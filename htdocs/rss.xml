@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<?xml-stylesheet href="rss.css" type="text/css" ?>
 <rss version="0.91">
 
   <channel>
@@ -9,6 +8,16 @@
       News, updates and changes related to BibTeX in XML.
     </description>
     <language>en-us</language>
+
+  <item>
+    <title>BibTeXML Subversion repository</title>
+    <link>http://sourceforge.net/svn/?group_id=56234</link>
+    <description>
+      We've (finally) imported BibTeXML code to
+      the SVN repository on sourceforge.net.
+    </description>
+    <pubDate>Wed, 03 Jan 2007 15:37:46 +0100</pubDate>
+  </item>
 
   <item>
     <title>Minor BibTeXML update</title>
