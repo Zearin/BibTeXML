@@ -1,0 +1,63 @@
+body {
+  background-color: rgb(218,227,235);
+  background-image: url(bibtexml-stripes.png);
+  background-position: top left;
+  background-repeat: no-repeat;
+  font-family: verdana, helvetica, arial, sans-serif;
+  font-size: 10pt;
+  color: black;
+  padding-top: 120px;
+  padding-left: 40px;
+  padding-bottom: 3em;
+}
+div { width: 460px; }
+a:link, a:visited { color: rgb(78,118,152); }
+a:visited { text-decoration: none; }
+a:hover { text-decoration: none; }
+p, address {
+  margin-bottom: 0em;
+  margin-top: .5em;
+}
+address {
+  margin-top: 2em;
+  font-size: 8pt;
+}
+p#sflogo { margin-top: 2em; }
+td#contact { width: 360px; }
+tt, pre { font-size: 8pt; }
+
+div.menu {
+  background-color: rgb(78,118,152);
+  font-size: 8pt;
+  position: absolute;
+  top: 90px;
+  left: 0px;
+  line-height: 1.4em;
+  width: 520px;
+  vertical-align: top;
+  margin: 0px;
+  padding: 0px;
+}
+div.menu p {
+  margin: 0px;
+  padding: 0px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-left: 40px;
+}
+div.menu a, div.menu a:link, div.menu a:visited {
+  padding-right: 1.5em;
+  text-decoration: none;
+  font-weight: normal;
+  color: white;
+  border: 1px solid transparent;
+}
+div.menu a#current { border: 1px solid transparent; }
+div.menu a:hover { border: 1px solid white; }
+div.menu a:hover#current { border: 1px solid transparent; }
+
+pre { margin: 0px; padding: 0px; }
+
+div.bibtexml-output p a { color: black; text-decoration: none; }
+div.bibtexml-output p a:hover { text-decoration: underline; }
+p#bibtexml-reference { font-size: 8pt; text-align: right; }

@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-uk">
+<head>
+<title>BibTeX as XML markup, examples</title>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1"/>
+<meta name="keywords"
+      content="BibTeX XML, BibTeX DTD, XML markup for BibTeX,
+               bibliography, bibliographic data,
+               convert BibTeX in LaTeX syntax to XML,
+	       XML application kit for BibTeX,
+               XML, SGML, BibTeX, LaTeX"/>
+<meta name="description"
+      content="Bibliography data in XML:
+               A DTD that expresses the content model in BibTeX
+               -- the bibliographic system for use with LaTeX."/>
+<link href="btx.css" type="text/css" rel="stylesheet"/>
+<link rel="copyright" href="http://creativecommons.org/licenses/GPL/2.0/" />
+<link rel="alternate"
+      type="application/rss+xml"
+      title="BibTeXML RSS-fee, updates and blog"
+      href="rss.xml" />
+<link rel="home" href="http://bibtexml.sf.net/" />
+<link rel="up" href="details.html" />
+<link rel="previous" href="details.html" />
+<link rel="contents" href="http://sourceforge.net/projects/bibtexml/" />
+</head>
+<body>
+
+<div class="menu">
+  <p>
+    <a title="About the project: Scope"
+       href="index.html">BibTeXML</a> 
+    <a title="Documentation: package contents and manual"
+       href="details.html">Details</a> 
+    <a title="News: recent changes and related links"
+       href="news.html">News</a> 
+    <a title="Visit the sourceforge.net project page"
+       href="http://sourceforge.net/projects/bibtexml/">>Project page</a> 
+    <a title="Get the distribution from sourceforge.net"
+       href="http://sourceforge.net/project/showfiles.php?group_id=56234"
+        >>Download</a> 
+  </p>
+</div>
+
+<div id="info" class="textual">
+
+<h1>BibTeXML output examples</h1>
+
+<p>List of examples:</p>
+
+<ul>
+  <li>
+    <a href="#bibtexml"
+       >BibTeXML document instance</a>
+  </li>
+  <li>HTML
+    <ul>
+      <li><a href="#html-harvard"
+	     >HTML with Harvard citation style</a>
+      <ul>
+         <li>
+	   <a href="#html-harvard-links"
+	      >Hypertext enabled and sorted by @id</a></li>
+	   <li>
+	     <a href="#html-harvard-css"
+		>Taking advantage of style sheet support</a></li>
+      </ul>
+      </li>
+      <li>
+	<a href="#html-chicago"
+	   >HTML with Chicago citation style</a></li>
+      <li>
+	<a href="#html-apa"
+	   >HTML with APA citation style</a>
+      </li>
+      <li>
+	<a href="#html-w3c"
+	   >HTML with titles first as seen used on the W3C web site</a>
+      </li>
+    </ul>
+  </li>
+  <li>LaTeX
+    <ul>
+      <li>
+	<a href="#bibtex-bib"
+	   >BibTeX .bib file (LaTeX syntax)</a></li><li>
+	<a href="#latex-harvard"
+	   >LaTeX biblist environment with Harvard citation style</a></li><li>
+	<a href="#latex-chicago"
+	   >LaTeX footnotes with Chicago citation style</a></li>
+    </ul>
+  </li>
+  <li>XML
+    <ul>
+	<li><a href="#xml-mods">MODS</a></li>
+	<li><a href="#dc">Dublin Core / RDF</a></li>
+	<li>BiblioX (not started)</li>
+	<li>DocBook (not started)</li>
+	<li>RISX (not started)</li>
+    </ul>
+  </li>
+  <li><a href="#ris">RIS</a></li>
+</ul>
+
+<h4 id="bibtexml"
+    >BibTeXML document instance</h4>
+
+<pre><![CDATA[
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE bibtex:file PUBLIC
+     "-//BibTeXML//DTD XML for BibTeX (extended) v1.0//EN"
+     "bibteXML-ext.dtd" >
+<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+
+<bibtex:entry id="berkman">
+  <bibtex:book>
+    <bibtex:author>Berkman, R. I.</bibtex:author>
+    <bibtex:title>
+      <bibtex:title>Find It Fast</bibtex:title>
+      <bibtex:subtitle>How to Uncover Expert Information
+         on Any Subject</bibtex:subtitle>
+    </bibtex:title>
+    <bibtex:publisher>HarperPerennial</bibtex:publisher>
+    <bibtex:year>1994</bibtex:year>
+    <bibtex:address>New York</bibtex:address>
+  </bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="robinson">
+  <bibtex:book>
+    <bibtex:editor>
+      <bibtex:person>Robinson, W. F.</bibtex:person>
+      <bibtex:person>Huxtable, C. R. R.</bibtex:person>
+    </bibtex:editor>
+    <bibtex:title>Clinicopathologic Principles
+         For Veterinary Medicine</bibtex:title>
+    <bibtex:publisher>Cambridge University Press</bibtex:publisher>
+    <bibtex:year>1988</bibtex:year>
+    <bibtex:address>Cambridge</bibtex:address>
+  </bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="huffman">
+  <bibtex:article>
+    <bibtex:author>Huffman, L. M.</bibtex:author>
+    <bibtex:title>Processing whey protein
+        for use as a food ingredient</bibtex:title>
+    <bibtex:journal>Food Technology</bibtex:journal>
+    <bibtex:year>1996</bibtex:year>
+    <bibtex:volume>50</bibtex:volume>
+    <bibtex:number>2</bibtex:number>
+    <bibtex:pages>49-52</bibtex:pages>
+  </bibtex:article>
+</bibtex:entry>
+
+</bibtex:file>
+]]></pre>
+
+<h4 id="html-harvard"
+    >HTML with Harvard citation style</h4>
+
+<p id="berkman">Berkman, R. I. 1994. <em>Find It Fast: How to Uncover Expert Information on Any Subject</em>, HarperPerennial, New York.</p><p id="robinson">Robinson, W. F. &amp; Huxtable, C. R. R. (eds) 1988. <em>Clinicopathologic Principles For Veterinary Medicine</em>, Cambridge University Press, Cambridge.</p><p id="huffman">Huffman, L. M. 1996. 'Processing whey protein for use as a food ingredient' in <em>Food Technology</em>, vol.50, no.2, pp.49-52.</p>
+
+<h4 id="html-harvard-links"
+    >The above, hypertext enabled and sorted by @id</h4>
+
+<p id="berkman"><a href="http://www.amazon.com/exec/obidos/author=Berkman, R. I.">Berkman, R. I.</a> 1994. <em><a href="http://www.amazon.com/exec/obidos/title=Find It Fast: How to Uncover Expert Information on Any Subject">Find It Fast: How to Uncover Expert Information on Any Subject</a></em>, HarperPerennial, New York.</p><p id="huffman"><a href="http://www.amazon.com/exec/obidos/author=Huffman, L. M.">Huffman, L. M.</a> 1996. '<a href="http://www.amazon.com/exec/obidos/title=Processing whey protein for use as a food ingredient">Processing whey protein for use as a food ingredient</a>' in <em><a href="http://www.google.com/search?q=Food+Technology">Food Technology</a></em>, vol.50, no.2, pp.49-52.</p><p id="robinson"><a href="http://www.amazon.com/exec/obidos/author=Robinson, W. F. &amp; Huxtable, C. R. R.">Robinson, W. F. &amp; Huxtable, C. R. R.</a> (eds) 1988. <em><a href="http://www.amazon.com/exec/obidos/title=Clinicopathologic Principles For Veterinary Medicine">Clinicopathologic Principles For Veterinary Medicine</a></em>, Cambridge University Press, Cambridge.</p>
+
+<h4 id="html-harvard-css"
+    >The above, taking advantage of style sheet support</h4>
+
+<div class="bibtexml-output">
+<p id="berkman"><a href="http://www.amazon.com/exec/obidos/author=Berkman, R. I.">Berkman, R. I.</a> 1994. <em><a href="http://www.amazon.com/exec/obidos/title=Find It Fast: How to Uncover Expert Information on Any Subject">Find It Fast: How to Uncover Expert Information on Any Subject</a></em>, HarperPerennial, New York.</p>
+
+<pre>
+div.bibtexml-output p a { text-decoration: none; color: black; }
+div.bibtexml-output p a:hover { text-decoration: underline; }
+p#bibtexml-reference { font-size: 8pt; text-align: right; }
+</pre>
+</div>
+
+<h4 id="html-chicago"
+    >HTML with Chicago 15th citation style (intended for footnotes)</h4>
+
+<p id="berkman">Berkman, R. I. <em>Find It Fast: How to Uncover Expert Information on Any Subject</em> (New York: HarperPerennial, 1994).</p><p id="robinson">Robinson, W. F. and Huxtable, C. R. R. (eds) <em>Clinicopathologic Principles For Veterinary Medicine</em> (Cambridge: Cambridge University Press, 1988).</p><p id="huffman">Huffman, L. M.  'Processing whey protein for use as a food ingredient,' <em>Food Technology</em> 50, no.2 (1996), 49-52.</p>
+
+<h4 id="html-apa"
+    >HTML with APA (Am. Psychological Association) citation style</h4>
+
+<p id="berkman">Berkman, R. I. (1994). <em>Find It Fast: How to Uncover Expert Information on Any Subject</em>. New York: HarperPerennial.</p><p id="robinson">Robinson, W. F. &amp; Huxtable, C. R. R. (eds) (1988). <em>Clinicopathologic Principles For Veterinary Medicine</em>. Cambridge: Cambridge University Press.</p><p id="huffman">Huffman, L. M. (1996). 'Processing whey protein for use as a food ingredient' in <em>Food Technology</em> 50 (2), pp.49-52.</p>
+
+
+<h4 id="html-w3c"
+    >HTML with titles first as seen used on the W3C web site</h4>
+
+<p id="berkman"><em>Find It Fast: How to Uncover Expert Information on Any Subject</em>. Berkman, R. I.. New York: HarperPerennial, 1994.</p><p id="robinson"><em>Clinicopathologic Principles For Veterinary Medicine</em>. Robinson, W. F. &amp; Huxtable, C. R. R. (eds). Cambridge: Cambridge University Press, 1988.</p><p id="huffman">'Processing whey protein for use as a food ingredient'. Huffman, L. M. <em>Food Technology</em> 50 (2), 1996, pp.49-52.</p>
+
+<h4 id="bibtex-bib"
+    >BibTeX .bib file (LaTeX syntax)</h4>
+
+<pre>
+@book{berkman,
+   author = {Berkman, R. I.},
+   title = {Find It Fast: How to Uncover Expert Information on Any Subject},
+   publisher = {HarperPerennial},
+   year = {1994},
+   address = {New York},
+}
+
+@book{robinson,
+   editor = {Robinson, W. F. and Huxtable, C. R. R.},
+   title = {Clinicopathologic Principles For Veterinary Medicine},
+   publisher = {Cambridge University Press},
+   year = {1988},
+   address = {Cambridge},
+}
+
+@article{huffman,
+   author = {Huffman, L. M.},
+   title = {Processing whey protein for use as a food ingredient},
+   journal = {Food Technology},
+   year = {1996},
+   volume = {50},
+   number = {2},
+   pages = {49-52},
+}
+</pre>
+
+<h4 id="latex-harvard"
+    >LaTeX biblist environment with Harvard citation style</h4>
+
+<pre>
+\begin{biblist}
+
+\bibitem[ber]
+Berkman, R. I. 1994, \textit{Find It Fast: How to Uncover Expert
+ Information on Any Subject}, HarperPerennial, New York.
+
+\bibitem[rob]
+Robinson, W. F. & Huxtable, C. R. R. (eds) 1988,
+ \textit{Clinicopathologic Principles For Veterinary Medicine},
+ Cambridge University Press, Cambridge.
+
+\bibitem[huf]
+Huffman, L. M. 1996, `Processing whey protein for use as a food
+ ingredient' in \textit{Food Technology}, vol.50, no.2, pp.49-52.
+
+\end{biblist}
+</pre>
+
+<h4 id="latex-chicago"
+  >Text output for LaTeX footnotes with Chicago citation style</h4>
+<pre>
+Berkman, R. I. \textit{Find It Fast: How to Uncover Expert Information
+ on Any Subject} (New York: HarperPerennial, 1994); 
+
+Robinson, W. F. and Huxtable, C. R. R. (eds) \textit{Clinicopathologic
+ Principles For Veterinary Medicine} (Cambridge: Cambridge University
+ Press, 1988);
+
+Huffman, L. M. `Processing whey protein for use as a food ingredient,'
+ \textit{Food Technology} 50, no.2 (1996), 49-52
+</pre>
+
+<h4 id="xml-mods"
+    >MODS</h4>
+
+<pre><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<modsCollection xmlns="http://www.loc.gov/mods/v3">
+
+  <mods ID="berkman">
+    <titleInfo>
+      <title>Find It Fast</title>
+      <subTitle>How to Uncover Expert Information on Any Subject</subTitle>
+    </titleInfo>
+    <name type="personal">
+      <namePart>Berkman, R. I.</namePart>
+      <role>
+        <roleTerm authority="marc" type="text">author</roleTerm>
+      </role>
+    </name>
+    <originInfo>
+      <dateIssued encoding="w3cdtf">1994</dateIssued>
+      <publisher>HarperPerennial</publisher>
+      <place>
+        <placeTerm>New York</placeTerm>
+      </place>
+    </originInfo>
+    <typeOfResource>text</typeOfResource>
+    <genre authority="bibx">book</genre>
+    <identifier type="citekey">berkman</identifier>
+  </mods>
+
+  <mods ID="robinson">
+    <titleInfo>
+      <title>Clinicopathologic Principles For Veterinary Medicine</title>
+    </titleInfo>
+    <name type="personal">
+      <namePart>Robinson, W. F.</namePart>
+      <role>
+        <roleTerm authority="marc" type="text">editor</roleTerm>
+      </role>
+    </name>
+    <name type="personal">
+      <namePart>Huxtable, C. R. R.</namePart>
+      <role>
+        <roleTerm authority="marc" type="text">editor</roleTerm>
+      </role>
+    </name>
+    <originInfo>
+      <dateIssued encoding="w3cdtf">1988</dateIssued>
+      <publisher>Cambridge University Press</publisher>
+      <place>
+        <placeTerm>Cambridge</placeTerm>
+      </place>
+    </originInfo>
+    <typeOfResource>text</typeOfResource>
+    <genre authority="bibx">book</genre>
+    <identifier type="citekey">robinson</identifier>
+  </mods>
+
+  <mods ID="huffman">
+    <titleInfo>
+      <title>Processing whey protein for use as a food ingredient</title>
+    </titleInfo>
+    <name type="personal">
+      <namePart>Huffman, L. M.</namePart>
+      <role>
+        <roleTerm authority="marc" type="text">author</roleTerm>
+      </role>
+    </name>
+    <originInfo>
+      <dateIssued encoding="w3cdtf">1996</dateIssued>
+    </originInfo>
+    <typeOfResource>text</typeOfResource>
+    <genre authority="xbib">article</genre>
+    <relatedItem type="host">
+      <titleInfo>
+        <title>Food Technology</title>
+      </titleInfo>
+      <originInfo>
+        <issuance>continuing</issuance>
+      </originInfo>
+      <genre authority="xbib">academic journal</genre>
+      <part>
+        <date>1996</date>
+        <detail type="volume">
+          <number>50</number>
+        </detail>
+        <detail type="number">
+          <number>2</number>
+        </detail>
+        <extent unit="page">
+          <start>49</start>
+          <end>52</end>
+        </extent>
+      </part>
+    </relatedItem>
+    <identifier type="citekey">huffman</identifier>
+  </mods>
+
+</modsCollection>
+]]></pre>
+
+<!--
+<h4 id="xml-bibliox"
+    >BiblioX</h4>
+<pre><![CDATA[
+]]></pre>
+
+<h4 id="xml-docbook"
+    >DocBook</h4>
+<pre><![CDATA[
+]]></pre>
+-->
+
+<h4 id="dc"
+    >Dublin Core / RDF</h4>
+
+<pre><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dc="http://purl.org/dc/elements/1.1/" >
+
+  <rdf:Description rdf:about="#berkman">
+    <dc:title>Find It Fast: How to Uncover Expert Information on Any Subject</dc:title>
+    <dc:creator>Berkman, R. I.</dc:creator>
+    <dc:date>1994</dc:date>
+    <dc:publisher>New York: HarperPerennial</dc:publisher>
+    <dc:type>book</dc:type>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="#robinson">
+    <dc:title>Clinicopathologic Principles For Veterinary Medicine</dc:title>
+    <dc:creator>Robinson, W. F. (ed.)</dc:creator>
+    <dc:creator>Huxtable, C. R. R. (ed.)</dc:creator>
+    <dc:date>1988</dc:date>
+    <dc:publisher>Cambridge: Cambridge University Press</dc:publisher>
+    <dc:type>book</dc:type>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="#huffman">
+    <dc:title>Processing whey protein for use as a food ingredient</dc:title>
+    <dc:creator>Huffman, L. M.</dc:creator>
+    <dc:date>1996</dc:date>
+    <dc:source>Food Technology, vol.50, no.2, pp.49-52</dc:source>
+    <dc:type>article</dc:type>
+  </rdf:Description>
+
+</rdf:RDF>
+]]></pre>
+
+<h4 id="ris"
+    >RIS</h4>
+
+<pre>
+TY  - BOOK
+AU  - Berkman, R. I.
+TI  - Find It Fast: How to Uncover Expert Information on Any Subject
+PB  - HarperPerennial
+PY  - 1994
+CY  - New York
+ID  - berkman
+ER  -
+TY  - BOOK
+ED  - Robinson, W. F.
+ED  - Huxtable, C. R. R.
+TI  - Clinicopathologic Principles For Veterinary Medicine
+PB  - Cambridge University Press
+PY  - 1988
+CY  - Cambridge
+ID  - robinson
+ER  -
+TY  - JOUR
+AU  - Huffman, L. M.
+TI  - Processing whey protein for use as a food ingredient
+JO  - Food Technology
+PY  - 1996
+VL  - 50(2)
+SP  - 49
+EP  - 52
+ID  - huffman
+ER  -
+</pre>
+
+
+
+</div>
+</body>
+</html>

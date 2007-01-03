@@ -1,0 +1,25 @@
+* {
+  display: block;
+  color: black; background: white;
+  font-family: "trebuchet ms", helvetica, sans-serif;
+  font-size: 10pt;
+}
+rss, rdf {
+  padding: 2em;
+  padding-left: 25%;
+}
+channel, item {
+  margin-bottom: 0.3em;
+  max-width: 40em;
+  position: deck;
+  text-align: left;
+}
+title { font-weight: bold; width: 30em; }
+channel>title { font-size: larger; }
+item { padding-top: 0.6em; }
+link:before { content: "Link: "; }
+language, rating, image, textinput, copyright, lastBuildDate,
+docs, managingEditor, webMaster, skipHours, skipDays, 
+rating, day, hour, name {
+  display: none;
+}

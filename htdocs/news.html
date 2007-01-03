@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-uk">
+<head>
+<title>BibTeX as XML markup, news</title>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1"/>
+<meta name="keywords"
+      content="BibTeX XML, BibTeX DTD, XML markup for BibTeX,
+               bibliography, bibliographic data,
+               convert BibTeX in LaTeX syntax to XML,
+	       XML application kit for BibTeX,
+               XML, SGML, BibTeX, LaTeX"/>
+<meta name="description"
+      content="Bibliography data in XML:
+               A DTD that expresses the content model in BibTeX
+               -- the bibliographic system for use with LaTeX."/>
+<link href="btx.css" type="text/css" rel="stylesheet"/>
+<link rel="copyright" href="http://creativecommons.org/licenses/GPL/2.0/" />
+<link rel="alternate"
+      type="application/rss+xml"
+      title="BibTeXML RSS-feed, updates and blog"
+      href="rss.xml" />
+<link rel="home" href="http://bibtexml.sf.net/" />
+<link rel="contents" href="http://sourceforge.net/projects/bibtexml/" />
+<link rel="next" href="http://sourceforge.net/projects/bibtexml/" />
+</head>
+<body>
+
+<div class="menu">
+  <p>
+    <a title="About the project: Scope"
+       href="index.html">BibTeXML</a> 
+    <a title="Documentation: package contents and manual"
+       href="details.html">Details</a> 
+    <a title="News: recent changes and related links"
+       id="current"
+       href="news.html">News</a> 
+    <a title="Visit the sourceforge.net project page"
+       href="http://sourceforge.net/projects/bibtexml/">>Project page</a> 
+    <a title="Get the distribution from sourceforge.net"
+       href="http://sourceforge.net/project/showfiles.php?group_id=56234"
+        >>Download</a> 
+  </p>
+</div>
+
+<div id="info" class="textual">
+
+<h1>BibTeXML news and updates</h1>
+
+<p>
+Updates and new links are tracked on our
+hand-rolled <a href="rss.xml">RSS feed</a>.
+</p>
+
+<h2>Related work</h2>
+<p>
+There are quite a few initiatives trying to XMLize BibTeX,
+most of them having a flat content model, and
+some of them support our schema.
+Users are encouraged to contribute to the project
+by giving feedback or create conversion tools.
+</p>
+<p>
+Bruce D'Arcus and John J. Lee have put together a list of
+<a href="http://wwwsearch.sourceforge.net/bib/openbib.html"
+   >"Open standards and software for bibliographies and cataloguing."</a>
+</p>
+
+<!--
+See also
+<a href="http://bibliographic.openoffice.org/"
+   >OpenOffice.org bibliographic</a> support.
+-->
+
+<!--
+<p>
+Taco Hoekwater maintains
+<a href="http://tex.aanhet.net/bibx/"
+  >bibx</a> dtd for use with ConTeXt.
+</p>
+-->
+
+<h4>Parsing .bib files</h4>
+<p>
+Use Chris Putnam's
+<a href="http://www.scripps.edu/~cdputnam/software/bibutils/">bibutils</a>,
+bibliography conversion utilities, for converting .bib files directly to MODS.
+<!-- and abandon BibTeXML -->
+</p>
+<p>
+Johannes Henkel has a
+<a href="http://www.cs.colorado.edu/~henkel/stuff/bib2xml/"
+  >BibTeX to XML converter</a>
+based on
+<a href="http://starship.python.net/~gward/btOOL/doc/btparse.html"
+  >Greg Ward's btparse C library</a>.
+</p>
+<p>Chris Bainbridge 
+has wrapped a few functions from the
+<a href="http://starship.python.net/~gward/btOOL/">C bibparse library</a>
+with <a href="http://www.swig.org/">SWIG</a> and used that to write
+a Python script:
+<a href="http://europa.dcs.ed.ac.uk:1234/~chrb/pub/bib2xml-0.0.2.tar.gz"
+  >bib2xml</a>.
+</p>
+
+<p>
+<a href="http://jreferences.sf.net/" >JReferences</a>
+supports BibTeXML. It includes a conversion util for:
+<br/>
+RIS &#x2194; BibTeXML, BibTeXML &#x2192; DocBook XML 4.1.2
+</p>
+<p>
+<a href="http://www.periapsis.org/tellico/" >Tellico</a>,
+a collection manager for KDE can import and export BibTeXML.
+</p>
+
+<h4>Converting BibTeX to HTML</h4>
+
+<p>
+Convert BibTeX to MODS XML using
+<a href="http://www.scripps.edu/~cdputnam/software/bibutils/"
+   >bibutils</a>,
+and use
+<a href="http://xbiblio.sourceforge.net/citeproc/"
+   >CiteProc</a> to produce HTML output.
+</p>
+<p>
+Sara E. Sprenkle has a
+<a href="http://www.cis.udel.edu/~sprenkle/bibtex2html/"
+  >BibTeX2HTML package</a>
+with a revised edition of our bibtex2xml python script.
+</p>
+<p>
+<a href="http://www.authopilot.com/xml/"
+  >Michael Auth</a>: BibTeX-XML-HTML project.
+The web page also depicts graphically
+the advantages of an XML formulation of BibTeX.
+</p>
+
+<h4>Other BibTeX DTDs</h4>
+<p>
+<a href="http://www.ps.uni-sb.de/~kuhlmann/bibtexml/"
+  >Marco Kuhlmann</a>
+A modularisable DTD.
+XSL for BibTeX output.
+<br/>
+<a href="http://www.teamxweb.com/doc/srf.shtml"
+  >SRF+BML by Holger (David) Wagner</a>
+</p>
+
+<!--
+<a href="http://www.dmn.tzi.org/bib/bibx.dtd" >Olaf Bergmann</a>
+
+BibTeXML.org by Erik Wilde/ETH Zürich.
+Flattened DTD, available as an XML Schema.
+Uses the BibTeX parser for XML-izing.
+Online converters.
+<a href="http://dret.net/projects/bibtexml/" >[Discontinued?]</a>.
+-->
+
+<h2>Recent changes and revisions</h2>
+
+<p>
+20060727. XML encoding set correctly to UTF-8.<br/>
+20030911. RELAX NG Schemas are available for testing.<br/>
+20030626. DTD bug fix.<br/>
+20030118. Parameterised DTD (pre v4).<br/>
+20020712. Downloadable files collected into one archive.<br/>
+20020621. Submitted the project to Sourceforge.
+</p>
+
+
+</div>
+</body>
+</html>

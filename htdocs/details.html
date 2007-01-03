@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-uk">
+<head>
+<title>BibTeX as XML markup, details</title>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1"/>
+<meta name="keywords"
+      content="BibTeX XML, BibTeX DTD, XML markup for BibTeX,
+               bibliography, bibliographic data,
+               convert BibTeX in LaTeX syntax to XML,
+	       XML application kit for BibTeX,
+               XML, SGML, BibTeX, LaTeX"/>
+<meta name="description"
+      content="Bibliography data in XML:
+               A DTD that expresses the content model in BibTeX
+               -- the bibliographic system for use with LaTeX."/>
+<link href="btx.css" type="text/css" rel="stylesheet"/>
+<link rel="copyright" href="http://creativecommons.org/licenses/GPL/2.0/" />
+<link rel="alternate"
+      type="application/rss+xml"
+      title="BibTeXML RSS-feed, updates and blog"
+      href="rss.xml" />
+<link rel="home" href="http://bibtexml.sf.net/" />
+<link rel="next" href="news.html" />
+<link rel="contents" href="http://sourceforge.net/projects/bibtexml/" />
+</head>
+<body>
+
+<div class="menu">
+  <p>
+    <a title="About the project: Scope"
+       href="index.html">BibTeXML</a> 
+    <a title="Documentation: package contents and manual"
+       id="current"
+       href="details.html">Details</a> 
+    <a title="News: recent changes and related links"
+       href="news.html">News</a> 
+    <a title="Visit the sourceforge.net project page"
+       href="http://sourceforge.net/projects/bibtexml/">>Project page</a> 
+    <a title="Get the distribution from sourceforge.net"
+       href="http://sourceforge.net/project/showfiles.php?group_id=56234"
+        >>Download</a> 
+  </p>
+</div>
+
+<div id="info" class="textual">
+
+<h1>BibTeXML documentation</h1>
+
+<p>
+Schemas and converters can be
+<a href="http://sourceforge.net/project/showfiles.php?group_id=56234"
+  >downloaded in one bundle.</a>
+</p>
+
+<p>
+Schemas:
+bibtexml.rnc/.dtd is a direct representation of the BibTeX in XML,
+while in bibtexml-ext.rnc/.dtd we have added syntax for more detailed
+tagging, e.g. a comma separated list of authors can now be tagged
+individually with firstname and lastname. `strict' documents are
+always valid `loose' documents, but not the other way around.
+The up-translation scripts will output strict BibTeXML markup.
+</p>
+
+<p>
+Up-translation:
+Use <a href="http://www.cs.colorado.edu/~henkel/stuff/bib2xml/">bib2xml</a>
+or the included bibtex2xml.py script to XMLize BibTeX data.
+</p>
+
+<p>
+For the intention of not typing bibliography metadata at all, search
+<a href="http://liinwww.ira.uka.de/mpsbib/index?query=%s"
+   title="The link is a keyword search URL
+	  (bookmark with Firefox or add to Opera's search.ini)"
+   >The Collection of Computer Science Bibliographies</a>
+for BibTeX formatted data, or try converting
+<a href="http://lcweb.loc.gov/marc/">MARC</a> or RIS data
+exported from library databases
+(e.g. <a href="http://catalog.loc.gov/">Library of Congress</a>
+or <a href="http://wgate.bibsys.no/search/pub/">Bibsys</a>)
+to XML markup, although the included converter is experimental quality.
+</p>
+
+<p>
+Down-translation:
+XSLT specs for converting BibTeX XML markup to
+BibTeX (LaTeX syntax),
+<a href="http://dublincore.org/" >Dublin Core</a>,
+<a href="http://www.loc.gov/standards/mods/" >MODS</a>,
+RIS,
+<a href="http://docbook.sourceforge.net/" >DocBook</a>,
+LaTeX biblist environment, or HTML using
+<a href="http://www.library.uq.edu.au/training/citation/harvard.html"
+   >Harvard</a>,
+<a href="http://www.library.uq.edu.au/ssah/useits/chicago15A_useit.pdf"
+   >Chicago</a> or
+<a href="http://www.library.uq.edu.au/training/citation/apa.pdf"
+   >APA</a>
+<a href="http://www.library.uq.edu.au/useit/"
+   >citation styles</a>.
+There is also a testbed for generating HTML with links to
+the <a href="http://www.amazon.com/" >Amazon.com</a> bookstore.
+See some <a href="examples.html" >examples</a>.
+</p>
+
+<p>
+Converting BibTeX (.bib) to MODS XML:
+<a href="http://www.scripps.edu/~cdputnam/software/bibutils/">bibutils</a>
+can convert BibTeX, RIS, Endnote, and other bibliography formats to
+MODS XML (and back). BibTeXML can also be seen as a intermediate
+format, but more suitable for converting .bib to HTML.
+For pretty printing of the MODS data in HTML, use
+<a href="http://xbiblio.sourceforge.net/citeproc.html">CiteProc</a>.
+</p>
+
+</div>
+</body>
+</html>

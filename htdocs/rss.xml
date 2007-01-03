@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet href="rss.css" type="text/css" ?>
+<rss version="0.91">
+
+  <channel>
+    <title>BibTeXML updates</title>
+    <link>http://bibtexml.sf.net/</link>
+    <description>
+      News, updates and changes related to BibTeX in XML.
+    </description>
+    <language>en-us</language>
+
+  <item>
+    <title>Minor BibTeXML update</title>
+    <link>http://bibtexml.sourceforge.net/</link>
+    <description>
+      We have released a new pre-release of BibTeXML.
+      Changes:
+      Character encoding fix.
+      encoding="utf-8" in output from bibtex2xml.py
+      Test case provided.
+    </description>
+    <pubDate>Thu, 27 Jul 2006 18:11:44 +0200</pubDate>
+  </item>
+
+  <item>
+    <title>Updates</title>
+    <link>http://bibtexml.sourceforge.net/</link>
+    <description>
+      We have released a new pre-release of BibTeXML.
+      Changes:
+      Replaced bibtex2xml.py with Sara E. Sprenkle's rewrite.
+      Many new XSLT style sheets for output to HTML or LaTeX
+      with Harvard, Chicago and APA citation styles, and
+      output to Dublin Core RDF, MODS XML and RIS.
+    </description>
+    <pubDate>Tue, 31 May 2005 00:11:30 +0200</pubDate>
+  </item>
+
+  <item>
+    <title>bibutils: BibTeX to MODS XML</title>
+    <link>http://www.scripps.edu/~cdputnam/software/bibutils/</link>
+    <description>
+      There is really no point in using tools provided with BibTeXML
+      for converting to MODS, because the bibliography conversion utilities
+      provided by bibutils are much better.
+      From BibTeX, RIS, EndNote, ISI, Pubmed, COPAC to MODS XML
+      and output to BibTeX, RIS, EndNote.
+      Binaries available for all common operating systems.
+      (Then use CiteProc or BiblioX to typeset MODS.)
+    </description>
+    <pubDate>Tue, 31 May 2005 00:05:20 +0200</pubDate>
+  </item>
+
+  <item>
+    <title>How-to: Citation styles</title>
+    <link>http://www.library.uq.edu.au/useit/</link>
+    <description>
+      PDFs with tutorials on how to write references according to
+      standard citation systems like Harvard, AGPS, Chicago, APA,
+      and their common uses.
+    </description>
+    <pubDate>Tue, 31 May 2005 00:01:11 +0200</pubDate>
+  </item>
+
+  <item>
+    <title>Changes: web page and mailing lists</title>
+    <link>http://bibtexml.sf.net/</link>
+    <description>
+      We have updated the web pages a bit, and
+      "deleted" the old bibtexml-general mailing list in
+      favor of a new bibtexml-users list.
+    </description>
+    <pubDate>Wed, 25 May 2005 15:11:08 +0200</pubDate>
+  </item>
+
+  <item>
+    <title>Updated BibTeX2HTML link</title>
+    <link>http://www.cis.udel.edu/~sprenkle/bibtex2html/</link>
+    <description>
+      Sara E. Sprenkle reports she has moved
+      the BibTeX2HTML package to another server.
+    </description>
+    <pubDate>Mon, 23 May 2005 09:46:52 +0200</pubDate>
+  </item>
+
+  <item>
+    <title>Download from sf.net File Release System</title>
+    <link>http://sourceforge.net/project/showfiles.php?group_id=56234</link>
+    <description>
+      Download are now available through the
+      SourceForge.net File Release System.
+      (Something I should have bothered learning
+      how to do a long time ago.)
+      Next: Learn how to set up CVS,
+      and create a "final" release for the schemas.
+    </description>
+    <pubDate>Sat, 30 Oct 2004 16:03:08 +0200</pubDate>
+  </item>
+
+  <item>
+    <title>RELAX NG Schemas</title>
+    <link>http://bibtexml.sf.net/</link>
+    <description>
+      Added RELAX NG versions of the Schemas for BibTeX.
+      Release candidate quality.
+      bibtexml-ext.rnc provides a slightly different markup
+      than bibtexml-ext.dtd.
+    </description>
+    <pubDate>Fri, 19 Sep 2003 08:34:05 +0200</pubDate>
+  </item>
+
+  <item>
+    <title>XSL transformation back to BibTeX</title>
+    <link>http://bibtexml.sf.net/</link>
+    <description>
+      Updated bibtexml2bibtex.xsl and bibtexml-ext2bibtex.xsl,
+      more XSLTs will be fixed in the near future.
+    </description>
+    <pubDate>Mon, 14 Jul 2003 19:43:09 +0200</pubDate>
+  </item>
+
+  <item>
+    <title>Bibliography overview</title>
+    <link>http://wwwsearch.sourceforge.net/bib/openbib.html</link>
+    <description>
+       Bruce D'Arcus and John J. Lee have put together a list of
+       "Open standards and software for bibliographies and cataloging."
+    </description>
+    <pubDate>Thu, 26 Jun 2003 16:07:09 +0200</pubDate>
+  </item>
+
+  <item>
+    <title>Bugfix: DTD</title>
+    <link>http://bibtexml.sf.net/</link>
+    <description>
+	A minor bug fix to bibteXML-ext.dtd. (Typos!)
+    </description>
+    <pubDate>Thu, 26 Jun 2003 13:52:10 +0200</pubDate>
+  </item>
+
+  <item>
+    <title>Parameterized DTD</title>
+    <link>http://bibtexml.sf.net/</link>
+    <description>
+        The bibtexml DTD has been rewritten, now fully modular,
+        with possibilities to plug in other DTDs,
+        modify sections of it, change the namespace prefix.
+    </description>
+    <pubDate>Sat, 18 Jan 2003 22:46:48 +0100</pubDate>
+  </item>
+
+  </channel>
+</rss>
