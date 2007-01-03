@@ -1,0 +1,324 @@
+*001981733476
+*008                                     eng
+*020  $a0-13-081152-1
+*080a $a681.324
+*100  $aGoldfarb, Charles F.
+*245  $aThe XML handbook$cCharles F. Goldfarb, Paul Prescod$wXML handbook
+*260  $aUpper Saddle River, N.J.$bPrentice Hall PTR$cc1998
+*300  $aXLIV, 639 s.$bill.$e1 CD-ROM (12 cm)
+*440  $aThe Charles F. Goldfarb series on open information management$wCharles F. Goldfarb series on open information management
+*699a $aXML
+*699a $aWorld Wide Web
+*699a $aInternett
+*700  $aPrescod, Paul
+*096a $aTEK$c681.324 G56x$n98a012163
+*096ug$aHIG/ING$n98ug01701
+
+*001941189112
+*008                                     eng
+*015  $alc93039691
+*020  $a0-201-52983-1
+*062c $aI.7.2
+*062ni$aI.7.2
+*080a $a655.26:681.3
+*080nk$a681.3.06
+*080ua$a681.3.06
+*080ug$a651.2:681.3
+*080uk$a681.3:655
+*080yf$a681.3:655
+*080yq$a681.3:655.28
+*082  $c682.2/2544536
+*082d $a682.2544536
+*082up$b686.22$a005.369
+*082xb$a682.2
+*082xc$a686.22544
+*085b $aNb 31$bQc 8ag
+*087na$aB8:42
+*100  $aLamport, Leslie
+*245  $aLaTeX$ba document preparation system : user's guide and reference manual$cLeslie Lamport ; illustrations by Duane Bibby
+*250  $a2nd ed.
+*260  $aReading, Mass.$bAddison-Wesley$cc1994
+*300  $aXVI, 272 s.$bill.
+*500  $aPå omslaget: Updated for LaTeX2
+*650  $aComputerized typesetting
+*687ug$aTekstbehandling
+*687ug$aLATEX
+*687yf$aTypografi$bDatabehandling
+*687yf$aTekstbehandling
+*687yq$aDesktop publishing
+*687yq$aTypesetting
+*691b $atekstbehandling dokumentbehandling skrivebordssetting bokfremstilling typografi
+*691na$atekstbehandling
+*691nk$adatamaskiner programmering
+*691nm$alatex tex
+*691uk$aLatex
+*691up$adesktop typografi latex
+*691xb$alatex computerized typesetting
+*691xc$atypografi tekstbehandling databehandling
+*699a $aLATEX
+*096nm$aUMN/MAT$bLærerbibl.$cLATEX$n96nm00041
+*096uf$aHIN$n95uf00735
+*096nm$aUMN/MAT$bLærerbibl.$cLATEX$n94nm00509
+
+*001960229256
+*008                                     eng
+*020  $a0-13-309881-8
+*062ni$aI.7.2
+*080a $a655:681.3
+*082d $a005.72
+*082up$a005.369$b652.5
+*085b $aQb 38d
+*100  $aMaler, Eve
+*245  $aDeveloping SGML DTDs$bfrom text to model to markup$cEve Maler, Jeanne El Andaloussi
+*260  $aUpper Saddle River, N.J.$bPrentice Hall$cc1996
+*300  $aXXIV, 532 s.$bill.
+*691b $awebsider hypertext programmering hypertekst
+*691ni$aSGML; DTD;
+*691pr$aprogrammeringsspråk SGML standard generalized markup language
+*691up$aWeb-sider Hypertekst
+*691yg$aSGML
+*699a $aSGML
+*700  $aEl Andaloussi, Jeanne
+*096a $aTEK$c655:681.3 M29d$n96a002959
+*096ni$aUMN/INF$bLærerbibl.$cMAL$n96ni00360
+
+*001940589230
+*008                                     eng
+*015  $alc93023150
+*020  $a0-201-54199-8
+*062c $aI.7.2
+*080a $a655.26:681.3
+*080ni$a681.3
+*080tb$a681.3.069:655.28
+*080ua$a681.3:655.26
+*080ug$a655.26:681.3
+*080uk$a681.3:655
+*080uu$a651.2:681.3
+*080yf$a681.3:655
+*080yq$a681.3:655.28
+*082  $c686.2/2544536
+*082d $a686.22544536
+*082ka$a686.22
+*082um$a686.2
+*082up$a686.2
+*082xj$a686.22
+*082xs$a686.22544
+*087na$aB8:73
+*087ni$aB8:23 rom.212
+*100  $aGoossens, Michel
+*245  $aThe LaTeX companion$cMichel Goossens, Frank Mittelbach, Alexander Samarin$wLaTeX companion
+*260  $aReading, Mass.$bAddison-Wesley$cc1994
+*300  $aXXX, 528 s.$bfig.
+*500  $aBibliografi: s. [481]-492
+*650  $aComputerized typesetting
+*687ug$aSkrivebordssetting
+*687ug$aDesktop publishing
+*687ug$aLATEX
+*687uu$aLATEX
+*687yf$aTypografi$bDatabehandling
+*687yf$aTekstbehandling
+*687yq$aDesktop publishing
+*687yq$aTypesetting
+*691d $adesktop publishing typografi databehandling
+*691na$adatabehandling tekstbehandling
+*691ni$adatabehandling tekstbehandling LaTex
+*691ua$atypografi edb
+*691uk$aLATEX
+*691up$atypografi latex
+*691xj$alatex
+*691xs$alitografi
+*698d $aSkrivebordssetting
+*699a $aLATEX
+*700  $aMittelbach, Frank
+*700  $aSamarin, Alexander
+*096tb$aBI$c681.3.069 GOO$n95tb06461
+
+*001910574286
+*008                                     eng
+*020  $a0-201-13448-9
+*062ni$aI.7.2
+*080a $a681.3:655$b651.2:681.3
+*080uk$a681.3:651.5/.9
+*080yf$a681.3:655
+*082d $a686.22544
+*084uk$a68-02
+*100  $aKnuth, Donald E.
+*245  $aThe TEXbook$cDonald E. Knuth ; illustrations by Duane Bibby$wTEXbook
+*260  $aReading, Mass.$bAddison-Wesley$c1984
+*300  $aix, 483 s.$bill.
+*687yf$aTEX
+*691uk$aTex Tekstbehandling
+*699a $aTypografi$bDatabehandling
+*699a $aTekstbehandling
+*699a $aGrafisk industri$bDatabehandling
+*096ni$aUMN/INF$cI.7.2 KNU$n88ni00135
+*096ni$aUMN/INF$n93ni01308
+*096nm$aUMN/MAT$bLærerbibl.$cTEX$n75nm09271
+*096nm$aUMN/MAT$bLærerbibl.$cTEX$n75nm16901
+*096nm$aUMN/MAT$bLærerbibl.$cTEX$n75nm03818
+*096a $aARK/ByggA$c681.3:655 K78t$n86a013913
+
+*001970871252
+*008                                     eng
+*020  $a0-201-48345-9
+*062ni$aE.2.0
+*080b $a519.723:006
+*080c $a003.26:006
+*245  $aThe Unicode standard, version 2.0$cthe Unicode Consortium$wUnicode standard, version 2.0
+*260  $aReading, Mass.$bAddison-Wesley Developers Press$c1996
+*300  $a1 b. (flere pag.)$bill.
+*500  $a1 CD-ROM i lomme
+*691b $akoder standardisering skrifttegn bokstaver håndbøker koding tegn
+*691ni$aUNICODE;
+*710  $aUnicode Consortium
+*096b $aLADE/DF$c*q519.723:006 Uni$n97b011657
+*096c $aIMV$bmag$cq003.26:006 Uni$n97c009879
+*096ni$aUMN/INF$cE.2.0 UNI$n98ni00148
+
+*00195250717x
+*008                                     eng
+*020  $a0-671-66398-4
+*020  $a0-671-70863-5
+*080a $a159.923
+*082  $c158
+*082yt$a158
+*100  $aCovey, Stephen R.
+*245  $aThe seven habits of highly effective people$brestoring the character ethic$cStephen R. Covey$wseven habits of highly effective people
+*250  $a1st Fireside ed.
+*260  $aNew York$bSimon & Schuster$c1990
+*300  $a358 s.$bill.
+*500  $a"A Fireside book."
+*500  $aOmslags- og ryggtittel: The 7 habits of highly effective people
+*650  $aMeditation
+*650  $aSelf-actualization (Psychology)
+*650  $aSuccess$xPsychological aspects
+*699a $aPersonlighetsutvikling
+*740  $aThe 7 habits of highly effective people$w7 habits of highly effective people
+*096a $aVERKBIB$c159.923 C83s$n95a025642
+*096yt$aNFR$c158 Cov$n98yt00142
+
+*001921390114
+*008                          c          eng
+*020  $a0-89871-274-2
+*080a $a517.4
+*080b $a517.4
+*080tc$a517.44
+*080uc$a517.44
+*080uf$a517.4
+*080ug$a517.4
+*080yf$a517.444
+*082  $c515/.2433
+*082d $a515.2433
+*082ua$a515.2433
+*082uc$a515.2433
+*082ur$a515.2433
+*084c $a42C
+*084ua$a42C15
+*087na$aB7:69
+*087nm$a42
+*100  $aDaubechies, Ingrid
+*245  $aTen lectures on wavelets$cIngrid Daubechies
+*260  $aPhiladelphia$bSociety for Industrial and Applied Mathematics$c1992
+*300  $aXIX, 357 s.$bill.
+*491  $aCBMS-NSF regional conference series in applied mathematics$v61$n 841064431
+*650  $aWavelets (Mathematics)$xCongresses
+*670tc$aMathematical models
+*687uf$aTransformasjoner$cMatematikk
+*687ug$aTransformasjoner (Matematikk)
+*691b $abølger matematikk signalbehandling
+*691d $abølgepakker
+*691ua$abølgepakker småbølger
+*691uc$aWavelets
+*691ur$aIntegraltransformasjoner Fourierrekker Harmonisk analyse
+*699a $aTransformasjoner$cMatematikk$xKongresser
+*699uc$aTransformasjoner$cMatematikk$xKongresser
+*740  $a10 lectures on wavelets
+*096c $aRMH$c42C Dau$n92c020289
+
+*001922376832
+*008                                     eng
+*015  $alc92018629
+*020  $a0-12-047140-x
+*080a $a621.376.037.37
+*082  $c621.382/2
+*082uc$a621.3822
+*082ur$a621.382
+*100  $aAkansu, Ali N.
+*245  $aMultiresolution signal decomposition$btransforms, subbands, and wavelets$cAli N. Akansu and Richard A. Haddad
+*260  $aBoston$bAcademic Press$cc1992
+*300  $axii, 376 s.$bill.
+*440  $aTelecommunications
+*650  $aSignal processing$xDigital techniques
+*650  $aCoding theory
+*687ur$aSignalbehandling
+*687yf$aDigital signalbehandling
+*691uc$aSignalbehandling Wavelets
+*699a $aDigital signalbehandling
+*700  $aHaddad, Richard A.
+*096ur$aHIS/FB$c621.382 AKA$n92ur12873
+*096a $aTEK$c621.376.037.37 Ak1m$n93a000678
+*096uc$aHIØ/os$c621.3822 Ak$n95uc02982
+*096a $aElekF$c621.376.037.37 Ak1m$n92a024402
+*096yf$aFFI$c621.391 Aka$n95yf00583
+
+*001931624851
+*008                                     eng
+*015  $alc93015001
+*020  $a0-201-54413-x
+*080uc$a621.376.037.37$b621.372.54
+*080ug$a621.376.037.37
+*080uk$a621.391.037.37
+*080uu$a621.376.037.37
+*080yf$a621.391.037.37
+*082  $c621.382/2
+*082ua$a621.3822
+*082uf$a621.3822
+*082un$a621.3822
+*082xd$a621.3822
+*082xp$a621.382
+*082xs$a621.382
+*100  $aIfeachor, Emmanuel C
+*245  $aDigital signal processing$ba practical approach$cEmmanuel C. Ifeachor, Barrie W. Jervis
+*260  $aWokingham, England ; Reading, Mass.$bAddison-Wesley$cc1993
+*300  $axxiii, 760 s.$bill.
+*440  $aElectronic systems engineering series
+*650  $aSignal processing$xDigital techniques
+*650  $aDigital filters (Mathematics)
+*650  $aAdaptive signal processing
+*687ug$aDigital signalbehandling
+*687uu$aDigital signalbehandling
+*687yf$aDigital telekommunikasjon
+*687yf$aDigitale filter
+*691ua$aDIGITAL SIGNALBEHANDLING
+*691ub$adigitalteknikk
+*691uk$aDigital signalbehandling Digitale filter
+*691un$asignalbehandling teknikk
+*691xd$adigitalteknikk teleteknikk signalteori
+*691xp$aSignalbehandling Digitalteknikk
+*691xs$aSignalbehandling
+*699uc$aDigital signalbehandling
+*699uc$aDigitale filter
+*700  $aJervis, Barrie W.
+*096yf$aFFI$c621.391.037.37 Ife$n95yf01358
+*096ub$aHIBU/KBG$c621.374 I Bibl$n93ub01406
+
+*001962461490
+*008                                     eng
+*020  $a1-558-60375-1
+*062c $aI.4.0
+*080a $a681.3:519.674$b517.4
+*087nm$a42$b42-02$b65Y25$b68U05
+*100  $aStollnitz, Eric J.
+*245  $aWavelets for computer graphics$btheory and applications$cEric J. Stollnitz, Tony D. DeRose, David H. Salesin
+*260  $aSan Francisco, Calif.$bMorgan Kaufmann Publ.$cc1996
+*300  $aXXVI, 245 s., pl.$bill.
+*440  $aThe Morgan Kaufmann series in computer graphics and geometric modeling wMorgan Kaufmann series in computer graphics and geometric modeling
+*699a $aGrafisk databehandling
+*699a $aTransformasjoner$cMatematikk
+*700  $aDeRose, Tony D.
+*700  $aSalesin, David H.
+*096a $aELEKBIB$c681.3:519.674 St6w$n96a024803
+*096c $aRMH$cI.4.0 Sto$n97c002448
+*096nm$aUMN/MAT$c42 STO$n97nm00379
+*096a $aTEK$c681.3:519.674 St6w$n97a010430
+

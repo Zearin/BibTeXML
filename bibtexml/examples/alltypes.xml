@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet href="bibtexml.css" type="text/css" ?>
+<!DOCTYPE bibtex:file PUBLIC
+    "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
+    "bibteXML.dtd" >
+<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+
+
+<bibtex:entry id="articlerequired">
+<bibtex:article>
+<bibtex:author>BibTeXML team</bibtex:author>
+<bibtex:title>Article title</bibtex:title>
+<bibtex:journal>sf.net</bibtex:journal>
+<bibtex:year>2003</bibtex:year>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="bookrequired">
+<bibtex:book>
+<bibtex:author>BibTeXML team</bibtex:author>
+<bibtex:title>Book title</bibtex:title>
+<bibtex:publisher>sf.net</bibtex:publisher>
+<bibtex:year>2003</bibtex:year>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="bookletrequired">
+<bibtex:booklet>
+<bibtex:title>Booklet title</bibtex:title>
+</bibtex:booklet>
+</bibtex:entry>
+
+<bibtex:entry id="inbookrequired">
+<bibtex:inbook>
+<bibtex:author>BibTeXML team</bibtex:author>
+<bibtex:title>In book title</bibtex:title>
+<bibtex:pages>23--41</bibtex:pages>
+<bibtex:publisher>sf.net</bibtex:publisher>
+<bibtex:year>2003</bibtex:year>
+</bibtex:inbook>
+</bibtex:entry>
+
+<bibtex:entry id="incollreq">
+<bibtex:incollection>
+<bibtex:author>BibTeXML team</bibtex:author>
+<bibtex:title>In collection title</bibtex:title>
+<bibtex:booktitle>Book title</bibtex:booktitle>
+<bibtex:publisher>sf.net</bibtex:publisher>
+<bibtex:year>2003</bibtex:year>
+</bibtex:incollection>
+</bibtex:entry>
+
+<bibtex:entry id="inprocreq">
+<bibtex:inproceedings>
+<bibtex:author>BibTeXML team</bibtex:author>
+<bibtex:title>In proceedings title</bibtex:title>
+<bibtex:booktitle>Book title</bibtex:booktitle>
+<bibtex:year>2003</bibtex:year>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+<bibtex:entry id="confreq">
+<bibtex:conference>
+<bibtex:author>BibTeXML team</bibtex:author>
+<bibtex:title>Conference title</bibtex:title>
+<bibtex:booktitle>Book title</bibtex:booktitle>
+<bibtex:year>2003</bibtex:year>
+</bibtex:conference>
+</bibtex:entry>
+
+<bibtex:entry id="manreq">
+<bibtex:manual>
+<bibtex:title>Manual title</bibtex:title>
+</bibtex:manual>
+</bibtex:entry>
+
+<bibtex:entry id="threq">
+<bibtex:mastersthesis>
+<bibtex:author>BibTeXML team</bibtex:author>
+<bibtex:title>Thesis (graduate degree) title</bibtex:title>
+<bibtex:school>sf.net</bibtex:school>
+<bibtex:year>2003</bibtex:year>
+</bibtex:mastersthesis>
+</bibtex:entry>
+
+<bibtex:entry id="pthreq">
+<bibtex:phdthesis>
+<bibtex:author>BibTeXML team</bibtex:author>
+<bibtex:title>Thesis (PHD) title</bibtex:title>
+<bibtex:school>sf.net</bibtex:school>
+<bibtex:year>2003</bibtex:year>
+</bibtex:phdthesis>
+</bibtex:entry>
+
+<bibtex:entry id="miscreq">
+<bibtex:misc>
+</bibtex:misc>
+</bibtex:entry>
+
+<bibtex:entry id="procreq">
+<bibtex:proceedings>
+<bibtex:title>Proceedings title</bibtex:title>
+<bibtex:year>2003</bibtex:year>
+</bibtex:proceedings>
+</bibtex:entry>
+
+<bibtex:entry id="techreq">
+<bibtex:techreport>
+<bibtex:author>BibTeXML team</bibtex:author>
+<bibtex:title>Techreport title</bibtex:title>
+<bibtex:institution>sf.net</bibtex:institution>
+<bibtex:year>2003</bibtex:year>
+</bibtex:techreport>
+</bibtex:entry>
+
+<bibtex:entry id="unreq">
+<bibtex:unpublished>
+<bibtex:author>BibTeXML team</bibtex:author>
+<bibtex:title>Note title</bibtex:title>
+<bibtex:note>Placeholder for a note.</bibtex:note>
+</bibtex:unpublished>
+</bibtex:entry>
+
+
+</bibtex:file>

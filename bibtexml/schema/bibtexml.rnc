@@ -1,0 +1,565 @@
+# - File: $Id: bibtexml.rnc, 2003.09.11 17:57:00 vbg Exp $
+# -
+# - This DTD expresses XML markup similar to the BibTeX language
+# - specified for LaTeX, or actually its content model.
+# - For documentation on BibTeX, see
+# -   http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
+# -
+# - Suggested invocation:
+# -
+# -   <?xml version="1.0" encoding="UTF-8"?>
+# -   <!DOCTYPE bibtex:file PUBLIC
+# -       "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
+# -       "bibteXML.dtd" >
+# -   <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+# -   ...
+# -   </bibtex:file>
+# -
+# - Available from  http://bibtexml.sf.net/
+# -
+# - This code originally developed by
+# - Vidar Bronken Gundersen
+# - Zeger W. Hendrikse
+# - Marco Kuhlmann
+# -
+# - This program is free software; you can redistribute it and/or
+# - modify it under the terms of the GNU General Public License.
+# - See  http://www.gnu.org/copyleft/gpl.html
+# -
+
+
+# namespace and namespace prefix
+default namespace bibtex = "http://bibtexml.sf.net/"
+
+# top level element
+start = file
+
+# Qualified Names module ..............................................
+
+# Qualified Names
+# -
+# - This module is contained in two parts, labeled Section 'A' and 'B':
+# -
+# -   Section A declares parameter entities to support namespace-
+# -   qualified names, namespace declarations, and name prefixing.
+# -
+# -   Section B declares parameter entities used to provide
+# -   namespace-qualified names for all element types.
+# -
+# - This module is derived from the XHTML Qualified Names Template module.
+# -
+
+# Section A: XML Namespace Framework ::::::::::::::::::::
+
+BibTeXML.xmlns.extra.attrib = empty
+BibTeXML.xmlns.attrib = BibTeXML.xmlns.extra.attrib
+
+# Section B: Qualified Names :::::::::::::::::::::::::::::
+
+# 9. This section declares parameter entities used to provide
+# -     namespace-qualified names for all element types.
+
+# ignores subsequent instantiation of this module when
+# -  used as external subset rather than module fragment.
+# -  NOTE: Do not modify this parameter entity, otherwise
+# -  a recursive parsing situation may result.
+
+# if %NS.prefixed; is INCLUDE, include all NS attributes, 
+# otherwise just those associated with MathML
+
+BibTeXML.NamespaceDecl.attrib = BibTeXML.xmlns.attrib
+
+# .....................................................................
+# Main structure
+
+# %entry.qname; may contain one of the bibliographic types.
+BibTeXML.standard.entries.class =
+      article
+      | book
+      | booklet
+      | manual
+      | techreport
+      | mastersthesis
+      | phdthesis
+      | inbook
+      | incollection
+      | proceedings
+      | inproceedings
+      | conference
+      | unpublished
+      | misc
+BibTeXML.additional.entries.class = empty#notAllowed
+BibTeXML.entries.class =
+      BibTeXML.standard.entries.class
+      | BibTeXML.additional.entries.class
+entry = element entry { attlist.entry, BibTeXML.entries.class }
+attlist.entry &= attribute id { xsd:ID }
+
+# %file.qname; is the document top element with a namespace indicator.
+file = element file { attlist.file, entry* }
+attlist.file &= BibTeXML.NamespaceDecl.attrib
+
+# .....................................................................
+# Parameter entities
+
+# these are additional elements often used, but not included in the
+# standard BibTeX distribution, these must be added to the
+# bibliography styles, otherwise these fields will be omitted by
+# the formatter
+
+BibTeXML.common.standard.fields = key?, crossref?
+BibTeXML.additional.fields = empty#notAllowed
+
+# .....................................................................
+# Entries in the BibTeX database
+
+# [article] An article from a journal or magazine.
+# -  Required fields: author, title, journal, year.
+# -  Optional fields: volume, number, pages, month, note.
+BibTeXML.article.standard.fields =
+      author,
+      title,
+      journal,
+      year,
+      volume?,
+      number?,
+      pages?,
+      month?,
+      note?
+BibTeXML.article.fields =
+      BibTeXML.article.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+article =
+      element article {
+            attlist.article, BibTeXML.article.fields?
+      }
+attlist.article &= empty
+
+# [book] A book with an explicit publisher.  
+# -  Required fields: author or editor, title, publisher, year.
+# -  Optional fields: volume or number, series, address,
+# -     edition, month, note.
+BibTeXML.book.standard.fields =
+      (author | editor),
+      title,
+      publisher,
+      year,
+      (volume | number)?,
+      series?,
+      address?,
+      edition?,
+      month?,
+      note?
+BibTeXML.book.fields =
+      BibTeXML.book.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+book = element book { attlist.book, BibTeXML.book.fields }
+attlist.book &= empty
+
+# [booklet] A work that is printed and bound, but without a named
+# -  publisher or sponsoring institution  
+# -  Required field: title.
+# -  Optional fields: author, howpublished, address, month, year, note.
+BibTeXML.booklet.standard.fields =
+      author?, title, howpublished?, address?, month?, year?, note?
+BibTeXML.booklet.fields =
+      BibTeXML.booklet.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+booklet =
+      element booklet {
+            attlist.booklet, BibTeXML.booklet.fields
+      }
+attlist.booklet &= empty
+
+# [inbook] A part of a book, which may be a chapter (or section or
+# -  whatever) and/or a range of pages.  
+# -  Required fields: author or editor, title, chapter and/or pages,
+# -     publisher, year.
+# -  Optional fields: volume or number, series, type, address,
+# -     edition, month, note.
+BibTeXML.inbook.standard.fields =
+      (author | editor),
+      title,
+      ((chapter, pages?) | pages),
+      publisher,
+      year,
+      (volume | number)?,
+      series?,
+      type?,
+      address?,
+      edition?,
+      month?,
+      note?
+BibTeXML.inbook.fields =
+      BibTeXML.inbook.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+inbook =
+      element inbook { attlist.inbook, BibTeXML.inbook.fields }
+attlist.inbook &= empty
+# - > I want to express that the elements a and/or b are legal that is
+# - > one of them or both must be present in the document instance
+# - > (see the element content for BibTeX entry `InBook').
+# -  in content model:   ((a , b?) | b)          if order matters
+# -                      ((a , b?) | (b , a?))   otherwise
+
+# [incollection] A part of a book having its own title.
+# -  Required fields: author, title, booktitle, publisher, year.
+# -  Optional fields: editor, volume or number, series, type,
+# -     chapter, pages, address, edition, month, note.
+BibTeXML.incollection.standard.fields =
+      author,
+      title,
+      booktitle,
+      publisher,
+      year,
+      editor?,
+      (volume | number)?,
+      series?,
+      type?,
+      chapter?,
+      pages?,
+      address?,
+      edition?,
+      month?,
+      note?
+BibTeXML.incollection.fields =
+      BibTeXML.incollection.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+incollection =
+      element incollection {
+            attlist.incollection, BibTeXML.incollection.fields
+      }
+attlist.incollection &= empty
+
+# [inproceedings] An article in a conference proceedings.
+# -  Required fields: author, title, booktitle, year.
+# -  Optional fields: editor, volume or number, series, pages,
+# -     address, month, organization, publisher, note.
+BibTeXML.inproceedings.common.fields =
+      author,
+      title,
+      booktitle,
+      year,
+      editor?,
+      (volume | number)?,
+      series?,
+      pages?,
+      address?,
+      month?,
+      organization?,
+      publisher?,
+      note?
+BibTeXML.inproceedings.standard.fields =
+      BibTeXML.inproceedings.common.fields
+BibTeXML.inproceedings.fields =
+      BibTeXML.inproceedings.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+inproceedings =
+      element inproceedings {
+            attlist.inproceedings, BibTeXML.inproceedings.fields
+      }
+attlist.inproceedings &= empty
+
+# [conference] The same as INPROCEEDINGS,
+# -  included for Scribe compatibility.
+BibTeXML.conference.standard.fields =
+      BibTeXML.inproceedings.common.fields
+BibTeXML.conference.fields =
+      BibTeXML.conference.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+conference =
+      element conference {
+            attlist.conference, BibTeXML.conference.fields
+      }
+attlist.conference &= empty
+
+# [manual] Technical documentation  
+# -  Required field: title.
+# -  Optional fields: author, organization, address,
+# -     edition, month, year, note.
+BibTeXML.manual.standard.fields =
+      author?,
+      title,
+      organization?,
+      address?,
+      edition?,
+      month?,
+      year?,
+      note?
+BibTeXML.manual.fields =
+      BibTeXML.manual.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+manual =
+      element manual { attlist.manual, BibTeXML.manual.fields }
+attlist.manual &= empty
+
+# [mastersthesis] A Master's thesis.  
+# -  Required fields: author, title, school, year.
+# -  Optional fields: type, address, month, note.
+BibTeXML.thesis.common.fields =
+      author, title, school, year, type?, address?, month?, note?
+BibTeXML.mastersthesis.standard.fields = BibTeXML.thesis.common.fields
+BibTeXML.mastersthesis.fields =
+      BibTeXML.mastersthesis.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+mastersthesis =
+      element mastersthesis {
+            attlist.mastersthesis, BibTeXML.mastersthesis.fields
+      }
+attlist.mastersthesis &= empty
+
+# [phdthesis] A PhD thesis.  
+# -  Required fields: author, title, school, year.
+# -  Optional fields: type, address, month, note.
+BibTeXML.phdthesis.standard.fields = BibTeXML.thesis.common.fields
+BibTeXML.phdthesis.fields =
+      BibTeXML.phdthesis.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+phdthesis =
+      element phdthesis {
+            attlist.phdthesis, BibTeXML.phdthesis.fields
+      }
+attlist.phdthesis &= empty
+
+# [misc] Use this type when nothing else fits.  
+# -  Required fields: none.
+# -  Optional fields: author, title, howpublished, month, year, note.
+BibTeXML.misc.standard.fields =
+      author?, title?, howpublished?, month?, year?, note?
+BibTeXML.misc.fields =
+      BibTeXML.misc.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+misc = element misc { attlist.misc, BibTeXML.misc.fields }
+attlist.misc &= empty
+
+# [proceedings] The proceedings of a conference.  
+# -  Required fields: title, year.
+# -  Optional fields: editor, volume or number, series,
+# -     address, month, organization, publisher, note.
+BibTeXML.proceedings.standard.fields =
+      editor?,
+      title,
+      year,
+      (volume | number)?,
+      series?,
+      address?,
+      month?,
+      organization?,
+      publisher?,
+      note?
+BibTeXML.proceedings.fields =
+      BibTeXML.proceedings.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+proceedings =
+      element proceedings {
+            attlist.proceedings, BibTeXML.proceedings.fields
+      }
+attlist.proceedings &= empty
+
+# [techreport] A report published by a school or other institution,
+# -  usually numbered within a series.  
+# -  Required fields: author, title, institution, year.
+# -  Optional fields: type, number, address, month, note.
+BibTeXML.techreport.standard.fields =
+      author,
+      title,
+      institution,
+      year,
+      type?,
+      number?,
+      address?,
+      month?,
+      note?
+BibTeXML.techreport.fields =
+      BibTeXML.techreport.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+techreport =
+      element techreport {
+            attlist.techreport, BibTeXML.techreport.fields
+      }
+attlist.techreport &= empty
+
+# [unpublished] A document having an author and title, but not
+# -  formally published.  
+# -  Required fields: author, title, note.
+# -  Optional fields: month, year.
+BibTeXML.unpublished.standard.fields =
+      author, title, note, month?, year?
+BibTeXML.unpublished.fields =
+      BibTeXML.unpublished.standard.fields,
+      BibTeXML.common.standard.fields,
+      BibTeXML.additional.fields
+unpublished =
+      element unpublished {
+            attlist.unpublished, BibTeXML.unpublished.fields
+      }
+attlist.unpublished &= empty
+
+# .....................................................................
+# Fields from the standard bibliography styles
+
+# - Below is a description of all fields recognized by the standard
+# - bibliography styles.  An entry can also contain other fields, which
+# - are ignored by those styles.
+# - 
+# - [address] Usually the address of the publisher or other type of
+# - institution  For major publishing houses, van~Leunen recommends
+# - omitting the information entirely.  For small publishers, on the other
+# - hand, you can help the reader by giving the complete address.
+# - 
+# - [annote] An annotation  It is not used by the standard bibliography
+# - styles, but may be used by others that produce an annotated
+# - bibliography.
+# - 
+# - [author] The name(s) of the author(s), in the format described in the
+# - LaTeX book.
+# - 
+# - [booktitle] Title of a book, part of which is being cited.  See the
+# - LaTeX book for how to type titles.  For book entries, use the title
+# - field instead.
+# - 
+# - [chapter] A chapter (or section or whatever) number.
+# - 
+# - [crossref] The database key of the entry being cross referenced.
+# - 
+# - [edition] The edition of a book-for example, ``Second''.  This
+# - should be an ordinal, and should have the first letter capitalized, as
+# - shown here; the standard styles convert to lower case when necessary.
+# - 
+# - [editor] Name(s) of editor(s), typed as indicated in the LaTeX book.
+# - If there is also an author field, then the editor field gives the
+# - editor of the book or collection in which the reference appears.
+# - 
+# - [howpublished] How something strange has been published.  The first
+# - word should be capitalized.
+# - 
+# - [institution] The sponsoring institution of a technical report.
+# - 
+# - [journal] A journal name.  Abbreviations are provided for many
+# - journals; see the Local Guide.
+# - 
+# - [key] Used for alphabetizing, cross referencing, and creating a label
+# - when the ``author'' information (described in Section [ref: ] is
+# - missing. This field should not be confused with the key that appears
+# - in the \cite command and at the beginning of the database entry.
+# - 
+# - [month] The month in which the work was published or, for an
+# - unpublished work, in which it was written  You should use the
+# - standard three-letter abbreviation, as described in Appendix B.1.3 of
+# - the LaTeX book.
+# - 
+# - [note] Any additional information that can help the reader.  The first
+# - word should be capitalized.
+# - 
+# - [number] The number of a journal, magazine, technical report, or of a
+# - work in a series.  An issue of a journal or magazine is usually
+# - identified by its volume and number; the organization that issues a
+# - technical report usually gives it a number; and sometimes books are
+# - given numbers in a named series.
+# - 
+# - [organization] The organization that sponsors a conference or that
+# - publishes a manual.
+# - 
+# - [pages] One or more page numbers or range of numbers, such as 42-111
+# - or 7,41,73-97 or 43+ (the `+' in this last example indicates pages
+# - following that don't form a simple range).  To make it easier to
+# - maintain Scribe-compatible databases, the standard styles convert a
+# - single dash (as in 7-33) to the double dash used in TeX to denote
+# - number ranges (as in 7-33).
+# - 
+# - [publisher] The publisher's name.
+# - 
+# - [school] The name of the school where a thesis was written
+# - 
+# - [series] The name of a series or set of books.  When citing an entire
+# - book, the the title field gives its title and an optional series field
+# - gives the name of a series or multi-volume set in which the book is
+# - published.
+# - 
+# - [title] The work's title, typed as explained in the LaTeX book.
+# - 
+# - [type] The type of a technical report-for example, ``Research Note''.
+# - 
+# - [volume] The volume of a journal or multivolume book.
+# - 
+# - [year] The year of publication or, for an unpublished work, the year
+# - it was written.  Generally it should consist of four numerals, such as
+# - 1984, although the standard styles can handle any year whose last four
+# - nonpunctuation characters are numerals, such as `(about 1984)'.
+address = element address { attlist.address, text }
+attlist.address &= empty
+author = element author { attlist.author, text }
+attlist.author &= empty
+booktitle = element booktitle { attlist.booktitle, text }
+attlist.booktitle &= empty
+chapter = element chapter { attlist.chapter, text }
+attlist.chapter &= empty
+edition = element edition { attlist.edition, text }
+attlist.edition &= empty
+editor = element editor { attlist.editor, text }
+attlist.editor &= empty
+howpublished = element howpublished { attlist.howpublished, text }
+attlist.howpublished &= empty
+institution = element institution { attlist.institution, text }
+attlist.institution &= empty
+journal = element journal { attlist.journal, text }
+attlist.journal &= empty
+month = element month { attlist.month, text }
+attlist.month &= empty
+note = element note { attlist.note, text }
+attlist.note &= empty
+number = element number { attlist.number, text }
+attlist.number &= empty
+organization = element organization { attlist.organization, text }
+attlist.organization &= empty
+pages = element pages { attlist.pages, text }
+attlist.pages &= empty
+publisher = element publisher { attlist.publisher, text }
+attlist.publisher &= empty
+school = element school { attlist.school, text }
+attlist.school &= empty
+series = element series { attlist.series, text }
+attlist.series &= empty
+title = element title { attlist.title, text }
+attlist.title &= empty
+type = element type { attlist.type, text }
+attlist.type &= empty
+volume = element volume { attlist.volume, text }
+attlist.volume &= empty
+year = element year { attlist.year, text }
+attlist.year &= empty
+
+# - In addition to the fields listed above, each entry type also has
+# - an optional key field, used in some styles for alphabetizing, or
+# - for forming a \bibitem label. You should include a key field for
+# - any entry whose ``author'' information is missing;
+key = element key { attlist.key, text }
+attlist.key &= empty
+
+# - BibTEX has a new cross-referencing feature, explained by an example.
+# -    @INPROCEEDINGS(no-gnats,
+# -        crossref = "gg-proceedings",
+# -    @PROCEEDINGS(gg-proceedings,
+crossref = element crossref { attlist.crossref, text }
+attlist.crossref &= empty
+
+# - Annotation is not used by the standard bibliography styles,
+# - if you prefer otherwise, incude it in BibTeXML.common.standard.fields
+annote = element annote { attlist.annote, text }
+attlist.annote &= empty
+
+
+# End of BibTeXML schema

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+
+<!--
+<bibtex:metadata supported="yes">
+  <bibtex:author>BibTeXML developers</bibtex:author>
+  <bibtex:filename>testcases.bib</bibtex:filename>
+  <bibtex:url>http://bibtexml.sourceforge.net/</bibtex:url>
+  <bibtex:email>bibtexml-maintainer at sourceforge dot net</bibtex:email>
+  <bibtex:docstring>This file contains bibliography entries that users
+        have had problems converting using bibtex2xml.py.</bibtex:docstring>
+</bibtex:metadata>
+-->
+
+<bibtex:entry id="esbensen-lists">
+<bibtex:book>
+<bibtex:author>
+  <bibtex:person>
+     <bibtex:first>Kim</bibtex:first>
+     <bibtex:last>Esbensen</bibtex:last>
+  </bibtex:person>
+  <bibtex:person>
+     <bibtex:first>Tonje</bibtex:first>
+     <bibtex:last>Midtgaard</bibtex:last>
+  </bibtex:person>
+  <bibtex:person>
+     <bibtex:first>Suzanne</bibtex:first>
+     <bibtex:last>Schönkopf</bibtex:last>
+  </bibtex:person>
+</bibtex:author>
+<bibtex:title>Multivariate Analysis in Practice</bibtex:title>
+<bibtex:publisher>Camo AS</bibtex:publisher>
+<bibtex:year>1994</bibtex:year>
+<bibtex:address>Trondheim</bibtex:address>
+<bibtex:isbn>82-993330-0-8</bibtex:isbn>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="stone.brooks-lists">
+<bibtex:article>
+<bibtex:author>
+  <bibtex:person>
+    <bibtex:initials>M.</bibtex:initials>
+    <bibtex:last>Stone</bibtex:last>
+  </bibtex:person>
+  <bibtex:person>
+    <bibtex:initials>R.J.</bibtex:initials>
+    <bibtex:last>Brooks</bibtex:last>
+  </bibtex:person>
+  </bibtex:author>
+<bibtex:title>
+  <bibtex:title>Continuum regression</bibtex:title>
+  <bibtex:subtitle>cross-validated sequentally constructed prediction
+     embracing ordinary least squares, partial least squares and
+     principal component regression (with discussion)</bibtex:subtitle>
+</bibtex:title>
+<bibtex:journal>J. R. Statistics Soc. B. Met.</bibtex:journal>
+<bibtex:year>1990</bibtex:year>
+<bibtex:volume>52</bibtex:volume>
+<bibtex:pages>237-269</bibtex:pages>
+<bibtex:keywords>
+  <bibtex:keyword>least squares</bibtex:keyword>
+  <bibtex:keyword>prediction</bibtex:keyword>
+</bibtex:keywords>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="berkman">
+  <bibtex:book>
+    <bibtex:author>Berkman, R. I.</bibtex:author>
+    <bibtex:title>
+      <bibtex:title>Find It Fast</bibtex:title>
+      <bibtex:subtitle>How to Uncover Expert Information
+         on Any Subject</bibtex:subtitle>
+    </bibtex:title>
+    <bibtex:publisher>HarperPerennial</bibtex:publisher>
+    <bibtex:year>1994</bibtex:year>
+    <bibtex:address>New York</bibtex:address>
+  </bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="moir">
+  <bibtex:book>
+    <bibtex:author>
+      <bibtex:person>Moir, A.</bibtex:person>
+      <bibtex:person>Jessel, D.</bibtex:person>
+    </bibtex:author>
+    <bibtex:title>
+      <bibtex:title>Brain Sex</bibtex:title>
+      <bibtex:subtitle>The Real Difference
+	Between Men and Women</bibtex:subtitle>
+    </bibtex:title>
+    <bibtex:publisher>Mandarin</bibtex:publisher>
+    <bibtex:year>1991</bibtex:year>
+    <bibtex:address>London</bibtex:address>
+  </bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="cheek">
+  <bibtex:book>
+    <bibtex:author>
+      <bibtex:person>Cheek, J.</bibtex:person>
+      <bibtex:person>Doskatsch, I.</bibtex:person>
+      <bibtex:person>Hill, P.</bibtex:person>
+      <bibtex:person>Walsh, L.</bibtex:person>
+    </bibtex:author>
+    <bibtex:title>
+      <bibtex:title>Finding Out</bibtex:title>
+      <bibtex:subtitle>Information Literacy
+           For the 21st century</bibtex:subtitle>
+    </bibtex:title>
+    <bibtex:publisher>MacMillan Education Australia</bibtex:publisher>
+    <bibtex:year>1995</bibtex:year>
+    <bibtex:address>South Melbourne</bibtex:address>
+  </bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="robinson">
+  <bibtex:book>
+    <bibtex:editor>
+      <bibtex:person>Robinson, W. F.</bibtex:person>
+      <bibtex:person>Huxtable, C. R. R.</bibtex:person>
+    </bibtex:editor>
+    <bibtex:title>Clinicopathologic Principles
+         For Veterinary Medicine</bibtex:title>
+    <bibtex:publisher>Cambridge University Press</bibtex:publisher>
+    <bibtex:year>1988</bibtex:year>
+    <bibtex:address>Cambridge</bibtex:address>
+  </bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="sjostrand">
+  <bibtex:book>
+    <bibtex:editor>Sjostrand, S.</bibtex:editor>
+    <bibtex:title>
+      <bibtex:title>Institutional Change</bibtex:title>
+      <bibtex:subtitle>Theory and Empirical Findings</bibtex:subtitle>
+    </bibtex:title>
+    <bibtex:publisher>M.E. Sharpe</bibtex:publisher>
+    <bibtex:year>1993</bibtex:year>
+    <bibtex:address>Armonk, N.Y.</bibtex:address>
+  </bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="mctaggart">
+  <bibtex:book>
+    <bibtex:author>
+      <bibtex:person>McTaggart, D.</bibtex:person>
+      <bibtex:person>Findlay, C.</bibtex:person>
+      <bibtex:person>Parkin, M.</bibtex:person>
+    </bibtex:author>
+    <bibtex:title>Economics</bibtex:title>
+    <bibtex:publisher>Addison-Wesley</bibtex:publisher>
+    <bibtex:year>1995</bibtex:year>
+    <bibtex:address>Sydney</bibtex:address>
+    <bibtex:edition>2nd edn</bibtex:edition>
+  </bibtex:book>
+</bibtex:entry>
+
+<!--
+        Australian Government Publishing Service 1994, Style Manual
+        For Authors, Editors and Printers, 5th edn, AGPS, Canberra.
+-->
+
+<bibtex:entry id="huffman">
+  <bibtex:article>
+    <bibtex:author>Huffman, L. M.</bibtex:author>
+    <bibtex:title>Processing whey protein
+        for use as a food ingredient</bibtex:title>
+    <bibtex:journal>Food Technology</bibtex:journal>
+    <bibtex:year>1996</bibtex:year>
+    <bibtex:volume>50</bibtex:volume>
+    <bibtex:number>2</bibtex:number>
+    <bibtex:pages>49-52</bibtex:pages>
+  </bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="bernstein">
+  <bibtex:inbook>
+    <bibtex:editor>Chen, W.F.</bibtex:editor>
+    <bibtex:title>The Civil Engineering Handbook</bibtex:title>
+    <bibtex:chapter>
+      <bibtex:title>Transportation planning</bibtex:title>
+      <bibtex:author>Bernstein, D.</bibtex:author>
+    </bibtex:chapter>
+    <bibtex:publisher>CRC Press</bibtex:publisher>
+    <bibtex:year>1995</bibtex:year>
+    <bibtex:address>Boca Raton</bibtex:address>
+  </bibtex:inbook>
+</bibtex:entry>
+
+<bibtex:entry id="simpson">
+  <!-- newspaper article -->
+  <bibtex:article>
+    <bibtex:author>Simpson, L.</bibtex:author>
+    <bibtex:title>Tasmania's railway goes private</bibtex:title>
+    <bibtex:journal>Australian Financial Review</bibtex:journal>
+    <bibtex:year>1997</bibtex:year>
+    <bibtex:pages>10</bibtex:pages>
+    <bibtex:month>13 Oct.</bibtex:month>
+  </bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="bohrer">
+  <!-- conference paper -->
+  <bibtex:inproceedings>
+    <bibtex:author>
+      <bibtex:person>Bohrer, S.</bibtex:person>
+      <bibtex:person>Zielke, T.</bibtex:person>
+      <bibtex:person>Freiburg, V.</bibtex:person>
+    </bibtex:author>
+    <bibtex:title>Integrated obstacle detection framework for intelligent cruise control on motorways</bibtex:title>
+    <bibtex:booktitle>IEEE Intelligent Vehicles Symposium</bibtex:booktitle>
+    <bibtex:year>1995</bibtex:year>
+    <bibtex:pages>276-281</bibtex:pages>
+    <bibtex:address>Detroit, MI, Piscataway</bibtex:address>
+  </bibtex:inproceedings>
+</bibtex:entry>
+
+<bibtex:entry id="simons">
+  <!-- series -->
+  <bibtex:incollection>
+    <bibtex:author>Simons, R. C.</bibtex:author>
+    <bibtex:title>Boo! Culture, Experience and
+            the Startle Reflex</bibtex:title>
+    <bibtex:booktitle>Series in Affective Science</bibtex:booktitle>
+    <bibtex:publisher>Oxford University Press</bibtex:publisher>
+    <bibtex:year>1996</bibtex:year>
+    <bibtex:address>New York</bibtex:address>
+  </bibtex:incollection>
+</bibtex:entry>
+
+<bibtex:entry id="chicago">
+  <bibtex:inbook>
+    <bibtex:author></bibtex:author>
+    <bibtex:title>The Chicago Manual of Style</bibtex:title>
+    <bibtex:pages>400--401</bibtex:pages>
+    <bibtex:publisher>University of Chicago Press</bibtex:publisher>
+    <bibtex:year>1982</bibtex:year>
+    <bibtex:edition>Thirteenth</bibtex:edition>
+    <bibtex:key>Chicago</bibtex:key>
+  </bibtex:inbook>
+</bibtex:entry>
+
+<bibtex:entry id="kun2005">
+ <bibtex:article>
+   <bibtex:author>Kunischer Mark, Klinzer Marina</bibtex:author>
+   <bibtex:title>Testveröffentlichung</bibtex:title>
+   <bibtex:journal>Applied physics letters</bibtex:journal>
+   <bibtex:year>2005</bibtex:year>
+ </bibtex:article>
+</bibtex:entry>
+
+
+</bibtex:file>

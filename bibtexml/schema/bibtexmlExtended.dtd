@@ -1,0 +1,161 @@
+<!--
+  - File: $Id: bibteXML-ext.dtd, 2003.06.26 13:52:00 vbg Exp $
+  -
+  - This DTD expresses XML markup similar to the BibTeX language
+  - specified for LaTeX, or actually its content model.
+  - For documentation on BibTeX, see
+  -   http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
+  -
+  - Suggested invocation:
+  - 
+  -   <?xml version="1.0" encoding="UTF-8"?>
+  -   <!DOCTYPE bibtex:file PUBLIC
+  -       "-//BibTeXML//DTD XML for BibTeX (extended) v1.0//EN"
+  -       "bibteXML-ext.dtd" >
+  -   <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+  -   ...
+  -   </bibtex:file>
+  - 
+  - Available from  http://bibtexml.sf.net/
+  -
+  - This code originally developed by
+  - Vidar Bronken Gundersen
+  - Zeger W. Hendrikse
+  -
+  - This program is free software; you can redistribute it and/or
+  - modify it under the terms of the GNU General Public License.
+  - See  http://www.gnu.org/copyleft/gpl.html
+  -
+-->
+
+
+<!-- popular user fields -->
+
+<!ENTITY % user.fields
+   "( bibtex:abstract?, bibtex:affiliation?,
+    bibtex:contents?, bibtex:copyright?,
+    (bibtex:isbn | bibtex:issn)?, bibtex:doi?,
+    bibtex:keywords?, bibtex:language?, bibtex:lccn?, 
+    bibtex:location?, bibtex:mrnumber?, bibtex:price?, 
+    bibtex:size?, bibtex:url?, bibtex:category? )">
+
+<!ENTITY % BibTeXML.common.standard.fields
+   ", bibtex:key?, bibtex:crossref?, %user.fields;">
+
+
+<!-- ..................................................................... -->
+<!-- Other popular fields
+  - 
+  - BibTeX is extremely popular, and many people have used it to store
+  - information. Here is a list of some of the more common fields:
+  - 
+  - [affiliation]  The authors affiliation. 
+  - [abstract]  An abstract of the work. 
+  - [contents]  A Table of Contents 
+  - [copyright]  Copyright information. 
+  - [ISBN]  The International Standard Book Number. 
+  - [ISSN]  The International Standard Serial Number. 
+  -         Used to identify a journal. 
+  - [keywords]  Key words used for searching or possibly for annotation. 
+  - [language]  The language the document is in. 
+  - [location]  A location associated with the entry,
+  -             such as the city in which a conference took place.
+  - [LCCN]  The Library of Congress Call Number.
+  -         I've also seen this as lib-congress. 
+  - [mrnumber]  The Mathematical Reviews number. 
+  - [price]  The price of the document. 
+  - [size]  The physical dimensions of a work. 
+  - [URL] The WWW Universal Resource Locator that points to the item being
+  -       referenced. This often is used for technical reports to point to the
+  -       ftp site where the postscript source of the report is located.
+  - 
+  - When using BibTeX with LaTeX you need
+  - BibTeX style files to print these data.
+  -
+  - Ref: www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html
+-->
+
+<!ELEMENT   bibtex:abstract        (#PCDATA) >
+<!ELEMENT   bibtex:affiliation     (#PCDATA) >
+<!ELEMENT   bibtex:contents        (#PCDATA) >
+<!ELEMENT   bibtex:copyright       (#PCDATA) >
+<!ELEMENT   bibtex:isbn            (#PCDATA) >
+<!ELEMENT   bibtex:issn            (#PCDATA) >
+<!ELEMENT   bibtex:language        (#PCDATA) >
+<!ELEMENT   bibtex:lccn            (#PCDATA) >
+<!ELEMENT   bibtex:location        (#PCDATA) >
+<!ELEMENT   bibtex:mrnumber        (#PCDATA) >
+<!ELEMENT   bibtex:price           (#PCDATA) >
+<!ELEMENT   bibtex:size            (#PCDATA) >
+<!ELEMENT   bibtex:url             (#PCDATA) >
+
+
+<!-- User requested fields
+  - [category]  Category of this bibitem
+  - [DOI]       The Digital Object Identifier (www.doi.org)
+  -               used to redirect to articles, a key like 10.1000/203
+-->
+
+<!ELEMENT   bibtex:category      (#PCDATA) >
+<!ELEMENT   bibtex:doi           (#PCDATA) >
+
+
+<!-- ..................................................................... -->
+<!-- Alternative syntax for compound fields
+  -  for author, editor, keywords and title fields.
+  -  Backwards compatible syntax.
+-->
+
+<!ENTITY % BibTeXML.author.element "IGNORE">
+<!ENTITY % BibTeXML.editor.element "IGNORE">
+
+<!ENTITY % author.qname "(bibtex:author | bibtex:authorlist)">
+<!ENTITY % editor.qname "(bibtex:editor | bibtex:editorlist)">
+
+<!ELEMENT  bibtex:authorlist  (bibtex:person+) >
+<!ELEMENT  bibtex:editorlist  (bibtex:person+) >
+<!ELEMENT  bibtex:author      (#PCDATA) >
+<!ELEMENT  bibtex:editor      (#PCDATA) >
+
+<!ELEMENT  bibtex:person ( ( bibtex:initials |
+                           (bibtex:first, bibtex:middle?)),
+                           bibtex:prelast?, bibtex:last,
+                           bibtex:lineage?)>
+
+<!-- first, middle and last name should be obvious
+  - preLast is for names like Thomas *de* Burghes,
+  - lineage is used for "Jr" in names like "James T. Kirk, Jr."
+  -->
+<!ATTLIST   bibtex:person  email    CDATA  #IMPLIED
+                           url      CDATA  #IMPLIED
+>
+<!ELEMENT   bibtex:first           (#PCDATA) >
+<!ELEMENT   bibtex:initials        (#PCDATA) >
+<!ELEMENT   bibtex:last            (#PCDATA) >
+<!ELEMENT   bibtex:middle          (#PCDATA) >
+<!ELEMENT   bibtex:prelast         (#PCDATA) >
+<!ELEMENT   bibtex:lineage         (#PCDATA) >
+
+
+<!ENTITY % BibTeXML.title.element "IGNORE">
+<!ENTITY % title.qname  "(bibtex:title | bibtex:titlelist)">
+<!ELEMENT   bibtex:titlelist     (bibtex:title, bibtex:subtitle?)>
+<!ELEMENT   bibtex:subtitle      (#PCDATA) >
+<!ELEMENT   bibtex:title         (#PCDATA) >
+
+<!ENTITY % BibTeXML.keywords.element "IGNORE">
+<!ENTITY % keywords.qname  "bibtex:keywords">
+<!ELEMENT   bibtex:keywords      (bibtex:keyword+) >
+<!ELEMENT   bibtex:keyword       (#PCDATA) >
+
+
+<!-- ..................................................................... -->
+<!-- reuse the strict BibTeXML DTD -->
+<!ENTITY % BibTeXML-strict PUBLIC
+    "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
+    "bibteXML.dtd">
+%BibTeXML-strict;
+
+
+<!-- ..................................................................... -->
+<!-- End of bibtex dtd -->

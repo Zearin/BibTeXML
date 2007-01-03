@@ -1,0 +1,11 @@
+@namespace bibtex url(http://bibtexml.sf.net/);
+file {
+  font-family: "trebuchet ms", sans-serif;
+  font-size: 10pt;
+  padding: 5px;
+}
+entry {
+  display: block;
+  padding-bottom: .5em
+}
+title:before, title:after { content: "'" }

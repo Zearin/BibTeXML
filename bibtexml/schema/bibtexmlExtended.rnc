@@ -1,0 +1,141 @@
+#  File: $Id: bibtexml-ext.rnc, 2003.09.19 10:05:00 vbg Exp $
+#
+#  This DTD expresses XML markup similar to the BibTeX language
+#  specified for LaTeX, or actually its content model.
+#  For documentation on BibTeX, see
+#    http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
+#
+#  Suggested invocation:
+#
+#    <?xml version="1.0" encoding="UTF-8"?>
+#    <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/ext">
+#    ...
+#    </bibtex:file>
+#  
+#  Available from  http://bibtexml.sf.net/
+# 
+#  This code originally developed by
+#  Vidar Bronken Gundersen
+#  Zeger W. Hendrikse
+# 
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License.
+#  See  http://www.gnu.org/copyleft/gpl.html
+# 
+
+
+# namespace and namespace prefix
+default namespace bibtex = "http://bibtexml.sf.net/"
+
+# reuse the strict BibTeXML DTD
+# redifine and extend functionality of given elements
+# -  Backwards compatible syntax.
+include "bibtexml.rnc" {
+   BibTeXML.additional.fields = user.fields
+   author = element author { ( text | person+ ) }
+   editor = element editor { ( text | person+ ) }
+   title = element title { ( text | ( title, subtitle? ) ) }
+   chapter = element chapter {
+      attlist.chapter, (text | (title, subtitle?, pages?, author?)) }
+}
+
+
+# adding popular user fields
+user.fields =
+  abstract?,
+  affiliation?,
+  contents?,
+  copyright?,
+  (isbn | issn)?,
+  doi?,
+  keywords?,
+  language?,
+  lccn?,
+  location?,
+  mrnumber?,
+  price?,
+  size?,
+  url?,
+  category?
+
+# Other popular fields
+# - 
+# - BibTeX is extremely popular, and many people have used it to store
+# - information. Here is a list of some of the more common fields:
+# - 
+# - [affiliation]  The authors affiliation. 
+# - [abstract]  An abstract of the work. 
+# - [contents]  A Table of Contents 
+# - [copyright]  Copyright information. 
+# - [ISBN]  The International Standard Book Number. 
+# - [ISSN]  The International Standard Serial Number. 
+# -         Used to identify a journal. 
+# - [keywords]  Key words used for searching or possibly for annotation. 
+# - [language]  The language the document is in. 
+# - [location]  A location associated with the entry,
+# -             such as the city in which a conference took place.
+# - [LCCN]  The Library of Congress Call Number.
+# -         I've also seen this as lib-congress. 
+# - [mrnumber]  The Mathematical Reviews number. 
+# - [price]  The price of the document. 
+# - [size]  The physical dimensions of a work. 
+# - [URL] The WWW Universal Resource Locator that points to the item being
+# -       referenced. This often is used for technical reports to point to the
+# -       ftp site where the postscript source of the report is located.
+# - 
+# - When using BibTeX with LaTeX you need
+# - BibTeX style files to print these data.
+# -
+# - Ref: www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html
+abstract = element abstract { text }
+affiliation = element affiliation { text }
+contents = element contents { text }
+copyright = element copyright { text }
+isbn = element isbn { text }
+issn = element issn { text }
+language = element language { text }
+lccn = element lccn { text }
+location = element location { text }
+mrnumber = element mrnumber { text }
+price = element price { text }
+size = element size { text }
+url = element url { text }
+keywords = element keywords { text }
+
+# User requested fields
+# - [category]  Category of this bibitem
+# - [DOI]       The Digital Object Identifier (www.doi.org)
+# -               used to redirect to articles, a key like 10.1000/203
+category = element category { text }
+doi = element doi { text }
+
+
+# first, middle and last name should be obvious
+# - preLast is for names like Thomas *de* Burghes,
+# - lineage is used for "Jr" in names like "James T. Kirk, Jr."
+person =
+  element person {
+    attlist.person,
+    (text | (
+      (initials | (first, middle?)),
+      prelast?,
+      last,
+      lineage? ))
+  }
+attlist.person |=
+  attribute email { text }?,
+  attribute url { text }?
+first = element first { text }
+initials = element initials { text }
+last = element last { text }
+middle = element middle { text }
+prelast = element prelast { text }
+lineage = element lineage { text }
+
+subtitle = element subtitle { text }
+
+keywords |= element keywords { keyword+ }
+keyword = element keyword { text }
+
+
+# End of BibTeXML schema

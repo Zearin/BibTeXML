@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+
+<bibtex:entry id="berkman">
+  <bibtex:book>
+    <bibtex:author>Berkman, R. I.</bibtex:author>
+    <bibtex:title>
+      <bibtex:title>Find It Fast</bibtex:title>
+      <bibtex:subtitle>How to Uncover Expert Information
+         on Any Subject</bibtex:subtitle>
+    </bibtex:title>
+    <bibtex:publisher>HarperPerennial</bibtex:publisher>
+    <bibtex:year>1994</bibtex:year>
+    <bibtex:address>New York</bibtex:address>
+  </bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="robinson">
+  <bibtex:book>
+    <bibtex:editor>
+      <bibtex:person>Robinson, W. F.</bibtex:person>
+      <bibtex:person>Huxtable, C. R. R.</bibtex:person>
+    </bibtex:editor>
+    <bibtex:title>Clinicopathologic Principles
+         For Veterinary Medicine</bibtex:title>
+    <bibtex:publisher>Cambridge University Press</bibtex:publisher>
+    <bibtex:year>1988</bibtex:year>
+    <bibtex:address>Cambridge</bibtex:address>
+  </bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="huffman">
+  <bibtex:article>
+    <bibtex:author>Huffman, L. M.</bibtex:author>
+    <bibtex:title>Processing whey protein
+        for use as a food ingredient</bibtex:title>
+    <bibtex:journal>Food Technology</bibtex:journal>
+    <bibtex:year>1996</bibtex:year>
+    <bibtex:volume>50</bibtex:volume>
+    <bibtex:number>2</bibtex:number>
+    <bibtex:pages>49-52</bibtex:pages>
+  </bibtex:article>
+</bibtex:entry>
+
+</bibtex:file>
