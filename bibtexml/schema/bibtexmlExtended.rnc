@@ -15,23 +15,23 @@
 #  Available from  http://bibtexml.sf.net/
 # 
 #  This code originally developed by
-#  Vidar Bronken Gundersen
-#  Zeger W. Hendrikse
+#    Vidar Bronken Gundersen
+#    Zeger W. Hendrikse
 # 
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License.
 #  See  http://www.gnu.org/copyleft/gpl.html
-# 
+#
 
 
 # namespace and namespace prefix
 default namespace bibtex = "http://bibtexml.sf.net/"
 
-# reuse the strict BibTeXML DTD
-# redifine and extend functionality of given elements
-# -  Backwards compatible syntax.
+## Reuse the strict BibTeXML DTD
+##   Content of given elements are redifined and extended.
+##   Backwards compatible syntax.
 include "bibtexml.rnc" {
-   BibTeXML.additional.fields = user.fields
+   BibTeXML.additional.fields = BibTeXML.user.fields
    author = element author { ( text | person+ ) }
    editor = element editor { ( text | person+ ) }
    title = element title { ( text | ( title, subtitle? ) ) }
@@ -40,8 +40,13 @@ include "bibtexml.rnc" {
 }
 
 
-# adding popular user fields
-user.fields =
+## Popular user fields
+##   BibTeX is extremely popular, and many people have used it to store
+##   information. Below is a list of some of the more common fields.
+##   When using BibTeX with LaTeX you need BibTeX style files
+##   to print these data.
+##   Ref: http://www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html
+BibTeXML.user.fields =
   abstract?,
   affiliation?,
   contents?,
@@ -58,61 +63,66 @@ user.fields =
   url?,
   category?
 
-# Other popular fields
-# - 
-# - BibTeX is extremely popular, and many people have used it to store
-# - information. Here is a list of some of the more common fields:
-# - 
-# - [affiliation]  The authors affiliation. 
-# - [abstract]  An abstract of the work. 
-# - [contents]  A Table of Contents 
-# - [copyright]  Copyright information. 
-# - [ISBN]  The International Standard Book Number. 
-# - [ISSN]  The International Standard Serial Number. 
-# -         Used to identify a journal. 
-# - [keywords]  Key words used for searching or possibly for annotation. 
-# - [language]  The language the document is in. 
-# - [location]  A location associated with the entry,
-# -             such as the city in which a conference took place.
-# - [LCCN]  The Library of Congress Call Number.
-# -         I've also seen this as lib-congress. 
-# - [mrnumber]  The Mathematical Reviews number. 
-# - [price]  The price of the document. 
-# - [size]  The physical dimensions of a work. 
-# - [URL] The WWW Universal Resource Locator that points to the item being
-# -       referenced. This often is used for technical reports to point to the
-# -       ftp site where the postscript source of the report is located.
-# - 
-# - When using BibTeX with LaTeX you need
-# - BibTeX style files to print these data.
-# -
-# - Ref: www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html
+## [abstract]  An abstract of the work. 
 abstract = element abstract { text }
+
+## [affiliation]  The authors affiliation. 
 affiliation = element affiliation { text }
+
+## [contents]  A Table of Contents 
 contents = element contents { text }
+
+## [copyright]  Copyright information. 
 copyright = element copyright { text }
+
+## [ISBN]  The International Standard Book Number. 
 isbn = element isbn { text }
+
+## [ISSN]  The International Standard Serial Number. 
+##         Used to identify a journal. 
 issn = element issn { text }
+
+## [language]  The language the document is in. 
 language = element language { text }
+
+## [LCCN]  The Library of Congress Call Number.
+##         I've also seen this as lib-congress. 
 lccn = element lccn { text }
+
+## [location]  A location associated with the entry,
+##             such as the city in which a conference took place.
 location = element location { text }
+
+## [mrnumber]  The Mathematical Reviews number. 
 mrnumber = element mrnumber { text }
+
+## [price]  The price of the document. 
 price = element price { text }
+
+## [size]  The physical dimensions of a work. 
 size = element size { text }
+
+## [URL]  The WWW Universal Resource Locator that points to the item being
+##        referenced. This often is used for technical reports to point to the
+##        ftp site where the postscript source of the report is located.
 url = element url { text }
+
+## [keywords]  Key words used for searching or possibly for annotation. 
 keywords = element keywords { text }
 
-# User requested fields
-# - [category]  Category of this bibitem
-# - [DOI]       The Digital Object Identifier (www.doi.org)
-# -               used to redirect to articles, a key like 10.1000/203
+
+## [category]  Category of this bibitem
 category = element category { text }
+
+## [DOI]  The Digital Object Identifier
+##        used to redirect to articles, a key like 10.1000/203
+##        Ref: http://www.doi.org/
 doi = element doi { text }
 
 
-# first, middle and last name should be obvious
-# - preLast is for names like Thomas *de* Burghes,
-# - lineage is used for "Jr" in names like "James T. Kirk, Jr."
+## first, middle and last name should be obvious.
+##   preLast is for names like Thomas *de* Burghes,
+##   lineage is used for "Jr" in names like "James T. Kirk, Jr."
 person =
   element person {
     attlist.person,
