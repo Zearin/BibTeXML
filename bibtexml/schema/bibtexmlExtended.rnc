@@ -63,67 +63,82 @@ BibTeXML.user.fields =
   url?,
   category?
 
+abstract =
 ## [abstract]  An abstract of the work. 
-abstract = element abstract { text }
+   element abstract { text }
 
+affiliation =
 ## [affiliation]  The authors affiliation. 
-affiliation = element affiliation { text }
+   element affiliation { text }
 
+contents =
 ## [contents]  A Table of Contents 
-contents = element contents { text }
+   element contents { text }
 
+copyright =
 ## [copyright]  Copyright information. 
-copyright = element copyright { text }
+   element copyright { text }
 
+isbn =
 ## [ISBN]  The International Standard Book Number. 
-isbn = element isbn { text }
+   element isbn { text }
 
+issn =
 ## [ISSN]  The International Standard Serial Number. 
 ##         Used to identify a journal. 
-issn = element issn { text }
+   element issn { text }
 
+language =
 ## [language]  The language the document is in. 
-language = element language { text }
+   element language { text }
 
+lccn =
 ## [LCCN]  The Library of Congress Call Number.
 ##         I've also seen this as lib-congress. 
-lccn = element lccn { text }
+   element lccn { text }
 
+location =
 ## [location]  A location associated with the entry,
 ##             such as the city in which a conference took place.
-location = element location { text }
+   element location { text }
 
+mrnumber =
 ## [mrnumber]  The Mathematical Reviews number. 
-mrnumber = element mrnumber { text }
+   element mrnumber { text }
 
+price =
 ## [price]  The price of the document. 
-price = element price { text }
+   element price { text }
 
+size =
 ## [size]  The physical dimensions of a work. 
-size = element size { text }
+   element size { text }
 
+url =
 ## [URL]  The WWW Universal Resource Locator that points to the item being
 ##        referenced. This often is used for technical reports to point to the
 ##        ftp site where the postscript source of the report is located.
-url = element url { text }
+   element url { text }
 
+keywords =
 ## [keywords]  Key words used for searching or possibly for annotation. 
-keywords = element keywords { text }
+   element keywords { text }
 
-
+category =
 ## [category]  Category of this bibitem
-category = element category { text }
+   element category { text }
 
+doi =
 ## [DOI]  The Digital Object Identifier
 ##        used to redirect to articles, a key like 10.1000/203
 ##        Ref: http://www.doi.org/
-doi = element doi { text }
+   element doi { text }
 
 
+person =
 ## first, middle and last name should be obvious.
 ##   preLast is for names like Thomas *de* Burghes,
 ##   lineage is used for "Jr" in names like "James T. Kirk, Jr."
-person =
   element person {
     attlist.person,
     (text | (
@@ -147,5 +162,3 @@ subtitle = element subtitle { text }
 keywords |= element keywords { keyword+ }
 keyword = element keyword { text }
 
-
-# End of BibTeXML schema

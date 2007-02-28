@@ -577,5 +577,3 @@ key =
    element key { attlist.key, text }
 attlist.key &= empty
 
-
-# End of BibTeXML schema
