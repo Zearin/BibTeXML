@@ -1,6 +1,6 @@
 #  File: $Id: bibtexml.rnc, 2007.02.27 20:48:00 vbg Exp $
 #
-#  This DTD expresses XML markup similar to the BibTeX language
+#  This schema expresses XML markup similar to the BibTeX language
 #  specified for LaTeX, or actually its content model.
 #  For documentation on BibTeX, see
 #    http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
@@ -27,43 +27,19 @@
 #  See  http://www.gnu.org/copyleft/gpl.html 
 #
 
-# namespace and namespace prefix
+# Namespace and namespace prefix
 default namespace bibtex = "http://bibtexml.sf.net/"
 
-# top element
+# Document top element with a namespace indicator.
 start = file
-
-
-# .....................................................................
-# Qualified Names module
-#  This module is contained in two parts, labeled Section 'A' and 'B':
-#  This module is derived from the XHTML Qualified Names Template module.
-
-# XML Namespace Framework
-#    Section A declares parameter entities to support namespace-
-#    qualified names, namespace declarations, and name prefixing.
-BibTeXML.xmlns.extra.attrib = empty
-BibTeXML.xmlns.attrib = BibTeXML.xmlns.extra.attrib
-
-# Qualified Names
-#    Section B declares parameter entities used to provide
-#    namespace-qualified names for all element types.
-#
-# 9. This section declares parameter entities used to provide
-#      namespace-qualified names for all element types.
-# ignores subsequent instantiation of this module when
-#   used as external subset rather than module fragment.
-#   NOTE: Do not modify this parameter entity, otherwise
-#   a recursive parsing situation may result.
-# if %NS.prefixed; is INCLUDE, include all NS attributes, 
-# otherwise just those associated with MathML
-BibTeXML.NamespaceDecl.attrib = BibTeXML.xmlns.attrib
+file = element file { attlist.file, entry* }
+attlist.file &= empty
 
 
 # .....................................................................
 # Main structure
 
-## %entry.qname; may contain one of the bibliographic types.
+## Each entry may contain one of the bibliographic types.
 BibTeXML.standard.entries.class =
       article
       | book
@@ -79,16 +55,14 @@ BibTeXML.standard.entries.class =
       | conference
       | unpublished
       | misc
-BibTeXML.additional.entries.class = empty    # ** notAllowed
+BibTeXML.additional.entries.class = empty
 BibTeXML.entries.class =
       BibTeXML.standard.entries.class
       | BibTeXML.additional.entries.class
 entry = element entry { attlist.entry, BibTeXML.entries.class }
 attlist.entry &= attribute id { xsd:ID }
 
-## %file.qname; is the document top element with a namespace indicator.
-file = element file { attlist.file, entry* }
-attlist.file &= BibTeXML.NamespaceDecl.attrib
+
 
 # .....................................................................
 # Parameter entities
@@ -98,7 +72,7 @@ attlist.file &= BibTeXML.NamespaceDecl.attrib
 ## bibliography styles, otherwise these fields will be omitted by
 ## the formatter.
 BibTeXML.common.standard.fields = key?, crossref?
-BibTeXML.additional.fields = empty   # ** notAllowed
+BibTeXML.additional.fields = empty
 
 
 # .....................................................................
@@ -401,6 +375,9 @@ unpublished =
 attlist.unpublished &= empty
 
 
+# .....................................................................
+# Metadata fields for each bibliographic entry
+
 ## Fields from the standard bibliography styles
 ##   Below follows fields recognized by the standard bibliography styles.
 ##   An entry can also contain other fields, which are ignored by those styles.
@@ -430,140 +407,164 @@ BibTeXML.all.standard.fields =
  & volume?
  & year?
 
+address =
 ## [address] Usually the address of the publisher or other type of
 ##   institution  For major publishing houses, van~Leunen recommends
 ##   omitting the information entirely.  For small publishers, on the other
 ##   hand, you can help the reader by giving the complete address.
-address = element address { attlist.address, text }
+   element address { attlist.address, text }
 attlist.address &= empty
 
+author =
 ## [author] The name(s) of the author(s),
 ##   in the format described in the LaTeX book.
-author = element author { attlist.author, text }
+   element author { attlist.author, text }
 attlist.author &= empty
 
+booktitle =
 ## [booktitle] Title of a book, part of which is being cited.  See the
 ##   LaTeX book for how to type titles.  For book entries, use the title
 ##   field instead.
-booktitle = element booktitle { attlist.booktitle, text }
+   element booktitle { attlist.booktitle, text }
 attlist.booktitle &= empty
 
+chapter =
 ## [chapter] A chapter (or section or whatever) number.
-chapter = element chapter { attlist.chapter, text }
+   element chapter { attlist.chapter, text }
 attlist.chapter &= empty
 
+edition =
 ## [edition] The edition of a book-for example, ``Second''.  This
 ##   should be an ordinal, and should have the first letter capitalized, as
 ##   shown here; the standard styles convert to lower case when necessary.
-edition = element edition { attlist.edition, text }
+   element edition { attlist.edition, text }
 attlist.edition &= empty
 
+editor =
 ## [editor] Name(s) of editor(s), typed as indicated in the LaTeX book.
 ##   If there is also an author field, then the editor field gives the
 ##   editor of the book or collection in which the reference appears.
-editor = element editor { attlist.editor, text }
+   element editor { attlist.editor, text }
 attlist.editor &= empty
 
+howpublished =
 ## [howpublished] How something strange has been published.  The first
 ##   word should be capitalized.
-howpublished = element howpublished { attlist.howpublished, text }
+   element howpublished { attlist.howpublished, text }
 attlist.howpublished &= empty
 
+institution =
 ## [institution] The sponsoring institution of a technical report.
-institution = element institution { attlist.institution, text }
+   element institution { attlist.institution, text }
 attlist.institution &= empty
 
+journal =
 ## [journal] A journal name.  Abbreviations are provided for many
 ##   journals; see the Local Guide.
-journal = element journal { attlist.journal, text }
+   element journal { attlist.journal, text }
 attlist.journal &= empty
 
+month =
 ## [month] The month in which the work was published or, for an
 ##  unpublished work, in which it was written  You should use the
 ##  standard three-letter abbreviation, as described in Appendix B.1.3 of
 ##  the LaTeX book.
-month = element month { attlist.month, text }
+   element month { attlist.month, text }
 attlist.month &= empty
 
+note =
 ## [note] Any additional information that can help the reader.  The first
 ##  word should be capitalized.
-note = element note { attlist.note, text }
+   element note { attlist.note, text }
 attlist.note &= empty
 
+number =
 ## [number] The number of a journal, magazine, technical report, or of a
 ##   work in a series.  An issue of a journal or magazine is usually
 ##   identified by its volume and number; the organization that issues a
 ##   technical report usually gives it a number; and sometimes books are
 ##   given numbers in a named series.
-number = element number { attlist.number, text }
+   element number { attlist.number, text }
 attlist.number &= empty
 
+organization =
 ## [organization] The organization that sponsors a conference or that
 ##   publishes a manual.
-organization = element organization { attlist.organization, text }
+   element organization { attlist.organization, text }
 attlist.organization &= empty
 
+pages =
 ## [pages] One or more page numbers or range of numbers, such as 42-111
 ##   or 7,41,73-97 or 43+ (the `+' in this last example indicates pages
 ##   following that don't form a simple range).  To make it easier to
 ##   maintain Scribe-compatible databases, the standard styles convert a
 ##   single dash (as in 7-33) to the double dash used in TeX to denote
 ##   number ranges (as in 7-33).
-pages = element pages { attlist.pages, text }
+   element pages { attlist.pages, text }
 attlist.pages &= empty
 
+publisher =
 ## [publisher] The publisher's name.
-publisher = element publisher { attlist.publisher, text }
+   element publisher { attlist.publisher, text }
 attlist.publisher &= empty
 
+school =
 ## [school] The name of the school where a thesis was written
-school = element school { attlist.school, text }
+   element school { attlist.school, text }
 attlist.school &= empty
 
+series =
 ## [series] The name of a series or set of books.  When citing an entire
 ##   book, the the title field gives its title and an optional series field
 ##   gives the name of a series or multi-volume set in which the book is
 ##   published.
-series = element series { attlist.series, text }
+   element series { attlist.series, text }
 attlist.series &= empty
 
+title =
 ## [title] The work's title, typed as explained in the LaTeX book.
-title = element title { attlist.title, text }
+   element title { attlist.title, text }
 attlist.title &= empty
 
+type =
 ## [type] The type of a technical report-for example, ``Research Note''.
-type = element type { attlist.type, text }
+   element type { attlist.type, text }
 attlist.type &= empty
 
+volume =
 ## [volume] The volume of a journal or multivolume book.
-volume = element volume { attlist.volume, text }
+   element volume { attlist.volume, text }
 attlist.volume &= empty
 
+year =
 ## [year] The year of publication or, for an unpublished work, the year
 ##   it was written.  Generally it should consist of four numerals, such as
 ##   1984, although the standard styles can handle any year whose last four
 ##   nonpunctuation characters are numerals, such as `(about 1984)'.
-year = element year { attlist.year, text }
+   element year { attlist.year, text }
 attlist.year &= empty
 
 
+annote =
 ## [annote] An annotation  It is not used by the standard bibliography
 ##   styles, but may be used by others that produce an annotated
 ##   bibliography.
 ##
 ##   Annotation is not used by the standard bibliography styles,
 ##   if you prefer otherwise, incude it in BibTeXML.common.standard.fields
-annote = element annote { attlist.annote, text }
+   element annote { attlist.annote, text }
 attlist.annote &= empty
 
+crossref =
 ## [crossref] The database key of the entry being cross referenced.
 ##   BibTEX has a new cross-referencing feature, explained by an example.
 ##     @INPROCEEDINGS(no-gnats,
 ##         crossref = "gg-proceedings",
 ##     @PROCEEDINGS(gg-proceedings,
-crossref = element crossref { attlist.crossref, text }
+   element crossref { attlist.crossref, text }
 attlist.crossref &= empty
 
+key =
 ## [key] Used for alphabetizing, cross referencing, and creating a label
 ##   when the ``author'' information (described in Section [ref: ] is
 ##   missing. This field should not be confused with the key that appears
@@ -573,7 +574,7 @@ attlist.crossref &= empty
 ##   an optional key field, used in some styles for alphabetizing, or
 ##   for forming a \bibitem label. You should include a key field for
 ##   any entry whose ``author'' information is missing;
-key = element key { attlist.key, text }
+   element key { attlist.key, text }
 attlist.key &= empty
 
 
