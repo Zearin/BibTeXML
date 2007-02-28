@@ -55,7 +55,7 @@ BibTeXML.standard.entries.class =
       | conference
       | unpublished
       | misc
-BibTeXML.additional.entries.class = empty
+BibTeXML.additional.entries.class = notAllowed
 BibTeXML.entries.class =
       BibTeXML.standard.entries.class
       | BibTeXML.additional.entries.class
@@ -72,7 +72,7 @@ attlist.entry &= attribute id { xsd:ID }
 ## bibliography styles, otherwise these fields will be omitted by
 ## the formatter.
 BibTeXML.common.standard.fields = key?, crossref?
-BibTeXML.additional.fields = empty
+BibTeXML.additional.fields = notAllowed
 
 
 # .....................................................................
