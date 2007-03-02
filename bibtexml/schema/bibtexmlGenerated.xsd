@@ -43,20 +43,14 @@
     .....................................................................
     Main structure
   -->
-  <xs:element name="BibTeXML.standard.entries.class" abstract="true" substitutionGroup="bibtex:BibTeXML.entries.class">
+  <xs:element name="BibTeXML.standard.entries.class" abstract="true">
     <xs:annotation>
       <xs:documentation>Each entry may contain one of the bibliographic types.</xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="BibTeXML.standard.entries.class">
-    <xs:sequence>
-      <xs:element ref="bibtex:BibTeXML.standard.entries.class"/>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="BibTeXML.entries.class" abstract="true"/>
   <xs:complexType name="BibTeXML.entries.class">
     <xs:sequence>
-      <xs:element ref="bibtex:BibTeXML.entries.class"/>
+      <xs:element minOccurs="0" ref="bibtex:BibTeXML.standard.entries.class"/>
     </xs:sequence>
   </xs:complexType>
   <xs:element name="entry">
@@ -109,8 +103,16 @@ the formatter.</xs:documentation>
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
+  <xs:group name="BibTeXML.article.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.article.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:group>
   <xs:element name="article" substitutionGroup="bibtex:BibTeXML.standard.entries.class">
-    <xs:complexType/>
+    <xs:complexType>
+      <xs:group minOccurs="0" ref="bibtex:BibTeXML.article.fields"/>
+    </xs:complexType>
   </xs:element>
   <xs:group name="BibTeXML.book.standard.fields">
     <xs:annotation>
@@ -138,7 +140,13 @@ the formatter.</xs:documentation>
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="book" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.book.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.book.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="book" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.book.fields"/>
   <xs:group name="BibTeXML.booklet.standard.fields">
     <xs:annotation>
       <xs:documentation>[booklet] A work that is printed and bound, but without a named
@@ -156,7 +164,13 @@ the formatter.</xs:documentation>
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="booklet" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.booklet.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.booklet.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="booklet" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.booklet.fields"/>
   <xs:group name="BibTeXML.inbook.standard.fields">
     <xs:annotation>
       <xs:documentation>[inbook] A part of a book, which may be a chapter (or section or
@@ -193,7 +207,13 @@ the formatter.</xs:documentation>
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="inbook" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.inbook.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.inbook.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="inbook" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.inbook.fields"/>
   <!--
     > I want to express that the elements a and/or b are legal that is
     > one of them or both must be present in the document instance
@@ -230,7 +250,13 @@ the formatter.</xs:documentation>
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="incollection" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.incollection.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.incollection.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="incollection" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.incollection.fields"/>
   <xs:group name="BibTeXML.inproceedings.common.fields">
     <xs:annotation>
       <xs:documentation>[inproceedings] An article in a conference proceedings.
@@ -262,7 +288,13 @@ the formatter.</xs:documentation>
       <xs:group ref="bibtex:BibTeXML.inproceedings.common.fields"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="inproceedings" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.inproceedings.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.inproceedings.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="inproceedings" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.inproceedings.fields"/>
   <xs:group name="BibTeXML.conference.standard.fields">
     <xs:annotation>
       <xs:documentation>[conference] The same as INPROCEEDINGS,
@@ -272,7 +304,13 @@ the formatter.</xs:documentation>
       <xs:group ref="bibtex:BibTeXML.inproceedings.common.fields"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="conference" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.conference.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.conference.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="conference" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.conference.fields"/>
   <xs:group name="BibTeXML.manual.standard.fields">
     <xs:annotation>
       <xs:documentation>[manual] Technical documentation  
@@ -291,7 +329,13 @@ the formatter.</xs:documentation>
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="manual" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.manual.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.manual.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="manual" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.manual.fields"/>
   <xs:group name="BibTeXML.thesis.common.fields">
     <xs:annotation>
       <xs:documentation>[mastersthesis] A Master's thesis.  
@@ -314,7 +358,13 @@ the formatter.</xs:documentation>
       <xs:group ref="bibtex:BibTeXML.thesis.common.fields"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="mastersthesis" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.mastersthesis.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.mastersthesis.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="mastersthesis" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.mastersthesis.fields"/>
   <xs:group name="BibTeXML.phdthesis.standard.fields">
     <xs:annotation>
       <xs:documentation>[phdthesis] A PhD thesis.  
@@ -325,7 +375,13 @@ the formatter.</xs:documentation>
       <xs:group ref="bibtex:BibTeXML.thesis.common.fields"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="phdthesis" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.phdthesis.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.phdthesis.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="phdthesis" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.phdthesis.fields"/>
   <xs:group name="BibTeXML.misc.standard.fields">
     <xs:annotation>
       <xs:documentation>[misc] Use this type when nothing else fits.  
@@ -341,7 +397,13 @@ the formatter.</xs:documentation>
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="misc" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.misc.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.misc.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="misc" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.misc.fields"/>
   <xs:group name="BibTeXML.proceedings.standard.fields">
     <xs:annotation>
       <xs:documentation>[proceedings] The proceedings of a conference.  
@@ -365,7 +427,13 @@ the formatter.</xs:documentation>
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="proceedings" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.proceedings.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.proceedings.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="proceedings" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.proceedings.fields"/>
   <xs:group name="BibTeXML.techreport.standard.fields">
     <xs:annotation>
       <xs:documentation>[techreport] A report published by a school or other institution,
@@ -385,7 +453,13 @@ the formatter.</xs:documentation>
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="techreport" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.techreport.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.techreport.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="techreport" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.techreport.fields"/>
   <xs:group name="BibTeXML.unpublished.standard.fields">
     <xs:annotation>
       <xs:documentation>[unpublished] A document having an author and title, but not
@@ -401,7 +475,13 @@ the formatter.</xs:documentation>
       <xs:element minOccurs="0" ref="bibtex:year"/>
     </xs:sequence>
   </xs:group>
-  <xs:element name="unpublished" substitutionGroup="bibtex:BibTeXML.standard.entries.class" abstract="true"/>
+  <xs:complexType name="BibTeXML.unpublished.fields">
+    <xs:sequence>
+      <xs:group ref="bibtex:BibTeXML.unpublished.standard.fields"/>
+      <xs:group ref="bibtex:BibTeXML.common.standard.fields"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="unpublished" substitutionGroup="bibtex:BibTeXML.standard.entries.class" type="bibtex:BibTeXML.unpublished.fields"/>
   <!--
     .....................................................................
     Metadata fields for each bibliographic entry
