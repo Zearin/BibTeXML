@@ -24,13 +24,13 @@
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License.
-#  See  http://www.gnu.org/copyleft/gpl.html 
+#  See  http://www.gnu.org/copyleft/gpl.html
 #
 
 # Namespace and namespace prefix
 default namespace bibtex = "http://bibtexml.sf.net/"
 
-# Document top element with a namespace indicator.
+# Document top element
 start = file
 file = element file { attlist.file, entry* }
 attlist.file &= empty
@@ -103,7 +103,7 @@ article =
       }
 attlist.article &= empty
 
-## [book] A book with an explicit publisher.  
+## [book] A book with an explicit publisher.
 ##   Required fields: author or editor, title, publisher, year.
 ##   Optional fields: volume or number, series, address,
 ##      edition, month, note.
@@ -126,7 +126,7 @@ book = element book { attlist.book, BibTeXML.book.fields }
 attlist.book &= empty
 
 ## [booklet] A work that is printed and bound, but without a named
-##   publisher or sponsoring institution  
+##   publisher or sponsoring institution
 ##   Required field: title.
 ##   Optional fields: author, howpublished, address, month, year, note.
 BibTeXML.booklet.standard.fields =
@@ -142,7 +142,7 @@ booklet =
 attlist.booklet &= empty
 
 ## [inbook] A part of a book, which may be a chapter (or section or
-##   whatever) and/or a range of pages.  
+##   whatever) and/or a range of pages.
 ##   Required fields: author or editor, title, chapter and/or pages,
 ##      publisher, year.
 ##   Optional fields: volume or number, series, type, address,
@@ -248,7 +248,7 @@ conference =
       }
 attlist.conference &= empty
 
-## [manual] Technical documentation  
+## [manual] Technical documentation
 ##   Required field: title.
 ##   Optional fields: author, organization, address,
 ##      edition, month, year, note.
@@ -269,7 +269,7 @@ manual =
       element manual { attlist.manual, BibTeXML.manual.fields }
 attlist.manual &= empty
 
-## [mastersthesis] A Master's thesis.  
+## [mastersthesis] A Master's thesis.
 ##   Required fields: author, title, school, year.
 ##   Optional fields: type, address, month, note.
 BibTeXML.thesis.common.fields =
@@ -285,7 +285,7 @@ mastersthesis =
       }
 attlist.mastersthesis &= empty
 
-## [phdthesis] A PhD thesis.  
+## [phdthesis] A PhD thesis.
 ##   Required fields: author, title, school, year.
 ##   Optional fields: type, address, month, note.
 BibTeXML.phdthesis.standard.fields = BibTeXML.thesis.common.fields
@@ -299,7 +299,7 @@ phdthesis =
       }
 attlist.phdthesis &= empty
 
-## [misc] Use this type when nothing else fits.  
+## [misc] Use this type when nothing else fits.
 ##   Required fields: none.
 ##   Optional fields: author, title, howpublished, month, year, note.
 BibTeXML.misc.standard.fields =
@@ -311,7 +311,7 @@ BibTeXML.misc.fields =
 misc = element misc { attlist.misc, BibTeXML.misc.fields }
 attlist.misc &= empty
 
-## [proceedings] The proceedings of a conference.  
+## [proceedings] The proceedings of a conference.
 ##   Required fields: title, year.
 ##   Optional fields: editor, volume or number, series,
 ##      address, month, organization, publisher, note.
@@ -337,7 +337,7 @@ proceedings =
 attlist.proceedings &= empty
 
 ## [techreport] A report published by a school or other institution,
-##   usually numbered within a series.  
+##   usually numbered within a series.
 ##   Required fields: author, title, institution, year.
 ##   Optional fields: type, number, address, month, note.
 BibTeXML.techreport.standard.fields =
@@ -361,7 +361,7 @@ techreport =
 attlist.techreport &= empty
 
 ## [unpublished] A document having an author and title, but not
-##   formally published.  
+##   formally published.
 ##   Required fields: author, title, note.
 ##   Optional fields: month, year.
 BibTeXML.unpublished.standard.fields =
@@ -383,8 +383,8 @@ attlist.unpublished &= empty
 ## Fields from the standard bibliography styles.
 ##   Below follows fields recognized by the standard bibliography
 ##   styles. An entry can also contain other fields, which are
-##   ignored by those styles. Included to enable reuse into a flat
-##   BibTeX markup scheme.
+##   ignored by those styles. Included in the schema to enable reuse
+##   into a flat BibTeX markup scheme.
 BibTeXML.all.standard.fields =
    address?
  & annote?
@@ -452,8 +452,8 @@ editor =
 attlist.editor &= empty
 
 howpublished =
-## [howpublished] How something strange has been published.  The first
-##   word should be capitalized.
+## [howpublished] How something strange has been published.
+##   The first word should be capitalized.
    element howpublished { attlist.howpublished, text }
 attlist.howpublished &= empty
 
@@ -464,16 +464,16 @@ attlist.institution &= empty
 
 journal =
 ## [journal] A journal name.  Abbreviations are provided for many
-##  journals; see the Local Guide.
+##   journals; see the Local Guide.
    element journal { attlist.journal, text }
 attlist.journal &= empty
 
 month =
 ## [month] The month in which the work was published or, for an
-##  unpublished work, in which it was written. You should use the
-##  standard three-letter abbreviation, as described in Appendix B.1.3 of
-##  the LaTeX book.
-##  The schema also allows a two digit month format, e.g. 05 (for May).
+##   unpublished work, in which it was written. You should use the
+##   standard three-letter abbreviation, as described in Appendix B.1.3 of
+##   the LaTeX book.
+##   The schema also allows a two digit month format, e.g. 05 (for May).
    element month { attlist.month, ( monthStringType | xsd:gMonth ) }
 attlist.month &= empty
 monthStringType =
@@ -491,8 +491,8 @@ monthStringType =
  | string "Dec"
 
 note =
-## [note] Any additional information that can help the reader.  The first
-##  word should be capitalized.
+## [note] Any additional information that can help the reader.
+##   The first word should be capitalized.
    element note { attlist.note, text }
 attlist.note &= empty
 
