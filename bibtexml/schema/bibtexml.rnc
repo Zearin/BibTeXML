@@ -42,23 +42,24 @@ attlist.file &= empty
 ## Each entry may contain one of the bibliographic types.
 BibTeXML.standard.entries.class =
       article
-      | book
-      | booklet
-      | manual
-      | techreport
-      | mastersthesis
-      | phdthesis
-      | inbook
-      | incollection
-      | proceedings
-      | inproceedings
-      | conference
-      | unpublished
-      | misc
+    | book
+    | booklet
+    | manual
+    | techreport
+    | mastersthesis
+    | phdthesis
+    | inbook
+    | incollection
+    | proceedings
+    | inproceedings
+    | conference
+    | unpublished
+    | misc
+## Hook for adding custom bibliographic types.
 BibTeXML.additional.entries.class = empty
 BibTeXML.entries.class =
       BibTeXML.standard.entries.class
-      | BibTeXML.additional.entries.class
+    | BibTeXML.additional.entries.class
 entry = element entry { attlist.entry, BibTeXML.entries.class }
 attlist.entry &= attribute id { xsd:ID }
 
@@ -72,6 +73,7 @@ attlist.entry &= attribute id { xsd:ID }
 ## bibliography styles, otherwise these fields will be omitted by
 ## the formatter.
 BibTeXML.common.standard.fields = key?, crossref?
+## Hook for adding custom fields to all entries.
 BibTeXML.additional.fields = empty
 
 
@@ -378,9 +380,11 @@ attlist.unpublished &= empty
 # .....................................................................
 # Metadata fields for each bibliographic entry
 
-## Fields from the standard bibliography styles
-##   Below follows fields recognized by the standard bibliography styles.
-##   An entry can also contain other fields, which are ignored by those styles.
+## Fields from the standard bibliography styles.
+##   Below follows fields recognized by the standard bibliography
+##   styles. An entry can also contain other fields, which are
+##   ignored by those styles. Included to enable reuse into a flat
+##   BibTeX markup scheme.
 BibTeXML.all.standard.fields =
    address?
  & annote?
@@ -430,14 +434,14 @@ attlist.booktitle &= empty
 
 chapter =
 ## [chapter] A chapter (or section or whatever) number.
-   element chapter { attlist.chapter, text }
+   element chapter { attlist.chapter, xsd:positiveInteger }
 attlist.chapter &= empty
 
 edition =
 ## [edition] The edition of a book-for example, ``Second''.  This
 ##   should be an ordinal, and should have the first letter capitalized, as
 ##   shown here; the standard styles convert to lower case when necessary.
-   element edition { attlist.edition, text }
+   element edition { attlist.edition, string { pattern="[A-Z].*" } }
 attlist.edition &= empty
 
 editor =
@@ -460,17 +464,31 @@ attlist.institution &= empty
 
 journal =
 ## [journal] A journal name.  Abbreviations are provided for many
-##   journals; see the Local Guide.
+##  journals; see the Local Guide.
    element journal { attlist.journal, text }
 attlist.journal &= empty
 
 month =
 ## [month] The month in which the work was published or, for an
-##  unpublished work, in which it was written  You should use the
+##  unpublished work, in which it was written. You should use the
 ##  standard three-letter abbreviation, as described in Appendix B.1.3 of
 ##  the LaTeX book.
-   element month { attlist.month, text }
+##  The schema also allows a two digit month format, e.g. 05 (for May).
+   element month { attlist.month, ( monthStringType | xsd:gMonth ) }
 attlist.month &= empty
+monthStringType =
+   string "Jan"
+ | string "Feb"
+ | string "Mar"
+ | string "Apr"
+ | string "May"
+ | string "Jun"
+ | string "Jul"
+ | string "Aug"
+ | string "Sep"
+ | string "Oct"
+ | string "Nov"
+ | string "Dec"
 
 note =
 ## [note] Any additional information that can help the reader.  The first
@@ -500,7 +518,10 @@ pages =
 ##   maintain Scribe-compatible databases, the standard styles convert a
 ##   single dash (as in 7-33) to the double dash used in TeX to denote
 ##   number ranges (as in 7-33).
-   element pages { attlist.pages, text }
+   element pages {
+      attlist.pages,
+      string { pattern="[0-9]*-{0,2}[0-9]*" }
+   }
 attlist.pages &= empty
 
 publisher =
@@ -541,7 +562,9 @@ year =
 ##   it was written.  Generally it should consist of four numerals, such as
 ##   1984, although the standard styles can handle any year whose last four
 ##   nonpunctuation characters are numerals, such as `(about 1984)'.
-   element year { attlist.year, text }
+##   The schema will restrict validation of the year to four numerals,
+##   as such a type is pre-defined in XML Schema.
+   element year { attlist.year, xsd:gYear }
 attlist.year &= empty
 
 
