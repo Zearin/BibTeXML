@@ -153,7 +153,7 @@
     <bibtex:publisher>Addison-Wesley</bibtex:publisher>
     <bibtex:year>1995</bibtex:year>
     <bibtex:address>Sydney</bibtex:address>
-    <bibtex:edition>2nd edn</bibtex:edition>
+    <bibtex:edition>Second ed.</bibtex:edition>
   </bibtex:book>
 </bibtex:entry>
 
@@ -197,7 +197,7 @@
     <bibtex:journal>Australian Financial Review</bibtex:journal>
     <bibtex:year>1997</bibtex:year>
     <bibtex:pages>10</bibtex:pages>
-    <bibtex:month>13 Oct.</bibtex:month>
+    <bibtex:month>Oct</bibtex:month>
   </bibtex:article>
 </bibtex:entry>
 

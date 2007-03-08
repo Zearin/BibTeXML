@@ -89,7 +89,7 @@ issn =
 
 language =
 ## [language]  The language the document is in. 
-   element language { text }
+   element language { xsd:language }
 
 lccn =
 ## [LCCN]  The Library of Congress Call Number.
@@ -117,7 +117,7 @@ url =
 ## [URL]  The WWW Universal Resource Locator that points to the item being
 ##        referenced. This often is used for technical reports to point to the
 ##        ftp site where the postscript source of the report is located.
-   element url { text }
+   element url { xsd:anyURI }
 
 keywords =
 ## [keywords]  Key words used for searching or possibly for annotation. 
