@@ -70,6 +70,10 @@ attlist.entry &= attribute id { xsd:ID }
 BibTeXML.standard.common.fields.class = key?, crossref?
 BibTeXML.common.fields.class = BibTeXML.standard.common.fields.class
 
+##   Annotation is not used by the standard bibliography styles,
+##   if you prefer otherwise, incude it in BibTeXML.common.fields.class
+#BibTeXML.common.fields.class &= annote
+
 
 # .....................................................................
 # Entries in the BibTeX database
@@ -552,10 +556,6 @@ annote =
 ## [annote] An annotation  It is not used by the standard bibliography
 ##   styles, but may be used by others that produce an annotated
 ##   bibliography.
-##
-##   Annotation is not used by the standard bibliography styles,
-##   if you prefer otherwise, incude it in
-##   BibTeXML.standard.common.fields.class
    element annote { attlist.annote, text }
 attlist.annote &= empty
 
