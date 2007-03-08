@@ -32,7 +32,7 @@ include "bibtexml.rnc"
 
 # Content of given elements are redefined and extended.
 # Backwards compatible syntax.
-BibTeXML.common.fields.class &= BibTeXML.user.fields.class
+common.fields.class &= user.fields.class
 author |= element author { person+ }
 editor |= element editor { person+ }
 title |= element title { (title, subtitle?) }
@@ -45,7 +45,7 @@ chapter |= element chapter { (title, subtitle?, pages?, author?) }
 ##   When using BibTeX with LaTeX you need BibTeX style files
 ##   to print these data.
 ##   Ref: http://www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html
-BibTeXML.user.fields.class =
+user.fields.class =
    abstract?
  & affiliation?
  & contents?

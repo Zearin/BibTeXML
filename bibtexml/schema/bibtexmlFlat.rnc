@@ -28,10 +28,10 @@ default namespace bibtex = "http://bibtexml.sf.net/"
 
 # Reuse the strict BibTeXML schema
 include "bibtexml.rnc" {
-   # Content of given elements are redefined.
-   BibTeXML.common.fields.class =
-      BibTeXML.all.standard.fields.class
-    & BibTeXML.user.fields.class
+      # Content of given elements are redefined.
+      common.fields.class =
+            all.standard.fields.class
+          & user.fields.class
 }
 
 
@@ -41,7 +41,7 @@ include "bibtexml.rnc" {
 ##   When using BibTeX with LaTeX you need BibTeX style files
 ##   to print these data.
 ##   Ref: http://www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html
-BibTeXML.user.fields.class =
+user.fields.class =
    abstract?
  & affiliation?
  & contents?

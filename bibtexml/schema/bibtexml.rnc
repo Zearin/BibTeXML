@@ -40,7 +40,7 @@ attlist.file &= empty
 # Main structure
 
 ## Each entry may contain one of the bibliographic types.
-BibTeXML.standard.entries.class =
+standard.entries.class =
       article
     | book
     | booklet
@@ -55,8 +55,8 @@ BibTeXML.standard.entries.class =
     | conference
     | unpublished
     | misc
-BibTeXML.entries.class = BibTeXML.standard.entries.class
-entry = element entry { attlist.entry, BibTeXML.entries.class }
+entry.content = standard.entries.class
+entry = element entry { attlist.entry, entry.content }
 attlist.entry &= attribute id { xsd:ID }
 
 
@@ -67,8 +67,8 @@ attlist.entry &= attribute id { xsd:ID }
 ## the standard BibTeX distribution, these must be added to the
 ## bibliography styles, otherwise these fields will be omitted by
 ## the formatter.
-BibTeXML.standard.common.fields.class = key?, crossref?
-BibTeXML.common.fields.class = BibTeXML.standard.common.fields.class
+standard.common.fields.class = key?, crossref?
+common.fields.class = standard.common.fields.class
 
 ##   Annotation is not used by the standard bibliography styles,
 ##   if you prefer otherwise, incude it in BibTeXML.common.fields.class
@@ -81,7 +81,7 @@ BibTeXML.common.fields.class = BibTeXML.standard.common.fields.class
 ## [article] An article from a journal or magazine.
 ##   Required fields: author, title, journal, year.
 ##   Optional fields: volume, number, pages, month, note.
-BibTeXML.article.standard.class =
+article.standard.class =
       author,
       title,
       journal,
@@ -91,20 +91,15 @@ BibTeXML.article.standard.class =
       pages?,
       month?,
       note?
-BibTeXML.article.class =
-      BibTeXML.article.standard.class,
-      BibTeXML.common.fields.class
-article =
-      element article {
-            attlist.article, BibTeXML.article.class?
-      }
+article.content = article.standard.class, common.fields.class
+article = element article { attlist.article, article.content }
 attlist.article &= empty
 
 ## [book] A book with an explicit publisher.
 ##   Required fields: author or editor, title, publisher, year.
 ##   Optional fields: volume or number, series, address,
 ##      edition, month, note.
-BibTeXML.book.standard.class =
+book.standard.class =
       (author | editor),
       title,
       publisher,
@@ -115,25 +110,18 @@ BibTeXML.book.standard.class =
       edition?,
       month?,
       note?
-BibTeXML.book.class =
-      BibTeXML.book.standard.class,
-      BibTeXML.common.fields.class
-book = element book { attlist.book, BibTeXML.book.class }
+book.content = book.standard.class, common.fields.class
+book = element book { attlist.book, book.content }
 attlist.book &= empty
 
 ## [booklet] A work that is printed and bound, but without a named
 ##   publisher or sponsoring institution
 ##   Required field: title.
 ##   Optional fields: author, howpublished, address, month, year, note.
-BibTeXML.booklet.standard.class =
+booklet.standard.class =
       author?, title, howpublished?, address?, month?, year?, note?
-BibTeXML.booklet.class =
-      BibTeXML.booklet.standard.class,
-      BibTeXML.common.fields.class
-booklet =
-      element booklet {
-            attlist.booklet, BibTeXML.booklet.class
-      }
+booklet.content = booklet.standard.class, common.fields.class
+booklet = element booklet { attlist.booklet, booklet.content }
 attlist.booklet &= empty
 
 ## [inbook] A part of a book, which may be a chapter (or section or
@@ -142,7 +130,7 @@ attlist.booklet &= empty
 ##      publisher, year.
 ##   Optional fields: volume or number, series, type, address,
 ##      edition, month, note.
-BibTeXML.inbook.standard.class =
+inbook.standard.class =
       (author | editor),
       title,
       ((chapter, pages?) | pages),
@@ -155,11 +143,8 @@ BibTeXML.inbook.standard.class =
       edition?,
       month?,
       note?
-BibTeXML.inbook.class =
-      BibTeXML.inbook.standard.class,
-      BibTeXML.common.fields.class
-inbook =
-      element inbook { attlist.inbook, BibTeXML.inbook.class }
+inbook.content = inbook.standard.class, common.fields.class
+inbook = element inbook { attlist.inbook, inbook.content }
 attlist.inbook &= empty
 #  > I want to express that the elements a and/or b are legal that is
 #  > one of them or both must be present in the document instance
@@ -172,7 +157,7 @@ attlist.inbook &= empty
 ##   Required fields: author, title, booktitle, publisher, year.
 ##   Optional fields: editor, volume or number, series, type,
 ##      chapter, pages, address, edition, month, note.
-BibTeXML.incollection.standard.class =
+incollection.standard.class =
       author,
       title,
       booktitle,
@@ -188,12 +173,10 @@ BibTeXML.incollection.standard.class =
       edition?,
       month?,
       note?
-BibTeXML.incollection.class =
-      BibTeXML.incollection.standard.class,
-      BibTeXML.common.fields.class
+incollection.content = incollection.standard.class, common.fields.class
 incollection =
       element incollection {
-            attlist.incollection, BibTeXML.incollection.class
+            attlist.incollection, incollection.content
       }
 attlist.incollection &= empty
 
@@ -201,7 +184,7 @@ attlist.incollection &= empty
 ##   Required fields: author, title, booktitle, year.
 ##   Optional fields: editor, volume or number, series, pages,
 ##      address, month, organization, publisher, note.
-BibTeXML.inproceedings.common.fields.class =
+inproceedings.standard.class =
       author,
       title,
       booktitle,
@@ -215,27 +198,19 @@ BibTeXML.inproceedings.common.fields.class =
       organization?,
       publisher?,
       note?
-BibTeXML.inproceedings.standard.class =
-      BibTeXML.inproceedings.common.fields.class
-BibTeXML.inproceedings.class =
-      BibTeXML.inproceedings.standard.class,
-      BibTeXML.common.fields.class
+inproceedings.content = inproceedings.standard.class, common.fields.class
 inproceedings =
       element inproceedings {
-            attlist.inproceedings, BibTeXML.inproceedings.class
+            attlist.inproceedings, inproceedings.content
       }
 attlist.inproceedings &= empty
 
 ## [conference] The same as INPROCEEDINGS,
 ##   included for Scribe compatibility.
-BibTeXML.conference.standard.class =
-      BibTeXML.inproceedings.common.fields.class
-BibTeXML.conference.class =
-      BibTeXML.conference.standard.class,
-      BibTeXML.common.fields.class
+conference.content = inproceedings.standard.class, common.fields.class
 conference =
       element conference {
-            attlist.conference, BibTeXML.conference.class
+            attlist.conference, conference.content
       }
 attlist.conference &= empty
 
@@ -243,7 +218,7 @@ attlist.conference &= empty
 ##   Required field: title.
 ##   Optional fields: author, organization, address,
 ##      edition, month, year, note.
-BibTeXML.manual.standard.class =
+manual.standard.class =
       author?,
       title,
       organization?,
@@ -252,57 +227,46 @@ BibTeXML.manual.standard.class =
       month?,
       year?,
       note?
-BibTeXML.manual.class =
-      BibTeXML.manual.standard.class,
-      BibTeXML.common.fields.class
-manual =
-      element manual { attlist.manual, BibTeXML.manual.class }
+manual.content = manual.standard.class, common.fields.class
+manual = element manual { attlist.manual, manual.content }
 attlist.manual &= empty
 
 ## [mastersthesis] A Master's thesis.
 ##   Required fields: author, title, school, year.
 ##   Optional fields: type, address, month, note.
-BibTeXML.thesis.common.fields.class =
+thesis.standard.class =
       author, title, school, year, type?, address?, month?, note?
-BibTeXML.mastersthesis.standard.class = BibTeXML.thesis.common.fields.class
-BibTeXML.mastersthesis.class =
-      BibTeXML.mastersthesis.standard.class,
-      BibTeXML.common.fields.class
+mastersthesis.content = thesis.standard.class, common.fields.class
 mastersthesis =
       element mastersthesis {
-            attlist.mastersthesis, BibTeXML.mastersthesis.class
+            attlist.mastersthesis, mastersthesis.content
       }
 attlist.mastersthesis &= empty
 
 ## [phdthesis] A PhD thesis.
 ##   Required fields: author, title, school, year.
 ##   Optional fields: type, address, month, note.
-BibTeXML.phdthesis.standard.class = BibTeXML.thesis.common.fields.class
-BibTeXML.phdthesis.class =
-      BibTeXML.phdthesis.standard.class,
-      BibTeXML.common.fields.class
+phdthesis.content = thesis.standard.class, common.fields.class
 phdthesis =
       element phdthesis {
-            attlist.phdthesis, BibTeXML.phdthesis.class
+            attlist.phdthesis, phdthesis.content
       }
 attlist.phdthesis &= empty
 
 ## [misc] Use this type when nothing else fits.
 ##   Required fields: none.
 ##   Optional fields: author, title, howpublished, month, year, note.
-BibTeXML.misc.standard.class =
+misc.standard.class =
       author?, title?, howpublished?, month?, year?, note?
-BibTeXML.misc.class =
-      BibTeXML.misc.standard.class,
-      BibTeXML.common.fields.class
-misc = element misc { attlist.misc, BibTeXML.misc.class }
+misc.content = misc.standard.class, common.fields.class
+misc = element misc { attlist.misc, misc.content }
 attlist.misc &= empty
 
 ## [proceedings] The proceedings of a conference.
 ##   Required fields: title, year.
 ##   Optional fields: editor, volume or number, series,
 ##      address, month, organization, publisher, note.
-BibTeXML.proceedings.standard.class =
+proceedings.standard.class =
       editor?,
       title,
       year,
@@ -313,12 +277,10 @@ BibTeXML.proceedings.standard.class =
       organization?,
       publisher?,
       note?
-BibTeXML.proceedings.class =
-      BibTeXML.proceedings.standard.class,
-      BibTeXML.common.fields.class
+proceedings.content = proceedings.standard.class, common.fields.class
 proceedings =
       element proceedings {
-            attlist.proceedings, BibTeXML.proceedings.class
+            attlist.proceedings, proceedings.content
       }
 attlist.proceedings &= empty
 
@@ -326,7 +288,7 @@ attlist.proceedings &= empty
 ##   usually numbered within a series.
 ##   Required fields: author, title, institution, year.
 ##   Optional fields: type, number, address, month, note.
-BibTeXML.techreport.standard.class =
+techreport.standard.class =
       author,
       title,
       institution,
@@ -336,12 +298,10 @@ BibTeXML.techreport.standard.class =
       address?,
       month?,
       note?
-BibTeXML.techreport.class =
-      BibTeXML.techreport.standard.class,
-      BibTeXML.common.fields.class
+techreport.content = techreport.standard.class, common.fields.class
 techreport =
       element techreport {
-            attlist.techreport, BibTeXML.techreport.class
+            attlist.techreport, techreport.content
       }
 attlist.techreport &= empty
 
@@ -349,14 +309,12 @@ attlist.techreport &= empty
 ##   formally published.
 ##   Required fields: author, title, note.
 ##   Optional fields: month, year.
-BibTeXML.unpublished.standard.class =
+unpublished.standard.class =
       author, title, note, month?, year?
-BibTeXML.unpublished.class =
-      BibTeXML.unpublished.standard.class,
-      BibTeXML.common.fields.class
+unpublished.content = unpublished.standard.class, common.fields.class
 unpublished =
       element unpublished {
-            attlist.unpublished, BibTeXML.unpublished.class
+            attlist.unpublished, unpublished.content
       }
 attlist.unpublished &= empty
 
@@ -369,7 +327,7 @@ attlist.unpublished &= empty
 ##   styles. An entry can also contain other fields, which are
 ##   ignored by those styles. Included in the schema to enable reuse
 ##   into a flat BibTeX markup scheme.
-BibTeXML.all.standard.fields.class =
+all.standard.fields.class =
    address?
  & annote?
  & author?
