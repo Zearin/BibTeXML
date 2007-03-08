@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="bibtexml.css" type="text/css" ?>
+<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+
+  <bibtex:entry id="stone.brooks.1">
+    <bibtex:article>
+      <bibtex:author>M. Stone; R.J. Brooks</bibtex:author>
+      <bibtex:title>
+        Continuum regression:
+        cross-validated sequentally constructed prediction embracing
+        ordinary least squares, partial least squares and principal
+        component regression (with discussion)
+      </bibtex:title>
+      <bibtex:journal>J. R. Statistics Soc. B. Met.</bibtex:journal>
+      <bibtex:year>1990</bibtex:year>
+      <bibtex:volume>52</bibtex:volume>
+      <bibtex:pages>237-269</bibtex:pages>
+    </bibtex:article>
+  </bibtex:entry>
+
+  <bibtex:entry id="stone.brooks.2">
+    <bibtex:article>
+      <bibtex:author>M. Stone; R.J. Brooks</bibtex:author>
+      <bibtex:title>
+        Continuum regression:
+        cross-validated sequentally constructed prediction embracing
+        ordinary least squares, partial least squares and principal
+        component regression (with discussion)
+      </bibtex:title>
+      <bibtex:journal>J. R. Statistics Soc. B. Met.</bibtex:journal>
+      <bibtex:year>1990</bibtex:year>
+      <bibtex:volume>52</bibtex:volume>
+      <bibtex:pages>237--269</bibtex:pages>
+    </bibtex:article>
+  </bibtex:entry>
+
+  <bibtex:entry id="stone.brooks.3">
+    <bibtex:article>
+      <bibtex:author>M. Stone; R.J. Brooks</bibtex:author>
+      <bibtex:title>
+        Continuum regression:
+        cross-validated sequentally constructed prediction embracing
+        ordinary least squares, partial least squares and principal
+        component regression (with discussion)
+      </bibtex:title>
+      <bibtex:journal>J. R. Statistics Soc. B. Met.</bibtex:journal>
+      <bibtex:year>1990</bibtex:year>
+      <bibtex:volume>52</bibtex:volume>
+      <bibtex:pages>237,269</bibtex:pages>
+    </bibtex:article>
+  </bibtex:entry>
+
+  <bibtex:entry id="stone.brooks.4">
+    <bibtex:article>
+      <bibtex:author>M. Stone; R.J. Brooks</bibtex:author>
+      <bibtex:title>
+        Continuum regression:
+        cross-validated sequentally constructed prediction embracing
+        ordinary least squares, partial least squares and principal
+        component regression (with discussion)
+      </bibtex:title>
+      <bibtex:journal>J. R. Statistics Soc. B. Met.</bibtex:journal>
+      <bibtex:year>1990</bibtex:year>
+      <bibtex:volume>52</bibtex:volume>
+      <bibtex:pages>40,234,237--269,280+</bibtex:pages>
+    </bibtex:article>
+  </bibtex:entry>
+
+  <bibtex:entry id="stone.brooks.5">
+    <bibtex:article>
+      <bibtex:author>M. Stone; R.J. Brooks</bibtex:author>
+      <bibtex:title>
+        Continuum regression:
+        cross-validated sequentally constructed prediction embracing
+        ordinary least squares, partial least squares and principal
+        component regression (with discussion)
+      </bibtex:title>
+      <bibtex:journal>J. R. Statistics Soc. B. Met.</bibtex:journal>
+      <bibtex:year>1990</bibtex:year>
+      <bibtex:volume>52</bibtex:volume>
+      <bibtex:pages>237–269</bibtex:pages>
+    </bibtex:article>
+  </bibtex:entry>
+
+  <bibtex:entry id="stone.brooks.6">
+    <bibtex:article>
+      <bibtex:author>M. Stone; R.J. Brooks</bibtex:author>
+      <bibtex:title>
+        Continuum regression:
+        cross-validated sequentally constructed prediction embracing
+        ordinary least squares, partial least squares and principal
+        component regression (with discussion)
+      </bibtex:title>
+      <bibtex:journal>J. R. Statistics Soc. B. Met.</bibtex:journal>
+      <bibtex:year>1990</bibtex:year>
+      <bibtex:volume>52</bibtex:volume>
+      <bibtex:pages>233,237-</bibtex:pages>
+    </bibtex:article>
+  </bibtex:entry>
+
+  <bibtex:entry id="stone.brooks.7">
+    <bibtex:article>
+      <bibtex:author>M. Stone; R.J. Brooks</bibtex:author>
+      <bibtex:title>
+        Continuum regression:
+        cross-validated sequentally constructed prediction embracing
+        ordinary least squares, partial least squares and principal
+        component regression (with discussion)
+      </bibtex:title>
+      <bibtex:journal>J. R. Statistics Soc. B. Met.</bibtex:journal>
+      <bibtex:year>1990</bibtex:year>
+      <bibtex:volume>52</bibtex:volume>
+      <bibtex:pages>233,237+</bibtex:pages>
+    </bibtex:article>
+  </bibtex:entry>
+
+  <bibtex:entry id="stone.brooks.8">
+    <bibtex:article>
+      <bibtex:author>M. Stone; R.J. Brooks</bibtex:author>
+      <bibtex:title>
+        Continuum regression:
+        cross-validated sequentally constructed prediction embracing
+        ordinary least squares, partial least squares and principal
+        component regression (with discussion)
+      </bibtex:title>
+      <bibtex:journal>J. R. Statistics Soc. B. Met.</bibtex:journal>
+      <bibtex:year>1990</bibtex:year>
+      <bibtex:volume>52</bibtex:volume>
+      <bibtex:pages>233,237</bibtex:pages>
+    </bibtex:article>
+  </bibtex:entry>
+
+  <bibtex:entry id="stone.brooks.9">
+    <bibtex:article>
+      <bibtex:author>M. Stone; R.J. Brooks</bibtex:author>
+      <bibtex:title>
+        Continuum regression:
+        cross-validated sequentally constructed prediction embracing
+        ordinary least squares, partial least squares and principal
+        component regression (with discussion)
+      </bibtex:title>
+      <bibtex:journal>J. R. Statistics Soc. B. Met.</bibtex:journal>
+      <bibtex:year>1990</bibtex:year>
+      <bibtex:volume>52</bibtex:volume>
+      <bibtex:pages>233</bibtex:pages>
+    </bibtex:article>
+  </bibtex:entry>
+
+  <bibtex:entry id="stone.brooks.10">
+    <bibtex:article>
+      <bibtex:author>M. Stone; R.J. Brooks</bibtex:author>
+      <bibtex:title>
+        Continuum regression:
+        cross-validated sequentally constructed prediction embracing
+        ordinary least squares, partial least squares and principal
+        component regression (with discussion)
+      </bibtex:title>
+      <bibtex:journal>J. R. Statistics Soc. B. Met.</bibtex:journal>
+      <bibtex:year>1990</bibtex:year>
+      <bibtex:volume>52</bibtex:volume>
+      <bibtex:pages>2+</bibtex:pages>
+    </bibtex:article>
+  </bibtex:entry>
+
+</bibtex:file>
