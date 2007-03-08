@@ -30,7 +30,7 @@ default namespace bibtex = "http://bibtexml.sf.net/"
 # Reuse the strict BibTeXML schema
 include "bibtexml.rnc"
 
-# Content of given elements are redifined and extended.
+# Content of given elements are redefined and extended.
 # Backwards compatible syntax.
 BibTeXML.common.fields.class &= BibTeXML.user.fields.class
 author |= element author { person+ }
