@@ -369,7 +369,7 @@ attlist.unpublished &= empty
 ##   styles. An entry can also contain other fields, which are
 ##   ignored by those styles. Included in the schema to enable reuse
 ##   into a flat BibTeX markup scheme.
-BibTeXML.all.standard.class =
+BibTeXML.all.standard.fields.class =
    address?
  & annote?
  & author?

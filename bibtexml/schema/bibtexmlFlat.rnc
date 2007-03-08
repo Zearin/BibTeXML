@@ -1,4 +1,4 @@
-#  File: $Id: bibtexmlExtended.rnc, 2003.09.19 10:05:00 vbg Exp $
+#  File: $Id: bibtexmlFlat.rnc, 2007.03.08 10:53:00 vidarg Exp $
 #
 #  This DTD expresses XML markup similar to the BibTeX language
 #  specified for LaTeX, or actually its content model.
@@ -16,7 +16,6 @@
 # 
 #  This code originally developed by
 #    Vidar Bronken Gundersen
-#    Zeger W. Hendrikse
 # 
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License.
@@ -28,15 +27,12 @@
 default namespace bibtex = "http://bibtexml.sf.net/"
 
 # Reuse the strict BibTeXML schema
-include "bibtexml.rnc"
-
-# Content of given elements are redifined and extended.
-# Backwards compatible syntax.
-BibTeXML.common.fields.class &= BibTeXML.user.fields.class
-author |= element author { person+ }
-editor |= element editor { person+ }
-title |= element title { (title, subtitle?) }
-chapter |= element chapter { (title, subtitle?, pages?, author?) }
+include "bibtexml.rnc" {
+   # Content of given elements are redefined.
+   BibTeXML.common.fields.class =
+      BibTeXML.all.standard.fields.class
+    & BibTeXML.user.fields.class
+}
 
 
 ## Popular user fields
@@ -132,32 +128,4 @@ doi =
 ##        used to redirect to articles, a key like 10.1000/203
 ##        Ref: http://www.doi.org/
    element doi { text }
-
-
-person =
-## first, middle and last name should be obvious.
-##   preLast is for names like Thomas *de* Burghes,
-##   lineage is used for "Jr" in names like "James T. Kirk, Jr."
-  element person {
-    attlist.person,
-    (text | (
-      (initials | (first, middle?)),
-      prelast?,
-      last,
-      lineage? ))
-  }
-attlist.person &=
-  attribute email { text }?,
-  attribute url { text }?
-first = element first { text }
-initials = element initials { text }
-last = element last { text }
-middle = element middle { text }
-prelast = element prelast { text }
-lineage = element lineage { text }
-
-subtitle = element subtitle { text }
-
-keywords |= element keywords { keyword+ }
-keyword = element keyword { text }
 
