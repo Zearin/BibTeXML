@@ -1,4 +1,4 @@
-#  File: $Id: bibtexml-ext.rnc, 2003.09.19 10:05:00 vbg Exp $
+#  File: $Id: bibtexmlExtended.rnc, 2003.09.19 10:05:00 vbg Exp $
 #
 #  This DTD expresses XML markup similar to the BibTeX language
 #  specified for LaTeX, or actually its content model.
@@ -24,20 +24,19 @@
 #
 
 
-# namespace and namespace prefix
+# Namespace and namespace prefix
 default namespace bibtex = "http://bibtexml.sf.net/"
 
-## Reuse the strict BibTeXML DTD
-##   Content of given elements are redifined and extended.
-##   Backwards compatible syntax.
-include "bibtexml.rnc" {
-   BibTeXML.additional.fields = BibTeXML.user.fields
-   author = element author { ( text | person+ ) }
-   editor = element editor { ( text | person+ ) }
-   title = element title { ( text | ( title, subtitle? ) ) }
-   chapter = element chapter {
-      attlist.chapter, (text | (title, subtitle?, pages?, author?)) }
-}
+# Reuse the strict BibTeXML DTD
+include "bibtexml.rnc"
+
+# Content of given elements are redifined and extended.
+# Backwards compatible syntax.
+BibTeXML.common.fields.class &= BibTeXML.user.fields
+author |= element author { person+ }
+editor |= element editor { person+ }
+title |= element title { (title, subtitle?) }
+chapter |= element chapter { (title, subtitle?, pages?, author?) }
 
 
 ## Popular user fields
@@ -47,21 +46,21 @@ include "bibtexml.rnc" {
 ##   to print these data.
 ##   Ref: http://www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html
 BibTeXML.user.fields =
-  abstract?,
-  affiliation?,
-  contents?,
-  copyright?,
-  (isbn | issn)?,
-  doi?,
-  keywords?,
-  language?,
-  lccn?,
-  location?,
-  mrnumber?,
-  price?,
-  size?,
-  url?,
-  category?
+   abstract?
+ & affiliation?
+ & contents?
+ & copyright?
+ & (isbn | issn)?
+ & doi?
+ & keywords?
+ & language?
+ & lccn?
+ & location?
+ & mrnumber?
+ & price?
+ & size?
+ & url?
+ & category?
 
 abstract =
 ## [abstract]  An abstract of the work. 
@@ -147,7 +146,7 @@ person =
       last,
       lineage? ))
   }
-attlist.person |=
+attlist.person &=
   attribute email { text }?,
   attribute url { text }?
 first = element first { text }
