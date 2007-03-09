@@ -416,9 +416,9 @@ month =
 ##   standard three-letter abbreviation, as described in Appendix B.1.3 of
 ##   the LaTeX book.
 ##   The schema also allows a two digit month format, e.g. 05 (for May).
-   element month { attlist.month, ( monthStringType | xsd:gMonth ) }
+   element month { attlist.month, ( monthString.datatype | xsd:gMonth ) }
 attlist.month &= empty
-monthStringType =
+monthString.datatype =
    string "Jan"
  | string "Feb"
  | string "Mar"
@@ -523,7 +523,7 @@ crossref =
 ##     @INPROCEEDINGS(no-gnats,
 ##         crossref = "gg-proceedings",
 ##     @PROCEEDINGS(gg-proceedings,
-   element crossref { attlist.crossref, text }
+   element crossref { attlist.crossref, xsd:NCName }
 attlist.crossref &= empty
 
 key =
