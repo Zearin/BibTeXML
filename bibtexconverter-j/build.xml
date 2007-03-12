@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--<!DOCTYPE project SYSTEM "http://mp3dings.sf.net/ant.dtd">-->
+<!--
+   $Id: bibtexconverter-build.xml,v 1.9 2007/02/08 14:39:03 Moritz.Ringler Exp $
+   Buildfile for csvmatscher
+   This file needs ant-shared.xml present in the same directory.
+   (c) Moritz Ringler, 2004
+-->
+<project name="bibtexconverter" default="test" basedir=".">
+  <description>
+    Buildfile for bibtexconverter application
+  </description>
+  <!-- global properties used by ant-shared.xml -->
+  <property name="src"
+      value="src"/>
+  <property name="build"
+      value="classes"/>
+  <property name="javadoc"
+      value="doc/api"/>
+  <property name="app.packagePath"
+      value="de/mospace/xml/**, net/sourceforge/bibtexml/**, de/mospace/swing/**, de/mospace/lang/**, net/sourceforge/texlipse/**"/>
+  <property name="texlipse"
+       value="net.sourceforge.texlipse" />
+  <property name="bp"
+       value="${texlipse}.bibparser"/>
+  <property name="dms"
+       value="de.mospace.swing"/>
+  <property name="app.packageList"
+      value="de.mospace.xml, net.sourceforge.bibtexml, de.mospace.lang, ${dms},
+      ${dms}.text, ${dms}.event, ${dms}.table, ${dms}.icon,
+      ${bp}, ${bp}.analysis, ${bp}.lexer, ${bp}.node
+      ${bp}.parser, ${texclipse}.model"/>
+  <property name="app.mainClass"
+      value="net.sourceforge.bibtexml.BibTeXConverter"/>
+  <property name="app.name"
+      value="BibTeXConverter"/>
+  <property name="app.src.lib"
+      value="src-lib/gpsdings-lib-1.0.src.zip  src-lib/mp3dings-lib-1.0.src.zip"/>
+  <property name="app.javaVersion"
+      value="1.5"/>
+  <property name="app.icon"
+      value="${src}\de\mospace\apps\bibtex\bibconvert.png"/>
+  <!--
+  <property name="app.jsmooth.skeleton"
+      value="Console Wrapper"/>
+  -->
+
+   <!-- IMPORT SHARED TARGETS -->
+   <import file="./ant-shared.xml"/>
+
+   <target name="copy" depends="shared.copy"/>
+
+   <target name='parser' description='(Re-)generate parser and lexer source files, needs sable-cc.jar and sablecc-anttask.jar in ANT_HOME/lib'>
+       <taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc"></taskdef>
+       <sablecc src="${src}/net/sourceforge/texlipse" includes="*.sablecc" outputdirectory="${src}"/>
+    </target>
+
+</project>
