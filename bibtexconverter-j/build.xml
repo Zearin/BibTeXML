@@ -39,7 +39,7 @@
   <property name="app.javaVersion"
       value="1.5"/>
   <property name="app.icon"
-      value="${src}\de\mospace\apps\bibtex\bibconvert.png"/>
+      value="${src}\net\sourceforge\bibtexml\bibconvert.png"/>
   <!--
   <property name="app.jsmooth.skeleton"
       value="Console Wrapper"/>
