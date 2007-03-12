@@ -97,6 +97,23 @@
       </manifest>
     </jar>
   </target>
+  
+  <target name="devel.sign.bin" depends="init">
+  <!-- description="Sign the binary jarfile" -->
+    <fail unless="sign.keystore"
+     message="You must set the sign.keystore property."/>
+    <fail unless="sign.keypass"
+     message="You must set the sign.keypass property." /> 
+    <fail unless="sign.storepass"
+     message="You must set the sign.storepass property."/> 
+    <signjar 
+      jar="${ant.project.name}-${buildID}.jar"
+      alias="ringler@users.sf.net"
+      keystore="${sign.keystore}"
+      storepass="${sign.storepass}"
+      keypass="${sign.keypass}"
+      lazy="true"/>
+  </target>
 
   <target name="addlibs" depends="binjar" if="app.includeLibs">
     <zip
