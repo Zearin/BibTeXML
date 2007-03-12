@@ -48,45 +48,48 @@
 <h1>BibTeX converter: A Java GUI tool for BibTeX conversion</h1>
 
 <p>
-I' ve written an all-Java GUI application
+BibTeX converter is an all-Java GUI application
 that converts BibTeX to BibXML and onwards.
 </p>
 <p>
-For the first step the user can choose between my java port of your
-Python BibTeX parser and the sablecc-generated texlipse parser by Oskar
-Ojala. Both give good results on valid input, but the texlipse parser is
-faster and produces useful error messages.
+For the first step the user can choose between a java port of the
+bibtexml.sf.net Python BibTeX parser and the sablecc-generated
+texlipse parser by Oskar Ojala. Both give good results on valid input,
+but the texlipse parser is faster and produces useful error messages.
 </p>
 <p>
-The second step is done via XSLT. There are three built-in stylesheets
-(two HTML and one RIS) that use XSLT 2.0 features and don't work with
-the JRE default transformer factory implementation. Therefore the user
-is asked to install Saxon when the application first starts up.
-</p>
-<p>
-Custom user-stylesheets can easily be loaded into the application (File menu).
+The second step is done via XSLT. There are three built-in XSLT&nbsp;2.0 stylesheets
+(two HTML and one RIS). Custom user-stylesheets can easily be loaded into the
+application (File menu).
+<!--
 Unfortunately, I used a rather early BibXML DTD, so that one might need
 to modify your stylesheets a bit to make them run within this app (if I
 find the time I will maybe alter the program to use the latest BibTeXML
-schema).
+schema).-->
 </p>
 <p>
-BibTeXConverter needs Java 1.5 or higher.
-I put it under GPL 2.
+BibTeXConverter needs Java&nbsp;1.5 or higher und is published
+under GPL&nbsp;2.
 </p>
 <p>
+You can download the BibTeX converter source code with 
+<a href="http://subversion.tigris.org/">subversion</a> from
+<pre>https://bibtexml.svn.sf.net/svnroot/bibtexml/trunk/bibtexconverter-j</pre>
+An <a href="http://ant.apache.org">ant</a> script is supplied for easy
+compilation.
+<!--
 The jar file can be run through
 </p>
 <pre>
-java -jar bibtexconverter-20070223.jar
+java -jar bibtexconverter.jar
 </pre>
-
+-->
 
 <table>
 <tr>
 <td id="contact">
 <address>
-2007.03.10 Moritz Ringler, Vidar Bronken Gundersen
+2007.03.12 Moritz Ringler, Vidar Bronken Gundersen
 <br/>
 Contact us using the
 <a href="http://sourceforge.net/mail/?group_id=56234"
@@ -104,7 +107,7 @@ Contact us using the
 <p id="sflogo">
 <a href="http://sourceforge.net/"><img
    src="http://sourceforge.net/sflogo.php?group_id=56234&amp;type=1"
-   width="88" height="31" border="0"
+   width="88" height="31" style="border: 0px none silver"
    title="Hosted by SourceForge.net"
    alt="SourceForge.net Logo"
     /></a>
