@@ -26,6 +26,7 @@
         name="buildID"
         value="${DSTAMP}"/>
     <!-- Create the build directory structure used by compile -->
+    <property name="binary" value="${ant.project.name}-${buildID}.jar"/>
     <mkdir dir="${build}"/>
     <copy
         todir="${build}">
@@ -86,7 +87,7 @@
   <!-- MAKE BINARY-ONLY JAR-FILE -->
   <target name="binjar" depends="compile, gpl">
     <jar
-        destfile="${ant.project.name}-${buildID}.jar"
+        destfile="${binary}"
         compress="true">
       <fileset dir="${build}" includes="${app.packagePath}"/>
       <fileset file="COPYING"/>
@@ -107,7 +108,7 @@
     <fail unless="sign.storepass"
      message="You must set the sign.storepass property."/> 
     <signjar 
-      jar="${ant.project.name}-${buildID}.jar"
+      jar="${binary}"
       alias="ringler@users.sf.net"
       keystore="${sign.keystore}"
       storepass="${sign.storepass}"
@@ -117,7 +118,7 @@
 
   <target name="addlibs" depends="binjar" if="app.includeLibs">
     <zip
-        destfile="${ant.project.name}-${buildID}.jar"
+        destfile="${binary}"
         compress="true"
         update="true">
       <zipgroupfileset dir="." includes="${app.lib}"/>
@@ -126,7 +127,7 @@
 
   <target name="dist.bin" depends="binjar, addlibs, packaging.win.jsmooth"
       description="Makes a binary-only jarfile and a JSmooth project file that can be used to generate a Windows executable wrapper (http://jsmooth.sf.net).">
-    <copy file="${ant.project.name}-${buildID}.jar" tofile="${ant.project.name}.jar"/>
+    <copy file="${binary}" tofile="${ant.project.name}.jar"/>
   </target>
 
 
@@ -333,6 +334,28 @@ org.xml.sax.helpers
       </fileset>
     </delete>
   </target>
+  
+	<target name="packaging.macosx.jarbundler" description="create a mac package, needs jarbundler 1.4 in the ant classpath.">
+    <property name="app.javaVersionPlus" value="${app.javaVersion}+"/>
+    <taskdef
+     name="jarbundler"
+     classname="com.loomcom.ant.tasks.jarbundler.JarBundler" />
+		<jarbundler
+     dir="."
+     name="${app.name}" 
+     mainclass="${app.mainClass}"
+     bundleid="de.mospace.mp3dings"
+     jars="${binary}"
+     version="${buildID}"
+     jvmversion="${app.javaVersionPlus}"
+     stubfile="JavaApplicationStub" />
+    <zip
+      destfile="${app.name}-${buildID}.OSX.zip"
+      compress="true"
+      basedir="."
+      includes="${app.name}.app/**"/>
+    <delete dir="${app.name}.app"/>
+	</target>
 
   <!-- JSMOOTH PROJCET -->
   <target
@@ -352,7 +375,7 @@ org.xml.sax.helpers
 &lt;executableName&gt;${ant.project.name}.exe&lt;/executableName&gt;
 &lt;iconLocation&gt;${app.icon}&lt;/iconLocation&gt;
 &lt;initialMemoryHeap&gt;-1&lt;/initialMemoryHeap&gt;
-&lt;jarLocation&gt;${ant.project.name}-${buildID}.jar&lt;/jarLocation&gt;
+&lt;jarLocation&gt;${binary}&lt;/jarLocation&gt;
 &lt;mainClassName&gt;${app.mainClass}&lt;/mainClassName&gt;
 &lt;maximumMemoryHeap&gt;-1&lt;/maximumMemoryHeap&gt;
 &lt;maximumVersion&gt;&lt;/maximumVersion&gt;
