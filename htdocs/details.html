@@ -48,14 +48,9 @@
 
 <h1>BibTeXML documentation</h1>
 
-<p>
-Schemas and converters can be
-<a href="http://sourceforge.net/project/showfiles.php?group_id=56234"
-  >downloaded in one bundle.</a>
-</p>
+<h3>XML schemas</h3>
 
 <p>
-Schemas:
 bibtexml.rnc/.dtd is a direct representation of the BibTeX in XML,
 while in bibtexml-ext.rnc/.dtd we have added syntax for more detailed
 tagging, e.g. a comma separated list of authors can now be tagged
@@ -64,10 +59,27 @@ always valid `loose' documents, but not the other way around.
 The up-translation scripts will output strict BibTeXML markup.
 </p>
 
+<!--
 <p>
-Up-translation:
+Schemas and converters can be
+<a href="http://sourceforge.net/project/showfiles.php?group_id=56234"
+  >downloaded in one bundle.</a>
+</p>
+-->
+
+<h3>Up-translation of native BibTeX to XML</h3>
+
+<p>
 Use <a href="http://www.cs.colorado.edu/~henkel/stuff/bib2xml/">bib2xml</a>
 or the included bibtex2xml.py script to XMLize BibTeX data.
+</p>
+
+<p>
+<a href="jws/bibtexconverter.jnlp">Start BibTexConverter</a>
+instantly with Java Web Start.
+<br/>
+See the <a href="bibtexconverter-j.html">BibTeXConverter</a>
+page for more information.
 </p>
 
 <p>
@@ -76,16 +88,30 @@ For the intention of not typing bibliography metadata at all, search
    title="The link is a keyword search URL
 	  (bookmark with Firefox or add to Opera's search.ini)"
    >The Collection of Computer Science Bibliographies</a>
-for BibTeX formatted data, or try converting
+for BibTeX formatted data.
+<!--, or try converting
 <a href="http://lcweb.loc.gov/marc/">MARC</a> or RIS data
 exported from library databases
 (e.g. <a href="http://catalog.loc.gov/">Library of Congress</a>
 or <a href="http://wgate.bibsys.no/search/pub/">Bibsys</a>)
 to XML markup, although the included converter is experimental quality.
+-->
 </p>
 
 <p>
-Down-translation:
+Optionally, MODS can be used as an intermediate format:
+Convert BibTeX (.bib) to MODS XML with
+<a href="http://www.scripps.edu/~cdputnam/software/bibutils/">bibutils</a>,
+which can convert BibTeX, RIS, Endnote, and other bibliography formats to
+MODS XML (and back).
+For pretty printing of the MODS data in HTML, use
+<a href="http://xbiblio.sourceforge.net/citeproc.html">CiteProc</a>.
+</p>
+
+
+<h3>XSLT based bibliographic presentation and exchange</h3>
+
+<p>
 XSLT specs for converting BibTeX XML markup to
 BibTeX (LaTeX syntax),
 <a href="http://dublincore.org/" >Dublin Core</a>,
@@ -106,15 +132,6 @@ the <a href="http://www.amazon.com/" >Amazon.com</a> bookstore.
 See some <a href="examples.html" >examples</a>.
 </p>
 
-<p>
-Converting BibTeX (.bib) to MODS XML:
-<a href="http://www.scripps.edu/~cdputnam/software/bibutils/">bibutils</a>
-can convert BibTeX, RIS, Endnote, and other bibliography formats to
-MODS XML (and back). BibTeXML can also be seen as a intermediate
-format, but more suitable for converting .bib to HTML.
-For pretty printing of the MODS data in HTML, use
-<a href="http://xbiblio.sourceforge.net/citeproc.html">CiteProc</a>.
-</p>
 
 </div>
 </body>

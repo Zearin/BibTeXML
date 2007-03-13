@@ -10,6 +10,18 @@
     <language>en-us</language>
 
   <item>
+    <title>Java GUI application for BibTeX conversion</title>
+    <link>http://bibtexml.sourceforge.net/bibtexconverter-j.html</link>
+    <description>
+      BibTeXConverter,
+      a Java GUI application for BibTeX conversion
+      developed by Moritz Ringler,
+      is now part of this project.
+    </description>
+    <pubDate>Tue, 13 Mar 2007 20:37:47 +0100</pubDate>
+  </item>
+
+  <item>
     <title>BibTeXML Subversion repository</title>
     <link>http://sourceforge.net/svn/?group_id=56234</link>
     <description>
