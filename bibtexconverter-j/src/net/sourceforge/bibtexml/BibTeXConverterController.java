@@ -87,7 +87,7 @@ import org.xml.sax.SAXException;
 class BibTeXConverterController extends JFrame implements ActionListener{
     private static final Preferences PREF =
             Preferences.userNodeForPackage(BibTeXConverterController.class);
-    private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("bibconvert.png"));
+    private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("bibxml.png"));
 
     private Input input = Input.BIBTEX;
     BibTeXConverter convert = new BibTeXConverter();
