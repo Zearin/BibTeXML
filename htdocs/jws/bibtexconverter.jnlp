@@ -5,7 +5,7 @@
 #
 # bibtexconverter.jnlp	
 #
-# JNLP File for Mp3dings, based on the JNLP file for 
+# JNLP File for BibTeX Converter, based on the JNLP file for 
 # JabRef (http://jabref.sourceforge.net)
 #
 ###############################################################################
@@ -17,11 +17,11 @@
       href="bibtexconverter.jnlp">
 
    <information> 
-      <title>Mp3dings</title> 
-      <vendor>Mp3dings Project</vendor>
+      <title>BibTeX Converter</title> 
+      <vendor>BibTeXML Project</vendor>
       <homepage href="http://bibtexml.sourceforge.net"/>
-      <description>Mp3dings is a Java MP3 tagger and organizer with a clean spreadsheet-style user interface.</description>
-      <description kind="short">Mp3dings is a Java MP3 tagger and organizer.</description>
+      <description>BibTeX Converter is an all-Java GUI application that converts BibTeX to BibXML and onwards.</description>
+      <description kind="short">BibTeX Converter converts BibTeX to BibXML and onwards.</description>
       <icon href="bibtexml-duke.png" width="65" height="76" kind="default"/>
       <offline-allowed/> 
    </information> 
@@ -29,8 +29,8 @@
       <all-permissions/>
   </security>
    <resources>
-      <j2se version="1.4+" href="http://java.sun.com/products/autodl/j2se"/>
-      <j2se version="1.4+"/>
+      <j2se version="1.5+" href="http://java.sun.com/products/autodl/j2se"/>
+      <j2se version="1.5+"/>
       <jar href="bibtexconverter-0.1.jar" main="true" download="eager"/>
    </resources>
    <application-desc/>
