@@ -98,22 +98,22 @@
       </manifest>
     </jar>
   </target>
-  
+
   <target name="devel.sign.bin" depends="init">
   <!-- description="Sign the binary jarfile" -->
     <fail unless="sign.keystore"
-     message="You must set the sign.keystore property."/>
+        message="You must set the sign.keystore property."/>
     <fail unless="sign.keypass"
-     message="You must set the sign.keypass property." /> 
+        message="You must set the sign.keypass property." />
     <fail unless="sign.storepass"
-     message="You must set the sign.storepass property."/> 
-    <signjar 
-      jar="${binary}"
-      alias="ringler@users.sf.net"
-      keystore="${sign.keystore}"
-      storepass="${sign.storepass}"
-      keypass="${sign.keypass}"
-      lazy="true"/>
+        message="You must set the sign.storepass property."/>
+    <signjar
+        jar="${binary}"
+        alias="ringler@users.sf.net"
+        keystore="${sign.keystore}"
+        storepass="${sign.storepass}"
+        keypass="${sign.keypass}"
+        lazy="true"/>
   </target>
 
   <target name="addlibs" depends="binjar" if="app.includeLibs">
@@ -334,28 +334,116 @@ org.xml.sax.helpers
       </fileset>
     </delete>
   </target>
+
+  <target name="packaging.macosx.jarbundler.jb">
+    <jarbundler
+        dir="."
+        name="${app.name}"
+        mainclass="${app.mainClass}"
+        bundleid="${app.package}"
+        jars="${binary}"
+        version="${buildID}"
+        jvmversion="${app.javaVersionPlus}"
+        stubfile="JavaApplicationStub"
+        signature="${app.mac.signature}">
+      <javaproperty
+          name="apple.laf.useScreenMenuBar"
+          value="true"/>
+      <javaproperty
+          name="apple.laf.useScreenMenuBar"
+          value="true"/>
+      <javaproperty 
+          name="apple.awt.brushMetal"
+          value="true"/>
+      <javaproperty
+          name="apple.awt.showGrowBox"
+          value="false"/>
+    </jarbundler>
+  </target>
   
-	<target name="packaging.macosx.jarbundler" description="create a mac package, needs jarbundler 1.4 in the ant classpath.">
-    <property name="app.javaVersionPlus" value="${app.javaVersion}+"/>
+  <target
+      name="packaging.macosx.jarbundler"
+      depends="init"
+      description="create a mac package, needs jarbundler 1.4 in the ant classpath.">
+    <property
+        name="app.javaVersionPlus"
+        value="${app.javaVersion}+"/>
+    <property
+        name="packaging.macosx.jarbundler.app"
+        value="${app.name}.app" />
+    <property
+        name="packaging.macosx.jarbundler.info"
+        value="${packaging.macosx.jarbundler.app}/Contents/Info.plist" />
+    <property
+        name="packaging.macosx.jarbundler.stub"
+        value="${packaging.macosx.jarbundler.app}/Contents/MacOS/JavaApplicationStub"/>
+    <!-- JarBundler 1.9 -->
     <taskdef
-     name="jarbundler"
-     classname="com.loomcom.ant.tasks.jarbundler.JarBundler" />
-		<jarbundler
-     dir="."
-     name="${app.name}" 
-     mainclass="${app.mainClass}"
-     bundleid="de.mospace.mp3dings"
-     jars="${binary}"
-     version="${buildID}"
-     jvmversion="${app.javaVersionPlus}"
-     stubfile="JavaApplicationStub" />
+        name="jarbundler"
+        classname="net.sourceforge.jarbundler.JarBundler" />
+    <echo
+        message="Info: needs jarbundler 1.9 and ant 1.7." />
+    <antcall target="packaging.macosx.jarbundler.jb"/>
+    <!-- patch Info.plist to register mac os x file extensions -->
+    <!--
+    <xslt
+        style="mac_file_association.xslt"
+        in="${packaging.macosx.jarbundler.info}"
+        out="${packaging.macosx.jarbundler.info}2"/>
+    <move
+        file="${packaging.macosx.jarbundler.info}2"
+        tofile="${packaging.macosx.jarbundler.info}"/>
+      -->  
+    <!-- replace CRLF by LF -->
+    <replaceregexp match="&#13;&#10;" replace="&#10;" flags="g" byline="false">
+      <fileset dir="${packaging.macosx.jarbundler.app}" >
+        <include name="**/PkgInfo" />
+        <include name="**/Info.plist" />
+      </fileset>
+    </replaceregexp>
+    
+    <condition property="isMacOs">
+      <os family="mac"/>
+    </condition>
+    <antcall target="packaging.macosx.jarbundler.replacestub"/>
+
+    <!-- zip everything except JavaApplicationStub with default access -->
     <zip
-      destfile="${app.name}-${buildID}.OSX.zip"
-      compress="true"
-      basedir="."
-      includes="${app.name}.app/**"/>
-    <delete dir="${app.name}.app"/>
-	</target>
+        destfile="${app.name}-${buildID}.OSX.zip"
+        compress="true"
+        basedir="."
+        includes="${packaging.macosx.jarbundler.app}/**"
+        excludes="**/JavaApplicationStub"
+        encoding="utf-8"
+        update="false" />
+    <!-- add JavaApplicationStub with access 744 (_rwxr__r__) -->
+    <zip
+        destfile="${app.name}-${buildID}.OSX.zip"
+        compress="true"
+        encoding="utf-8"
+        update="true">
+      <zipfileset
+          fullpath="${packaging.macosx.jarbundler.stub}"
+          file="${packaging.macosx.jarbundler.stub}"
+          filemode="744"
+          encoding="utf-8" />
+    </zip>
+    <delete dir="${packaging.macosx.jarbundler.app}"/>
+  </target>
+
+  <target
+      name="packaging.macosx.jarbundler.replacestub"
+      if="isMacOS">
+    <!-- This only works on a Mac -->
+    <!-- Delete the JavaApplicationStub and replace it with a symbolic link
+         which should work on older and future versions of OS X -->
+    <!-- Taken from http://informagen.com/JarBundler/StubFile.html -->
+    <delete file="${packaging.macosx.jarbundler.stub}"/>
+    <exec executable="ln">
+      <arg line="-s /System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub"/>
+      <arg value="${packaging.macosx.jarbundler.stub}"/>
+    </exec>
+  </target>
 
   <!-- JSMOOTH PROJCET -->
   <target

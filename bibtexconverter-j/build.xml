@@ -11,34 +11,50 @@
     Buildfile for bibtexconverter application
   </description>
   <!-- global properties used by ant-shared.xml -->
-  <property name="src"
+  <property
+      name="src"
       value="src"/>
-  <property name="build"
+  <property 
+      name="build"
       value="classes"/>
-  <property name="javadoc"
+  <property
+      name="javadoc"
       value="doc/api"/>
-  <property name="app.packagePath"
+  <property
+      name="app.package" 
+      value="net.sourceforge.bibtexml" />
+  <property 
+      name="app.mac.signature"
+      value="btcj"/>
+  <property
+      name="app.packagePath"
       value="de/mospace/xml/**, net/sourceforge/bibtexml/**, de/mospace/swing/**, de/mospace/lang/**, net/sourceforge/texlipse/**"/>
-  <property name="texlipse"
-       value="net.sourceforge.texlipse" />
-  <property name="bp"
-       value="${texlipse}.bibparser"/>
-  <property name="dms"
-       value="de.mospace.swing"/>
-  <property name="app.packageList"
-      value="de.mospace.xml, net.sourceforge.bibtexml, de.mospace.lang, ${dms},
-      ${dms}.text, ${dms}.event, ${dms}.table, ${dms}.icon,
-      ${bp}, ${bp}.analysis, ${bp}.lexer, ${bp}.node
-      ${bp}.parser, ${texclipse}.model"/>
-  <property name="app.mainClass"
+  <property
+      name="texlipse"
+      value="net.sourceforge.texlipse" />
+  <property
+      name="bp"
+      value="${texlipse}.bibparser"/>
+  <property
+      name="dms"
+      value="de.mospace.swing"/>
+  <property
+      name="app.packageList"
+      value="de.mospace.xml, net.sourceforge.bibtexml, de.mospace.lang, ${dms}, ${dms}.text, ${dms}.event, ${dms}.table, ${dms}.icon, ${bp}, ${bp}.analysis, ${bp}.lexer, ${bp}.node ${bp}.parser, ${texclipse}.model"/>
+  <property
+      name="app.mainClass"
       value="net.sourceforge.bibtexml.BibTeXConverter"/>
-  <property name="app.name"
+  <property
+      name="app.name"
       value="BibTeXConverter"/>
-  <property name="app.src.lib"
-      value="src-lib/gpsdings-lib-1.0.src.zip  src-lib/mp3dings-lib-1.0.src.zip"/>
-  <property name="app.javaVersion"
+  <property
+      name="app.src.lib"
+      value="src-lib/gpsdings-lib-1.0.src.zip src-lib/mp3dings-lib-1.0.src.zip"/>
+  <property
+      name="app.javaVersion"
       value="1.5"/>
-  <property name="app.icon"
+  <property
+      name="app.icon"
       value="${src}\net\sourceforge\bibtexml\bibxml.png"/>
   <!--
   <property name="app.jsmooth.skeleton"
@@ -46,13 +62,44 @@
   -->
 
    <!-- IMPORT SHARED TARGETS -->
-   <import file="./ant-shared.xml"/>
+  <import file="./ant-shared.xml"/>
 
-   <target name="copy" depends="shared.copy"/>
+  <target name="copy" depends="shared.copy"/>
 
-   <target name='parser' description='(Re-)generate parser and lexer source files, needs sable-cc.jar and sablecc-anttask.jar in ANT_HOME/lib'>
-       <taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc"></taskdef>
-       <sablecc src="${src}/net/sourceforge/texlipse" includes="*.sablecc" outputdirectory="${src}"/>
-    </target>
+  <target name="parser" description="(Re-)generate parser and lexer source files, needs sable-cc.jar and sablecc-anttask.jar in ANT_HOME/lib">
+    <taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc"></taskdef>
+    <sablecc src="${src}/net/sourceforge/texlipse" includes="*.sablecc" outputdirectory="${src}"/>
+  </target>
+  
+  <!-- overwrites ant-shared.xml's target of the same name
+       in order to register file types -->
+  <target name="packaging.macosx.jarbundler.jb">
+    <!-- copied from ant-shared -->
+    <jarbundler
+        dir="."
+        name="${app.name}"
+        mainclass="${app.mainClass}"
+        bundleid="${app.package}"
+        jars="${binary}"
+        version="${buildID}"
+        jvmversion="${app.javaVersionPlus}"
+        stubfile="JavaApplicationStub"
+        signature="${app.mac.signature}">
+      <javaproperty
+          name="apple.laf.useScreenMenuBar"
+          value="true"/>
+      <javaproperty 
+          name="apple.awt.brushMetal"
+          value="true"/>
+      <javaproperty
+          name="apple.awt.showGrowBox"
+          value="false"/>
+      <!-- specific to bibtexconverter -->
+      <documenttype
+       name="BibTeX Document"
+       extensions="bib btx"
+       role="Editor"/>
+    </jarbundler>
+  </target>
 
 </project>
