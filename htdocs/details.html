@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" >
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-uk">
@@ -51,33 +51,33 @@
 <h3>XML schemas</h3>
 
 <p>
-bibtexml.rnc/.dtd is a direct representation of the BibTeX in XML,
-while in bibtexml-ext.rnc/.dtd we have added syntax for more detailed
-tagging, e.g. a comma separated list of authors can now be tagged
-individually with firstname and lastname. `strict' documents are
-always valid `loose' documents, but not the other way around.
-The up-translation scripts will output strict BibTeXML markup.
+<a href="http://sourceforge.net/project/showfiles.php?group_id=56234"
+  >bibtexml.rnc|xsd|dtd</a>
+is a direct representation of the BibTeX in XML, while in
+bibtexmlExtended.* we have added syntax for more detailed tagging,
+e.g. a comma separated list of authors can now be tagged individually
+with firstname and lastname. “strict” documents are always valid
+“loose” documents, but not the other way around.
+<!--The up-translation scripts will output strict BibTeXML markup.-->
 </p>
 
-<!--
-<p>
-Schemas and converters can be
-<a href="http://sourceforge.net/project/showfiles.php?group_id=56234"
-  >downloaded in one bundle.</a>
-</p>
--->
 
 <h3>Up-translation of native BibTeX to XML</h3>
 
 <p>
 To XMLize BibTeX data, use
 <a href="http://www.cs.colorado.edu/~henkel/stuff/bib2xml/">bib2xml</a>,
-the included bibtex2xml Python script,
+the included
+<a href="http://sourceforge.net/project/showfiles.php?group_id=56234"
+  >bibtex2xml</a> Python script,
 or <a href="bibtexconverter-j.html">BibTeXConverter</a>
 which can be
 <a href="jws/bibtexconverter.jnlp"
    >started using Java Web Start</a>.
 </p>
+
+
+<h3>Workflow ideas</h3>
 
 <p>
 For the intention of not typing bibliography metadata at all,
