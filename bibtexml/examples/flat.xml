@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<file xmlns="http://bibtexml.sf.net/">
+
+<entry id="doiRef">
+  <manual>
+    <author>Norman Paskin</author>
+    <title>The DOI® Handbook</title>
+    <organization>International DOI Foundation</organization>
+    <month>Oct</month>
+    <year>2006</year>
+    <url>http://www.doi.org/handbook_2000/toc.html</url>
+    <doi>10.1000/182</doi>
+    <version>4.4.1</version>
+  </manual>
+</entry>
+
+<entry id="fastRegexIndexing">
+  <inproceedings>
+    <author>Junghoo Cho</author>
+    <author>Rajagopalan, S.</author>
+    <title>A fast regular expression indexing engine</title>
+    <booktitle>
+      Data Engineering, 2002.
+      Proceedings. 18th International Conference on
+    </booktitle>
+    <year>2002</year>
+    <pages>419--430</pages>
+    <month>Mar</month>
+    <doi>10.1109/ICDE.2002.994755</doi>
+    <abstract>
+In this paper; we describe the design, architecture, and lessons learned from the implementation of a fast regular-expression indexing engine FREE. FREE uses a prebuilt index to identify the text data units which may contain a matching string and only examines these further. In this way, FREE shows orders of magnitude performance improvement in certain cases over standard regular expression matching systems, such as lex, awk and grep
+    </abstract>
+  </inproceedings>
+</entry>
+
+<entry id="regexBloodPressure">
+  <article>
+    <author>Alexander Turchin</author>
+    <author>Nikheel S. Kolatkar</author>
+    <author>Richard W. Grant</author>
+    <author>Eric C. Makhni</author>
+    <author>Merri L. Pendergrass</author>
+    <author>Jonathan S. Einbinder</author>
+    <title>
+      Using Regular Expressions to Abstract Blood Pressure
+      and Treatment Intensification Information from the
+      Text of Physician Notes
+    </title>
+    <journal>J Am Med Inform Assoc.</journal>
+    <year>2006</year>
+    <number>13</number>
+    <pages>691-695</pages>
+    <month>Aug</month>
+    <doi>10.1197/jamia.M2078</doi>
+    <abstract>
+This case study examined the utility of regular expressions to identify clinical data relevant to the epidemiology of treatment of hypertension. We designed a software tool that employed regular expressions to identify and extract instances of documented blood pressure values and anti-hypertensive treatment intensification from the text of physician notes. We determined sensitivity, specificity and precision of identification of blood pressure values and anti-hypertensive treatment intensification using a gold standard of manual abstraction of 600 notes by two independent reviewers. The software processed 370 Mb of text per hour, and identified elevated blood pressure documented in free text physician notes with sensitivity and specificity of 98%, and precision of 93.2%. Anti-hypertensive treatment intensification was identified with sensitivity 83.8%, specificity of 95.0%, and precision of 85.9%. Regular expressions can be an effective method for focused information extraction tasks related to high-priority disease areas such as hypertension.
+    </abstract>
+    <note>
+      Correspondence and reprints: Alexander Turchin, MD, MS, Clinical Informatics Research and Development, Partners HealthCare System, 93 Worcester Street, Suite 201, Wellesley, MA 02481.
+    </note>
+    <email>aturchin at partners dot org</email>
+  </article>
+</entry>
+
+<entry id="esbensen">
+  <book>
+    <author>Kim Esbensen</author>
+    <author>Tonje Midtgaard</author>
+    <author>Suzanne Schönkopf</author>
+    <title>Multivariate Analysis in Practice</title>
+    <publisher>Camo AS</publisher>
+    <year>1994</year>
+    <address>Trondheim</address>
+    <isbn>82-993330-0-8</isbn>
+  </book>
+</entry>
+
+<entry id="stone.brooks">
+<article>
+<author>M. Stone</author>
+<author>R.J. Brooks</author>
+<title>Continuum regression:
+cross-validated sequentally constructed prediction embracing
+ordinary least squares, partial least squares and principal
+component regression (with discussion)</title>
+<journal>J. R. Statistics Soc. B. Met.</journal>
+<year>1990</year>
+<volume>52</volume>
+<pages>237-269</pages>
+</article>
+</entry>
+
+</file>
