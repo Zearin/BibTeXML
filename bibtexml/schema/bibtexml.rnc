@@ -207,7 +207,7 @@ attlist.inproceedings &= empty
 
 ## [conference] The same as INPROCEEDINGS,
 ##   included for Scribe compatibility.
-conference.content = inproceedings.standard.class, common.fields.class
+conference.content = inproceedings.content
 conference =
       element conference {
             attlist.conference, conference.content
@@ -231,12 +231,18 @@ manual.content = manual.standard.class, common.fields.class
 manual = element manual { attlist.manual, manual.content }
 attlist.manual &= empty
 
-## [mastersthesis] A Master's thesis.
+
+## %thesis; mastersthesis and phdthesis are identical
 ##   Required fields: author, title, school, year.
 ##   Optional fields: type, address, month, note.
 thesis.standard.class =
       author, title, school, year, type?, address?, month?, note?
-mastersthesis.content = thesis.standard.class, common.fields.class
+thesis.content = thesis.standard.class, common.fields.class
+
+## [mastersthesis] A Master's thesis.
+##   Required fields: author, title, school, year.
+##   Optional fields: type, address, month, note.
+mastersthesis.content = thesis.content
 mastersthesis =
       element mastersthesis {
             attlist.mastersthesis, mastersthesis.content
@@ -246,7 +252,7 @@ attlist.mastersthesis &= empty
 ## [phdthesis] A PhD thesis.
 ##   Required fields: author, title, school, year.
 ##   Optional fields: type, address, month, note.
-phdthesis.content = thesis.standard.class, common.fields.class
+phdthesis.content = thesis.content
 phdthesis =
       element phdthesis {
             attlist.phdthesis, phdthesis.content
@@ -326,7 +332,7 @@ attlist.unpublished &= empty
 ##   Below follows fields recognized by the standard bibliography
 ##   styles. An entry can also contain other fields, which are
 ##   ignored by those styles. Included in the schema to enable reuse
-##   into a flat BibTeX markup scheme.
+##   into a flat BibTeX markup scheme, with optional field order.
 all.standard.fields.class =
    address?
  & annote?

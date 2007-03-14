@@ -131,7 +131,7 @@ doi =
 ## [DOI]  The Digital Object Identifier
 ##        used to redirect to articles, a key like 10.1000/203
 ##        Ref: http://www.doi.org/
-   element doi { text }
+   element doi { xsd:string { pattern="[0-9]{0,2}\.[0-9]{0,4}/.*" } }
 
 
 person =

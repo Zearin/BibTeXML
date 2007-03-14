@@ -28,10 +28,30 @@ default namespace bibtex = "http://bibtexml.sf.net/"
 
 # Reuse the strict BibTeXML schema
 include "bibtexml.rnc" {
+      # Multiple authors in following tags
+      author = element author { attlist.author, text }+
+      editor = element editor { attlist.editor, text }+
       # Content of given elements are redefined.
       common.fields.class =
             all.standard.fields.class
           & user.fields.class
+          & anyElement*
+      # Allow any fields in any order
+      article.content = common.fields.class
+      book.content = common.fields.class
+      booklet.content = common.fields.class
+      inbook.content = common.fields.class
+      incollection.content = common.fields.class
+      inproceedings.content = common.fields.class
+      manual.content = common.fields.class
+      thesis.content = common.fields.class
+      misc.content = common.fields.class
+      proceedings.content = common.fields.class
+      techreport.content = common.fields.class
+      unpublished.content = common.fields.class
+      # Lighten up on allowed data types
+      month = element month { attlist.month, text }
+      chapter = element chapter { attlist.chapter, text }
 }
 
 
@@ -127,5 +147,11 @@ doi =
 ## [DOI]  The Digital Object Identifier
 ##        used to redirect to articles, a key like 10.1000/203
 ##        Ref: http://www.doi.org/
-   element doi { text }
+   element doi { xsd:string { pattern="[0-9]{0,2}\.[0-9]{0,4}/.*" } }
+
+
+## Arbitrary element names are allowed.
+##   Examples of such fields are
+##   acknowledgement, comment, owner, class
+anyElement = element * { text }
 
