@@ -234,6 +234,7 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
 
     /** The method that starts up the BibTeXConverter Application. **/
     public static void main(String[] argv) throws Exception{
+        System.setSecurityManager(null);
         LookAndFeelMenu.setLookAndFeel(
             Preferences.userNodeForPackage(BibTeXConverterController.class),
             null);
