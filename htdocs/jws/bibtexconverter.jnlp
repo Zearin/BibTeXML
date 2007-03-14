@@ -22,7 +22,7 @@
       <homepage href="http://bibtexml.sourceforge.net"/>
       <description>BibTeX Converter is an all-Java GUI application that converts BibTeX to BibXML and onwards.</description>
       <description kind="short">BibTeX Converter converts BibTeX to BibXML and onwards.</description>
-      <icon href="bibtexml-duke.png" width="65" height="76" kind="default"/>
+      <icon href="bibxml-duke.png" width="65" height="76" kind="default"/>
       <offline-allowed/> 
    </information> 
   <security>
