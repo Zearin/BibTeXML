@@ -27,33 +27,21 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 import java.util.prefs.Preferences;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -68,14 +56,13 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import javax.swing.*;
-import net.sourceforge.bibtexml.BibTeXConverter.*;
+import javax.swing.SwingUtilities;
 import de.mospace.swing.LookAndFeelMenu;
 import de.mospace.swing.PathInput;
 import de.mospace.swing.text.DocumentOutputStream;
+import net.sourceforge.bibtexml.BibTeXConverter.*;
 import org.xml.sax.SAXException;
 
 /** When I wrote BibTeXConverterController I realized it can be used as
@@ -108,6 +95,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
     private JComboBox encodings;
     private String groupingKey = "keywords";
     private Container styleContainer = Box.createVerticalBox();
+    protected File styledir;
 
     private SaxonGUI() throws SAXException, IOException{
         super("Saxon GUI");
@@ -116,6 +104,9 @@ public class SaxonGUI extends JFrame implements ActionListener{
             tf = convert.loadTransformerFactory(this);
         }
         init(tf != null);
+        String styledirpath = PREF.get("styledir", null);
+        styledir = (styledirpath == null)? null : new File(styledirpath);
+
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         if(tf == null){
             System.err.println("Saxon not found!");
@@ -377,7 +368,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
     }
     
     public boolean addStyle(){
-        JFileChooser jfc = new JFileChooser();
+        JFileChooser jfc = new JFileChooser(styledir);
         jfc.setDialogTitle("Choose an XSLT stylesheet");
         jfc.setMultiSelectionEnabled(false);
         int returnVal = jfc.showOpenDialog(this);
@@ -388,6 +379,11 @@ public class SaxonGUI extends JFrame implements ActionListener{
             } catch (Exception ex){
                 ex.printStackTrace();
             }
+        }
+        File dir = jfc.getCurrentDirectory();
+        if(dir != null){
+            styledir = dir;
+            PREF.put("styledir", styledir.getAbsolutePath());
         }
         if(style == null){
             return false;
@@ -531,6 +527,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
         boolean result = styles.remove(cssc);
         if(result){
             styleContainer.remove(cssc.getUI());
+            cssc.dispose();
         }
         return result;
     }
