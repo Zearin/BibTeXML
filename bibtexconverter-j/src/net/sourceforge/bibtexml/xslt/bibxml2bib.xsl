@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
-<xsl:stylesheet version="1.0"
+<xsl:stylesheet version="2.0"
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 		xmlns:bibtex="http://bibtexml.sf.net/">
+  <xsl:param name="bibtexml.sf.net.encoding" select="'ISO-8859-1'" />
   <xsl:output method="text"
-	      media-type="application/x-bibtex" />
+	      media-type="application/x-bibtex"
+        encoding="ISO-8859-1" />
   <xsl:include href="include/extended.xsl"/>
 
   <!--
