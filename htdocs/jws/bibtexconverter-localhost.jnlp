@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+###############################################################################
+#
+# bibtexconverter-localhost.jnlp	
+#
+# This is for testing java web start on a local web server
+#
+###############################################################################
+ -->
+
+
+<jnlp spec="0.2 1.0"
+      codebase="http://localhost/bibtexml.sourceforge.net/jws/"
+      href="bibtexconverter.jnlp">
+
+   <information> 
+      <title>BibTeX Converter</title> 
+      <vendor>BibTeXML Project</vendor>
+      <homepage href="http://bibtexml.sourceforge.net"/>
+      <description>BibTeX Converter is an all-Java GUI application that converts BibTeX to BibXML and onwards.</description>
+      <description kind="short">BibTeX Converter converts BibTeX to BibXML and onwards.</description>
+      <icon href="bibxml-duke.png" width="65" height="76" kind="default"/>
+      <offline-allowed/> 
+   </information> 
+  <security>
+      <all-permissions/>
+  </security>
+   <resources>
+      <j2se version="1.5+" href="http://java.sun.com/products/autodl/j2se"/>
+      <j2se version="1.5+"/>
+      <jar href="bibtexconverter-0.1.01.jar" main="true" download="eager"/>
+   </resources>
+   <application-desc/>
+</jnlp> 
