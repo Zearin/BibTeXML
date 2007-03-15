@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.prefs.Preferences;
@@ -49,7 +50,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
-import de.mospace.lang.*;
+import de.mospace.lang.BrowserLauncher;
+import de.mospace.lang.ClassLoaderProvider;
+import de.mospace.lang.DefaultClassLoaderProvider;
 import de.mospace.swing.ExtensionInstaller;
 import de.mospace.swing.PathInput;
 
@@ -73,18 +76,27 @@ final class About extends JDialog implements ActionListener {
         Container cp = getContentPane();
         setTitle("About BibTeXConverter");
         setResizable(false);
-
+        
+        String version = "";
+        try{
+            Properties p = new Properties();
+            p.load(getClass().getResourceAsStream("version.properties"));
+            version = p.getProperty("version") + " (build " + p.getProperty("build") + ")";
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+        
         JLabel image = new JLabel(logo);
         JLabel text = new JLabel(
             "<html>" +
-            "<b>BibTeXConverter alpha-1</b><br>" +
+            "<b>BibTeXConverter " + version + "</b><br>" +
 
             /*
             "<a href=\"http://mp3dings.sourceforge.net\">" +
             "http://mp3dings.sourceforge.net</a><br><br>" +
             */
 
-            "&copy; Moritz Ringler, 2006<br><br>" +
+            "&copy; Moritz Ringler, 2006-2007<br><br>" +
             "<b>BibTeX-Parsers:</b><br>" +
             "<u>texlipse.sf.net</u><br>&copy; Oskar Ojala, 2004-2005<br>" +
             "<u>bibtexml.sf.net</u><br>bibtex2xml.py: &copy; Vidar Bronken Gundersen, Sara Sprenkle<br>" +
