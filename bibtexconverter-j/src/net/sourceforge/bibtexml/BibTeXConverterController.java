@@ -99,8 +99,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
     private final static String RIS = "RIS (Reference Manager & Endnote)";
     private final static String HTMLFLAT = "HTML (flat)";
     private final static String HTMLGROUPED = "HTML (grouped)";
+    private final static String BIBTEX = "BibTeX";
     private final static String[] BUILTIN = new String[]{
-        RIS, HTMLFLAT, HTMLGROUPED};
+        BIBTEX, RIS, HTMLFLAT, HTMLGROUPED};
 
     final static String DEFAULT_ENC = BibTeXConverter.DEFAULT_ENC;
 
@@ -114,6 +115,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
     private JComboBox encodings;
     private String groupingKey = "keywords";
     private Container styleContainer = Box.createVerticalBox();
+    protected File styledir;
 
     public BibTeXConverterController() throws SAXException, IOException{
         super("BibTeXConverter");
@@ -122,12 +124,18 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             tf = convert.loadTransformerFactory(this);
         }
         init(tf != null);
+         String styledirpath = PREF.get("styledir", null);
+         styledir = (styledirpath == null)? null : new File(styledirpath);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         if(tf == null){
             System.err.println("Saxon not found!");
             System.err.println("Only XML output is possible.");
         } else {
             /* load built-in styles */
+            addStyle(
+                new StyleSheetController(convert, BIBTEX, "-new.bib",
+                        getClass().getResource("xslt/bibxml2bib.xsl"),
+                        false, true, true));
             addStyle(
                 new StyleSheetController(convert, RIS, ".ris",
                         getClass().getResource("xslt/bibxml2ris.xsl"),
@@ -646,7 +654,6 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             null;
     }
     
-    protected File styledir = null;
     public boolean addStyle(){
         JFileChooser jfc = new JFileChooser(styledir);
         jfc.setDialogTitle("Choose an XSLT stylesheet");
@@ -663,6 +670,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         File dir = jfc.getCurrentDirectory();
         if(dir != null){
             styledir = dir;
+            PREF.put("styledir", styledir.getAbsolutePath());
         }
         if(style == null){
             return false;
@@ -806,6 +814,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         boolean result = styles.remove(cssc);
         if(result){
             styleContainer.remove(cssc.getUI());
+            cssc.dispose();
         }
         return result;
     }
