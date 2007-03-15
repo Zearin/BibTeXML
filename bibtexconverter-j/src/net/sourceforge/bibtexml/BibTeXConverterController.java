@@ -72,17 +72,16 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
-import net.sourceforge.bibtexml.BibTeXConverter.*;
 import de.mospace.swing.LookAndFeelMenu;
 import de.mospace.swing.PathInput;
 import de.mospace.swing.text.DocumentOutputStream;
+import net.sourceforge.bibtexml.BibTeXConverter.*;
 import org.xml.sax.SAXException;
 
 //ToDo:
 //insert doctype declaration into xml output
 //* Think about output encoding:
 //  - Which encoding(s) can you use for RIS?
-//* Cleaned bibtex output (when input is bibtex)
 
 class BibTeXConverterController extends JFrame implements ActionListener{
     private static final Preferences PREF =
@@ -124,8 +123,8 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             tf = convert.loadTransformerFactory(this);
         }
         init(tf != null);
-         String styledirpath = PREF.get("styledir", null);
-         styledir = (styledirpath == null)? null : new File(styledirpath);
+        String styledirpath = PREF.get("styledir", null);
+        styledir = (styledirpath == null)? null : new File(styledirpath);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         if(tf == null){
             System.err.println("Saxon not found!");
