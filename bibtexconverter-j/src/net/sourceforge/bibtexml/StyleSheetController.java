@@ -180,7 +180,7 @@ class StyleSheetController {
         init(customParams, customEncoding);
     }
     
-    private void setConfigVisible(boolean b){
+    private synchronized void setConfigVisible(boolean b){
         if(dialog != null && dialog.isVisible()){
             if(b){
                 custom.requestFocus();
@@ -302,6 +302,11 @@ class StyleSheetController {
                 in.close();
                 in = new BufferedInputStream(style.openStream());
                 params = XSLParamHandler.getStyleSheetParameters(in);
+                for(String key : params.keySet().toArray(new String[0])){
+                    if(key.startsWith(BibTeXConverter.INTERNAL_PARAMETER_PREFIX)){
+                        params.remove(key);
+                    }
+                }
                 customParams = (params.size() > 0);
             }
         } catch (TransformerConfigurationException ex){
@@ -540,6 +545,14 @@ class StyleSheetController {
                 }
             }
         });
+    }
+    
+    public synchronized void dispose(){
+        if(dialog != null){
+            dialog.setVisible(false);
+            dialog.dispose();
+        }
+        dialog = null;
     }
     
     public Component getUI(){
