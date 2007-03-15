@@ -130,11 +130,11 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             /* load built-in styles */
             addStyle(
                 new StyleSheetController(convert, RIS, ".ris",
-                        getClass().getResource("bibxml2ris.xsl"),
+                        getClass().getResource("xslt/bibxml2ris.xsl"),
                         false, false, true));
             addStyle(
                 new StyleSheetController(convert, HTMLFLAT, ".html",
-                        getClass().getResource("bibxml2html.xsl"),
+                        getClass().getResource("xslt/bibxml2html.xsl"),
                         true, true, false){
                     public boolean transformImpl(File a, File b){
                         return checkPdfDirURI(params) && super.transformImpl(a, b);
@@ -142,7 +142,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                 });
             addStyle(
                 new StyleSheetController(convert, HTMLGROUPED, "g.html",
-                        getClass().getResource("bibxml2htmlg.xsl"),
+                        getClass().getResource("xslt/bibxml2htmlg.xsl"),
                         true, true, false){
                     public boolean transformImpl(File a, File b){
                         return checkPdfDirURI(params) && super.transformImpl(a, b);
@@ -570,8 +570,8 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         if(html){
             try{
                 /* Creates CSS and JavaScript used by the HTML output. */
-                convert.copyResourceToFile("default.css", dir);
-                convert.copyResourceToFile("toggle.js", dir);
+                convert.copyResourceToFile("xslt/default.css", dir);
+                convert.copyResourceToFile("xslt/toggle.js", dir);
             }  catch (IOException ex){
                 convert.handleException("Cannot generate javascript or css.", ex);
             }
@@ -646,8 +646,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             null;
     }
     
+    protected File styledir = null;
     public boolean addStyle(){
-        JFileChooser jfc = new JFileChooser();
+        JFileChooser jfc = new JFileChooser(styledir);
         jfc.setDialogTitle("Choose an XSLT stylesheet");
         jfc.setMultiSelectionEnabled(false);
         int returnVal = jfc.showOpenDialog(this);
@@ -658,6 +659,10 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             } catch (Exception ex){
                 ex.printStackTrace();
             }
+        }
+        File dir = jfc.getCurrentDirectory();
+        if(dir != null){
+            styledir = dir;
         }
         if(style == null){
             return false;
