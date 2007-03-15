@@ -600,7 +600,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         try{
             reader = new BufferedReader(new FileReader(inp));
             String line;
-            Matcher m = Pattern.compile("(?i)Encoding:?\\s*(\\w+)").matcher("");
+            Matcher m = Pattern.compile("(?i)Encoding:?\\s*([\\w_-]+)").matcher("");
             for(int i=0; i<5; i++){
                 line = reader.readLine();
                 if(line == null){
