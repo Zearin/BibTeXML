@@ -7,9 +7,8 @@
 <!-- in the output. Do not remove them!                  -->
 <xsl:stylesheet version="2.0"
  xmlns:bibtex="http://bibtexml.sf.net/"
- xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
- xmlns:fn="http://www.w3.org/2003/11/xpath-functions">
-<xsl:output method="text" indent="no" encoding="iso-8859-1"/>
+ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="text" indent="no" encoding="windows-1252"/>
 <xsl:strip-space elements="*"/>
 
 <xsl:template match="/"><xsl:apply-templates select="bibtex:file"/></xsl:template>
