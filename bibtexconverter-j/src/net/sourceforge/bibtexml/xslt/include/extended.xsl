@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xsl:stylesheet version="1.0"
+<xsl:stylesheet version="2.0"
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 		xmlns:bibtex="http://bibtexml.sf.net/">
 
@@ -57,33 +57,38 @@
 
 
   <xsl:template name="bibtexml-latex-warning">
-    <xsl:text disable-output-escaping="yes"><![CDATA[
+    <xsl:text 
+    disable-output-escaping="yes"><![CDATA[This file was created with JabRef % it was not, but this makes jabref read the encoding
+Encoding: ]]></xsl:text><xsl:value-of 
+select="$bibtexml.sf.net.encoding"/><xsl:text 
+disable-output-escaping="yes"><![CDATA[
 %%% BibTeX-file {
 %%%    author	 = "",
 %%%    filename  = "",
-%%%    date      = "",
+%%%    date      = "]]></xsl:text><xsl:value-of
+select="format-dateTime(current-dateTime(),'[Y0001]-[M01]-[D01] [H01]:[m01]:[s01][Z]')"/><xsl:text
+disable-output-escaping="yes"><![CDATA[",
 %%%    version   = "",
 %%%    address   = "",
 %%%    URL       = "",
 %%%    email     = "",
-%%%    codetable = "UTF-8",
+%%%    codetable = "]]></xsl:text><xsl:value-of
+select="$bibtexml.sf.net.encoding"/><xsl:text
+disable-output-escaping="yes"><![CDATA[,
 %%%    supported = "yes|no",
 %%%    docstring = "",
 %%%    keywords  = "",
 %%% }
 %%%
 %%%    Bibliography text for LaTeX inclusion
-%%%    --  output encoding is UTF-8, you need to
-%%%    --  convert non-ascii characters to latex control sequences
+%%%    You need to manually
 %%%    --  escape reserved latex characters
 %%%    --  review according to the citation style recommendation
 %%%    --  edit the above metadata
 %%%
 %%%    Generated using tools from http://bibtexml.sf.net/
 %%%    License: http://creativecommons.org/licenses/GPL/2.0/
-
-]]></xsl:text>
-  </xsl:template>
+]]></xsl:text></xsl:template>
 
 
 </xsl:stylesheet>
