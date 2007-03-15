@@ -52,7 +52,8 @@ import de.mospace.swing.LookAndFeelMenu;
 public class BibTeXConverter extends DefaultClassLoaderProvider{
     private final static boolean cleanInput = true;
     private TransformerFactory tf;
-    protected final static String DEFAULT_ENC = "ISO-8859-1";
+    protected final static String DEFAULT_ENC = Charset.defaultCharset().name();
+    protected final static String INTERNAL_PARAMETER_PREFIX = "bibtexml.sf.net.";
     private String xmlenc = DEFAULT_ENC;
     protected final static Parser DEFAULT_PARSER = Parser.TEXLIPSE;
     public final static String TRANSFORMER_FACTORY_IMPLEMENTATION =
@@ -167,6 +168,7 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
             }
         }
         if(encoding != null){
+            t.setParameter(INTERNAL_PARAMETER_PREFIX +"encoding", encoding);
             t.setOutputProperty(OutputKeys.ENCODING, encoding);
         }
         
@@ -313,7 +315,12 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
         if(!target.isDirectory()){
             target = target.getAbsoluteFile().getParentFile();
         }
-        target = new File(target, resourcename);
+        int lastslash = resourcename.lastIndexOf('/');
+        if(lastslash == resourcename.length()){
+            throw new IllegalArgumentException("Resourcename may not end with a slash.");
+        }
+        target = new File(target, (lastslash < 0) ? resourcename
+                : resourcename.substring(lastslash + 1));
         InputStream in = null;
         OutputStream out = null;
         try{
