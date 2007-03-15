@@ -64,8 +64,6 @@
    <!-- IMPORT SHARED TARGETS -->
   <import file="./ant-shared.xml"/>
 
-  <target name="copy" depends="shared.copy"/>
-
   <target name="parser" description="(Re-)generate parser and lexer source files, needs sable-cc.jar and sablecc-anttask.jar in ANT_HOME/lib">
     <taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc"></taskdef>
     <sablecc src="${src}/net/sourceforge/texlipse" includes="*.sablecc" outputdirectory="${src}"/>
@@ -100,6 +98,34 @@
        extensions="bib btx"
        role="Editor"/>
     </jarbundler>
+  </target>
+  
+<target name="devel.ftp.upload"
+    depends="init"><!--
+    description="[developers only] Copies distribution files to SF.net upload server" -->
+    <ftp
+     server="upload.sf.net"
+     userid="anonymous"
+     password=""
+     remotedir="incoming"
+     verbose="yes">
+     <fileset dir=".">
+        <include name="${ant.project.name}-${buildID}.jar"/>
+        <include name="${ant.project.name}-${buildID}-src.zip"/>
+        <include name="${ant.project.name}.exe"/>
+     </fileset>
+     <!--
+     <fileset dir="installer">
+        <include name="${ant.project.name}-${buildID}-setup.exe"/>
+     </fileset>
+     -->
+    </ftp>
+  </target>
+  
+  <target name="copy" depends="shared.copy">
+    <!-- if you change the following section you must run the clean target once -->
+    <replaceregexp file="${build}/net/sourceforge/bibtexml/version.properties"
+     byline="true" match="build=.*" replace="build=${DSTAMP}${TSTAMP}"/>
   </target>
 
 </project>
