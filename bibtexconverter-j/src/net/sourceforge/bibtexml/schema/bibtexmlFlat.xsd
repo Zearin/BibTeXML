@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   File: $Id: bibtexmlFlat.rnc, 2007.03.08 10:53:00 vidarg Exp $
+  
+   This DTD expresses XML markup similar to the BibTeX language
+   specified for LaTeX, or actually its content model.
+   For documentation on BibTeX, see
+     http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
+  
+   Suggested invocation:
+  
+     <?xml version="1.0" encoding="UTF-8"?>
+     <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/ext">
+     ...
+     </bibtex:file>
+   
+   Available from  http://bibtexml.sf.net/
+  
+   This code originally developed by
+     Vidar Bronken Gundersen
+  
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License.
+   See  http://www.gnu.org/copyleft/gpl.html
+  
+-->
+<!-- Namespace and namespace prefix -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://bibtexml.sf.net/" xmlns:bibtex="http://bibtexml.sf.net/">
+  <!-- Document top element -->
+  <xs:element name="file">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="bibtex:entry"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="entry.content" abstract="true"/>
+  <xs:complexType name="entry.content">
+    <xs:sequence>
+      <xs:element ref="bibtex:entry.content"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="entry">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="bibtex:entry.content">
+          <xs:attributeGroup ref="bibtex:attlist.entry"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <!--
+    .....................................................................
+    Main structure
+  -->
+  <xs:element name="standard.entries.class" abstract="true" substitutionGroup="bibtex:entry.content">
+    <xs:annotation>
+      <xs:documentation>Each entry may contain one of the bibliographic types.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="standard.entries.class">
+    <xs:sequence>
+      <xs:element ref="bibtex:standard.entries.class"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:attributeGroup name="attlist.entry">
+    <xs:attribute name="id" use="required" type="xs:ID"/>
+  </xs:attributeGroup>
+  <!--
+    .....................................................................
+    Parameter entities
+  -->
+  <xs:group name="standard.common.fields.class">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="bibtex:key"/>
+      <xs:element minOccurs="0" ref="bibtex:crossref"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="common.fields.class">
+    <xs:sequence>
+      <xs:group ref="bibtex:standard.common.fields.class"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="article.standard.class">
+    <xs:sequence>
+      <xs:element ref="bibtex:author"/>
+      <xs:element ref="bibtex:title"/>
+      <xs:element ref="bibtex:journal"/>
+      <xs:element ref="bibtex:year"/>
+      <xs:element minOccurs="0" ref="bibtex:volume"/>
+      <xs:element minOccurs="0" ref="bibtex:number"/>
+      <xs:element minOccurs="0" ref="bibtex:pages"/>
+      <xs:element minOccurs="0" ref="bibtex:month"/>
+      <xs:element minOccurs="0" ref="bibtex:note"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="article" substitutionGroup="bibtex:standard.entries.class" type="bibtex:article.content"/>
+  <xs:group name="book.standard.class">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element ref="bibtex:author"/>
+        <xs:element ref="bibtex:editor"/>
+      </xs:choice>
+      <xs:element ref="bibtex:title"/>
+      <xs:element ref="bibtex:publisher"/>
+      <xs:element ref="bibtex:year"/>
+      <xs:choice minOccurs="0">
+        <xs:element ref="bibtex:volume"/>
+        <xs:element ref="bibtex:number"/>
+      </xs:choice>
+      <xs:element minOccurs="0" ref="bibtex:series"/>
+      <xs:element minOccurs="0" ref="bibtex:address"/>
+      <xs:element minOccurs="0" ref="bibtex:edition"/>
+      <xs:element minOccurs="0" ref="bibtex:month"/>
+      <xs:element minOccurs="0" ref="bibtex:note"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="book" substitutionGroup="bibtex:standard.entries.class" type="bibtex:book.content"/>
+  <xs:group name="booklet.standard.class">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="bibtex:author"/>
+      <xs:element ref="bibtex:title"/>
+      <xs:element minOccurs="0" ref="bibtex:howpublished"/>
+      <xs:element minOccurs="0" ref="bibtex:address"/>
+      <xs:element minOccurs="0" ref="bibtex:month"/>
+      <xs:element minOccurs="0" ref="bibtex:year"/>
+      <xs:element minOccurs="0" ref="bibtex:note"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="booklet" substitutionGroup="bibtex:standard.entries.class" type="bibtex:booklet.content"/>
+  <xs:group name="inbook.standard.class">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element ref="bibtex:author"/>
+        <xs:element ref="bibtex:editor"/>
+      </xs:choice>
+      <xs:element ref="bibtex:title"/>
+      <xs:choice>
+        <xs:sequence>
+          <xs:element ref="bibtex:chapter"/>
+          <xs:element minOccurs="0" ref="bibtex:pages"/>
+        </xs:sequence>
+        <xs:element ref="bibtex:pages"/>
+      </xs:choice>
+      <xs:element ref="bibtex:publisher"/>
+      <xs:element ref="bibtex:year"/>
+      <xs:choice minOccurs="0">
+        <xs:element ref="bibtex:volume"/>
+        <xs:element ref="bibtex:number"/>
+      </xs:choice>
+      <xs:element minOccurs="0" ref="bibtex:series"/>
+      <xs:element minOccurs="0" ref="bibtex:type"/>
+      <xs:element minOccurs="0" ref="bibtex:address"/>
+      <xs:element minOccurs="0" ref="bibtex:edition"/>
+      <xs:element minOccurs="0" ref="bibtex:month"/>
+      <xs:element minOccurs="0" ref="bibtex:note"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="inbook" substitutionGroup="bibtex:standard.entries.class" type="bibtex:inbook.content"/>
+  <!--
+     > I want to express that the elements a and/or b are legal that is
+     > one of them or both must be present in the document instance
+     > (see the element content for BibTeX entry `InBook').
+    
+      in content model:   ((a , b?) | b)          if order matters
+                          ((a , b?) | (b , a?))   otherwise
+  -->
+  <xs:group name="incollection.standard.class">
+    <xs:sequence>
+      <xs:element ref="bibtex:author"/>
+      <xs:element ref="bibtex:title"/>
+      <xs:element ref="bibtex:booktitle"/>
+      <xs:element ref="bibtex:publisher"/>
+      <xs:element ref="bibtex:year"/>
+      <xs:element minOccurs="0" ref="bibtex:editor"/>
+      <xs:choice minOccurs="0">
+        <xs:element ref="bibtex:volume"/>
+        <xs:element ref="bibtex:number"/>
+      </xs:choice>
+      <xs:element minOccurs="0" ref="bibtex:series"/>
+      <xs:element minOccurs="0" ref="bibtex:type"/>
+      <xs:element minOccurs="0" ref="bibtex:chapter"/>
+      <xs:element minOccurs="0" ref="bibtex:pages"/>
+      <xs:element minOccurs="0" ref="bibtex:address"/>
+      <xs:element minOccurs="0" ref="bibtex:edition"/>
+      <xs:element minOccurs="0" ref="bibtex:month"/>
+      <xs:element minOccurs="0" ref="bibtex:note"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="incollection" substitutionGroup="bibtex:standard.entries.class" type="bibtex:incollection.content"/>
+  <xs:group name="inproceedings.standard.class">
+    <xs:sequence>
+      <xs:element ref="bibtex:author"/>
+      <xs:element ref="bibtex:title"/>
+      <xs:element ref="bibtex:booktitle"/>
+      <xs:element ref="bibtex:year"/>
+      <xs:element minOccurs="0" ref="bibtex:editor"/>
+      <xs:choice minOccurs="0">
+        <xs:element ref="bibtex:volume"/>
+        <xs:element ref="bibtex:number"/>
+      </xs:choice>
+      <xs:element minOccurs="0" ref="bibtex:series"/>
+      <xs:element minOccurs="0" ref="bibtex:pages"/>
+      <xs:element minOccurs="0" ref="bibtex:address"/>
+      <xs:element minOccurs="0" ref="bibtex:month"/>
+      <xs:element minOccurs="0" ref="bibtex:organization"/>
+      <xs:element minOccurs="0" ref="bibtex:publisher"/>
+      <xs:element minOccurs="0" ref="bibtex:note"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="inproceedings" substitutionGroup="bibtex:standard.entries.class" type="bibtex:inproceedings.content"/>
+  <xs:element name="conference" substitutionGroup="bibtex:standard.entries.class" type="bibtex:conference.content"/>
+  <xs:complexType name="conference.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:inproceedings.content"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:group name="manual.standard.class">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="bibtex:author"/>
+      <xs:element ref="bibtex:title"/>
+      <xs:element minOccurs="0" ref="bibtex:organization"/>
+      <xs:element minOccurs="0" ref="bibtex:address"/>
+      <xs:element minOccurs="0" ref="bibtex:edition"/>
+      <xs:element minOccurs="0" ref="bibtex:month"/>
+      <xs:element minOccurs="0" ref="bibtex:year"/>
+      <xs:element minOccurs="0" ref="bibtex:note"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="thesis.standard.class">
+    <xs:sequence>
+      <xs:element ref="bibtex:author"/>
+      <xs:element ref="bibtex:title"/>
+      <xs:element ref="bibtex:school"/>
+      <xs:element ref="bibtex:year"/>
+      <xs:element minOccurs="0" ref="bibtex:type"/>
+      <xs:element minOccurs="0" ref="bibtex:address"/>
+      <xs:element minOccurs="0" ref="bibtex:month"/>
+      <xs:element minOccurs="0" ref="bibtex:note"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:complexType name="mastersthesis.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:thesis.content"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="mastersthesis" substitutionGroup="bibtex:standard.entries.class" type="bibtex:mastersthesis.content"/>
+  <xs:complexType name="phdthesis.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:thesis.content"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="phdthesis" substitutionGroup="bibtex:standard.entries.class" type="bibtex:phdthesis.content"/>
+  <xs:group name="misc.standard.class">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="bibtex:author"/>
+      <xs:element minOccurs="0" ref="bibtex:title"/>
+      <xs:element minOccurs="0" ref="bibtex:howpublished"/>
+      <xs:element minOccurs="0" ref="bibtex:month"/>
+      <xs:element minOccurs="0" ref="bibtex:year"/>
+      <xs:element minOccurs="0" ref="bibtex:note"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="misc" substitutionGroup="bibtex:standard.entries.class" type="bibtex:misc.content"/>
+  <xs:group name="proceedings.standard.class">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="bibtex:editor"/>
+      <xs:element ref="bibtex:title"/>
+      <xs:element ref="bibtex:year"/>
+      <xs:choice minOccurs="0">
+        <xs:element ref="bibtex:volume"/>
+        <xs:element ref="bibtex:number"/>
+      </xs:choice>
+      <xs:element minOccurs="0" ref="bibtex:series"/>
+      <xs:element minOccurs="0" ref="bibtex:address"/>
+      <xs:element minOccurs="0" ref="bibtex:month"/>
+      <xs:element minOccurs="0" ref="bibtex:organization"/>
+      <xs:element minOccurs="0" ref="bibtex:publisher"/>
+      <xs:element minOccurs="0" ref="bibtex:note"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="proceedings" substitutionGroup="bibtex:standard.entries.class" type="bibtex:proceedings.content"/>
+  <xs:group name="techreport.standard.class">
+    <xs:sequence>
+      <xs:element ref="bibtex:author"/>
+      <xs:element ref="bibtex:title"/>
+      <xs:element ref="bibtex:institution"/>
+      <xs:element ref="bibtex:year"/>
+      <xs:element minOccurs="0" ref="bibtex:type"/>
+      <xs:element minOccurs="0" ref="bibtex:number"/>
+      <xs:element minOccurs="0" ref="bibtex:address"/>
+      <xs:element minOccurs="0" ref="bibtex:month"/>
+      <xs:element minOccurs="0" ref="bibtex:note"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="techreport" substitutionGroup="bibtex:standard.entries.class" type="bibtex:techreport.content"/>
+  <xs:group name="unpublished.standard.class">
+    <xs:sequence>
+      <xs:element ref="bibtex:author"/>
+      <xs:element ref="bibtex:title"/>
+      <xs:element ref="bibtex:note"/>
+      <xs:element minOccurs="0" ref="bibtex:month"/>
+      <xs:element minOccurs="0" ref="bibtex:year"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="unpublished" substitutionGroup="bibtex:standard.entries.class" type="bibtex:unpublished.content"/>
+  <!--
+    .....................................................................
+    Metadata fields for each bibliographic entry
+  -->
+  <xs:group name="all.standard.fields.class">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="bibtex:address"/>
+        <xs:element ref="bibtex:annote"/>
+        <xs:element ref="bibtex:author"/>
+        <xs:element ref="bibtex:booktitle"/>
+        <xs:element ref="bibtex:chapter"/>
+        <xs:element ref="bibtex:crossref"/>
+        <xs:element ref="bibtex:edition"/>
+        <xs:element ref="bibtex:editor"/>
+        <xs:element ref="bibtex:howpublished"/>
+        <xs:element ref="bibtex:institution"/>
+        <xs:element ref="bibtex:journal"/>
+        <xs:element ref="bibtex:key"/>
+        <xs:element ref="bibtex:month"/>
+        <xs:element ref="bibtex:note"/>
+        <xs:element ref="bibtex:number"/>
+        <xs:element ref="bibtex:organization"/>
+        <xs:element ref="bibtex:pages"/>
+        <xs:element ref="bibtex:publisher"/>
+        <xs:element ref="bibtex:school"/>
+        <xs:element ref="bibtex:series"/>
+        <xs:element ref="bibtex:title"/>
+        <xs:element ref="bibtex:type"/>
+        <xs:element ref="bibtex:volume"/>
+        <xs:element ref="bibtex:year"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="address" type="xs:string"/>
+  <xs:element name="booktitle" type="xs:string"/>
+  <xs:element name="edition">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:pattern value="[A-Z].*"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="howpublished" type="xs:string"/>
+  <xs:element name="institution" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[institution] The sponsoring institution of a technical report.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="journal" type="xs:string"/>
+  <xs:simpleType name="monthString.datatype">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Jan"/>
+      <xs:enumeration value="Feb"/>
+      <xs:enumeration value="Mar"/>
+      <xs:enumeration value="Apr"/>
+      <xs:enumeration value="May"/>
+      <xs:enumeration value="Jun"/>
+      <xs:enumeration value="Jul"/>
+      <xs:enumeration value="Aug"/>
+      <xs:enumeration value="Sep"/>
+      <xs:enumeration value="Oct"/>
+      <xs:enumeration value="Nov"/>
+      <xs:enumeration value="Dec"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="note" type="xs:string"/>
+  <xs:element name="number" type="xs:string"/>
+  <xs:element name="organization" type="xs:string"/>
+  <xs:element name="pages">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:pattern value="[0-9]+((-{0,2}|–|,)[0-9]+)*\+?"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="publisher" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[publisher] The publisher's name.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="school" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[school] The name of the school where a thesis was written</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="series" type="xs:string"/>
+  <xs:element name="title" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[title] The work's title, typed as explained in the LaTeX book.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="type" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[type] The type of a technical report-for example, ``Research Note''.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="volume" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[volume] The volume of a journal or multivolume book.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="year" type="xs:gYear"/>
+  <xs:element name="annote" type="xs:string"/>
+  <xs:element name="crossref" type="xs:NCName"/>
+  <xs:element name="key" type="xs:string"/>
+  
+  
+  <!-- Reuse the strict BibTeXML schema -->
+  <!-- Multiple authors in following tags -->
+  <xs:group name="author">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" ref="bibtex:author"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="author" type="xs:string"/>
+  <xs:group name="editor">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" ref="bibtex:editor"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="editor" type="xs:string"/>
+  <!-- Content of given elements are redefined. -->
+  <xs:complexType name="common.fields.class">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="bibtex:all.standard.fields.class"/>
+      <xs:group ref="bibtex:user.fields.class"/>
+      <!--<xs:group ref="bibtex:anyElement"/>-->
+    </xs:choice>
+  </xs:complexType>
+  <!-- Allow any fields in any order -->
+  <xs:complexType name="article.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="book.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="booklet.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="inbook.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="incollection.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="inproceedings.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="manual.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="thesis.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="misc.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="proceedings.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="techreport.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="unpublished.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <!-- Lighten up on allowed data types -->
+  <xs:element name="month" type="xs:string"/>
+  <xs:element name="chapter" type="xs:string"/>
+  <xs:group name="user.fields.class">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="bibtex:abstract"/>
+        <xs:element ref="bibtex:affiliation"/>
+        <xs:element ref="bibtex:contents"/>
+        <xs:element ref="bibtex:copyright"/>
+        <xs:choice>
+          <xs:element ref="bibtex:isbn"/>
+          <xs:element ref="bibtex:issn"/>
+        </xs:choice>
+        <xs:element ref="bibtex:doi"/>
+        <xs:element ref="bibtex:keywords"/>
+        <xs:element ref="bibtex:language"/>
+        <xs:element ref="bibtex:lccn"/>
+        <xs:element ref="bibtex:location"/>
+        <xs:element ref="bibtex:mrnumber"/>
+        <xs:element ref="bibtex:price"/>
+        <xs:element ref="bibtex:size"/>
+        <xs:element ref="bibtex:url"/>
+        <xs:element ref="bibtex:category"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="abstract" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[abstract]  An abstract of the work. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="affiliation" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[affiliation]  The authors affiliation. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="contents" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[contents]  A Table of Contents </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="copyright" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[copyright]  Copyright information. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="isbn" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[ISBN]  The International Standard Book Number. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="issn" type="xs:string"/>
+  <xs:element name="language" type="xs:language">
+    <xs:annotation>
+      <xs:documentation>[language]  The language the document is in. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="lccn" type="xs:string"/>
+  <xs:element name="location" type="xs:string"/>
+  <xs:element name="mrnumber" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[mrnumber]  The Mathematical Reviews number. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="price" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[price]  The price of the document. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="size" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[size]  The physical dimensions of a work. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="url" type="xs:anyURI"/>
+  <xs:element name="keywords" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[keywords]  Key words used for searching or possibly for annotation. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="category" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[category]  Category of this bibitem</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="doi">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:pattern value="[0-9]{0,2}\.[0-9]{0,4}/.*"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:group name="anyElement">
+    <xs:sequence>
+      <xs:any processContents="skip"/>
+    </xs:sequence>
+  </xs:group>
+</xs:schema>
