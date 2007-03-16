@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   File: $Id: bibtexmlExtended.rnc, 2003.09.19 10:05:00 vbg Exp $
+  
+   This DTD expresses XML markup similar to the BibTeX language
+   specified for LaTeX, or actually its content model.
+   For documentation on BibTeX, see
+     http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
+  
+   Suggested invocation:
+  
+     <?xml version="1.0" encoding="UTF-8"?>
+     <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/ext">
+     ...
+     </bibtex:file>
+   
+   Available from  http://bibtexml.sf.net/
+  
+   This code originally developed by
+     Vidar Bronken Gundersen
+     Zeger W. Hendrikse
+  
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License.
+   See  http://www.gnu.org/copyleft/gpl.html
+  
+-->
+<!-- Namespace and namespace prefix -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://bibtexml.sf.net/" xmlns:bibtex="http://bibtexml.sf.net/">
+  <xs:include schemaLocation="bibtexml.xsd"/>
+  <!-- Reuse the strict BibTeXML schema -->
+  <!--
+    Content of given elements are redefined and extended.
+    Backwards compatible syntax.
+  -->
+  <xs:group name="user.fields.class">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="bibtex:abstract"/>
+        <xs:element ref="bibtex:affiliation"/>
+        <xs:element ref="bibtex:contents"/>
+        <xs:element ref="bibtex:copyright"/>
+        <xs:choice>
+          <xs:element ref="bibtex:isbn"/>
+          <xs:element ref="bibtex:issn"/>
+        </xs:choice>
+        <xs:element ref="bibtex:doi"/>
+        <xs:group ref="bibtex:keywords"/>
+        <xs:element ref="bibtex:language"/>
+        <xs:element ref="bibtex:lccn"/>
+        <xs:element ref="bibtex:location"/>
+        <xs:element ref="bibtex:mrnumber"/>
+        <xs:element ref="bibtex:price"/>
+        <xs:element ref="bibtex:size"/>
+        <xs:element ref="bibtex:url"/>
+        <xs:element ref="bibtex:category"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="abstract" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[abstract]  An abstract of the work. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="affiliation" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[affiliation]  The authors affiliation. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="contents" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[contents]  A Table of Contents </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="copyright" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[copyright]  Copyright information. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="isbn" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[ISBN]  The International Standard Book Number. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="issn" type="xs:string"/>
+  <xs:element name="language" type="xs:language">
+    <xs:annotation>
+      <xs:documentation>[language]  The language the document is in. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="lccn" type="xs:string"/>
+  <xs:element name="location" type="xs:string"/>
+  <xs:element name="mrnumber" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[mrnumber]  The Mathematical Reviews number. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="price" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[price]  The price of the document. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="size" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[size]  The physical dimensions of a work. </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="url" type="xs:anyURI"/>
+  <xs:group name="keywords">
+    <xs:choice>
+      <xs:element name="keywords" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>[keywords]  Key words used for searching or possibly for annotation. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="keywords">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" ref="bibtex:keyword"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
+  </xs:group>
+  <xs:element name="category" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[category]  Category of this bibitem</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="doi">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:pattern value="[0-9]{0,2}\.[0-9]{0,4}/.*"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="person">
+    <xs:complexType mixed="true">
+      <xs:sequence minOccurs="0">
+        <xs:choice>
+          <xs:element ref="bibtex:initials"/>
+          <xs:sequence>
+            <xs:element ref="bibtex:first"/>
+            <xs:element minOccurs="0" ref="bibtex:middle"/>
+          </xs:sequence>
+        </xs:choice>
+        <xs:element minOccurs="0" ref="bibtex:prelast"/>
+        <xs:element ref="bibtex:last"/>
+        <xs:element minOccurs="0" ref="bibtex:lineage"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="bibtex:attlist.person"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.person">
+    <xs:attribute name="email"/>
+    <xs:attribute name="url"/>
+  </xs:attributeGroup>
+  <xs:element name="first" type="xs:string"/>
+  <xs:element name="initials" type="xs:string"/>
+  <xs:element name="last" type="xs:string"/>
+  <xs:element name="middle" type="xs:string"/>
+  <xs:element name="prelast" type="xs:string"/>
+  <xs:element name="lineage" type="xs:string"/>
+  <xs:element name="subtitle" type="xs:string"/>
+  <xs:element name="keyword" type="xs:string"/>
+</xs:schema>

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   File: $Id: bibtexmlExtended.rnc, 2003.09.19 10:05:00 vbg Exp $
+  
+   This DTD expresses XML markup similar to the BibTeX language
+   specified for LaTeX, or actually its content model.
+   For documentation on BibTeX, see
+     http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
+  
+   Suggested invocation:
+  
+     <?xml version="1.0" encoding="UTF-8"?>
+     <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/ext">
+     ...
+     </bibtex:file>
+   
+   Available from  http://bibtexml.sf.net/
+  
+   This code originally developed by
+     Vidar Bronken Gundersen
+     Zeger W. Hendrikse
+  
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License.
+   See  http://www.gnu.org/copyleft/gpl.html
+  
+-->
+<!-- Namespace and namespace prefix -->
+<grammar ns="http://bibtexml.sf.net/" xmlns:bibtex="http://bibtexml.sf.net/" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <!-- Reuse the strict BibTeXML schema -->
+  <include href="bibtexml.rng"/>
+  <!--
+    Content of given elements are redefined and extended.
+    Backwards compatible syntax.
+  -->
+  <define name="common.fields.class" combine="interleave">
+    <ref name="user.fields.class"/>
+  </define>
+  <define name="author" combine="choice">
+    <element name="author">
+      <oneOrMore>
+        <ref name="person"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="editor" combine="choice">
+    <element name="editor">
+      <oneOrMore>
+        <ref name="person"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="title" combine="choice">
+    <element name="title">
+      <ref name="title"/>
+      <optional>
+        <ref name="subtitle"/>
+      </optional>
+    </element>
+  </define>
+  <define name="chapter" combine="choice">
+    <element name="chapter">
+      <ref name="title"/>
+      <optional>
+        <ref name="subtitle"/>
+      </optional>
+      <optional>
+        <ref name="pages"/>
+      </optional>
+      <optional>
+        <ref name="author"/>
+      </optional>
+    </element>
+  </define>
+  <define name="user.fields.class">
+    <a:documentation>Popular user fields
+  BibTeX is extremely popular, and many people have used it to store
+  information. Below is a list of some of the more common fields.
+  When using BibTeX with LaTeX you need BibTeX style files
+  to print these data.
+  Ref: http://www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html</a:documentation>
+    <interleave>
+      <optional>
+        <ref name="abstract"/>
+      </optional>
+      <optional>
+        <ref name="affiliation"/>
+      </optional>
+      <optional>
+        <ref name="contents"/>
+      </optional>
+      <optional>
+        <ref name="copyright"/>
+      </optional>
+      <optional>
+        <choice>
+          <ref name="isbn"/>
+          <ref name="issn"/>
+        </choice>
+      </optional>
+      <optional>
+        <ref name="doi"/>
+      </optional>
+      <optional>
+        <ref name="keywords"/>
+      </optional>
+      <optional>
+        <ref name="language"/>
+      </optional>
+      <optional>
+        <ref name="lccn"/>
+      </optional>
+      <optional>
+        <ref name="location"/>
+      </optional>
+      <optional>
+        <ref name="mrnumber"/>
+      </optional>
+      <optional>
+        <ref name="price"/>
+      </optional>
+      <optional>
+        <ref name="size"/>
+      </optional>
+      <optional>
+        <ref name="url"/>
+      </optional>
+      <optional>
+        <ref name="category"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="abstract">
+    <element name="abstract">
+      <a:documentation>[abstract]  An abstract of the work. </a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="affiliation">
+    <element name="affiliation">
+      <a:documentation>[affiliation]  The authors affiliation. </a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="contents">
+    <element name="contents">
+      <a:documentation>[contents]  A Table of Contents </a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="copyright">
+    <element name="copyright">
+      <a:documentation>[copyright]  Copyright information. </a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="isbn">
+    <element name="isbn">
+      <a:documentation>[ISBN]  The International Standard Book Number. </a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="issn">
+    <element name="issn">
+      <a:documentation>[ISSN]  The International Standard Serial Number. 
+        Used to identify a journal. </a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="language">
+    <element name="language">
+      <a:documentation>[language]  The language the document is in. </a:documentation>
+      <data type="language"/>
+    </element>
+  </define>
+  <define name="lccn">
+    <element name="lccn">
+      <a:documentation>[LCCN]  The Library of Congress Call Number.
+        I've also seen this as lib-congress. </a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="location">
+    <element name="location">
+      <a:documentation>[location]  A location associated with the entry,
+            such as the city in which a conference took place.</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="mrnumber">
+    <element name="mrnumber">
+      <a:documentation>[mrnumber]  The Mathematical Reviews number. </a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="price">
+    <element name="price">
+      <a:documentation>[price]  The price of the document. </a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="size">
+    <element name="size">
+      <a:documentation>[size]  The physical dimensions of a work. </a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="url">
+    <element name="url">
+      <a:documentation>[URL]  The WWW Universal Resource Locator that points to the item being
+       referenced. This often is used for technical reports to point to the
+       ftp site where the postscript source of the report is located.</a:documentation>
+      <data type="anyURI"/>
+    </element>
+  </define>
+  <define name="keywords">
+    <element name="keywords">
+      <a:documentation>[keywords]  Key words used for searching or possibly for annotation. </a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="category">
+    <element name="category">
+      <a:documentation>[category]  Category of this bibitem</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="doi">
+    <element name="doi">
+      <a:documentation>[DOI]  The Digital Object Identifier
+       used to redirect to articles, a key like 10.1000/203
+       Ref: http://www.doi.org/</a:documentation>
+      <data type="string">
+        <param name="pattern">[0-9]{0,2}\.[0-9]{0,4}/.*</param>
+      </data>
+    </element>
+  </define>
+  <define name="person">
+    <element name="person">
+      <a:documentation>first, middle and last name should be obvious.
+  preLast is for names like Thomas *de* Burghes,
+  lineage is used for "Jr" in names like "James T. Kirk, Jr."</a:documentation>
+      <ref name="attlist.person"/>
+      <choice>
+        <text/>
+        <group>
+          <choice>
+            <ref name="initials"/>
+            <group>
+              <ref name="first"/>
+              <optional>
+                <ref name="middle"/>
+              </optional>
+            </group>
+          </choice>
+          <optional>
+            <ref name="prelast"/>
+          </optional>
+          <ref name="last"/>
+          <optional>
+            <ref name="lineage"/>
+          </optional>
+        </group>
+      </choice>
+    </element>
+  </define>
+  <define name="attlist.person" combine="interleave">
+    <optional>
+      <attribute name="email"/>
+    </optional>
+    <optional>
+      <attribute name="url"/>
+    </optional>
+  </define>
+  <define name="first">
+    <element name="first">
+      <text/>
+    </element>
+  </define>
+  <define name="initials">
+    <element name="initials">
+      <text/>
+    </element>
+  </define>
+  <define name="last">
+    <element name="last">
+      <text/>
+    </element>
+  </define>
+  <define name="middle">
+    <element name="middle">
+      <text/>
+    </element>
+  </define>
+  <define name="prelast">
+    <element name="prelast">
+      <text/>
+    </element>
+  </define>
+  <define name="lineage">
+    <element name="lineage">
+      <text/>
+    </element>
+  </define>
+  <define name="subtitle">
+    <element name="subtitle">
+      <text/>
+    </element>
+  </define>
+  <define name="keywords" combine="choice">
+    <element name="keywords">
+      <oneOrMore>
+        <ref name="keyword"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="keyword">
+    <element name="keyword">
+      <text/>
+    </element>
+  </define>
+</grammar>
