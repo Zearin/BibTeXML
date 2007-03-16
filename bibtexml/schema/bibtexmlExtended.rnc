@@ -8,7 +8,7 @@
 #  Suggested invocation:
 #
 #    <?xml version="1.0" encoding="UTF-8"?>
-#    <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/ext">
+#    <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
 #    ...
 #    </bibtex:file>
 #  
