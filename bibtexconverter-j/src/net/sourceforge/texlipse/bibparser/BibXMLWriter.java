@@ -44,6 +44,7 @@ public final class BibXMLWriter extends DepthFirstAdapter {
 
     protected final static Pattern AUTHOR_REX = Pattern.compile("\\s+and\\s+");
     protected final static Pattern KEYWORDS_REX = Pattern.compile("\\s*[,;]\\s*");
+    protected final static Pattern WHITESPACE_REX = Pattern.compile("\\s+");
     private String key = "";
     private String entryType;
 
@@ -249,7 +250,9 @@ public final class BibXMLWriter extends DepthFirstAdapter {
             }
         } else if (key.equals("keywords") || key.equals("refgroup")){
             values = KEYWORDS_REX.split(value);
-        } else {
+        } else if (key.equals("pages")){
+            values = new String[]{WHITESPACE_REX.matcher(value).replaceAll("")};
+        }  else {
             values = new String[]{value};
         }
         textNode(values[0]);
