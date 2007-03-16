@@ -27,8 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +44,20 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.validation.*;
+import javax.xml.XMLConstants;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import de.mospace.lang.DefaultClassLoaderProvider;
 import de.mospace.swing.LookAndFeelMenu;
 
 public class BibTeXConverter extends DefaultClassLoaderProvider{
     private final static boolean cleanInput = true;
     private TransformerFactory tf;
+    private Validator xmlValidator; 
     protected final static String DEFAULT_ENC = Charset.defaultCharset().name();
     protected final static String INTERNAL_PARAMETER_PREFIX = "bibtexml.sf.net.";
     private String xmlenc = DEFAULT_ENC;
@@ -131,6 +137,66 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
     
     public void setXMLEncoding(Charset chars){
         xmlenc = chars.name();
+    }
+    
+    /** @throws IllegalArgumentException if schema has an unknown extension or
+    * no SchemaFactory for its language is available. */
+    public synchronized void setXMLSchema(URL schema) throws SAXException{
+        if(schema == null){
+            xmlValidator = null;
+            return;
+        }
+        String schemaLanguage = null;
+        String schemaName = schema.toString();
+        if(schemaName.endsWith(".xsd")){
+            schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
+        } else if(schemaName.endsWith(".rng")){
+            schemaLanguage = XMLConstants.RELAXNG_NS_URI;
+        } else {
+            throw new IllegalArgumentException("url must end with .xsd or .rng");
+        }
+        try{
+            SchemaFactory sf = SchemaFactory.newInstance(schemaLanguage);
+            ErrorHandler errorh = (xmlValidator == null) ? null : xmlValidator.getErrorHandler();
+            if(errorh == null){
+                errorh = new ErrorHandler(){
+                    public void fatalError( SAXParseException e ) throws SAXException {
+                        throw e;
+                    }
+                    public void error( SAXParseException e ) throws SAXException {
+                        throw e;
+                    }
+                    public void warning( SAXParseException e ) throws SAXException {
+                        handleException("Warning:", e);
+                    }
+                };
+            }
+            xmlValidator = sf.newSchema(schema).newValidator();
+            xmlValidator.setErrorHandler(errorh);
+        } catch(IllegalArgumentException ex){
+            throw new IllegalArgumentException("No service provider found for schema language " + schemaLanguage);
+        }
+    }
+    
+    public boolean hasSchema(){
+        return xmlValidator != null;
+    }
+    
+    public synchronized void validate(File xml) throws SAXParseException, SAXException, IOException{
+        if(xmlValidator != null){
+            InputStream in = null;
+            xmlValidator.reset();
+            try{
+                in = new BufferedInputStream(new FileInputStream(xml));
+                Source src = new SAXSource(new InputSource(in));
+                src.setSystemId(xml.toURI().toURL().toString());
+                xmlValidator.validate(src);
+            } finally {
+                if (in != null){
+                    in.close();
+                }
+            }
+        }
     }
 
     public void setBibTeXParser(Parser p){

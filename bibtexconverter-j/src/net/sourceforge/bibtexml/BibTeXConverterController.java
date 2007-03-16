@@ -69,6 +69,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
@@ -77,6 +78,7 @@ import de.mospace.swing.PathInput;
 import de.mospace.swing.text.DocumentOutputStream;
 import net.sourceforge.bibtexml.BibTeXConverter.*;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 //ToDo:
 //insert doctype declaration into xml output
@@ -93,6 +95,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
 
     private final static String INPUT_PREFIX = Input.class.getName()+":";
     final static String ENCODING_PREFIX = Charset.class.getName()+":";
+    final static String VALIDATION_PREFIX = "javax.xml.validation:";
     private final static String JABREF_ENC = "Look for JabRef encoding";
     private final static String START_CONVERSION = "Start conversion";
     private final static String RIS = "RIS (Reference Manager & Endnote)";
@@ -114,6 +117,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
     private JComboBox encodings;
     private String groupingKey = "keywords";
     private Container styleContainer = Box.createVerticalBox();
+    private String xmlschema = "bibtexmlExtended.xsd";
     protected File styledir;
 
     public BibTeXConverterController() throws SAXException, IOException{
@@ -165,6 +169,27 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                 }
         }
         pack();
+    }
+    
+    private void setValidationSchema(String cmd){
+        try{
+            if(cmd.equals("None")){
+                convert.setXMLSchema(null);
+            } else {
+                xmlschema = cmd + ".xsd";
+                URL schema = getClass().getResource("schema/"+xmlschema);
+                if(schema == null){
+                    System.err.println("Warning: cannot load schema " + xmlschema);
+                    System.err.println("Resource not found.");
+                }
+                convert.setXMLSchema(schema);
+            }
+        } catch (SAXParseException ex){
+            convert.handleException("Warning: error in schema " + xmlschema 
+            + "\n" + ex.getSystemId() + " line " + ex.getLineNumber(), ex);
+        } catch (Exception ex){
+            convert.handleException("Warning: cannot load schema " + xmlschema, ex);
+        }
     }
     
     private boolean checkPdfDirURI(Map<String, Object> params){
@@ -243,8 +268,30 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         exit.addActionListener(this);
         fm.add(exit);
         mb.add(fm);
-        mb.add(new LookAndFeelMenu(PREF,this));
+        
+        fm = new JMenu("Options");
+        mb.add(fm);
+        fm.add(new LookAndFeelMenu(PREF,this));
+        JMenu menu = new JMenu("BibXML Validation");
+        fm.add(menu);
+        
+        JRadioButtonMenuItem mi;
+        ButtonGroup group = new ButtonGroup();
+        String prefval = PREF.get(VALIDATION_PREFIX, "None");
+        for(String item : 
+        new String[]{"None", "bibtexmlFlat", "bibtexmlExtended", "bibtexml"}){
+            mi = new JRadioButtonMenuItem(item);
+            mi.addActionListener(this);
+            mi.setActionCommand(VALIDATION_PREFIX + item);
+            menu.add(mi);
+            group.add(mi);
+            if(item.equals(prefval)){
+                mi.setSelected(true);
+                mi.doClick();
+            }
+        }
 
+        menu = new JMenu("Help");
         JMenuItem about = new JMenuItem("About");
         about.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -253,7 +300,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                     convert.getSaxonVersion())).setVisible(true);
             }
         });
-        mb.add(about);
+        menu.add(about);
+        mb.add(menu);
+        
         setJMenuBar(mb);
 
         setIconImage(logo.getImage());
@@ -551,13 +600,33 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                     convert.handleException("*** ERROR TRANSFORMING BIBTEX TO XML ***", ex);
                     continue;
                 }
+                /*
                 try{
                     convert.createBibXmlDTD(dir);
                 } catch (IOException ex){
                     convert.handleException("*** ERROR GENERATING BIBXML DTD ***", ex);
                     return;
                 }
+                */
             }
+            
+            /* xml validation */
+            if(convert.hasSchema()){
+                try{
+                    System.out.println("Validating "+ xml.getPath() + " using schema " + xmlschema);
+                    convert.validate(xml);
+                    System.out.println("Document is valid.");
+                } catch (SAXParseException ex){
+                    convert.handleException("*** ERROR VALIDATING BIBXML ***\n" +
+                    ex.getSystemId() + " line " + ex.getLineNumber(), ex);
+                    continue;
+                } catch (Exception ex){
+                    convert.handleException("*** ERROR VALIDATING BIBXML ***", ex);
+                    continue;
+                }
+            }
+            
+            /* xslt transformation */
             if(hasStyles()){
                 for(StyleSheetController cssc : getStyles()){
                     if(cssc.isActive()){
@@ -850,6 +919,10 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             input = Enum.valueOf(Input.class, cmd);
             PREF.put(INPUT_PREFIX, cmd);
 
+        } else if(cmd.startsWith(VALIDATION_PREFIX)){
+            cmd = cmd.substring(VALIDATION_PREFIX.length());
+            PREF.put(VALIDATION_PREFIX, cmd);
+            setValidationSchema(cmd);
         }
         if(c instanceof JToggleButton){
             updateDependentComponents();
