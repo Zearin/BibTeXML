@@ -125,7 +125,7 @@ public abstract class AbstractBibTeXParser{
     protected void writeBibXML(String[] data, OutputStream out ) throws IOException{
         StringBuilder header = new StringBuilder(200);
         header.append("<?xml version=\"1.0\" encoding=\""+outputCharset+"\"?>\n");
-        header.append("<!DOCTYPE bibtex:file SYSTEM \"bibtexml-strict.dtd\" >\n");
+        //header.append("<!DOCTYPE bibtex:file SYSTEM \"bibtexml-strict.dtd\" >\n");
         header.append("<bibtex:file xmlns:bibtex=\"http://bibtexml.sf.net/\">\n");
         String footer = "<!-- manual cleanup may be required... -->\n" +
             "</bibtex:file>";
