@@ -422,7 +422,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         gbc.weightx = 0;
         input.add(jb, gbc);
 
+        
         /* BibTeX parser */
+        /* //Disabled parser selection because texlipse parser is much superior
         key = Parser.class.getName();
         prefval = PREF.get(key, Parser.TEXLIPSE.name());
         JComboBox parser = new JComboBox(Parser.values());
@@ -448,6 +450,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         gbc.gridx = 1;
         gbc.weightx = 0;
         input.add(parser, gbc);
+        */
 
         return input;
     }
