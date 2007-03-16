@@ -67,7 +67,7 @@ attlist.entry &= attribute id { xsd:ID }
 ## the standard BibTeX distribution, these must be added to the
 ## bibliography styles, otherwise these fields will be omitted by
 ## the formatter.
-standard.common.fields.class = key?, crossref?
+standard.common.fields.class = key? & crossref?
 common.fields.class = standard.common.fields.class
 
 ##   Annotation is not used by the standard bibliography styles,
@@ -466,14 +466,9 @@ pages =
 ##   maintain Scribe-compatible databases, the standard styles convert a
 ##   single dash (as in 7-33) to the double dash used in TeX to denote
 ##   number ranges (as in 7-33).
-##
-## Modified by MR:
-## allow also S10-S20 
-## and 10(S)-20(S) (supplement)
-## allow also 121403(R) (cp. http://dx.doi.org/10.1103/PhysRevB.69.121403)
    element pages {
       attlist.pages,
-      xsd:string { pattern="[a-zA-Z]?[0-9]+(\([a-zA-Z]\))?((-{0,2}|–|,)[a-zA-Z]?[0-9]+(\([a-zA-Z]\))?)*\+?(\([a-zA-Z]\))?" }
+      xsd:string { pattern="[0-9]+((-{0,2}|–|,)[0-9]+)*\+?" }
    }
 attlist.pages &= empty
 
