@@ -26,27 +26,15 @@
 -->
 <!-- Namespace and namespace prefix -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://bibtexml.sf.net/" xmlns:bibtex="http://bibtexml.sf.net/">
-  <!-- Document top element -->
+  <!--
+    Reuse the strict BibTeXML schema
+    Document top element
+  -->
   <xs:element name="file">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="bibtex:entry"/>
       </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="entry.content" abstract="true"/>
-  <xs:complexType name="entry.content">
-    <xs:sequence>
-      <xs:element ref="bibtex:entry.content"/>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="entry">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="bibtex:entry.content">
-          <xs:attributeGroup ref="bibtex:attlist.entry"/>
-        </xs:extension>
-      </xs:complexContent>
     </xs:complexType>
   </xs:element>
   <!--
@@ -63,6 +51,21 @@
       <xs:element ref="bibtex:standard.entries.class"/>
     </xs:sequence>
   </xs:complexType>
+  <xs:element name="entry.content" abstract="true"/>
+  <xs:complexType name="entry.content">
+    <xs:sequence>
+      <xs:element ref="bibtex:entry.content"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="entry">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="bibtex:entry.content">
+          <xs:attributeGroup ref="bibtex:attlist.entry"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <xs:attributeGroup name="attlist.entry">
     <xs:attribute name="id" use="required" type="xs:ID"/>
   </xs:attributeGroup>
@@ -76,14 +79,16 @@
       <xs:element minOccurs="0" ref="bibtex:crossref"/>
     </xs:sequence>
   </xs:group>
-  <xs:group name="common.fields.class">
-    <xs:sequence>
-      <xs:group ref="bibtex:standard.common.fields.class"/>
-    </xs:sequence>
-  </xs:group>
+  <xs:complexType name="common.fields.class">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="bibtex:all.standard.fields.class"/>
+      <xs:group ref="bibtex:user.fields.class"/>
+    </xs:choice>
+  </xs:complexType>
+  <!-- & anyElement* -->
   <xs:group name="article.standard.class">
     <xs:sequence>
-      <xs:element ref="bibtex:author"/>
+      <xs:group ref="bibtex:author"/>
       <xs:element ref="bibtex:title"/>
       <xs:element ref="bibtex:journal"/>
       <xs:element ref="bibtex:year"/>
@@ -94,12 +99,17 @@
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
+  <xs:complexType name="article.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element name="article" substitutionGroup="bibtex:standard.entries.class" type="bibtex:article.content"/>
   <xs:group name="book.standard.class">
     <xs:sequence>
       <xs:choice>
-        <xs:element ref="bibtex:author"/>
-        <xs:element ref="bibtex:editor"/>
+        <xs:group ref="bibtex:author"/>
+        <xs:group ref="bibtex:editor"/>
       </xs:choice>
       <xs:element ref="bibtex:title"/>
       <xs:element ref="bibtex:publisher"/>
@@ -115,10 +125,15 @@
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
+  <xs:complexType name="book.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element name="book" substitutionGroup="bibtex:standard.entries.class" type="bibtex:book.content"/>
   <xs:group name="booklet.standard.class">
     <xs:sequence>
-      <xs:element minOccurs="0" ref="bibtex:author"/>
+      <xs:group minOccurs="0" ref="bibtex:author"/>
       <xs:element ref="bibtex:title"/>
       <xs:element minOccurs="0" ref="bibtex:howpublished"/>
       <xs:element minOccurs="0" ref="bibtex:address"/>
@@ -127,12 +142,17 @@
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
+  <xs:complexType name="booklet.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element name="booklet" substitutionGroup="bibtex:standard.entries.class" type="bibtex:booklet.content"/>
   <xs:group name="inbook.standard.class">
     <xs:sequence>
       <xs:choice>
-        <xs:element ref="bibtex:author"/>
-        <xs:element ref="bibtex:editor"/>
+        <xs:group ref="bibtex:author"/>
+        <xs:group ref="bibtex:editor"/>
       </xs:choice>
       <xs:element ref="bibtex:title"/>
       <xs:choice>
@@ -156,6 +176,11 @@
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
+  <xs:complexType name="inbook.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element name="inbook" substitutionGroup="bibtex:standard.entries.class" type="bibtex:inbook.content"/>
   <!--
      > I want to express that the elements a and/or b are legal that is
@@ -167,12 +192,12 @@
   -->
   <xs:group name="incollection.standard.class">
     <xs:sequence>
-      <xs:element ref="bibtex:author"/>
+      <xs:group ref="bibtex:author"/>
       <xs:element ref="bibtex:title"/>
       <xs:element ref="bibtex:booktitle"/>
       <xs:element ref="bibtex:publisher"/>
       <xs:element ref="bibtex:year"/>
-      <xs:element minOccurs="0" ref="bibtex:editor"/>
+      <xs:group minOccurs="0" ref="bibtex:editor"/>
       <xs:choice minOccurs="0">
         <xs:element ref="bibtex:volume"/>
         <xs:element ref="bibtex:number"/>
@@ -187,14 +212,19 @@
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
+  <xs:complexType name="incollection.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element name="incollection" substitutionGroup="bibtex:standard.entries.class" type="bibtex:incollection.content"/>
   <xs:group name="inproceedings.standard.class">
     <xs:sequence>
-      <xs:element ref="bibtex:author"/>
+      <xs:group ref="bibtex:author"/>
       <xs:element ref="bibtex:title"/>
       <xs:element ref="bibtex:booktitle"/>
       <xs:element ref="bibtex:year"/>
-      <xs:element minOccurs="0" ref="bibtex:editor"/>
+      <xs:group minOccurs="0" ref="bibtex:editor"/>
       <xs:choice minOccurs="0">
         <xs:element ref="bibtex:volume"/>
         <xs:element ref="bibtex:number"/>
@@ -208,16 +238,21 @@
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
+  <xs:complexType name="inproceedings.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element name="inproceedings" substitutionGroup="bibtex:standard.entries.class" type="bibtex:inproceedings.content"/>
-  <xs:element name="conference" substitutionGroup="bibtex:standard.entries.class" type="bibtex:conference.content"/>
   <xs:complexType name="conference.content">
     <xs:complexContent>
       <xs:extension base="bibtex:inproceedings.content"/>
     </xs:complexContent>
   </xs:complexType>
+  <xs:element name="conference" substitutionGroup="bibtex:standard.entries.class" type="bibtex:conference.content"/>
   <xs:group name="manual.standard.class">
     <xs:sequence>
-      <xs:element minOccurs="0" ref="bibtex:author"/>
+      <xs:group minOccurs="0" ref="bibtex:author"/>
       <xs:element ref="bibtex:title"/>
       <xs:element minOccurs="0" ref="bibtex:organization"/>
       <xs:element minOccurs="0" ref="bibtex:address"/>
@@ -227,9 +262,15 @@
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
+  <xs:complexType name="manual.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="manual" substitutionGroup="bibtex:standard.entries.class" type="bibtex:manual.content"/>
   <xs:group name="thesis.standard.class">
     <xs:sequence>
-      <xs:element ref="bibtex:author"/>
+      <xs:group ref="bibtex:author"/>
       <xs:element ref="bibtex:title"/>
       <xs:element ref="bibtex:school"/>
       <xs:element ref="bibtex:year"/>
@@ -239,6 +280,11 @@
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
+  <xs:complexType name="thesis.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="mastersthesis.content">
     <xs:complexContent>
       <xs:extension base="bibtex:thesis.content"/>
@@ -253,7 +299,7 @@
   <xs:element name="phdthesis" substitutionGroup="bibtex:standard.entries.class" type="bibtex:phdthesis.content"/>
   <xs:group name="misc.standard.class">
     <xs:sequence>
-      <xs:element minOccurs="0" ref="bibtex:author"/>
+      <xs:group minOccurs="0" ref="bibtex:author"/>
       <xs:element minOccurs="0" ref="bibtex:title"/>
       <xs:element minOccurs="0" ref="bibtex:howpublished"/>
       <xs:element minOccurs="0" ref="bibtex:month"/>
@@ -261,10 +307,15 @@
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
+  <xs:complexType name="misc.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element name="misc" substitutionGroup="bibtex:standard.entries.class" type="bibtex:misc.content"/>
   <xs:group name="proceedings.standard.class">
     <xs:sequence>
-      <xs:element minOccurs="0" ref="bibtex:editor"/>
+      <xs:group minOccurs="0" ref="bibtex:editor"/>
       <xs:element ref="bibtex:title"/>
       <xs:element ref="bibtex:year"/>
       <xs:choice minOccurs="0">
@@ -279,10 +330,15 @@
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
+  <xs:complexType name="proceedings.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element name="proceedings" substitutionGroup="bibtex:standard.entries.class" type="bibtex:proceedings.content"/>
   <xs:group name="techreport.standard.class">
     <xs:sequence>
-      <xs:element ref="bibtex:author"/>
+      <xs:group ref="bibtex:author"/>
       <xs:element ref="bibtex:title"/>
       <xs:element ref="bibtex:institution"/>
       <xs:element ref="bibtex:year"/>
@@ -293,16 +349,26 @@
       <xs:element minOccurs="0" ref="bibtex:note"/>
     </xs:sequence>
   </xs:group>
+  <xs:complexType name="techreport.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element name="techreport" substitutionGroup="bibtex:standard.entries.class" type="bibtex:techreport.content"/>
   <xs:group name="unpublished.standard.class">
     <xs:sequence>
-      <xs:element ref="bibtex:author"/>
+      <xs:group ref="bibtex:author"/>
       <xs:element ref="bibtex:title"/>
       <xs:element ref="bibtex:note"/>
       <xs:element minOccurs="0" ref="bibtex:month"/>
       <xs:element minOccurs="0" ref="bibtex:year"/>
     </xs:sequence>
   </xs:group>
+  <xs:complexType name="unpublished.content">
+    <xs:complexContent>
+      <xs:extension base="bibtex:common.fields.class"/>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element name="unpublished" substitutionGroup="bibtex:standard.entries.class" type="bibtex:unpublished.content"/>
   <!--
     .....................................................................
@@ -313,12 +379,12 @@
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="bibtex:address"/>
         <xs:element ref="bibtex:annote"/>
-        <xs:element ref="bibtex:author"/>
+        <xs:group ref="bibtex:author"/>
         <xs:element ref="bibtex:booktitle"/>
         <xs:element ref="bibtex:chapter"/>
         <xs:element ref="bibtex:crossref"/>
         <xs:element ref="bibtex:edition"/>
-        <xs:element ref="bibtex:editor"/>
+        <xs:group ref="bibtex:editor"/>
         <xs:element ref="bibtex:howpublished"/>
         <xs:element ref="bibtex:institution"/>
         <xs:element ref="bibtex:journal"/>
@@ -339,7 +405,18 @@
     </xs:sequence>
   </xs:group>
   <xs:element name="address" type="xs:string"/>
+  <xs:group name="author">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" ref="bibtex:author"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="author" type="xs:string"/>
   <xs:element name="booktitle" type="xs:string"/>
+  <xs:element name="chapter" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>[chapter] A chapter (or section or whatever) number.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="edition">
     <xs:simpleType>
       <xs:restriction base="xs:string">
@@ -347,6 +424,12 @@
       </xs:restriction>
     </xs:simpleType>
   </xs:element>
+  <xs:group name="editor">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" ref="bibtex:editor"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:element name="editor" type="xs:string"/>
   <xs:element name="howpublished" type="xs:string"/>
   <xs:element name="institution" type="xs:string">
     <xs:annotation>
@@ -354,6 +437,7 @@
     </xs:annotation>
   </xs:element>
   <xs:element name="journal" type="xs:string"/>
+  <xs:element name="month" type="xs:string"/>
   <xs:simpleType name="monthString.datatype">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Jan"/>
@@ -410,94 +494,6 @@
   <xs:element name="annote" type="xs:string"/>
   <xs:element name="crossref" type="xs:NCName"/>
   <xs:element name="key" type="xs:string"/>
-  
-  
-  <!-- Reuse the strict BibTeXML schema -->
-  <!-- Multiple authors in following tags -->
-  <xs:group name="author">
-    <xs:sequence>
-      <xs:element maxOccurs="unbounded" ref="bibtex:author"/>
-    </xs:sequence>
-  </xs:group>
-  <xs:element name="author" type="xs:string"/>
-  <xs:group name="editor">
-    <xs:sequence>
-      <xs:element maxOccurs="unbounded" ref="bibtex:editor"/>
-    </xs:sequence>
-  </xs:group>
-  <xs:element name="editor" type="xs:string"/>
-  <!-- Content of given elements are redefined. -->
-  <xs:complexType name="common.fields.class">
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:group ref="bibtex:all.standard.fields.class"/>
-      <xs:group ref="bibtex:user.fields.class"/>
-      <!--<xs:group ref="bibtex:anyElement"/>-->
-    </xs:choice>
-  </xs:complexType>
-  <!-- Allow any fields in any order -->
-  <xs:complexType name="article.content">
-    <xs:complexContent>
-      <xs:extension base="bibtex:common.fields.class"/>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="book.content">
-    <xs:complexContent>
-      <xs:extension base="bibtex:common.fields.class"/>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="booklet.content">
-    <xs:complexContent>
-      <xs:extension base="bibtex:common.fields.class"/>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="inbook.content">
-    <xs:complexContent>
-      <xs:extension base="bibtex:common.fields.class"/>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="incollection.content">
-    <xs:complexContent>
-      <xs:extension base="bibtex:common.fields.class"/>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="inproceedings.content">
-    <xs:complexContent>
-      <xs:extension base="bibtex:common.fields.class"/>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="manual.content">
-    <xs:complexContent>
-      <xs:extension base="bibtex:common.fields.class"/>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="thesis.content">
-    <xs:complexContent>
-      <xs:extension base="bibtex:common.fields.class"/>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="misc.content">
-    <xs:complexContent>
-      <xs:extension base="bibtex:common.fields.class"/>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="proceedings.content">
-    <xs:complexContent>
-      <xs:extension base="bibtex:common.fields.class"/>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="techreport.content">
-    <xs:complexContent>
-      <xs:extension base="bibtex:common.fields.class"/>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="unpublished.content">
-    <xs:complexContent>
-      <xs:extension base="bibtex:common.fields.class"/>
-    </xs:complexContent>
-  </xs:complexType>
-  <!-- Lighten up on allowed data types -->
-  <xs:element name="month" type="xs:string"/>
-  <xs:element name="chapter" type="xs:string"/>
   <xs:group name="user.fields.class">
     <xs:sequence>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
