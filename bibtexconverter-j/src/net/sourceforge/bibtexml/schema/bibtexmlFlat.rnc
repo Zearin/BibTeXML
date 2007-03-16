@@ -35,7 +35,7 @@ include "bibtexml.rnc" {
       common.fields.class =
             all.standard.fields.class
           & user.fields.class
-          & anyElement*
+          & anyOtherElement*
       # Allow any fields in any order
       article.content = common.fields.class
       book.content = common.fields.class
@@ -137,7 +137,7 @@ url =
 
 keywords =
 ## [keywords]  Key words used for searching or possibly for annotation. 
-   element keywords { text }
+   element keywords { text }+
 
 category =
 ## [category]  Category of this bibitem
@@ -153,5 +153,45 @@ doi =
 ## Arbitrary element names are allowed.
 ##   Examples of such fields are
 ##   acknowledgement, comment, owner, class
-anyElement = element * { text }
-
+anyOtherElement = element *  - (
+   abstract |
+  affiliation |
+  contents |
+  copyright |
+  isbn | 
+  issn |
+  doi |
+  keywords |
+ language |
+ lccn |
+ location |
+ mrnumber |
+ price |
+ size |
+ url |
+ category |
+   address |
+  annote |
+  author |
+ booktitle |
+ chapter |
+ crossref |
+ edition |
+  editor |
+  howpublished |
+  institution |
+  journal |
+  key |
+  month |
+  note |
+  number |
+  organization |
+  pages |
+  publisher |
+  school |
+  series |
+  title |
+  type |
+  volume |
+  year ){ text }
+#( all.standard.fields.class | user.fields.class ) { text }
