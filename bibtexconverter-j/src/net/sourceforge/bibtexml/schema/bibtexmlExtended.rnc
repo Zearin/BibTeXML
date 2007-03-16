@@ -1,0 +1,163 @@
+#  File: $Id: bibtexmlExtended.rnc, 2003.09.19 10:05:00 vbg Exp $
+#
+#  This DTD expresses XML markup similar to the BibTeX language
+#  specified for LaTeX, or actually its content model.
+#  For documentation on BibTeX, see
+#    http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
+#
+#  Suggested invocation:
+#
+#    <?xml version="1.0" encoding="UTF-8"?>
+#    <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/ext">
+#    ...
+#    </bibtex:file>
+#  
+#  Available from  http://bibtexml.sf.net/
+# 
+#  This code originally developed by
+#    Vidar Bronken Gundersen
+#    Zeger W. Hendrikse
+# 
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License.
+#  See  http://www.gnu.org/copyleft/gpl.html
+#
+
+
+# Namespace and namespace prefix
+default namespace bibtex = "http://bibtexml.sf.net/"
+
+# Reuse the strict BibTeXML schema
+include "bibtexml.rnc"
+
+# Content of given elements are redefined and extended.
+# Backwards compatible syntax.
+common.fields.class &= user.fields.class
+author |= element author { person+ }
+editor |= element editor { person+ }
+title |= element title { (title, subtitle?) }
+chapter |= element chapter { (title, subtitle?, pages?, author?) }
+
+
+## Popular user fields
+##   BibTeX is extremely popular, and many people have used it to store
+##   information. Below is a list of some of the more common fields.
+##   When using BibTeX with LaTeX you need BibTeX style files
+##   to print these data.
+##   Ref: http://www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html
+user.fields.class =
+   abstract?
+ & affiliation?
+ & contents?
+ & copyright?
+ & (isbn | issn)?
+ & doi?
+ & keywords?
+ & language?
+ & lccn?
+ & location?
+ & mrnumber?
+ & price?
+ & size?
+ & url?
+ & category?
+
+abstract =
+## [abstract]  An abstract of the work. 
+   element abstract { text }
+
+affiliation =
+## [affiliation]  The authors affiliation. 
+   element affiliation { text }
+
+contents =
+## [contents]  A Table of Contents 
+   element contents { text }
+
+copyright =
+## [copyright]  Copyright information. 
+   element copyright { text }
+
+isbn =
+## [ISBN]  The International Standard Book Number. 
+   element isbn { text }
+
+issn =
+## [ISSN]  The International Standard Serial Number. 
+##         Used to identify a journal. 
+   element issn { text }
+
+language =
+## [language]  The language the document is in. 
+   element language { xsd:language }
+
+lccn =
+## [LCCN]  The Library of Congress Call Number.
+##         I've also seen this as lib-congress. 
+   element lccn { text }
+
+location =
+## [location]  A location associated with the entry,
+##             such as the city in which a conference took place.
+   element location { text }
+
+mrnumber =
+## [mrnumber]  The Mathematical Reviews number. 
+   element mrnumber { text }
+
+price =
+## [price]  The price of the document. 
+   element price { text }
+
+size =
+## [size]  The physical dimensions of a work. 
+   element size { text }
+
+url =
+## [URL]  The WWW Universal Resource Locator that points to the item being
+##        referenced. This often is used for technical reports to point to the
+##        ftp site where the postscript source of the report is located.
+   element url { xsd:anyURI }
+
+keywords =
+## [keywords]  Key words used for searching or possibly for annotation. 
+   element keywords { text }
+
+category =
+## [category]  Category of this bibitem
+   element category { text }
+
+doi =
+## [DOI]  The Digital Object Identifier
+##        used to redirect to articles, a key like 10.1000/203
+##        Ref: http://www.doi.org/
+   element doi { xsd:string { pattern="[0-9]{0,2}\.[0-9]{0,4}/.*" } }
+
+
+person =
+## first, middle and last name should be obvious.
+##   preLast is for names like Thomas *de* Burghes,
+##   lineage is used for "Jr" in names like "James T. Kirk, Jr."
+  element person {
+    attlist.person,
+    (text | (
+      (initials | (first, middle?)),
+      prelast?,
+      last,
+      lineage? ))
+  }
+attlist.person &=
+  attribute email { text }?,
+  attribute url { text }?
+first = element first { text }
+initials = element initials { text }
+last = element last { text }
+middle = element middle { text }
+prelast = element prelast { text }
+lineage = element lineage { text }
+
+subtitle = element subtitle { text }
+
+keywords |= element keywords { keyword+ }
+keyword = element keyword { text }
+
