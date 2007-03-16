@@ -104,6 +104,8 @@ class BibTeXConverterController extends JFrame implements ActionListener{
     private final static String BIBTEX = "BibTeX";
     private final static String[] BUILTIN = new String[]{
         BIBTEX, RIS, HTMLFLAT, HTMLGROUPED};
+    private final static String SCHEMA_LANGUAGE
+        = System.getProperty("SchemaLanguage", ".xsd");
 
     final static String DEFAULT_ENC = BibTeXConverter.DEFAULT_ENC;
 
@@ -176,7 +178,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             if(cmd.equals("None")){
                 convert.setXMLSchema(null);
             } else {
-                xmlschema = cmd + ".xsd";
+                xmlschema = cmd + SCHEMA_LANGUAGE;
                 URL schema = getClass().getResource("schema/"+xmlschema);
                 if(schema == null){
                     System.err.println("Warning: cannot load schema " + xmlschema);
@@ -189,6 +191,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             + "\n" + ex.getSystemId() + " line " + ex.getLineNumber(), ex);
         } catch (Exception ex){
             convert.handleException("Warning: cannot load schema " + xmlschema, ex);
+            if(ex instanceof NullPointerException){
+                ex.printStackTrace();
+            }
         }
     }
     
