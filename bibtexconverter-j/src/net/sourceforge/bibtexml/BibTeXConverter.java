@@ -164,7 +164,7 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
                         throw e;
                     }
                     public void error( SAXParseException e ) throws SAXException {
-                        throw e;
+                        handleException("Error: ",e);
                     }
                     public void warning( SAXParseException e ) throws SAXException {
                         handleException("Warning:", e);
