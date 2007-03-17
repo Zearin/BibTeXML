@@ -90,4 +90,50 @@ component regression (with discussion)</title>
 </article>
 </entry>
 
+<entry id="esbensenTestEditor">
+  <book>
+    <editor>Kim Esbensen</editor>
+    <title>Multivariate Analysis in Practice</title>
+    <publisher>Camo AS</publisher>
+    <year>1994</year>
+    <address>Trondheim</address>
+    <isbn>82-993330-0-8</isbn>
+  </book>
+</entry>
+
+<entry id="inbookrequired">
+  <inbook>
+    <author>BibTeXML team</author>
+    <title>In book title</title>
+    <chapter>3</chapter>
+    <publisher>sf.net</publisher>
+    <pages>23--41</pages>
+    <year>2003</year>
+  </inbook>
+</entry>
+
+<entry id="isbn10test">
+  <manual>
+    <author>BibTeXML team</author>
+    <title>ISBN-10 sample</title>
+    <isbn>1-56619-909-4-X</isbn>
+  </manual>
+</entry>
+
+<entry id="isbn13test">
+  <manual>
+    <author>BibTeXML team</author>
+    <title>ISBN-13 sample</title>
+    <isbn>9781566199093</isbn>
+  </manual>
+</entry>
+
+<entry id="issntest">
+  <manual>
+    <author>BibTeXML team</author>
+    <title>ISSN sample</title>
+    <issn>1234-5679</issn>
+  </manual>
+</entry>
+
 </file>
