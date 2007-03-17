@@ -1,0 +1,25 @@
+#  For use with Relax-NG compatible "catalog file" mechanisms
+#
+#  * Emacs nxml-mode
+#  * ARX
+#
+# schemas.xml:
+#
+#   <namespace ns="http://bibtexml.sf.net/" typeId="bibtexml"/>
+#   <documentElement prefix="bibtex" typeId="bibtexml"/>
+#   <typeId id="bibtexml" uri="bibtexmlCollection.rnc"/>
+#
+# arx.conf:
+#
+#   grammars {
+#      bibtexml="bibtexmlCollection.rnc"
+#   }
+#   valid {
+#      default namespace bibtex = "http://bibtexml.sf.net/"
+#      start = element (bibtex:*) {any}
+#      any = (element * {any}|attribute * {text}|text)*
+#   } => bibtexml
+
+  external "bibtexml.rnc"
+| external "bibtexmlFlat.rnc"
+| external "bibtexmlExtended.rnc"

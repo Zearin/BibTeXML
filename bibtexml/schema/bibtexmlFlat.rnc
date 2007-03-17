@@ -1,14 +1,26 @@
-#  File: $Id: bibtexmlFlat.rnc, 2007.03.08 10:53:00 vidarg Exp $
+#  File: $Id: bibtexmlFlat.rnc, 2007.03.16 22:43:00 vidarg Exp $
 #
 #  This DTD expresses XML markup similar to the BibTeX language
 #  specified for LaTeX, or actually its content model.
 #  For documentation on BibTeX, see
 #    http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
 #
+#  Differences to the strict BibTeXML schema are
+#    * Order is irrelevant
+#    * Multiple author fields are allowed
+#    * Easier on data types (e.g. month, chapter, pages elements)
+#    * Arbitrary fields are allowed
+#    * Required fields must be present
+#    * Fields used by the BibTeX style files are retained
+#        for schema-aware XML editors, while other fields
+#        are ommitted, but will match an anyOtherElement-rule.
+#        E.g. you can use the journal-field on a book,
+#        but your editor won't suggest it for you.
+#
 #  Suggested invocation:
 #
 #    <?xml version="1.0" encoding="UTF-8"?>
-#    <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/ext">
+#    <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
 #    ...
 #    </bibtex:file>
 #  
@@ -28,31 +40,54 @@ default namespace bibtex = "http://bibtexml.sf.net/"
 
 # Reuse the strict BibTeXML schema
 include "bibtexml.rnc" {
-      # Multiple authors in following tags
+
+      # Allow any fields in any order
+      # Retain required and optional fields to aid schema-aware XML editors,
+      article.content = author & title & journal & year & volume? &
+         number? & pages? & month? & note? & common.fields.class
+      book.content = (author|editor) & title & publisher & year &
+         volume? & number? & series? & address? & edition? & month? &
+         note? & common.fields.class
+      booklet.content = title & author? & howpublished? & address? &
+         month? & year? & note? & common.fields.class
+      inbook.content = (author|editor) & title & ((chapter & pages?) |
+         pages) & publisher & year & volume? & number? & series? & type? &
+         address? & edition? & month? & note? & common.fields.class
+      incollection.content = author & title & booktitle & publisher & year &
+         editor? & volume? & number? & series? & type? & chapter? &
+         pages? & address? & edition? & month? & note? & common.fields.class
+      inproceedings.content = author & title & booktitle & year &
+         editor? & volume? & number? & series? & pages? & address? &
+         month? & organization? & publisher? & note? &
+         common.fields.class
+      manual.content = title & author? & organization? & address? &
+         edition? & month? & year? & note? & common.fields.class
+      thesis.content = author & title & school & year & type? &
+         address? & month? & note? & common.fields.class
+      misc.content = author? & title? & howpublished? & month? & year?
+         & note? & common.fields.class
+      proceedings.content = title & year & editor? & volume? &
+         number? & series? & address? & month? & organization? &
+         publisher? & note?  & common.fields.class
+      techreport.content = author & title & institution & year & type?
+         & number? & address? & month? & note? & common.fields.class
+      unpublished.content = author & title & note &
+         month? & year? & common.fields.class
+
+      # Multiple authors and editors in following tags
       author = element author { attlist.author, text }+
       editor = element editor { attlist.editor, text }+
-      # Content of given elements are redefined.
-      common.fields.class =
-            all.standard.fields.class
-          & user.fields.class
-          & anyOtherElement*
-      # Allow any fields in any order
-      article.content = common.fields.class
-      book.content = common.fields.class
-      booklet.content = common.fields.class
-      inbook.content = common.fields.class
-      incollection.content = common.fields.class
-      inproceedings.content = common.fields.class
-      manual.content = common.fields.class
-      thesis.content = common.fields.class
-      misc.content = common.fields.class
-      proceedings.content = common.fields.class
-      techreport.content = common.fields.class
-      unpublished.content = common.fields.class
-      # Lighten up on allowed data types
+
+      # Lighten up on data types
       month = element month { attlist.month, text }
       chapter = element chapter { attlist.chapter, text }
+      pages = element pages { attlist.month, text }
 }
+
+# Extend common fields (at this point key? & crossref?)
+standard.common.fields.class &= annote?
+common.fields.class &= user.fields.class
+common.fields.class &= anyOtherElement*
 
 
 ## Popular user fields
@@ -95,13 +130,20 @@ copyright =
    element copyright { text }
 
 isbn =
-## [ISBN]  The International Standard Book Number. 
-   element isbn { text }
+## [ISBN]  The International Standard Book Number.
+##    Every ISBN consist of 13 digits, divided into five parts of
+##    variable length, separated by a hyphen. After January 1, 2007,
+##    the ISBN-13 officially becomes "ISBN"; and the use of the
+##    ISBN-10 should be phased out.
+   element isbn { ISBN-10.datatype | ISBN-13.datatype }
+ISBN-10.datatype = xsd:string { pattern="([0-9](-{0,2}|–)){10}X?" }
+ISBN-13.datatype = xsd:string { pattern="([0-9](-{0,2}|–)){13}X?" }
 
 issn =
 ## [ISSN]  The International Standard Serial Number. 
 ##         Used to identify a journal. 
-   element issn { text }
+   element issn { ISSN.datatype }
+ISSN.datatype = xsd:string { pattern="[0-9]{4}(-{0,2}|–)[0-9]{4}" }
 
 language =
 ## [language]  The language the document is in. 
@@ -137,7 +179,8 @@ url =
 
 keywords =
 ## [keywords]  Key words used for searching or possibly for annotation. 
-   element keywords { text }+
+   element keywords { text } |
+   element keyword { text }+
 
 category =
 ## [category]  Category of this bibitem
@@ -153,45 +196,45 @@ doi =
 ## Arbitrary element names are allowed.
 ##   Examples of such fields are
 ##   acknowledgement, comment, owner, class
-anyOtherElement = element *  - (
-   abstract |
-  affiliation |
-  contents |
-  copyright |
-  isbn | 
-  issn |
-  doi |
-  keywords |
- language |
- lccn |
- location |
- mrnumber |
- price |
- size |
- url |
- category |
-   address |
-  annote |
-  author |
- booktitle |
- chapter |
- crossref |
- edition |
-  editor |
-  howpublished |
-  institution |
-  journal |
-  key |
-  month |
-  note |
-  number |
-  organization |
-  pages |
-  publisher |
-  school |
-  series |
-  title |
-  type |
-  volume |
-  year ){ text }
-#( all.standard.fields.class | user.fields.class ) { text }
+
+anyOtherElement = element * - (
+   address
+ | annote
+ | author
+ | booktitle
+ | chapter
+ | crossref
+ | edition
+ | editor
+ | howpublished
+ | institution
+ | journal
+ | key
+ | month
+ | note
+ | number
+ | organization
+ | pages
+ | publisher
+ | school
+ | series
+ | title
+ | type
+ | volume
+ | year
+ | abstract
+ | affiliation
+ | contents
+ | copyright
+ | isbn | issn
+ | doi
+ | keywords
+ | language
+ | lccn
+ | location
+ | mrnumber
+ | price
+ | size
+ | url
+ | category
+ ) { text }
