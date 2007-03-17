@@ -81,7 +81,10 @@ include "bibtexml.rnc" {
       # Lighten up on data types
       month = element month { attlist.month, text }
       chapter = element chapter { attlist.chapter, text }
-      pages = element pages { attlist.month, text }
+      pages = element pages {
+         attlist.pages,
+         xsd:string { pattern="[a-zA-Z]?[0-9]+(\([a-zA-Z]\))?((-{0,2}|–|,)[a-zA-Z]?[0-9]+(\([a-zA-Z]\))?)*\+?(\([a-zA-Z]\))?" }
+      }
 }
 
 # Extend common fields (at this point key? & crossref?)
@@ -179,8 +182,8 @@ url =
 
 keywords =
 ## [keywords]  Key words used for searching or possibly for annotation. 
-   element keywords { text } |
-   element keyword { text }+
+      element keywords { text }
+    | element keyword { text }+
 
 category =
 ## [category]  Category of this bibitem
