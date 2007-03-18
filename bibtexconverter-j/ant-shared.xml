@@ -68,6 +68,7 @@
   <!-- COMPILE JAVA CODE -->
   <target name="compile" depends="copy"
       description="Compiles the application from source.">
+      
     <!-- Compile the java code from ${src} into ${build} -->
     <javac
         srcdir="${src}"
@@ -85,7 +86,7 @@
   </target>
 
   <!-- MAKE BINARY-ONLY JAR-FILE -->
-  <target name="binjar" depends="compile, gpl">
+  <target name="binjar" depends="compile, license">
     <jar
         destfile="${binary}"
         compress="true">
@@ -94,7 +95,7 @@
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
         <attribute name="Main-Class" value="${app.mainClass}"/>
-        <attribute name="Class-Path" value="${app.libraries}"/>
+        <!--<attribute name="Class-Path" value="${app.libraries}"/>-->
       </manifest>
     </jar>
   </target>
@@ -296,7 +297,7 @@ org.xml.sax.helpers
   </target>
 
   <!-- MAKE JAR WITH SOURCES -->
-  <target name="dist.src" depends="gpl, init"
+  <target name="dist.src" depends="license, init"
       description="Makes a jarfile containing sources only">
    <!-- make a build file called build.xml in temporary directory -->
     <copy file="${ant.file}" tofile="${java.io.tmpdir}/build.xml"/>
@@ -490,7 +491,7 @@ org.xml.sax.helpers
   </target>
 
   <!-- CREATE GPL FILE -->
-  <target name="gpl">
+  <target name="license">
    <!-- description="Prints the software license to a file called COPYING." -->
     <echo file="COPYING">		    GNU GENERAL PUBLIC LICENSE
                Version 2, June 1991
