@@ -43,7 +43,8 @@ default namespace bibtex = "http://bibtexml.sf.net/"
 include "bibtexml.rnc" {
 
       # Allow any fields in any order
-      # Retain required and optional fields to aid schema-aware XML editors,
+      # Retain required and optional fields
+      # to aid schema-aware XML editors.
       article.content = author & title & journal & year & volume? &
          number? & pages? & month? & note? & common.fields.class
       book.content = (author|editor) & title & publisher & year &
@@ -90,8 +91,15 @@ include "bibtexml.rnc" {
 
 # Extend common fields (at this point key? & crossref?)
 standard.common.fields.class &= annote?
-common.fields.class &= user.fields.class
-common.fields.class &= anyOtherElement*
+common.fields.class &= ignored.fields.class
+
+
+## [ignored] BibTEX ignores any field that is not required or optional,
+##    so you can include any fields you want in a bib file entry. It’s
+##    a good idea to put all relevant information about a reference in
+##    its bib file entry—even information that may never appear in the
+##    bibliography.
+ignored.fields.class = user.fields.class & anyOtherElement*
 
 
 ## Popular user fields
@@ -202,9 +210,9 @@ doi =
 keywords |= element keyword { text }+
 
 
-## Arbitrary element names are allowed.
-##   Examples of such fields are
-##   acknowledgement, comment, owner, class
+## The XML schema will allow arbitrary element names.
+##    Examples of such fields are
+##    acknowledgement, comment, owner, class
 anyOtherElement = element * - (
    address
  | annote

@@ -57,7 +57,9 @@ standard.entries.class =
     | misc
 entry.content = standard.entries.class
 entry = element entry { attlist.entry, entry.content }
-attlist.entry &= attribute id { xsd:ID }
+attlist.entry &=
+   ## Citation key
+   attribute id { xsd:ID { pattern="[A-Za-z0-9.:\-]+" } }
 
 
 # .....................................................................
