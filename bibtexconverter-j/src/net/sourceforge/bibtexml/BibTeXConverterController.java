@@ -27,6 +27,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -46,6 +47,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
@@ -104,14 +106,14 @@ class BibTeXConverterController extends JFrame implements ActionListener{
     private final static String BIBTEX = "BibTeX";
     private final static String[] BUILTIN = new String[]{
         BIBTEX, RIS, HTMLFLAT, HTMLGROUPED};
-    private final static String SCHEMA_LANGUAGE
-        = System.getProperty("SchemaLanguage", ".xsd");
+    private String schemaLanguageExtension;
 
     final static String DEFAULT_ENC = BibTeXConverter.DEFAULT_ENC;
 
     final static Object[] allEncodings = Charset.availableCharsets().keySet().toArray();
 
     private PathInput inputFile;
+    private JButton startbutton;
     private PathInput outputDir;
     private Map<JToggleButton, Set<Component>> dependencies = new HashMap<JToggleButton, Set<Component>>();
     private Collection<StyleSheetController> styles;
@@ -119,7 +121,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
     private JComboBox encodings;
     private String groupingKey = "keywords";
     private Container styleContainer = Box.createVerticalBox();
-    private String xmlschema = "bibtexmlExtended.xsd";
+    private String xmlschema = "bibtexmlExtended";
     protected File styledir;
 
     public BibTeXConverterController() throws SAXException, IOException{
@@ -171,29 +173,37 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                 }
         }
         pack();
+        System.err.flush();
+        System.out.flush();
     }
     
     private void setValidationSchema(String cmd){
+        String xmlschema2 = "";
         try{
             if(cmd.equals("None")){
                 convert.setXMLSchema(null);
+                xmlschema = "";
             } else {
-                xmlschema = cmd + SCHEMA_LANGUAGE;
-                URL schema = getClass().getResource("schema/"+xmlschema);
+                xmlschema = cmd;
+                xmlschema2 = cmd + schemaLanguageExtension;
+                URL schema = getClass().getResource("schema/"+xmlschema2);
                 if(schema == null){
-                    System.err.println("Warning: cannot load schema " + xmlschema);
+                    System.err.println("Warning: cannot load schema " + xmlschema2);
                     System.err.println("Resource not found.");
                 }
                 convert.setXMLSchema(schema);
             }
         } catch (SAXParseException ex){
-            convert.handleException("Warning: error in schema " + xmlschema 
+            convert.handleException("Warning: error in schema " + xmlschema2 
             + "\n" + ex.getSystemId() + " line " + ex.getLineNumber(), ex);
         } catch (Exception ex){
-            convert.handleException("Warning: cannot load schema " + xmlschema, ex);
+            convert.handleException("Warning: cannot load schema " + xmlschema2, ex);
             if(ex instanceof NullPointerException){
                 ex.printStackTrace();
             }
+        } finally {
+            System.out.flush();
+            System.err.flush();
         }
     }
     
@@ -209,6 +219,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             System.err.println("*** ERROR CREATING HTML OUTPUT ***");
             System.err.println("Malformed PDF directory URI");
             System.err.println(ex.getMessage());
+            System.err.flush();
             return false;
         }
         if(!uri.endsWith("/")){
@@ -236,10 +247,10 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         cp.add(createOutputPanel(), gbc);
 
         gbc.gridy = 2;
-        JButton button = new JButton(START_CONVERSION);
-        button.setActionCommand(START_CONVERSION);
-        button.addActionListener(this);
-        cp.add(button, gbc);
+        startbutton = new JButton(START_CONVERSION);
+        startbutton.setActionCommand(START_CONVERSION);
+        startbutton.addActionListener(this);
+        cp.add(startbutton, gbc);
 
         gbc.gridy = 3;
         gbc.weighty = 1;
@@ -249,10 +260,10 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         x.setPreferredSize(new Dimension(200,200));
         cp.add(x, gbc);
         DocumentOutputStream output = new DocumentOutputStream(console.getDocument());
-        System.setOut(new PrintStream(output));
+        System.setOut(new PrintStream(new BufferedOutputStream(output), false));
         output = new DocumentOutputStream(console.getDocument());
         output.setColor(Color.red);
-        System.setErr(new PrintStream(output));
+        System.setErr(new PrintStream(new BufferedOutputStream(output), false));
 
         setContentPane(cp);
         JMenuBar mb = new JMenuBar();
@@ -280,8 +291,36 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         JMenu menu = new JMenu("BibXML Validation");
         fm.add(menu);
         
-        JRadioButtonMenuItem mi;
+        JMenu menu2 = new JMenu("Schema Language");
         ButtonGroup group = new ButtonGroup();
+        schemaLanguageExtension = PREF.get("Schema Language", ".rng");
+        JRadioButtonMenuItem mi;
+        
+        Map<String, String> lang = new TreeMap<String, String>();
+        lang.put("RELAX NG", ".rng");
+        lang.put("W3C Schema", ".xsd");
+        for(String name : lang.keySet()){
+            mi = new JRadioButtonMenuItem(name);
+            final String extension = lang.get(name);
+            mi.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    String oldext = schemaLanguageExtension;
+                    schemaLanguageExtension = extension;
+                    PREF.put("Schema Language", extension);
+                    if(xmlschema.length() > 0){
+                        setValidationSchema(xmlschema);
+                    }
+                }
+            });
+            group.add(mi);
+            menu2.add(mi);
+            if(extension.equals(schemaLanguageExtension)){
+                mi.setSelected(true);
+            }
+        }
+        menu.add(menu2);        
+        
+        group = new ButtonGroup();
         String prefval = PREF.get(VALIDATION_PREFIX, "None");
         for(String item : 
         new String[]{"None", "bibtexmlFlat", "bibtexmlExtended", "bibtexml"}){
@@ -543,8 +582,11 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         File inp = new File(path);
         if(!inp.exists()){
             convert.handleException("No input", new FileNotFoundException("Input file "+path+" does not exist."));
+            System.err.flush();
             return;
         }
+        
+        startbutton.setEnabled(false);
 
         File dir = inp.isDirectory()
                 ? inp
@@ -568,7 +610,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                     dir.mkdirs();
             } else {
                 System.out.println("FINISHED");
+                System.out.flush();
             }
+            startbutton.setEnabled(true);
             return;
         }
         PREF.put("OutputDir", dir.getPath());
@@ -591,6 +635,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                 System.out.println();
             }
             System.out.println("CONVERTING "+inputf.getPath());
+            System.out.flush();
             String basename = inputf.getName();
             int lastdot = basename.lastIndexOf(".");
             String extension = "";
@@ -619,20 +664,30 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             }
             
             /* xml validation */
+            boolean isValid;
             if(convert.hasSchema()){
                 try{
-                    System.out.println("Validating "+ xml.getPath() + " using schema " + xmlschema);
-                    convert.validate(xml);
-                    System.out.println("Document is valid.");
+                    System.out.println("Validating "+ xml.getPath() + 
+                        " using schema " + xmlschema + schemaLanguageExtension);
+                    System.out.flush();
+                    isValid = convert.validate(xml);
+                    if(isValid){
+                        System.out.println("Document is valid.");
+                    } else {
+                        System.err.println("Document is not valid.");
+                    }
                 } catch (SAXParseException ex){
-                    convert.handleException("*** ERROR VALIDATING BIBXML ***\n" +
-                    ex.getSystemId() + " line " + ex.getLineNumber(), ex);
+                    System.err.println("*** FATAL ERROR VALIDATING BIBXML ***");
+                    System.err.println(ex.getSystemId() + " line " + ex.getLineNumber());
+                    System.err.println(ex.getLocalizedMessage());
                     continue;
                 } catch (Exception ex){
-                    convert.handleException("*** ERROR VALIDATING BIBXML ***", ex);
+                    convert.handleException("*** FATAL ERROR VALIDATING BIBXML ***", ex);
                     continue;
                 }
             }
+            System.out.flush();
+            System.err.flush();
             
             /* xslt transformation */
             if(hasStyles()){
@@ -647,6 +702,8 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                         } else {
                             break FILELOOP;
                         }
+                        System.out.flush();
+                        System.err.flush();
                     } 
                 }
             }
@@ -661,6 +718,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             }
         }
         System.out.println("FINISHED\n");
+        System.out.flush();
+        System.err.flush();
+        startbutton.setEnabled(true);
     }
 
     private void jabrefEncoding(){
@@ -716,6 +776,8 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                 } catch (IOException ignore){
                 }
             }
+            System.out.flush();
+            System.err.flush();
         }
 
     }
