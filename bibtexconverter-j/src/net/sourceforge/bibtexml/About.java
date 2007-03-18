@@ -97,10 +97,13 @@ final class About extends JDialog implements ActionListener {
             */
 
             "&copy; Moritz Ringler, 2006-2007<br><br>" +
-            "<b>BibTeX-Parsers:</b><br>" +
-            "<u>texlipse.sf.net</u><br>&copy; Oskar Ojala, 2004-2005<br>" +
-            "<u>bibtexml.sf.net</u><br>bibtex2xml.py: &copy; Vidar Bronken Gundersen, Sara Sprenkle<br>" +
-            "Java port: &copy; Moritz Ringler, 2006<br><br>" +
+            "<b>BibTeX-Parser:</b><br>" +
+            "<u>texlipse.sf.net</u><br>&copy; Oskar Ojala, 2004-2005<br><br>" +
+            "<b>RELAX NG validator:</b><br>" +
+            "<u>jing + jarv + jaxp</u><br>&copy; Thai Open Source," +
+            "SF ISO-RELAX Project, K. Kawaguchi, M. Ringler, 2001-2007<br><br>" +
+            /*"<u>bibtexml.sf.net</u><br>bibtex2xml.py: &copy; Vidar Bronken Gundersen, Sara Sprenkle<br>" +
+            "Java port: &copy; Moritz Ringler, 2006<br><br>" +*/
             ((saxonVersion == null)? "" : ("<b>XSLT-Processor:</b><br>"  + saxonVersion + "<br><br>"))
             + "Running on <br>" +
             "Java " + System.getProperty("java.version")+
