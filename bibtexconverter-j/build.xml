@@ -133,5 +133,11 @@
     <replaceregexp file="${build}/net/sourceforge/bibtexml/version.properties"
      byline="true" match="build=.*" replace="build=${DSTAMP}${TSTAMP}"/>
   </target>
+  
+   
+ <target name="dist.bin" depends="addlibs,devel.sign.bin,packaging.win.jsmooth,packaging.macosx.jarbundler"
+      description="Makes a binary-only jarfile and a JSmooth project file that can be used to generate a Windows executable wrapper (http://jsmooth.sf.net).">
+    <copy file="${binary}" tofile="${ant.project.name}.jar"/>
+  </target>
 
 </project>
