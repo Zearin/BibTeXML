@@ -60,6 +60,10 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
     private Validator xmlValidator; 
     protected final static String DEFAULT_ENC = Charset.defaultCharset().name();
     protected final static String INTERNAL_PARAMETER_PREFIX = "bibtexml.sf.net.";
+    public final static String RELAXNG_SF 
+        = "javax.xml.validation.SchemaFactory:" + XMLConstants.RELAXNG_NS_URI;
+    public final static String JARV_RELAXNG_SF
+        = "org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl";
     private String xmlenc = DEFAULT_ENC;
     protected final static Parser DEFAULT_PARSER = Parser.TEXLIPSE;
     public final static String TRANSFORMER_FACTORY_IMPLEMENTATION =
@@ -67,6 +71,7 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
 
     String inputenc = DEFAULT_ENC;
     Parser parser = DEFAULT_PARSER;
+    private ValidationErrorHandler errorh; //will be lazily initialized
 
     public BibTeXConverter(){
 
@@ -157,24 +162,21 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
         }
         try{
             SchemaFactory sf = SchemaFactory.newInstance(schemaLanguage);
-            ErrorHandler errorh = (xmlValidator == null) ? null : xmlValidator.getErrorHandler();
             if(errorh == null){
-                errorh = new ErrorHandler(){
-                    public void fatalError( SAXParseException e ) throws SAXException {
-                        throw e;
-                    }
-                    public void error( SAXParseException e ) throws SAXException {
-                        handleException("Error: ",e);
-                    }
-                    public void warning( SAXParseException e ) throws SAXException {
-                        handleException("Warning:", e);
-                    }
-                };
+                errorh = new ValidationErrorHandler();
             }
             xmlValidator = sf.newSchema(schema).newValidator();
             xmlValidator.setErrorHandler(errorh);
         } catch(IllegalArgumentException ex){
-            throw new IllegalArgumentException("No service provider found for schema language " + schemaLanguage);
+            if(schemaLanguage.equals(XMLConstants.RELAXNG_NS_URI)
+                && System.getProperty(RELAXNG_SF) == null){
+                //try again with JAXP-JARV bridge
+                System.out.println("Looking for a JARV RELAX_NG validator.");
+                System.setProperty(RELAXNG_SF, JARV_RELAXNG_SF);
+                setXMLSchema(schema);
+            } else {
+                throw new IllegalArgumentException("No service provider found for schema language " + schemaLanguage);
+            }
         }
     }
     
@@ -182,21 +184,24 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
         return xmlValidator != null;
     }
     
-    public synchronized void validate(File xml) throws SAXParseException, SAXException, IOException{
+    public synchronized boolean validate(File xml) throws SAXParseException, SAXException, IOException{
+        boolean result = true;
         if(xmlValidator != null){
             InputStream in = null;
-            xmlValidator.reset();
             try{
                 in = new BufferedInputStream(new FileInputStream(xml));
                 Source src = new SAXSource(new InputSource(in));
                 src.setSystemId(xml.toURI().toURL().toString());
+                errorh.reset();
                 xmlValidator.validate(src);
+                result = !errorh.hasError();
             } finally {
                 if (in != null){
                     in.close();
                 }
             }
         }
+        return result;
     }
 
     public void setBibTeXParser(Parser p){
@@ -458,6 +463,37 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
 
         public String toString(){
             return longname;
+        }
+    }
+    
+    private static class ValidationErrorHandler implements ErrorHandler{
+        private boolean error = false;
+        
+        public void fatalError( SAXParseException e ) throws SAXException {
+            error = true;
+            throw e;
+        }
+        
+        public void error( SAXParseException ex ) throws SAXException {
+            System.err.print("VALIDATION ERROR at");
+            System.err.println(" line " + ex.getLineNumber() + " of " + ex.getSystemId());
+            System.err.println("  " + ex.getLocalizedMessage());
+            System.err.println();
+            error = true;
+        }
+        
+        public void warning( SAXParseException e ) throws SAXException {
+            System.err.println("Warning:");
+            System.err.println(e);
+            
+        }
+        
+        public boolean hasError(){
+            return error;
+        }
+        
+        public void reset(){
+            error = false;
         }
     }
 }
