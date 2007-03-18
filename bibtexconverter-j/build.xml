@@ -56,6 +56,12 @@
   <property
       name="app.icon"
       value="${src}\net\sourceforge\bibtexml\bibxml.png"/>
+  <property name="app.libraries"
+      value="lib/jing-20070318.jar" />
+  <property name="app.lib"
+      value="${app.libraries}" />
+  <property name="app.includeLibs"
+      value="true" />
   <!--
   <property name="app.jsmooth.skeleton"
       value="Console Wrapper"/>
