@@ -160,24 +160,25 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
         } else {
             throw new IllegalArgumentException("url must end with .xsd or .rng");
         }
+        SchemaFactory sf = null;
         try{
-            SchemaFactory sf = SchemaFactory.newInstance(schemaLanguage);
-            if(errorh == null){
-                errorh = new ValidationErrorHandler();
-            }
-            xmlValidator = sf.newSchema(schema).newValidator();
-            xmlValidator.setErrorHandler(errorh);
+            sf = SchemaFactory.newInstance(schemaLanguage);
         } catch(IllegalArgumentException ex){
-            if(schemaLanguage.equals(XMLConstants.RELAXNG_NS_URI)
-                && System.getProperty(RELAXNG_SF) == null){
-                //try again with JAXP-JARV bridge
-                System.out.println("Looking for a JARV RELAX_NG validator.");
-                System.setProperty(RELAXNG_SF, JARV_RELAXNG_SF);
-                setXMLSchema(schema);
+            if(schemaLanguage.equals(XMLConstants.RELAXNG_NS_URI)){
+                try{
+                    sf = new org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl();
+                } catch (Exception ex2){
+                    throw new IllegalArgumentException("No service provider found for schema language " + schemaLanguage);
+                }
             } else {
                 throw new IllegalArgumentException("No service provider found for schema language " + schemaLanguage);
             }
         }
+        if(errorh == null){
+            errorh = new ValidationErrorHandler();
+        }
+        xmlValidator = sf.newSchema(schema).newValidator();
+        xmlValidator.setErrorHandler(errorh);
     }
     
     public boolean hasSchema(){
