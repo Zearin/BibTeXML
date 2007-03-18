@@ -119,6 +119,7 @@
         <include name="${ant.project.name}-${buildID}.jar"/>
         <include name="${ant.project.name}-${buildID}-src.zip"/>
         <include name="${ant.project.name}.exe"/>
+        <include name="${app.name}-${buildID}.OSX.zip" />
      </fileset>
      <!--
      <fileset dir="installer">
