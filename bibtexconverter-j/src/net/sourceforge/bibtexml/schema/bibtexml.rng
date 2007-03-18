@@ -935,10 +935,15 @@ the formatter.</a:documentation>
   following that don't form a simple range).  To make it easier to
   maintain Scribe-compatible databases, the standard styles convert a
   single dash (as in 7-33) to the double dash used in TeX to denote
-  number ranges (as in 7-33).</a:documentation>
+  number ranges (as in 7-33).
+
+Modified by MR:
+allow also S10-S20 
+and 10(S)-20(S) (supplement)
+allow also 121403(R) (cp. http://dx.doi.org/10.1103/PhysRevB.69.121403)</a:documentation>
       <ref name="attlist.pages"/>
       <data type="string">
-        <param name="pattern">[0-9]+((-{0,2}|–|,)[0-9]+)*\+?</param>
+        <param name="pattern">[a-zA-Z]?[0-9]+(\([a-zA-Z]\))?((-{0,2}|–|,)[a-zA-Z]?[0-9]+(\([a-zA-Z]\))?)*\+?(\([a-zA-Z]\))?</param>
       </data>
     </element>
   </define>
