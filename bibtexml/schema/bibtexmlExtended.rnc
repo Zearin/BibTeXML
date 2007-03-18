@@ -79,13 +79,20 @@ copyright =
    element copyright { text }
 
 isbn =
-## [ISBN]  The International Standard Book Number. 
-   element isbn { text }
+## [ISBN]  The International Standard Book Number.
+##    Every ISBN consist of 13 digits, divided into five parts of
+##    variable length, separated by a hyphen. After January 1, 2007,
+##    the ISBN-13 officially becomes "ISBN"; and the use of the
+##    ISBN-10 should be phased out.
+   element isbn { ISBN-10.datatype | ISBN-13.datatype }
+ISBN-10.datatype = xsd:string { pattern="(\d(-{0,2}|–| )){9}[\dX]" }
+ISBN-13.datatype = xsd:string { pattern="(\d(-{0,2}|–| )){12}[0-9X]" }
 
 issn =
 ## [ISSN]  The International Standard Serial Number. 
 ##         Used to identify a journal. 
-   element issn { text }
+   element issn { ISSN.datatype }
+ISSN.datatype = xsd:string { pattern="\d{4}(-{0,2}|–)\d{4}" }
 
 language =
 ## [language]  The language the document is in. 
@@ -131,13 +138,15 @@ doi =
 ## [DOI]  The Digital Object Identifier
 ##        used to redirect to articles, a key like 10.1000/203
 ##        Ref: http://www.doi.org/
-   element doi { xsd:string { pattern="[0-9]{0,2}\.[0-9]{0,4}/.*" } }
+   element doi { xsd:string { pattern="\d{0,2}\.\d{0,4}/.*" } }
+
+# end of user fields
 
 
 person =
-## first, middle and last name should be obvious.
-##   preLast is for names like Thomas *de* Burghes,
-##   lineage is used for "Jr" in names like "James T. Kirk, Jr."
+  ## first, middle and last name should be obvious.
+  ##   preLast is for names like Thomas *de* Burghes,
+  ##   lineage is used for "Jr" in names like "James T. Kirk, Jr."
   element person {
     attlist.person,
     (text | (

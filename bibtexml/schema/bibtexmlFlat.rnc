@@ -1,6 +1,6 @@
 #  File: $Id: bibtexmlFlat.rnc, 2007.03.16 22:43:00 vidarg Exp $
 #
-#  This DTD expresses XML markup similar to the BibTeX language
+#  This schema expresses XML markup similar to the BibTeX language
 #  specified for LaTeX, or actually its content model.
 #  For documentation on BibTeX, see
 #    http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
@@ -28,6 +28,7 @@
 # 
 #  This code originally developed by
 #    Vidar Bronken Gundersen
+#    Moritz Ringler
 # 
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License.
@@ -139,14 +140,14 @@ isbn =
 ##    the ISBN-13 officially becomes "ISBN"; and the use of the
 ##    ISBN-10 should be phased out.
    element isbn { ISBN-10.datatype | ISBN-13.datatype }
-ISBN-10.datatype = xsd:string { pattern="([0-9](-{0,2}|–)){10}X?" }
-ISBN-13.datatype = xsd:string { pattern="([0-9](-{0,2}|–)){13}X?" }
+ISBN-10.datatype = xsd:string { pattern="(\d(-{0,2}|–| )){9}[\dX]" }
+ISBN-13.datatype = xsd:string { pattern="(\d(-{0,2}|–| )){12}[0-9X]" }
 
 issn =
 ## [ISSN]  The International Standard Serial Number. 
 ##         Used to identify a journal. 
    element issn { ISSN.datatype }
-ISSN.datatype = xsd:string { pattern="[0-9]{4}(-{0,2}|–)[0-9]{4}" }
+ISSN.datatype = xsd:string { pattern="\d{4}(-{0,2}|–)\d{4}" }
 
 language =
 ## [language]  The language the document is in. 
@@ -182,8 +183,7 @@ url =
 
 keywords =
 ## [keywords]  Key words used for searching or possibly for annotation. 
-      element keywords { text }
-    | element keyword { text }+
+   element keywords { text }
 
 category =
 ## [category]  Category of this bibitem
@@ -193,13 +193,18 @@ doi =
 ## [DOI]  The Digital Object Identifier
 ##        used to redirect to articles, a key like 10.1000/203
 ##        Ref: http://www.doi.org/
-   element doi { xsd:string { pattern="[0-9]{0,2}\.[0-9]{0,4}/.*" } }
+   element doi { xsd:string { pattern="\d{0,2}\.\d{0,4}/.*" } }
+
+# end of user fields
+
+
+## Change keywords content to allow multiple keywords
+keywords |= element keyword { text }+
 
 
 ## Arbitrary element names are allowed.
 ##   Examples of such fields are
 ##   acknowledgement, comment, owner, class
-
 anyOtherElement = element * - (
    address
  | annote

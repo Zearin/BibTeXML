@@ -116,7 +116,66 @@ component regression (with discussion)</title>
   <manual>
     <author>BibTeXML team</author>
     <title>ISBN-10 sample</title>
-    <isbn>1-56619-909-4-X</isbn>
+    <isbn>1-56619-909-4</isbn>
+  </manual>
+</entry>
+
+<entry id="isbn10testX">
+  <manual>
+    <author>BibTeXML team</author>
+    <title>ISBN-10 with X sample</title>
+    <isbn>156619909X</isbn>
+  </manual>
+</entry>
+
+<entry id="isbn10test1">
+  <manual>
+    <author>Michael Ash</author>
+    <title>ISBN-10 sample</title>
+    <isbn>0 93028 923 4</isbn>
+  </manual>
+</entry>
+<entry id="isbn10test2">
+  <manual>
+    <author>Michael Ash</author>
+    <title>ISBN-10 sample</title>
+    <isbn>1-56389-668-0</isbn>
+  </manual>
+</entry>
+<entry id="isbn10test3">
+  <manual>
+    <author>Michael Ash</author>
+    <title>ISBN-10 sample</title>
+    <isbn>1-56389-016-X</isbn>
+  </manual>
+</entry>
+<entry id="isbn10test5">
+  <manual>
+    <author>Michael Ash</author>
+    <title>ISBN-10 sample</title>
+    <isbn>123456789X</isbn>
+  </manual>
+</entry>
+<entry id="isbn10test5">
+  <manual>
+    <author>Michael Ash</author>
+    <title>ISBN-10 sample</title>
+    <isbn>9-87654321-2</isbn>
+  </manual>
+</entry>
+<entry id="isbn10test6">
+  <manual>
+    <author>Michael Ash</author>
+    <title>ISBN-10 sample</title>
+    <isbn>123 456-789X</isbn>
+  </manual>
+</entry>
+
+<entry id="isbn10test7">
+  <manual>
+    <author>BibTeX team</author>
+    <title>ISBN-10 sample</title>
+    <isbn>82-03-22051-7</isbn>
   </manual>
 </entry>
 
