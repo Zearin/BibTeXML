@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <xsl:stylesheet version="2.0"
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-		xmlns:bibtex="http://bibtexml.sf.net/">
+		xmlns:bibtex="http://bibtexml.sf.net/"
+		xmlns:my="foo:bar">
   <xsl:param name="bibtexml.sf.net.encoding" select="'ISO-8859-1'" />
   <xsl:output method="text"
 	      media-type="application/x-bibtex"
@@ -14,19 +15,19 @@
       assumed to be a valid BibTeXML document instance.
   -->
 
-  <xsl:template match="bibtex:file">
+  <xsl:template match="bibtex:file" priority="1">
     <xsl:call-template name="bibtexml-latex-warning"/>
     <xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:template match="bibtex:entry">
+  <xsl:template match="bibtex:entry" priority="1">
     <xsl:text>&#xA;</xsl:text>
     <xsl:apply-templates/>
   </xsl:template>
 
   <xsl:template match="bibtex:entry/bibtex:*">
     <xsl:text>@</xsl:text>
-    <xsl:value-of select='substring-after(name(),"bibtex:")'/>
+    <xsl:value-of select='local-name()'/>
     <xsl:text>{</xsl:text>
     <xsl:value-of select="../@id"/>
     <xsl:text>,</xsl:text>
@@ -35,14 +36,36 @@
     <xsl:text>}</xsl:text>
     <xsl:text>&#xA;</xsl:text>
   </xsl:template>
-
-  <xsl:template match="bibtex:entry/*/bibtex:*">
+    
+  <xsl:template match="bibtex:entry/*/bibtex:*" priority="0.5">
+  <xsl:variable name="myname" select="name()" />
+  <xsl:variable name="my-local-name" select="local-name()" />
+  <xsl:variable name="brothers" select="../*[name() = $myname]"/>
+  
+  <xsl:if test="empty(./*) and (. = $brothers[1])"> <!-- no output for containers -->
     <xsl:text>   </xsl:text>
-    <xsl:value-of select='substring-after(name(),"bibtex:")'/>
+    <xsl:value-of select="if ($my-local-name eq 'keyword') then 'keywords' else $my-local-name"/>
     <xsl:text> = {</xsl:text>
-    <xsl:apply-templates/>
-    <xsl:text>},</xsl:text>
-    <xsl:text>&#xA;</xsl:text>
+    <xsl:value-of select="string-join($brothers/text(), if ($my-local-name eq 'author') then ' and ' else ', ')"/>
+    <xsl:text>},&#xA;</xsl:text>
+  </xsl:if>
   </xsl:template>
+  
+  <xsl:template match="*" priority="0" />
+  
+  <!-- Do we need this? Or do we suppose we have escaped text in the xml? -->
+  <!--
+  <xsl:function name="my:escape">
+   <xsl:param name="input" as="xs:string"/>
+     <xsl:sequence select="
+     	replace(
+		replace(
+			replace(
+				replace($input, '\', '\\'}
+				
+     "/>
+   </xsl:function>
+  $ & % # _ { } ~ ^ \
+  -->
 
 </xsl:stylesheet>
