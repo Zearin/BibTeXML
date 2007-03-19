@@ -1,3 +1,4 @@
+/* $Id$ */
 function toggleAbstract(citekey){
   abs = eval(document.getElementById("abstract_"+citekey));
   if(abs.style.display=="none"){

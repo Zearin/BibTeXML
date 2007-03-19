@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!--<!DOCTYPE xsl:stylesheet SYSTEM "xslt.dtd">-->
+<!-- $Id$ -->
 <xsl:transform version="2.0"
         xmlns:bibtex="http://bibtexml.sf.net/"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
