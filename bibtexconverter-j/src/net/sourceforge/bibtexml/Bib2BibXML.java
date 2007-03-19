@@ -95,6 +95,8 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/** @deprecated This is not a very good parser. Use {@link TeXLipseParser} instead
+*/
 class Bib2BibXML extends AbstractBibTeXParser{
     /** set of valid name characters **/
     protected final static String VALID_NAME_CHARS = "[\\w\\-:]";
