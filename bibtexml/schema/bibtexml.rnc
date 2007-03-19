@@ -59,7 +59,10 @@ entry.content = standard.entries.class
 entry = element entry { attlist.entry, entry.content }
 attlist.entry &=
    ## Citation key
-   attribute id { xsd:ID { pattern="[A-Za-z0-9.:\-]+" } }
+   attribute citekey { citekey.datatype }
+ | ## Citation key, for backward compatibility
+   attribute id { citekey.datatype }
+citekey.datatype = xsd:ID { pattern="[a-zA-Z0-9.:\-]+" }
 
 
 # .....................................................................
