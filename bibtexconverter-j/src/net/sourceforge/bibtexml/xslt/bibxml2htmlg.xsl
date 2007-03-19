@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- $Id$ -->
 <!--<!DOCTYPE xsl:stylesheet SYSTEM "xslt.dtd">-->
 <xsl:transform version="2.0"
         xmlns:bibtex="http://bibtexml.sf.net/"
@@ -41,7 +42,7 @@ Generated from XML using tools from
 and <a href="http://www.cs.duke.edu/~sprenkle/bibtex2html/">Sara Sprenkle</a><br/><br/>
 (<a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>)
 20030714 Vidar Bronken Gundersen, Zeger W. Hendrikse<br />
-Style sheet: <xsl:text>$Id: bibxml2htmlg.xsl,v 1.9 2007/02/23 14:18:49 Moritz.Ringler Exp $</xsl:text> by Moritz Ringler, 2003-2006
+Style sheet: <xsl:text>$Id$</xsl:text> by Moritz Ringler, 2003-2006
 </address>
       </body>
     </html>
