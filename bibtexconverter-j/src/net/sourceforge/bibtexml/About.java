@@ -96,14 +96,20 @@ final class About extends JDialog implements ActionListener {
             "http://mp3dings.sourceforge.net</a><br><br>" +
             */
 
-            "&copy; Moritz Ringler, 2006-2007<br><br>" +
+            "&copy; 2006-2007, Moritz Ringler<br><br>" +
             "<b>BibTeX-Parser:</b><br>" +
-            "<u>texlipse.sf.net</u><br>&copy; Oskar Ojala, 2004-2005<br><br>" +
+            "<u>texlipse.sf.net</u><br>&copy; 2004-2005, Oskar Ojala<br><br>" +
             "<b>RELAX NG validator:</b><br>" +
-            "<u>jing + jarv + jaxp</u><br>&copy; Thai Open Source," +
-            "SF ISO-RELAX Project, K. Kawaguchi, M. Ringler, 2001-2007<br><br>" +
+            "<u>jing + jarv + jaxp</u><br>&copy; 2001-2007, Thai Open Source, " +
+            "SF ISO-RELAX Project, K. Kawaguchi, M. Ringler<br><br>" +
             /*"<u>bibtexml.sf.net</u><br>bibtex2xml.py: &copy; Vidar Bronken Gundersen, Sara Sprenkle<br>" +
             "Java port: &copy; Moritz Ringler, 2006<br><br>" +*/
+            "<b>BibTeXML schemas</b><br>" +
+            "&copy; 2003-2007, V. B. Gundersen, Z. W. Hendrikse, M. Kuhlmann, M. Ringler" +
+            "<br><br>" +
+            "<b>XSLT stylesheets</b><br>" +
+            "&copy; 2003-2007, V. B. Gundersen, Z. W. Hendrikse, M. Ringler" +
+            "<br><br>" +
             ((saxonVersion == null)? "" : ("<b>XSLT-Processor:</b><br>"  + saxonVersion + "<br><br>"))
             + "Running on <br>" +
             "Java " + System.getProperty("java.version")+
