@@ -60,7 +60,7 @@ import de.mospace.swing.PathInput;
  * A Dialog that shows author and license information, opened
  * with the Help->About menu command.
  * @author Moritz Ringler
- * @version $Revision: 1.9 $ ($Date: 2007/03/10 23:00:21 $)
+ * @version $Revision$ ($Date: 2007/03/10 23:00:21 $)
  */
 final class About extends JDialog implements ActionListener {
 
