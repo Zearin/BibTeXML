@@ -300,7 +300,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         lang.put("RELAX NG", ".rng");
         lang.put("W3C Schema", ".xsd");
         for(String name : lang.keySet()){
-            mi = new JRadioButtonMenuItem(name);
+            mi = new JRadioButtonMenuItem(name.equals("RELAX NG")? 
+                "<html>" + name + " <i>(recommended)</i></html>" :
+                name);
             final String extension = lang.get(name);
             mi.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
@@ -324,7 +326,10 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         String prefval = PREF.get(VALIDATION_PREFIX, "None");
         for(String item : 
         new String[]{"None", "bibtexmlFlat", "bibtexmlExtended", "bibtexml"}){
-            mi = new JRadioButtonMenuItem(item);
+            mi = new JRadioButtonMenuItem(
+                item.equals("bibtexmlFlat") ?
+                "<html>" + item + " <i>(recommended)</i></html>" :
+                item);
             mi.addActionListener(this);
             mi.setActionCommand(VALIDATION_PREFIX + item);
             menu.add(mi);
