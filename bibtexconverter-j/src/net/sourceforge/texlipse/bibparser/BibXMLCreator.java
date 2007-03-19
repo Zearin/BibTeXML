@@ -1,5 +1,5 @@
 /*
- * $Id: BibXMLCreator.java,v 1.6 2006/10/26 13:32:57 Moritz.Ringler Exp $
+ * $Id$
  *
  * Copyright (c) 2006 Moritz Ringler
  * This class is derived from EntryRetriever by Oskar Ojala

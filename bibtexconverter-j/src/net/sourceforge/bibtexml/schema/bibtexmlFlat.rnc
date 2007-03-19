@@ -1,4 +1,4 @@
-#  File: $Id: bibtexmlFlat.rnc, 2007.03.08 10:53:00 vidarg Exp $
+#  File: $Id$
 #
 #  This DTD expresses XML markup similar to the BibTeX language
 #  specified for LaTeX, or actually its content model.

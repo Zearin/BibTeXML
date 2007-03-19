@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   File: $Id: bibtexml.rnc, 2007.02.27 20:48:00 vbg Exp $
+   File: $Id$
   
    This schema expresses XML markup similar to the BibTeX language
    specified for LaTeX, or actually its content model.

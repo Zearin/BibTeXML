@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- $Id: bibxml2ris.xsl,v 1.2 2006/10/26 17:06:10 Moritz.Ringler Exp $ -->
+<!-- $Id$ -->
 <!-- (c) Moritz Ringler, 2004                            -->
 <!-- XSLT stylesheet that converts bibliographic data    -->
 <!-- from BibXML to RIS format.                          -->

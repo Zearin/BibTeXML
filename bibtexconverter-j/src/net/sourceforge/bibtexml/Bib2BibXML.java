@@ -1,6 +1,6 @@
 package net.sourceforge.bibtexml;
 /*
- * $Id: Bib2BibXML.java,v 1.6 2006/09/28 11:38:41 Moritz.Ringler Exp $
+ * $Id$
  * This is a Java port of the GPLed python script bibtex2xml.py
  * from http://bibtexml.sf.net
  * (see below)

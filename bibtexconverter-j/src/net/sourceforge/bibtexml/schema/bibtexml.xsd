@@ -1,5 +1,5 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
-<!-- File: $Id: bibtexml.xsd, 2007.03.07 23:17:00 vidarg Exp $ -->
+<!-- File: $Id$ -->
 
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:bibtex="http://bibtexml.sf.net/"

@@ -1,5 +1,5 @@
 /*
- * $Id: BibLexer.java,v 1.2 2006/09/11 15:48:43 Moritz.Ringler Exp $
+ * $Id$
  *
  * Copyright (c) 2004-2005 Oskar Ojala
  *

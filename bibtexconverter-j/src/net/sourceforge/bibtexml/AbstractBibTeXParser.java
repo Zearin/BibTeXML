@@ -1,6 +1,6 @@
 package net.sourceforge.bibtexml;
 /*
- * $Id: AbstractBibTeXParser.java,v 1.2 2006/09/11 15:49:22 Moritz.Ringler Exp $
+ * $Id$
  * (c) Moritz Ringler, 2006
  *
  * This program is free software; you can redistribute it and/or

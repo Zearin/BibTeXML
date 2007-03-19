@@ -1,5 +1,5 @@
 /*
- * $Id: BibXMLWriter.java,v 1.2 2007/02/08 14:32:56 Moritz.Ringler Exp $
+ * $Id$
  *
  * Copyright (c) 2006 Moritz Ringler
  * This class is derived from EntryRetriever by Oskar Ojala

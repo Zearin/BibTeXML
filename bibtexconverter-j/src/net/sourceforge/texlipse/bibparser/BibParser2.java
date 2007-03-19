@@ -1,5 +1,5 @@
 /*
- * $Id: BibParser2.java,v 1.3 2006/10/26 13:32:57 Moritz.Ringler Exp $
+ * $Id$
  *
  * This classed is based on BibParser
  * Copyright (c) 2004-2005 Oskar Ojala

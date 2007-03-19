@@ -1,5 +1,5 @@
 <!--
-  - File: $Id: bibteXML.dtd, 2003.01.18 21:46:00 vbg Exp $
+  - File: $Id$
   -
   - This DTD expresses XML markup similar to the BibTeX language
   - specified for LaTeX, or actually its content model.

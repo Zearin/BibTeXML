@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  - File: $Id: bibtexml2bibtex.xsl,v 1.1 2002/01/12 13:10:14 kuhlmann Exp $
+  - File: $Id$
   - 
   - Convert plain vanilla BibTeXML to BibTeX
   - Copyright (C) 2001, 2002 Marco Kuhlmann <mk@mcqm.net>

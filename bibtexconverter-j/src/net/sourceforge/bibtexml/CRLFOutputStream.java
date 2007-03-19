@@ -1,6 +1,6 @@
 package net.sourceforge.bibtexml;
 /*
- * $Id: CRLFOutputStream.java,v 1.1 2006/09/11 17:16:24 Moritz.Ringler Exp $
+ * $Id$
  * (c) Moritz Ringler, 2006
 
  * This program is free software; you can redistribute it and/or

@@ -2,7 +2,7 @@ package net.sourceforge.bibtexml;
 
 /* Mp3dings - manage mp3 meta-information
  * Copyright (C) 2003 Moritz Ringler
- * $Id: About.java,v 1.9 2007/03/10 23:00:21 Moritz.Ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -60,7 +60,7 @@ import de.mospace.swing.PathInput;
  * A Dialog that shows author and license information, opened
  * with the Help->About menu command.
  * @author Moritz Ringler
- * @version $Revision$ ($Date: 2007/03/10 23:00:21 $)
+ * @version $Revision$ ($Date$)
  */
 final class About extends JDialog implements ActionListener {
 

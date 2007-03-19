@@ -1,5 +1,5 @@
 <!--
-  - File: $Id: bibtexml-strict.dtd,v 1.1 2006/07/28 18:27:55 Moritz.Ringler Exp $
+  - File: $Id$
   -
   - This DTD expresses XML markup similar to the BibTeX language
   - specified for LaTeX, or actually its content model.

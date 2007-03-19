@@ -1,6 +1,6 @@
 package net.sourceforge.bibtexml;
 /*
- * $Id: StyleSheetController.java,v 1.5 2007/02/23 17:06:17 Moritz.Ringler Exp $
+ * $Id$
  * (c) Moritz Ringler, 2006
  *
  * This program is free software; you can redistribute it and/or
