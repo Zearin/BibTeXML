@@ -1,6 +1,6 @@
 package net.sourceforge.bibtexml;
 /*
- * $Id: TeXLipseParser.java 131 2007-03-19 17:34:53Z ringler $
+ * $Id$
  * (c) Moritz Ringler, 2006
 
  * This program is free software; you can redistribute it and/or
