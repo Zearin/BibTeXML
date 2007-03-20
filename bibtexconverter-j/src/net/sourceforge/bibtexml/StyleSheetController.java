@@ -233,7 +233,7 @@ class StyleSheetController {
         return false;
     }
     
-    private static boolean placeWindow(Window w, Window owner){
+    static boolean placeWindow(Window w, Window owner){
         Set<Window> others = new HashSet<Window>();
         others.addAll(Arrays.asList(owner.getOwnedWindows()));
         others.remove(w);

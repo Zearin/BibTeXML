@@ -53,6 +53,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import de.mospace.lang.DefaultClassLoaderProvider;
 import de.mospace.swing.LookAndFeelMenu;
+import de.mospace.xml.JointErrorHandler;
+import de.mospace.xml.ResettableErrorHandler;
 
 public class BibTeXConverter extends DefaultClassLoaderProvider{
     private final static boolean cleanInput = true;
@@ -71,7 +73,7 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
 
     String inputenc = DEFAULT_ENC;
     Parser parser = DEFAULT_PARSER;
-    private ValidationErrorHandler errorh; //will be lazily initialized
+    private JointErrorHandler errorh; //will be lazily initialized, see getErrorHandler() below
 
     public BibTeXConverter(){
 
@@ -174,11 +176,8 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
                 throw new IllegalArgumentException("No service provider found for schema language " + schemaLanguage);
             }
         }
-        if(errorh == null){
-            errorh = new ValidationErrorHandler();
-        }
         xmlValidator = sf.newSchema(schema).newValidator();
-        xmlValidator.setErrorHandler(errorh);
+        xmlValidator.setErrorHandler(getErrorHandler());
     }
     
     public boolean hasSchema(){
@@ -193,9 +192,10 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
                 in = new BufferedInputStream(new FileInputStream(xml));
                 Source src = new SAXSource(new InputSource(in));
                 src.setSystemId(xml.toURI().toURL().toString());
-                errorh.reset();
+                getErrorHandler().reset();
                 xmlValidator.validate(src);
-                result = !errorh.hasError();
+                result = false;
+                result = !((ValidationErrorPrinter) getErrorHandler().getSecond()).hasError(); 
             } finally {
                 if (in != null){
                     in.close();
@@ -435,6 +435,17 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
             System.err.flush();
         }
     }
+    
+    private synchronized JointErrorHandler getErrorHandler(){
+        if(errorh == null){
+            errorh = new JointErrorHandler(null, new ValidationErrorPrinter());
+        }
+        return errorh;
+    }
+    
+    public void setErrorHandler(ResettableErrorHandler handler){
+        getErrorHandler().setFirst(handler);
+    }
 
     /** The allowed input types. */
     public enum Input {
@@ -464,37 +475,6 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
 
         public String toString(){
             return longname;
-        }
-    }
-    
-    private static class ValidationErrorHandler implements ErrorHandler{
-        private boolean error = false;
-        
-        public void fatalError( SAXParseException e ) throws SAXException {
-            error = true;
-            throw e;
-        }
-        
-        public void error( SAXParseException ex ) throws SAXException {
-            System.err.print("VALIDATION ERROR at");
-            System.err.println(" line " + ex.getLineNumber() + " of " + ex.getSystemId());
-            System.err.println("  " + ex.getLocalizedMessage());
-            System.err.println();
-            error = true;
-        }
-        
-        public void warning( SAXParseException e ) throws SAXException {
-            System.err.println("Warning:");
-            System.err.println(e);
-            
-        }
-        
-        public boolean hasError(){
-            return error;
-        }
-        
-        public void reset(){
-            error = false;
         }
     }
 }

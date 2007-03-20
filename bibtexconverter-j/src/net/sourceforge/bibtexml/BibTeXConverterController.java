@@ -19,7 +19,7 @@ package net.sourceforge.bibtexml;
  */
 
 import java.awt.Color;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -56,7 +56,7 @@ import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -78,14 +78,11 @@ import javax.swing.JToggleButton;
 import de.mospace.swing.LookAndFeelMenu;
 import de.mospace.swing.PathInput;
 import de.mospace.swing.text.DocumentOutputStream;
+import de.mospace.xml.ResettableErrorHandler;
+import de.mospace.xml.JointErrorHandler;
 import net.sourceforge.bibtexml.BibTeXConverter.*;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-
-//ToDo:
-//insert doctype declaration into xml output
-//* Think about output encoding:
-//  - Which encoding(s) can you use for RIS?
 
 class BibTeXConverterController extends JFrame implements ActionListener{
     private static final Preferences PREF =
@@ -122,7 +119,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
     private String groupingKey = "keywords";
     private Container styleContainer = Box.createVerticalBox();
     private String xmlschema = "bibtexmlExtended";
+    protected MessagePanel msgPane = new MessagePanel();
     protected File styledir;
+    
 
     public BibTeXConverterController() throws SAXException, IOException{
         super("BibTeXConverter");
@@ -254,16 +253,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
 
         gbc.gridy = 3;
         gbc.weighty = 1;
-        JEditorPane console = new JTextPane();
-
-        JScrollPane x = new JScrollPane(console);
-        x.setPreferredSize(new Dimension(200,200));
-        cp.add(x, gbc);
-        DocumentOutputStream output = new DocumentOutputStream(console.getDocument());
-        System.setOut(new PrintStream(new BufferedOutputStream(output), false));
-        output = new DocumentOutputStream(console.getDocument());
-        output.setColor(Color.red);
-        System.setErr(new PrintStream(new BufferedOutputStream(output), false));
+        
+        convert.setErrorHandler(msgPane.getErrorHandler());
+        cp.add(msgPane, gbc);
 
         setContentPane(cp);
         JMenuBar mb = new JMenuBar();
@@ -579,7 +571,6 @@ class BibTeXConverterController extends JFrame implements ActionListener{
 
     private void doConversion(){
         String path = inputFile.getPath();
-
         if(path.equals("")){
             return;
         }
@@ -614,11 +605,11 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
                     dir.mkdirs();
             } else {
-                System.out.println("FINISHED");
+                System.out.println("ABORTED");
                 System.out.flush();
+                startbutton.setEnabled(true);
+                return;
             }
-            startbutton.setEnabled(true);
-            return;
         }
         PREF.put("OutputDir", dir.getPath());
 
@@ -634,6 +625,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             : new File[]{inp};
 
         boolean html = false;
+        boolean hasErrors = false;
         int i = 0;
         FILELOOP: for(File inputf : inf){
             if(i++ != 0){
@@ -656,7 +648,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                     convert.bibTexToXml(inputf, xml);
                 } catch (Exception ex){
                     convert.handleException("*** ERROR TRANSFORMING BIBTEX TO XML ***", ex);
-                    continue;
+                    break FILELOOP;
                 }
                 /*
                 try{
@@ -669,26 +661,26 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             }
             
             /* xml validation */
-            boolean isValid;
             if(convert.hasSchema()){
                 try{
                     System.out.println("Validating "+ xml.getPath() + 
                         " using schema " + xmlschema + schemaLanguageExtension);
                     System.out.flush();
-                    isValid = convert.validate(xml);
-                    if(isValid){
-                        System.out.println("Document is valid.");
-                    } else {
-                        System.err.println("Document is not valid.");
-                    }
+                    hasErrors = !convert.validate(xml);
                 } catch (SAXParseException ex){
                     System.err.println("*** FATAL ERROR VALIDATING BIBXML ***");
                     System.err.println(ex.getSystemId() + " line " + ex.getLineNumber());
                     System.err.println(ex.getLocalizedMessage());
-                    continue;
+                    hasErrors = true;
                 } catch (Exception ex){
                     convert.handleException("*** FATAL ERROR VALIDATING BIBXML ***", ex);
-                    continue;
+                    hasErrors = true;
+                }
+                if(hasErrors){
+                    System.err.println("Document is not valid.");
+                    break FILELOOP;
+                } else {
+                    System.out.println("Document is valid.");
                 }
             }
             System.out.flush();
@@ -705,6 +697,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                                 html = true;
                             }
                         } else {
+                            hasErrors = true;
                             break FILELOOP;
                         }
                         System.out.flush();
@@ -726,6 +719,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         System.out.flush();
         System.err.flush();
         startbutton.setEnabled(true);
+        if(hasErrors){
+            msgPane.showErrors();
+        }
     }
 
     private void jabrefEncoding(){
@@ -1044,5 +1040,68 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                 }
             }
         }
+    }
+    
+    private static class MessagePanel extends JPanel{
+        private final CardLayout layout = new CardLayout();
+        private final static String CONSOLE = "Console";
+        private final static String ERRORS = "Error List";
+        private final JEditorPane console = new JTextPane();
+        private final ErrorList errorlist = new ErrorList();
+        private ResettableErrorHandler errorhandler;
+        
+        public MessagePanel(){
+            super();
+            setLayout(layout);
+            DocumentOutputStream output = new DocumentOutputStream(console.getDocument());
+            System.setOut(new PrintStream(new BufferedOutputStream(output), false));
+            output = new DocumentOutputStream(console.getDocument());
+            output.setColor(Color.red);
+            System.setErr(new PrintStream(new BufferedOutputStream(output), false));
+            add(new JScrollPane(console), CONSOLE);
+            add(new JScrollPane(errorlist.component()), ERRORS);
+            showConsole();
+            setPreferredSize(new Dimension(200,200));
+        }
+        
+        public synchronized ResettableErrorHandler getErrorHandler(){
+            if(errorhandler == null){
+                errorhandler = new JointErrorHandler(
+                    new MyErrorHandler(),
+                    errorlist.getErrorHandler());
+            }
+            return errorhandler;
+        }
+        
+        public void showConsole(){
+            layout.show(this, CONSOLE);
+        }
+        
+        public void showErrors(){
+            layout.show(this, ERRORS);
+        }
+        
+        private class MyErrorHandler implements ResettableErrorHandler{
+            public MyErrorHandler(){
+            }
+        
+            public synchronized void fatalError( SAXParseException e ) throws SAXException {
+                showErrors();
+            }
+        
+            public synchronized void error( SAXParseException ex ) throws SAXException {
+                showErrors();
+            }
+        
+            public synchronized void warning( SAXParseException e ) throws SAXException {
+                showErrors();
+            }
+        
+            public synchronized void reset(){
+                showConsole();
+            }
+            
+        }
+
     }
 }
