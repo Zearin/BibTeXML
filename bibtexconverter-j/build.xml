@@ -28,7 +28,7 @@
       value="btcj"/>
   <property
       name="app.packagePath"
-      value="de/mospace/xml/**, net/sourceforge/bibtexml/**, de/mospace/swing/**, de/mospace/lang/**, net/sourceforge/texlipse/**"/>
+      value="de/mospace/xml/**, net/sourceforge/bibtexml/**, net/sourceforge/jeditsyntax/**, de/mospace/swing/**, de/mospace/lang/**, net/sourceforge/texlipse/**"/>
   <property
       name="texlipse"
       value="net.sourceforge.texlipse" />
@@ -40,7 +40,7 @@
       value="de.mospace.swing"/>
   <property
       name="app.packageList"
-      value="de.mospace.xml, net.sourceforge.bibtexml, de.mospace.lang, ${dms}, ${dms}.text, ${dms}.event, ${dms}.table, ${dms}.icon, ${bp}, ${bp}.analysis, ${bp}.lexer, ${bp}.node ${bp}.parser, ${texclipse}.model"/>
+      value="de.mospace.xml, net.sourceforge.bibtexml, net.sourceforge.jeditsyntax, de.mospace.lang, ${dms}, ${dms}.text, ${dms}.event, ${dms}.table, ${dms}.icon, ${bp}, ${bp}.analysis, ${bp}.lexer, ${bp}.node ${bp}.parser, ${texclipse}.model"/>
   <property
       name="app.mainClass"
       value="net.sourceforge.bibtexml.BibTeXConverter"/>
