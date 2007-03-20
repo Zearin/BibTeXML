@@ -38,6 +38,7 @@ public abstract class AbstractBibTeXParser{
     private String inputCharset;
     private final String outputCharset;
     private boolean cleanInput = false;
+    protected BibTeXErrorHandler errorhandler = null;
 
     public String getInputCharset(){
         return inputCharset;
@@ -144,6 +145,10 @@ public abstract class AbstractBibTeXParser{
         if(footer != null){
             bw.println(footer);
         }
+    }
+    
+    public void setErrorHandler(BibTeXErrorHandler handler){
+        errorhandler = handler;
     }
 
     abstract protected String[] translateBibTeXStream(BufferedReader reader) throws IOException;

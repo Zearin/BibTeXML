@@ -18,81 +18,37 @@ package net.sourceforge.bibtexml;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.Color;
 import java.awt.*;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
-import java.nio.charset.UnsupportedCharsetException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.nio.charset.*;
+import java.util.*;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
 import javax.swing.*;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.JToggleButton;
 import de.mospace.swing.LookAndFeelMenu;
 import de.mospace.swing.PathInput;
-import de.mospace.swing.text.DocumentOutputStream;
+import de.mospace.swing.text.*;
 import de.mospace.xml.ResettableErrorHandler;
-import de.mospace.xml.JointErrorHandler;
-import net.sourceforge.bibtexml.BibTeXConverter.*;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import net.sourceforge.texlipse.model.ParseErrorMessage;
+import net.sourceforge.bibtexml.BibTeXConverter.*;
 
 class BibTeXConverterController extends JFrame implements ActionListener{
     private static final Preferences PREF =
             Preferences.userNodeForPackage(BibTeXConverterController.class);
     private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("bibxml.png"));
 
-    private Input input = Input.BIBTEX;
+    private InputType input = InputType.BIBTEX;
     BibTeXConverter convert = new BibTeXConverter();
 
-    private final static String INPUT_PREFIX = Input.class.getName()+":";
+    private final static String INPUT_PREFIX = InputType.class.getName()+":";
     final static String ENCODING_PREFIX = Charset.class.getName()+":";
     final static String VALIDATION_PREFIX = "javax.xml.validation:";
     private final static String JABREF_ENC = "Look for JabRef encoding";
@@ -104,8 +60,6 @@ class BibTeXConverterController extends JFrame implements ActionListener{
     private final static String[] BUILTIN = new String[]{
         BIBTEX, RIS, HTMLFLAT, HTMLGROUPED};
     private String schemaLanguageExtension;
-
-    final static String DEFAULT_ENC = BibTeXConverter.DEFAULT_ENC;
 
     final static Object[] allEncodings = Charset.availableCharsets().keySet().toArray();
 
@@ -172,6 +126,10 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                 }
         }
         pack();
+        
+        convert.setXMLErrorHandler(msgPane.getErrorHandler());
+        convert.setBibTeXErrorHandler(msgPane.getErrorHandler());
+        
         System.err.flush();
         System.out.flush();
     }
@@ -254,7 +212,6 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         gbc.gridy = 3;
         gbc.weighty = 1;
         
-        convert.setErrorHandler(msgPane.getErrorHandler());
         cp.add(msgPane, gbc);
 
         setContentPane(cp);
@@ -389,7 +346,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         /* Input type: BibXML or BibTeX */
         ButtonGroup bgroup = new ButtonGroup();
         JRadioButton button = new JRadioButton("BibXML");
-        button.setActionCommand(INPUT_PREFIX + Input.BIBXML.name());
+        button.setActionCommand(INPUT_PREFIX + InputType.BIBXML.name());
         button.addActionListener(this);
         bgroup.add(button);
         input.add(button, gbc);
@@ -398,15 +355,15 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         gbc.gridwidth = 1;
 
         bibTeXInput = new JRadioButton("BibTeX");
-        bibTeXInput.setActionCommand(INPUT_PREFIX + Input.BIBTEX.name());
+        bibTeXInput.setActionCommand(INPUT_PREFIX + InputType.BIBTEX.name());
         bibTeXInput.addActionListener(this);
         bgroup.add(bibTeXInput);
         Set<Component> bibtexComps = new HashSet<Component>();
         dependencies.put(bibTeXInput, bibtexComps);
         input.add(bibTeXInput, gbc);
 
-        String prefval = PREF.get(INPUT_PREFIX, Input.BIBTEX.name());
-        if(prefval.equals(Input.BIBXML.name())){
+        String prefval = PREF.get(INPUT_PREFIX, InputType.BIBTEX.name());
+        if(prefval.equals(InputType.BIBXML.name())){
             button.doClick();
         } else {
             bibTeXInput.doClick();
@@ -423,8 +380,8 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         input.add(inputFile, gbc);
 
         /* BibTeX input encodings */
-        String key = ENCODING_PREFIX + Input.class.getName();
-        prefval = PREF.get(key, DEFAULT_ENC);
+        String key = ENCODING_PREFIX + InputType.class.getName();
+        prefval = PREF.get(key, BibTeXConverter.DEFAULT_ENC.name());
         encodings = new JComboBox(allEncodings);
         encodings.setActionCommand(key);
         encodings.setEditable(true);
@@ -549,7 +506,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
 
         /* - BibXML encoding */
         key = ENCODING_PREFIX + "XML";
-        prefval = PREF.get(key, DEFAULT_ENC);
+        prefval = PREF.get(key, BibTeXConverter.DEFAULT_ENC.name());
         JComboBox outpEnc = new JComboBox(allEncodings);
         outpEnc.setEditable(true);
         outpEnc.setActionCommand(key);
@@ -570,6 +527,8 @@ class BibTeXConverterController extends JFrame implements ActionListener{
     }
 
     private void doConversion(){
+        msgPane.showConsole();
+        
         String path = inputFile.getPath();
         if(path.equals("")){
             return;
@@ -583,144 +542,168 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         }
         
         startbutton.setEnabled(false);
-
-        File dir = inp.isDirectory()
+        try{
+            File dir = inp.isDirectory()
                 ? inp
                 : inp.getAbsoluteFile().getParentFile();
-        PREF.put("InputFile", inp.getAbsolutePath());
-
-        path = outputDir.getPath();
-        if(!path.equals("")){
-            File x = new File(path);
-            if(x.isAbsolute()){
-                dir = x;
-            } else {
-                dir = new File(dir, path);
+            PREF.put("InputFile", inp.getAbsolutePath());
+            
+            path = outputDir.getPath();
+            if(!path.equals("")){
+                File x = new File(path);
+                if(x.isAbsolute()){
+                    dir = x;
+                } else {
+                    dir = new File(dir, path);
+                }
             }
-        }
-        if (!dir.exists()){
-            if(JOptionPane.showConfirmDialog(this,
-                "Output directory " + dir +
-                " does not exist.\n Do you want to create it?", "Create output dir?",
-                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+            if (!dir.exists()){
+                if(JOptionPane.showConfirmDialog(this,
+                        "Output directory " + dir +
+                        " does not exist.\n Do you want to create it?",
+                        "Create output dir?",
+                        JOptionPane.OK_CANCEL_OPTION)
+                    == JOptionPane.OK_OPTION
+                ){
                     dir.mkdirs();
-            } else {
-                System.out.println("ABORTED");
-                System.out.flush();
-                startbutton.setEnabled(true);
-                return;
+                } else {
+                    System.out.println("ABORTED");
+                    System.out.flush();
+                    startbutton.setEnabled(true);
+                    return;
+                }
             }
-        }
-        PREF.put("OutputDir", dir.getPath());
-
-        File[] inf = null;
-        inf = inp.isDirectory()?
+            PREF.put("OutputDir", dir.getPath());
+            
+            File[] inf = null;
+            inf = inp.isDirectory()?
             inp.listFiles(
                 new FileFilter(){
                     public boolean accept(File file){
                         return file.isFile() && file.getName().endsWith(input.extension());
                     }
                 }
-            )
+                )
             : new File[]{inp};
-
-        boolean html = false;
-        boolean hasErrors = false;
-        int i = 0;
-        FILELOOP: for(File inputf : inf){
-            if(i++ != 0){
-                System.out.println();
-            }
-            System.out.println("CONVERTING "+inputf.getPath());
-            System.out.flush();
-            String basename = inputf.getName();
-            int lastdot = basename.lastIndexOf(".");
-            String extension = "";
-            if(lastdot >= 0){
-                extension = basename.substring(lastdot);
-                basename = basename.substring(0, lastdot);
-            }
-
-            File xml = inputf;
-            if(input == Input.BIBTEX){
-                xml = new File(dir, basename + ".xml");
-                try{
-                    convert.bibTexToXml(inputf, xml);
-                } catch (Exception ex){
-                    convert.handleException("*** ERROR TRANSFORMING BIBTEX TO XML ***", ex);
-                    break FILELOOP;
-                }
-                /*
-                try{
-                    convert.createBibXmlDTD(dir);
-                } catch (IOException ex){
-                    convert.handleException("*** ERROR GENERATING BIBXML DTD ***", ex);
-                    return;
-                }
-                */
-            }
             
-            /* xml validation */
-            if(convert.hasSchema()){
-                try{
-                    System.out.println("Validating "+ xml.getPath() + 
-                        " using schema " + xmlschema + schemaLanguageExtension);
+            boolean html = false;
+            int parseErrors  = 0;
+            
+            int i = 0;
+            FILELOOP: for(File inputf : inf){
+                if(i++ != 0){
+                    System.out.println();
+                }
+                System.out.println("CONVERTING " + inputf.getPath());
+                System.out.flush();
+                String basename = inputf.getName();
+                int lastdot = basename.lastIndexOf(".");
+                String extension = "";
+                if(lastdot >= 0){
+                    extension = basename.substring(lastdot);
+                    basename = basename.substring(0, lastdot);
+                }
+                
+                File xml = inputf;
+                
+                if(input == InputType.BIBTEX){
+                    xml = new File(dir, basename + ".xml");
+                    System.out.println("Creating XML in " + xml.getPath());
                     System.out.flush();
-                    hasErrors = !convert.validate(xml);
-                } catch (SAXParseException ex){
-                    System.err.println("*** FATAL ERROR VALIDATING BIBXML ***");
-                    System.err.println(ex.getSystemId() + " line " + ex.getLineNumber());
-                    System.err.println(ex.getLocalizedMessage());
-                    hasErrors = true;
-                } catch (Exception ex){
-                    convert.handleException("*** FATAL ERROR VALIDATING BIBXML ***", ex);
-                    hasErrors = true;
-                }
-                if(hasErrors){
-                    System.err.println("Document is not valid.");
-                    break FILELOOP;
-                } else {
-                    System.out.println("Document is valid.");
-                }
-            }
-            System.out.flush();
-            System.err.flush();
-            
-            /* xslt transformation */
-            if(hasStyles()){
-                for(StyleSheetController cssc : getStyles()){
-                    if(cssc.isActive()){
-                        if(cssc.transform(xml, dir, basename)){
-                            if( cssc.getName().equals("HTML (flat)") ||
-                                cssc.getName().equals("HTML (grouped)") )
-                            {
-                                html = true;
-                            }
-                        } else {
-                            hasErrors = true;
-                            break FILELOOP;
-                        }
-                        System.out.flush();
+                    try{
+                        parseErrors  = convert.bibTexToXml(inputf, xml);
+                    } catch (IOException ex){
+                        convert.handleException("*** ERROR TRANSFORMING BIBTEX TO XML ***", ex);
+                        parseErrors = 0;
+                        break FILELOOP;
+                    }
+                    if(parseErrors  > 0){
+                        ErrorList el = msgPane.getErrorList(); 
+                        el.setFile(new XFile(inputf, InputType.BIBTEX, convert.getBibTeXEncoding()));
+                        el.setTitle("Errors parsing " + inputf.getName());
+                        el.setAllowDoubleClick(true);
+                        System.err.println(parseErrors  + " errors parsing " +  inputf.getName());
                         System.err.flush();
-                    } 
+                        break FILELOOP;
+                    }
+                }
+                System.err.flush();
+                System.out.flush();
+                
+                /* xml validation */
+                if(convert.hasSchema()){
+                    try{
+                        System.out.println("Validating "+ xml.getPath() + 
+                            " using schema " + xmlschema + schemaLanguageExtension);
+                        System.out.flush();
+                        parseErrors  = convert.validate(xml);
+                    } catch (SAXParseException ex){
+                        System.err.println("*** FATAL ERROR VALIDATING BIBXML ***");
+                        System.err.println(ex.getSystemId() + " line " + ex.getLineNumber());
+                        System.err.println(ex.getLocalizedMessage());
+                        parseErrors  = 1;
+                    } catch (Exception ex){
+                        convert.handleException("*** FATAL ERROR VALIDATING BIBXML ***", ex);
+                        parseErrors  = 0;
+                        break FILELOOP;
+                    }
+                    if(parseErrors  > 0){
+                        ErrorList el = msgPane.getErrorList(); 
+                        el.setFile(new XFile(xml, InputType.BIBXML, convert.getXMLEncoding()));
+                        el.setTitle("Errors validating " + xml.getName() + " against " + xmlschema + schemaLanguageExtension);
+                        el.setAllowDoubleClick(true);
+                        System.err.println(parseErrors  + " errors validating " +  xml.getName());
+                        System.err.println("Document is not valid.");
+                        System.err.flush();
+                        break FILELOOP;
+                    } else {
+                        System.out.println("Document is valid.");
+                    }
+                }
+                System.err.flush();
+                System.out.flush();
+                
+                /* xslt transformation */
+                if(hasStyles()){
+                    for(StyleSheetController cssc : getStyles()){
+                        if(cssc.isActive()){
+                            if(cssc.transform(xml, dir, basename)){
+                                if( cssc.getName().equals("HTML (flat)") ||
+                                    cssc.getName().equals("HTML (grouped)") )
+                                {
+                                    html = true;
+                                }
+                            } else {
+                                break FILELOOP;
+                            }
+                            System.err.flush();
+                            System.out.flush();
+                        } 
+                    }
                 }
             }
-        }
-        if(html){
-            try{
-                /* Creates CSS and JavaScript used by the HTML output. */
-                convert.copyResourceToFile("xslt/default.css", dir);
-                convert.copyResourceToFile("xslt/toggle.js", dir);
-            }  catch (IOException ex){
-                convert.handleException("Cannot generate javascript or css.", ex);
+            if(html){
+                try{
+                    /* Creates CSS and JavaScript used by the HTML output. */
+                    convert.copyResourceToFile("xslt/default.css", dir);
+                    convert.copyResourceToFile("xslt/toggle.js", dir);
+                }  catch (IOException ex){
+                    convert.handleException("Cannot generate javascript or css.", ex);
+                }
             }
-        }
-        System.out.println("FINISHED\n");
-        System.out.flush();
-        System.err.flush();
-        startbutton.setEnabled(true);
-        if(hasErrors){
-            msgPane.showErrors();
+            System.err.flush();
+            System.out.println("FINISHED\n");
+            System.out.flush();
+            if(parseErrors  > 0){
+                msgPane.showErrors();
+            }
+        } catch (RuntimeException ex){
+            msgPane.showConsole();
+            ex.printStackTrace();
+            System.err.flush();
+            throw ex;
+        } finally {
+            startbutton.setEnabled(true);
         }
     }
 
@@ -987,7 +970,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
 
         } else if(cmd.startsWith(INPUT_PREFIX)){
             cmd = cmd.substring(INPUT_PREFIX.length());
-            input = Enum.valueOf(Input.class, cmd);
+            input = Enum.valueOf(InputType.class, cmd);
             PREF.put(INPUT_PREFIX, cmd);
 
         } else if(cmd.startsWith(VALIDATION_PREFIX)){
@@ -1009,7 +992,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             convert.setBibTeXParser((Parser) item);
             PREF.put(cmd, ((Parser) item).name());
 
-        } else if(cmd.equals(ENCODING_PREFIX + Input.class.getName())){
+        } else if(cmd.equals(ENCODING_PREFIX + InputType.class.getName())){
             convert.setBibTeXEncoding(Charset.forName(sitem));
             PREF.put(cmd, sitem);
             //System.out.println("Input encoding is " + sitem);
@@ -1034,7 +1017,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             } catch (Exception ex){
                 convert.handleException("Invalid selection", ex);
                 if(jcb.getActionCommand().startsWith(ENCODING_PREFIX)){
-                    jcb.setSelectedItem(DEFAULT_ENC);
+                    jcb.setSelectedItem(BibTeXConverter.DEFAULT_ENC.name());
                 } else {
                     jcb.setSelectedIndex(0);
                 }
@@ -1048,7 +1031,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         private final static String ERRORS = "Error List";
         private final JEditorPane console = new JTextPane();
         private final ErrorList errorlist = new ErrorList();
-        private ResettableErrorHandler errorhandler;
+        private UniversalErrorHandler errorhandler;
         
         public MessagePanel(){
             super();
@@ -1059,12 +1042,12 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             output.setColor(Color.red);
             System.setErr(new PrintStream(new BufferedOutputStream(output), false));
             add(new JScrollPane(console), CONSOLE);
-            add(new JScrollPane(errorlist.component()), ERRORS);
+            add(errorlist.component(), ERRORS);
             showConsole();
             setPreferredSize(new Dimension(200,200));
         }
         
-        public synchronized ResettableErrorHandler getErrorHandler(){
+        public synchronized UniversalErrorHandler getErrorHandler(){
             if(errorhandler == null){
                 errorhandler = new JointErrorHandler(
                     new MyErrorHandler(),
@@ -1081,23 +1064,32 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             layout.show(this, ERRORS);
         }
         
-        private class MyErrorHandler implements ResettableErrorHandler{
+        protected ErrorList getErrorList(){
+            return errorlist;
+        }
+        
+        private class MyErrorHandler implements UniversalErrorHandler{
             public MyErrorHandler(){
             }
         
-            public synchronized void fatalError( SAXParseException e ) throws SAXException {
+            public void fatalError( SAXParseException e ) throws SAXException {
                 showErrors();
             }
         
-            public synchronized void error( SAXParseException ex ) throws SAXException {
+            public void error( SAXParseException ex ) throws SAXException {
                 showErrors();
             }
         
-            public synchronized void warning( SAXParseException e ) throws SAXException {
+            public void warning( SAXParseException e ) throws SAXException {
+                showErrors();
+            }
+            
+            public void error(ParseErrorMessage e) throws IOException {
                 showErrors();
             }
         
             public synchronized void reset(){
+                errorlist.setAllowDoubleClick(false);
                 showConsole();
             }
             

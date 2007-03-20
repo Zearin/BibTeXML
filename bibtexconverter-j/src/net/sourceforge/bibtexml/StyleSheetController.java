@@ -234,6 +234,9 @@ class StyleSheetController {
     }
     
     static boolean placeWindow(Window w, Window owner){
+        if(owner == null){
+            return false;
+        }
         Set<Window> others = new HashSet<Window>();
         others.addAll(Arrays.asList(owner.getOwnedWindows()));
         others.remove(w);
@@ -353,9 +356,9 @@ class StyleSheetController {
         JLabel label;
         int rowcount = 0;
         if(customEncoding){
-            String prefval = pref.get(P_KEY_ENCODING, BibTeXConverter.DEFAULT_ENC);
+            String prefval = pref.get(P_KEY_ENCODING, BibTeXConverter.DEFAULT_ENC.name());
             JComboBox outpEnc = new JComboBox(BibTeXConverterController.allEncodings);
-            outpEnc.setSelectedItem(BibTeXConverter.DEFAULT_ENC);
+            outpEnc.setSelectedItem(BibTeXConverter.DEFAULT_ENC.name());
             outpEnc.setEditable(true);
             if(Charset.isSupported(prefval)){
                 outpEnc.setSelectedItem(prefval);

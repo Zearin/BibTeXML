@@ -78,14 +78,14 @@ public class SaxonGUI extends JFrame implements ActionListener{
             Preferences.userNodeForPackage(BibTeXConverterController.class).node("saxongui");
     private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("bibconvert.png"));
 
-    private Input input = Input.BIBXML;
+    private InputType input = InputType.BIBXML;
     BibTeXConverter convert = new BibTeXConverter();
 
-    private final static String INPUT_PREFIX = Input.class.getName()+":";
+    private final static String INPUT_PREFIX = InputType.class.getName()+":";
     final static String ENCODING_PREFIX = Charset.class.getName()+":";
     private final static String START_CONVERSION = "Start conversion";
 
-    final static String DEFAULT_ENC = BibTeXConverter.DEFAULT_ENC;
+    final static Charset DEFAULT_ENC = BibTeXConverter.DEFAULT_ENC;
 
     final static Object[] allEncodings = Charset.availableCharsets().keySet().toArray();
 
@@ -558,7 +558,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
 
         } else if(cmd.startsWith(INPUT_PREFIX)){
             cmd = cmd.substring(INPUT_PREFIX.length());
-            input = Enum.valueOf(Input.class, cmd);
+            input = Enum.valueOf(InputType.class, cmd);
             PREF.put(INPUT_PREFIX, cmd);
 
         }
@@ -573,7 +573,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
             convert.setBibTeXParser((Parser) item);
             PREF.put(cmd, ((Parser) item).name());
 
-        } else if(cmd.equals(ENCODING_PREFIX + Input.class.getName())){
+        } else if(cmd.equals(ENCODING_PREFIX + InputType.class.getName())){
             convert.setBibTeXEncoding(Charset.forName(sitem));
             PREF.put(cmd, sitem);
             //System.out.println("Input encoding is " + sitem);
@@ -598,7 +598,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
             } catch (Exception ex){
                 convert.handleException("Invalid selection", ex);
                 if(jcb.getActionCommand().startsWith(ENCODING_PREFIX)){
-                    jcb.setSelectedItem(DEFAULT_ENC);
+                    jcb.setSelectedItem(DEFAULT_ENC.name());
                 } else {
                     jcb.setSelectedIndex(0);
                 }

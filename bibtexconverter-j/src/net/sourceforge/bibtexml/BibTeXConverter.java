@@ -53,30 +53,30 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import de.mospace.lang.DefaultClassLoaderProvider;
 import de.mospace.swing.LookAndFeelMenu;
-import de.mospace.xml.JointErrorHandler;
 import de.mospace.xml.ResettableErrorHandler;
 
 public class BibTeXConverter extends DefaultClassLoaderProvider{
     private final static boolean cleanInput = true;
     private TransformerFactory tf;
     private Validator xmlValidator; 
-    protected final static String DEFAULT_ENC = Charset.defaultCharset().name();
+    protected final static Charset DEFAULT_ENC = Charset.defaultCharset();
     protected final static String INTERNAL_PARAMETER_PREFIX = "bibtexml.sf.net.";
     public final static String RELAXNG_SF 
         = "javax.xml.validation.SchemaFactory:" + XMLConstants.RELAXNG_NS_URI;
     public final static String JARV_RELAXNG_SF
         = "org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl";
-    private String xmlenc = DEFAULT_ENC;
+    private Charset xmlenc = DEFAULT_ENC;
     protected final static Parser DEFAULT_PARSER = Parser.TEXLIPSE;
     public final static String TRANSFORMER_FACTORY_IMPLEMENTATION =
             "net.sf.saxon.TransformerFactoryImpl";
 
-    String inputenc = DEFAULT_ENC;
+    private Charset inputenc = DEFAULT_ENC;
     Parser parser = DEFAULT_PARSER;
-    private JointErrorHandler errorh; //will be lazily initialized, see getErrorHandler() below
+    private ErrorCounter ecount = new ErrorCounter();
+    private ResettableErrorHandler saxErrorHandler = ecount;
+    private BibTeXErrorHandler bibErrorHandler = ecount;
 
     public BibTeXConverter(){
-
         /* add default library directories to class path if they exist */
         String fs = File.separator;
         List<String> candidates = new ArrayList<String>();
@@ -114,36 +114,74 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
         tf = tryToGetTransformerFactory();
     }
 
-    /* generating BIBXML from BibTeX */
-
     /** Converts bibTex from in to BibXML using the current Parser, inputenc, and
-     * xmlenc and  writes the result to out. **/
-    public void bibTexToXml(File in, File out) throws IOException{
+     * xmlenc and  writes the result to out.
+     * @return the number of parse errors that occurred
+     **/
+    public int bibTexToXml(File in, File out) throws IOException{
         AbstractBibTeXParser p = null;
         switch(parser){
             case BIB2BIBXML :
-                p = new Bib2BibXML(inputenc, xmlenc, cleanInput);;
+                p = new Bib2BibXML(inputenc.name(), xmlenc.name(), cleanInput);
                 break;
             case TEXLIPSE:
-                p = new TeXLipseParser(inputenc, xmlenc, cleanInput);
+                p = new TeXLipseParser(inputenc.name(), xmlenc.name(), cleanInput);
                 break;
             default:
-                System.err.println("No such parser: "+ parser.toString());
+                throw new IOException("No such parser: "+ parser.toString());
         }
-
+        p.setErrorHandler(bibErrorHandler);
+        bibErrorHandler.reset();
         if(p != null){
-            System.out.println("Creating bibxml "+out.getPath());
-            System.out.flush();
             p.processFile(in, out);
         }
+        return ecount.getErrorCount();
     }
 
     public void setBibTeXEncoding(Charset chars){
-        inputenc = chars.name();
+        inputenc = chars;
+    }
+    
+    public Charset getBibTeXEncoding(){
+        return inputenc;
+    }
+    
+    public void setBibTeXErrorHandler(BibTeXErrorHandler handler){
+        if(handler == null){
+            bibErrorHandler = ecount;
+        } else {
+            UniversalErrorHandler b = (handler instanceof UniversalErrorHandler)
+                    ? (UniversalErrorHandler) handler
+                    : UniversalErrorHandlerAdapter.wrap(handler);
+            if(bibErrorHandler instanceof JointErrorHandler){
+                ((JointErrorHandler) bibErrorHandler).setSecond(b);
+            } else {
+                bibErrorHandler = new JointErrorHandler(ecount, b);
+            }
+        }
     }
     
     public void setXMLEncoding(Charset chars){
-        xmlenc = chars.name();
+        xmlenc = chars;
+    }
+    
+    public Charset getXMLEncoding(){
+        return xmlenc;
+    }
+    
+    public void setXMLErrorHandler(ResettableErrorHandler handler){
+        if(handler == null){
+            saxErrorHandler = ecount;
+        } else {
+            UniversalErrorHandler b = (handler instanceof UniversalErrorHandler)
+                    ? (UniversalErrorHandler) handler
+                    : UniversalErrorHandlerAdapter.wrap(handler);
+            if(saxErrorHandler instanceof JointErrorHandler){
+                ((JointErrorHandler) saxErrorHandler).setSecond(b);
+            } else {
+                saxErrorHandler = new JointErrorHandler(ecount, b);
+            }
+        }
     }
     
     /** @throws IllegalArgumentException if schema has an unknown extension or
@@ -160,7 +198,7 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
         } else if(schemaName.endsWith(".rng")){
             schemaLanguage = XMLConstants.RELAXNG_NS_URI;
         } else {
-            throw new IllegalArgumentException("url must end with .xsd or .rng");
+            throw new IllegalArgumentException("URL must end with .xsd or .rng");
         }
         SchemaFactory sf = null;
         try{
@@ -177,25 +215,25 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
             }
         }
         xmlValidator = sf.newSchema(schema).newValidator();
-        xmlValidator.setErrorHandler(getErrorHandler());
     }
     
     public boolean hasSchema(){
         return xmlValidator != null;
     }
     
-    public synchronized boolean validate(File xml) throws SAXParseException, SAXException, IOException{
-        boolean result = true;
+    /** @return the number of errors that occured */
+    public synchronized int validate(File xml) throws SAXException, IOException{
+        int result = 0;
         if(xmlValidator != null){
             InputStream in = null;
             try{
                 in = new BufferedInputStream(new FileInputStream(xml));
                 Source src = new SAXSource(new InputSource(in));
                 src.setSystemId(xml.toURI().toURL().toString());
-                getErrorHandler().reset();
+                saxErrorHandler.reset();
+                xmlValidator.setErrorHandler(saxErrorHandler);
                 xmlValidator.validate(src);
-                result = false;
-                result = !((ValidationErrorPrinter) getErrorHandler().getSecond()).hasError(); 
+                result = ecount.getErrorCount(); 
             } finally {
                 if (in != null){
                     in.close();
@@ -207,10 +245,6 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
 
     public void setBibTeXParser(Parser p){
         parser = p;
-    }
-
-    public void createBibXmlDTD(File target) throws IOException{
-        copyResourceToFile("bibtexml-strict.dtd", target);
     }
     
     public String getSaxonVersion(){
@@ -433,33 +467,6 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
         if(ex != null){
             System.err.println(ex);
             System.err.flush();
-        }
-    }
-    
-    private synchronized JointErrorHandler getErrorHandler(){
-        if(errorh == null){
-            errorh = new JointErrorHandler(null, new ValidationErrorPrinter());
-        }
-        return errorh;
-    }
-    
-    public void setErrorHandler(ResettableErrorHandler handler){
-        getErrorHandler().setFirst(handler);
-    }
-
-    /** The allowed input types. */
-    public enum Input {
-        BIBXML(".xml"),
-        BIBTEX("bib");
-
-        private final String ext;
-
-        Input(String extension){
-            ext = extension;
-        }
-
-        public String extension(){
-            return ext;
         }
     }
 
