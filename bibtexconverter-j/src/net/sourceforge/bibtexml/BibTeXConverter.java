@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -248,10 +250,14 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
     }
     
     public String getSaxonVersion(){
+        return getSaxonVersion("ProductTitle");
+    }
+    
+    public String getSaxonVersion(String what){
         String result = null;
         try{
             Class c = Class.forName("net.sf.saxon.Version", true, getClassLoader());
-            java.lang.reflect.Method m = c.getMethod("getProductTitle");
+            java.lang.reflect.Method m = c.getMethod("get" + what);
             result = (String) m.invoke(null);
         } catch (Exception ignore){}
         return result;
@@ -408,6 +414,32 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
                 System.out.println("Saxon found in " +
                         DefaultClassLoaderProvider.getRepositoryRoot(
                         tf.getClass()));
+                double saxonversion = 0;
+                try{
+                    String sv = getSaxonVersion("ProductVersion");
+                    //use only part up to second dot
+                    int dot = sv.indexOf('.');
+                    dot = sv.indexOf('.', dot + 1);
+                    if(dot > 0){
+                        sv = sv.substring(0, dot);
+                    }
+                    saxonversion = Double.parseDouble(sv);
+                } catch (Exception ignore){
+                }
+                System.out.println("Saxon version: " + saxonversion);
+                if(saxonversion >= 8.9){
+                    System.out.println();
+                } else if (saxonversion >= 8.8){
+                    //We need to switch the URI resolver to something that
+                    //knows how to handle jar files
+                    tf.setURIResolver(new JarAwareURIResolver());
+                } else {
+                    System.out.println();
+                    System.err.println("WARNING: This program has been developed" +
+                        " and tested with saxon version 8.8 and later.");
+                }
+                System.out.flush();
+                System.err.flush();
             } catch (TransformerFactoryConfigurationError ignore){
             }
         }
@@ -482,6 +514,39 @@ public class BibTeXConverter extends DefaultClassLoaderProvider{
 
         public String toString(){
             return longname;
+        }
+    }
+    
+    private static class JarAwareURIResolver implements URIResolver{
+        public JarAwareURIResolver(){
+        }
+        
+        public Source resolve(String href,
+                      String base)
+                throws TransformerException{
+           try{
+               URI uri = new URI(href);
+               if(uri.isAbsolute()){
+                   //leave it as it is
+               } else if (base.startsWith("jar:")){
+                   int lastslash = base.lastIndexOf('/');
+                   if(lastslash >= 0){
+                       uri = new URI(base.substring(0, lastslash + 1) + href);
+                   } else {
+                       uri = new URI(base + "/" + href);
+                   }
+               } else {
+                   URI baseuri = new URI(base);
+                   uri = baseuri.resolve(uri);
+               }
+               URL url = uri.toURL();
+               InputStream in = url.openStream();
+               Source src = new StreamSource(new BufferedInputStream(in));
+               src.setSystemId(url.toString());
+               return src;
+           } catch (Exception ex){
+               throw new TransformerException(ex);
+           }
         }
     }
 }
