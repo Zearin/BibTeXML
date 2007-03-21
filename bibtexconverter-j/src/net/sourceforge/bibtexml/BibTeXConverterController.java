@@ -622,7 +622,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                         el.setFile(new XFile(inputf, InputType.BIBTEX, convert.getBibTeXEncoding()));
                         el.setTitle("Errors parsing " + inputf.getName());
                         el.setAllowDoubleClick(true);
-                        System.err.println(parseErrors  + " errors parsing " +  inputf.getName());
+                        if(parseErrors != 1){
+                            System.err.println(parseErrors  + " errors parsing " +  inputf.getName());
+                        }
                         System.err.flush();
                         break FILELOOP;
                     }
@@ -642,6 +644,10 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                         System.err.println(ex.getSystemId() + " line " + ex.getLineNumber());
                         System.err.println(ex.getLocalizedMessage());
                         parseErrors  = 1;
+                    } catch (SAXException ex){
+                        System.err.println("*** FATAL ERROR VALIDATING BIBXML ***");
+                        System.err.println(ex.getMessage());
+                        parseErrors = 1;
                     } catch (Exception ex){
                         convert.handleException("*** FATAL ERROR VALIDATING BIBXML ***", ex);
                         parseErrors  = 0;
@@ -652,7 +658,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
                         el.setFile(new XFile(xml, InputType.BIBXML, convert.getXMLEncoding()));
                         el.setTitle("Errors validating " + xml.getName() + " against " + xmlschema + schemaLanguageExtension);
                         el.setAllowDoubleClick(true);
-                        System.err.println(parseErrors  + " errors validating " +  xml.getName());
+                        if(parseErrors != 1){
+                            System.err.println(parseErrors  + " errors validating " +  xml.getName());
+                        }
                         System.err.println("Document is not valid.");
                         System.err.flush();
                         break FILELOOP;

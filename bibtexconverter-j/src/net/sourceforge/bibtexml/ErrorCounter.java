@@ -20,6 +20,7 @@ package net.sourceforge.bibtexml;
  
 import de.mospace.xml.ResettableErrorHandler;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.SAXException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
 class ErrorCounter implements UniversalErrorHandler{
     private int count = 0;
@@ -27,16 +28,22 @@ class ErrorCounter implements UniversalErrorHandler{
     public ErrorCounter(){
     }
     
-    public void fatalError( SAXParseException e ){
+    public void fatalError( SAXParseException e ) throws SAXException{
         count++;
+        if(count > 100){
+            throw new SAXException("Stopped: more than 100 errors.");
+        }
     }
     
-    public void error( SAXParseException ex ){
+    public void error( SAXParseException e ) throws SAXException{
         count++;
+        //100 errors are fatal
+        if(count > 100){
+            throw new SAXException("Stopped: more than 100 errors.");
+        }
     }
     
     public void warning( SAXParseException e ){
-        count++;
     }
     
     public void error(ParseErrorMessage e){
