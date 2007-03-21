@@ -21,8 +21,10 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/** does not work for utf-16 encoding, may not work with utf-8 **/
-class CRLFOutputStream extends FilterOutputStream{
+/** This FilterOutputStream replaces single linefeeds (LF, '\n') with 
+ * linefeed + carriage returns (CRLF, '\n\r'). Does not work for utf-16
+ * encoding, may not work with utf-8 **/
+public class CRLFOutputStream extends FilterOutputStream{
     int lastb;
     final private static int LF = '\n' & 0xFF;
     final private static int CR = '\r' & 0xFF;

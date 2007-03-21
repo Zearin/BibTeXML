@@ -18,6 +18,6 @@ package net.sourceforge.bibtexml;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import de.mospace.xml.ResettableErrorHandler;
- 
+/** An error handler for both BibTeX to XML and XML to whatever conversion. */ 
 public interface UniversalErrorHandler extends ResettableErrorHandler, BibTeXErrorHandler{
 }

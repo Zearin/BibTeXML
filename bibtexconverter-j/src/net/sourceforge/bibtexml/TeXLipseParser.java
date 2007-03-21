@@ -31,7 +31,7 @@ import net.sourceforge.texlipse.bibparser.BibParser2;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
 import org.xml.sax.SAXException;
 
-class TeXLipseParser extends AbstractBibTeXParser{
+public class TeXLipseParser extends AbstractBibTeXParser{
     private BibParser2 parser;
     private boolean hasErrors = false;
 

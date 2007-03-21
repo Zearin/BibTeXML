@@ -28,7 +28,8 @@ import org.xml.sax.*;
 import java.nio.charset.Charset;
 import de.mospace.xml.ResettableErrorHandler;
 
-class XFile extends File {
+/** A file plus type and character set information. **/
+public class XFile extends File {
     private final InputType type;
     private final Charset charset;
     

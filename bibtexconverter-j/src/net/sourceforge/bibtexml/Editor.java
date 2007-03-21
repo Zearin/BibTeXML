@@ -31,8 +31,8 @@ import net.sourceforge.jeditsyntax.*;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 
-//ToDo better exception handling
-class Editor{
+/** This minimal editor allows to correct errors in BibTeX or XML input files. */
+public class Editor{
     private final JEditTextArea area = new JEditTextArea();
     private XFile activeFile = null;
     private final JDialog dialog;

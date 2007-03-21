@@ -22,7 +22,10 @@ import de.mospace.xml.ResettableErrorHandler;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
-class ErrorCounter implements UniversalErrorHandler{
+
+/** A resettable error handler that counts the errors in a single
+* parse or validation. */
+public class ErrorCounter implements UniversalErrorHandler{
     private int count = 0;
     
     public ErrorCounter(){

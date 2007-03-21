@@ -72,7 +72,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import de.mospace.xml.XSLParamHandler;
 import org.xml.sax.SAXException;
 
-class StyleSheetController {
+public class StyleSheetController {
     static Preferences PREF =
             Preferences.userNodeForPackage(BibTeXConverterController.class).node("styles");
     private final Preferences pref;

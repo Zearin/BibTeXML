@@ -23,6 +23,12 @@ import org.xml.sax.SAXParseException;
 import java.io.IOException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
 
+/** Default implementation of a universal error handler. The error and 
+* fatalError methods will always throw an exception. warning and reset
+* do nothing. The wrap methods allows to dress ResettableErrorHandlers
+* and BibTeXErrorHandlers as UniversalErrorHandlers by providing them
+* with this default behaviour.
+*/
 public class UniversalErrorHandlerAdapter implements UniversalErrorHandler{
     private UniversalErrorHandler first;
     

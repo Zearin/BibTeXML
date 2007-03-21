@@ -40,7 +40,7 @@ import org.xml.sax.SAXParseException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
 import net.sourceforge.bibtexml.BibTeXConverter.Parser;
 
-class BibTeXConverterController extends JFrame implements ActionListener{
+public class BibTeXConverterController extends JFrame implements ActionListener{
     private static final Preferences PREF =
             Preferences.userNodeForPackage(BibTeXConverterController.class);
     private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("bibxml.png"));

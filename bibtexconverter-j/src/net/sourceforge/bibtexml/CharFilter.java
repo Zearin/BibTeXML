@@ -25,7 +25,7 @@ import java.nio.charset.*;
 import java.util.regex.*;
 import java.util.*;
 
-class CharFilter extends FilterReader{
+public class CharFilter extends FilterReader{
     private final String chars;
     private final List<int[]> forbidden = new Vector<int[]>();
     private final Matcher htmlEscape = Pattern.compile("&#(\\d{1,3});").matcher("");
@@ -66,12 +66,12 @@ class CharFilter extends FilterReader{
         return result;
     }
 
+    /** Not implemented. Always throws an UnsupportedOperationException. 
+    * @throws UnsupportedOperationException 
+    */
     public int read(CharBuffer target) throws IOException{
         throw new UnsupportedOperationException("Not implemented!");
     }
-
-
-
 
     public int cleanupFile(File input, File output){
         int lc = 0;
@@ -197,6 +197,9 @@ class CharFilter extends FilterReader{
         return result;
     }
 
+    /** Convenience method for creating a CharFilter that suppresses all
+    * characters that do not belong to the ISO-8859-1  charset.
+    */
     public static CharFilter getIsoLatin1Reader(Reader in){
         CharFilter ric = new CharFilter(in, "ISO-8859-1");
         ric.addForbiddenRange(127, 159);
@@ -206,6 +209,8 @@ class CharFilter extends FilterReader{
         return ric;
     }
 
+    /** Reads the file specified as this methods first argument using an
+    * isoLatinReader and prints the result to stdout. */
     public static void main(String[] argv){
         CharFilter ric = getIsoLatin1Reader(null);
         int lc = ric.cleanupFile(new File(argv[0]), null);

@@ -23,6 +23,10 @@ import org.xml.sax.SAXParseException;
 import java.io.IOException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
  
+/** Allows to combine two error handlers. Each of the error
+* handling methods delegates to both the methods of the first and the
+* second handler (in this order).
+*/
 public class JointErrorHandler implements UniversalErrorHandler{
     private UniversalErrorHandler first;
     private UniversalErrorHandler second;

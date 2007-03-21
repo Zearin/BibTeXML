@@ -30,7 +30,8 @@ import org.xml.sax.SAXParseException;
 import java.io.IOException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
 
-class ErrorList{
+/** Provides the component for displaying errors in a structured manner. */
+public class ErrorList{
     private final DefaultListModel model = new DefaultListModel();
     private final JList list = new JList(model);
     private final JScrollPane ui = new JScrollPane(list);
