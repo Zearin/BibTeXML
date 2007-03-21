@@ -38,7 +38,7 @@ import de.mospace.xml.ResettableErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
-import net.sourceforge.bibtexml.BibTeXConverter.*;
+import net.sourceforge.bibtexml.BibTeXConverter.Parser;
 
 class BibTeXConverterController extends JFrame implements ActionListener{
     private static final Preferences PREF =
@@ -77,7 +77,7 @@ class BibTeXConverterController extends JFrame implements ActionListener{
     protected File styledir;
     
 
-    public BibTeXConverterController() throws SAXException, IOException{
+    public BibTeXConverterController(){
         super("BibTeXConverter");
         Object tf = convert.tryToGetTransformerFactory(); 
         if(tf == null){
@@ -92,38 +92,15 @@ class BibTeXConverterController extends JFrame implements ActionListener{
             System.err.println("Only XML output is possible.");
         } else {
             /* load built-in styles */
-            addStyle(
-                new StyleSheetController(convert, BIBTEX, "-new.bib",
-                        getClass().getResource("xslt/bibxml2bib.xsl"),
-                        false, true, true));
-            addStyle(
-                new StyleSheetController(convert, RIS, ".ris",
-                        getClass().getResource("xslt/bibxml2ris.xsl"),
-                        false, false, true));
-            addStyle(
-                new StyleSheetController(convert, HTMLFLAT, ".html",
-                        getClass().getResource("xslt/bibxml2html.xsl"),
-                        true, true, false){
-                    public boolean transformImpl(File a, File b){
-                        return checkPdfDirURI(params) && super.transformImpl(a, b);
+            addBuiltInStyles();
+            try{
+                for(StyleSheetController style : 
+                    StyleSheetController.load(convert, BUILTIN)){
+                addStyle(style);
                     }
-                });
-            addStyle(
-                new StyleSheetController(convert, HTMLGROUPED, "g.html",
-                        getClass().getResource("xslt/bibxml2htmlg.xsl"),
-                        true, true, false){
-                    public boolean transformImpl(File a, File b){
-                        return checkPdfDirURI(params) && super.transformImpl(a, b);
-                    }
-                });
-                try{
-                    for(StyleSheetController style : 
-                            StyleSheetController.load(convert, BUILTIN)){
-                        addStyle(style);
-                    }
-                } catch (Exception ex){
-                    ex.printStackTrace();
-                }
+            } catch (Exception ex){
+                ex.printStackTrace();
+            }
         }
         pack();
         
@@ -132,6 +109,47 @@ class BibTeXConverterController extends JFrame implements ActionListener{
         
         System.err.flush();
         System.out.flush();
+    }
+    
+    private void addBuiltInStyles(){
+        addStyle(
+            StyleSheetController.newInstance(convert, BIBTEX, "-new.bib",
+                    getClass().getResource("xslt/bibxml2bib.xsl"),
+                    false, true, true));
+        addStyle(
+            StyleSheetController.newInstance(convert, RIS, ".ris",
+                    getClass().getResource("xslt/bibxml2ris.xsl"),
+                    false, false, true));
+        try{
+            addStyle(
+                new StyleSheetController(convert, HTMLFLAT, ".html",
+                        getClass().getResource("xslt/bibxml2html.xsl"),
+                        true, true, false){
+                    public boolean transformImpl(File a, File b){
+                        return checkPdfDirURI(params) && super.transformImpl(a, b);
+                    }
+                });
+        } catch (SAXException ex){
+            System.err.println("Error compiling stylesheet for flat HTML output.");
+            System.err.println((ex.getCause() == null)? ex : ex.getCause());
+        } catch (IOException ex){
+            ex.printStackTrace();
+        }
+        try{
+            addStyle(
+                new StyleSheetController(convert, HTMLGROUPED, "g.html",
+                        getClass().getResource("xslt/bibxml2htmlg.xsl"),
+                        true, true, false){
+                    public boolean transformImpl(File a, File b){
+                        return checkPdfDirURI(params) && super.transformImpl(a, b);
+                    }
+                });
+        } catch (SAXException ex){
+            System.err.println("Error compiling stylesheet for grouped HTML output.");
+            System.err.println((ex.getCause() == null)? ex : ex.getCause());
+        } catch (IOException ex){
+            ex.printStackTrace();
+        }
     }
     
     private void setValidationSchema(String cmd){
@@ -892,6 +910,9 @@ class BibTeXConverterController extends JFrame implements ActionListener{
     }
     
     synchronized public boolean addStyle(StyleSheetController cssc){
+        if(cssc == null){
+            return false;
+        }
         if(styles == null){
             styles = new HashSet<StyleSheetController>();
         }

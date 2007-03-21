@@ -180,6 +180,28 @@ class StyleSheetController {
         init(customParams, customEncoding);
     }
     
+    /** Doesn't throw any exceptions, prints errors to stderr. **/
+    public static StyleSheetController newInstance(BibTeXConverter conv, 
+            String outputname,
+            String outputSuffix,
+            URL stylesheet,
+            boolean customParams,
+            boolean customEncoding,
+            boolean newlineConversion){
+        StyleSheetController ssc = null;
+        try{
+            ssc = new StyleSheetController(conv, outputname, outputSuffix,
+                   stylesheet, customParams, customEncoding, newlineConversion);
+        } catch (SAXException ex){
+            System.err.println("Error compiling stylesheet for " + outputname);
+            System.err.println((ex.getCause() == null)? ex : ex.getCause());
+        } catch (IOException ex){
+            System.err.println("Error loading stylesheet from " + stylesheet);
+            ex.printStackTrace();
+        }
+        return ssc;
+    }
+    
     private synchronized void setConfigVisible(boolean b){
         if(dialog != null && dialog.isVisible()){
             if(b){
