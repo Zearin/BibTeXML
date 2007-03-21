@@ -8,7 +8,11 @@
 -->
 <project name="bibtexconverter" default="test" basedir=".">
   <description>
-    Buildfile for bibtexconverter application
+    Buildfile for bibtexconverter application. As of 2007-03-21,
+    this buildfile works correctly only in nightly builds of 
+    apache ant due to ant bug 41879 
+    (http://issues.apache.org/bugzilla/show_bug.cgi?id=41879).
+    It is expected that this bug will be fixed in ant 1.7.1.
   </description>
   <!-- global properties used by ant-shared.xml -->
   <property
