@@ -62,7 +62,7 @@ public class BibTeXConverter extends XMLConverter{
     protected final static Parser DEFAULT_PARSER = Parser.TEXLIPSE;
     private Charset inputenc = XMLConverter.DEFAULT_ENC;
     private Parser parser = DEFAULT_PARSER;
-    private BibTeXErrorHandler bibErrorHandler = super.ecount;
+    private BibTeXErrorHandler bibErrorHandler = new ErrorCounter();
 
     public BibTeXConverter(){
         super();
@@ -72,7 +72,8 @@ public class BibTeXConverter extends XMLConverter{
      * xmlenc and  writes the result to out.
      * @return the number of parse errors that occurred
      **/
-    public int bibTexToXml(File in, File out) throws IOException{
+    @SuppressWarnings("deprecation") 
+    public void bibTexToXml(File in, File out) throws IOException{
         AbstractBibTeXParser p = null;
         switch(parser){
             case BIB2BIBXML :
@@ -85,11 +86,9 @@ public class BibTeXConverter extends XMLConverter{
                 throw new IOException("No such parser: "+ parser.toString());
         }
         p.setErrorHandler(bibErrorHandler);
-        bibErrorHandler.reset();
         if(p != null){
             p.processFile(in, out);
         }
-        return ecount.getErrorCount();
     }
 
     public void setBibTeXEncoding(Charset chars){
@@ -101,18 +100,7 @@ public class BibTeXConverter extends XMLConverter{
     }
     
     public void setBibTeXErrorHandler(BibTeXErrorHandler handler){
-        if(handler == null){
-            bibErrorHandler = ecount;
-        } else {
-            UniversalErrorHandler b = (handler instanceof UniversalErrorHandler)
-                    ? (UniversalErrorHandler) handler
-                    : UniversalErrorHandlerAdapter.wrap(handler);
-            if(bibErrorHandler instanceof JointErrorHandler){
-                ((JointErrorHandler) bibErrorHandler).setSecond(b);
-            } else {
-                bibErrorHandler = new JointErrorHandler(ecount, b);
-            }
-        }
+        bibErrorHandler = handler;
     }
     
     public void setBibTeXParser(Parser p){

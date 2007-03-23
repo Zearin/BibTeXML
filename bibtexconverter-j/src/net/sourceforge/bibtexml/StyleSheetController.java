@@ -67,7 +67,9 @@ import javax.swing.SpringLayout;
 import de.mospace.swing.SpringUtilities;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerConfigurationException;
 import de.mospace.xml.XSLParamHandler;
 import org.xml.sax.SAXException;
@@ -533,23 +535,21 @@ public class StyleSheetController {
         return active;
     }
     
-    public boolean transform(File xml,
+    public void transform(File xml,
                            File dir,
-                           String basename){
+                           String basename) throws TransformerException, IOException{
         File xslout = new File(dir, basename + ext);               
         System.out.printf("Creating %s in %s\n", name, xslout.toString());
-        return transformImpl(xml, xslout);
+        System.out.flush();
+        transformImpl(xml, xslout);
     }
     
-    protected boolean transformImpl(File xml, File xslout){
-        boolean result = true;
-        try{
-            conv.transform(t, xml, xslout, params, enc, crlf);
-        } catch (Exception ex){
-            conv.handleException("***ERROR in XSL transformation***", null);
-            result = false;
-        }
-        return result;
+    protected void transformImpl(File xml, File xslout) throws TransformerException, IOException{
+        conv.transform(t, xml, xslout, params, enc, crlf);
+    }
+    
+    public void setErrorHandler(ErrorListener handler){
+        t.setErrorListener(handler);
     }
     
     public static void main(final String[] argv){

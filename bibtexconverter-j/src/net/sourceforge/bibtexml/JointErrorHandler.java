@@ -20,6 +20,7 @@ package net.sourceforge.bibtexml;
 import de.mospace.xml.ResettableErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
  
@@ -51,6 +52,27 @@ public class JointErrorHandler implements UniversalErrorHandler{
     }
     
     public void warning( SAXParseException e ) throws SAXException {
+        if(first != null){
+            first.warning(e);
+        }
+        second.warning(e);
+    }
+    
+    public void fatalError( TransformerException e ) throws TransformerException {
+        if(first != null){
+            first.fatalError(e);
+        }
+        second.fatalError(e);
+    }
+    
+    public void error( TransformerException e ) throws TransformerException {
+        if(first != null){
+            first.error(e);
+        }
+        second.error(e);
+    }
+    
+    public void warning( TransformerException e ) throws TransformerException {
         if(first != null){
             first.warning(e);
         }

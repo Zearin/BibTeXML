@@ -17,25 +17,29 @@ package net.sourceforge.bibtexml;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import de.mospace.xml.ResettableErrorHandler;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.ErrorListener;
 import java.io.IOException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
 
 /** Default implementation of a universal error handler. The error and 
 * fatalError methods will always throw an exception. warning and reset
-* do nothing. The wrap methods allows to dress ResettableErrorHandlers
+* do nothing. The wrap methods allows to dress ErrorHandlers
 * and BibTeXErrorHandlers as UniversalErrorHandlers by providing them
 * with this default behaviour.
 */
 public class UniversalErrorHandlerAdapter implements UniversalErrorHandler{
     private UniversalErrorHandler first;
     
+    //BibTeXErrorHandler
     public void error(ParseErrorMessage e) throws IOException {
         throw new IOException(e.getMsg());
     }
     
+    //ErrorHandler
     public void fatalError( SAXParseException e ) throws SAXException {
         throw new SAXException(e);
     }
@@ -47,21 +51,60 @@ public class UniversalErrorHandlerAdapter implements UniversalErrorHandler{
     public void warning( SAXParseException e ) throws SAXException {
     }
     
+    //ErrorListener
+    public void fatalError( TransformerException e ) throws TransformerException {
+        throw new TransformerException(e);
+    }
+        
+    public void error( TransformerException e ) throws TransformerException {
+        throw new TransformerException(e);
+    }
+        
+    public void warning( TransformerException e ) throws TransformerException {
+    }
+    
     public void reset(){
     }
     
-    public static UniversalErrorHandler wrap(ResettableErrorHandler handler){
-        return new WrappedResettableErrorHandler(handler);
+    public static UniversalErrorHandler wrap(ErrorHandler handler){
+        return new WrappedErrorHandler(handler);
     }
     
     public static UniversalErrorHandler wrap(BibTeXErrorHandler handler){
         return new WrappedBibTeXErrorHandler(handler);
     }
     
-    private static class WrappedResettableErrorHandler extends UniversalErrorHandlerAdapter{
-        private final ResettableErrorHandler reh;
+    public static UniversalErrorHandler wrap(ErrorListener handler){
+        return new WrappedErrorListener(handler);
+    }
+    
+    private static class WrappedErrorListener extends UniversalErrorHandlerAdapter{
+        private final ErrorListener eh;
         
-        public WrappedResettableErrorHandler(ResettableErrorHandler handler){
+        public WrappedErrorListener(ErrorListener handler){
+            eh = handler;
+        }
+        
+        @Override
+        public void fatalError( TransformerException e ) throws TransformerException {
+            eh.fatalError(e);
+        }
+        
+        @Override
+        public void error( TransformerException e ) throws TransformerException {
+            eh.error(e);
+        }
+        
+        @Override
+        public void warning( TransformerException e ) throws TransformerException {
+            eh.warning(e);
+        }
+    }
+    
+    private static class WrappedErrorHandler extends UniversalErrorHandlerAdapter{
+        private final ErrorHandler reh;
+        
+        public WrappedErrorHandler(ErrorHandler handler){
             reh = handler;
         }
         
@@ -72,17 +115,12 @@ public class UniversalErrorHandlerAdapter implements UniversalErrorHandler{
         
         @Override
         public void error( SAXParseException e ) throws SAXException {
-            reh.fatalError(e);
+            reh.error(e);
         }
         
         @Override
         public void warning( SAXParseException e ) throws SAXException {
             reh.warning(e);
-        }
-        
-        @Override
-        public void reset(){
-            reh.reset();
         }
     }
     

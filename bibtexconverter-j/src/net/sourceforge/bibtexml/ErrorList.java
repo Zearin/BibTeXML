@@ -27,12 +27,14 @@ import javax.swing.*;
 import de.mospace.xml.ResettableErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
+import de.mospace.swing.SortedSetListModel;
 
 /** Provides the component for displaying errors in a structured manner. */
 public class ErrorList{
-    private final DefaultListModel model = new DefaultListModel();
+    private final SortedSetListModel model = new SortedSetListModel();
     private final JList list = new JList(model);
     private final JScrollPane ui = new JScrollPane(list);
     private final JLabel title = new JLabel("Errors");
@@ -42,6 +44,7 @@ public class ErrorList{
     
     private ErrorAdder errorhandler;
     private final MouseListener editorUpdater = new MouseAdapter() {
+        @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2 && allowDoubleClick) {
                 int index = list.locationToIndex(e.getPoint());
@@ -149,7 +152,7 @@ public class ErrorList{
         }
     }
     
-    private final static class ErrorItem{
+    private final static class ErrorItem implements Comparable{
         /** first line is 1 **/
         public final int line;
         /** first column is 1 **/
@@ -160,7 +163,7 @@ public class ErrorList{
             String message, int line, int column){
             this.column = column;
             this.line = line;
-            this.message = message;
+            this.message = (message == null)? "" : message; //assure message is non-null
         }
         
         public static ErrorItem fromSaxParseException( SAXParseException e ){
@@ -177,12 +180,66 @@ public class ErrorList{
                 e.getPos() + 1);
         }
         
+        public static ErrorItem fromTransformerException( TransformerException e){
+            if(e.getLocator() != null){
+                return new ErrorItem(
+                    e.getLocalizedMessage(),
+                    e.getLocator().getLineNumber(),
+                    e.getLocator().getColumnNumber());
+            } else if(e.getCause() != null){
+                Throwable cause = e.getCause();
+                if(cause instanceof SAXParseException){
+                    return fromSaxParseException((SAXParseException) cause);
+                } else if(cause instanceof TransformerException){
+                    return fromTransformerException((TransformerException) cause);
+                }
+            }
+            return new ErrorItem(e.getLocalizedMessage(), -1, -1);
+        }
+        
+        @Override
         public String toString(){
             StringBuilder sb = new StringBuilder();
             sb.append(String.valueOf(line)).append(':');
             sb.append(String.valueOf(column)).append(" ");
             sb.append(message);
             return sb.toString();
+        }
+        
+        @Override
+        public boolean equals(Object o){
+            if(this == o){
+                return true;
+            }
+            boolean result = false;
+            if(o instanceof ErrorItem){
+                ErrorItem other = (ErrorItem) o;
+                result = message.equals(other.message) && 
+                    line == other.line &&
+                    column == other.column;
+            }
+            return result;
+        }
+        
+        @Override
+        public int hashCode(){
+            int result = 59;
+            result = 37 * result + message.hashCode();
+            result = 37 * result + line;
+            result = 37 * result + column;
+            return result;
+        }
+        
+        /** Error items are compared by line, column, message in this order. */ 
+        public int compareTo(Object o){
+            ErrorItem other = (ErrorItem) o;
+            if(line != other.line){
+                return line - other.line;
+            } else if (column != other.column){
+                return column - other.column;
+            } else {
+                return message.compareTo(other.message);
+            }
         }
     }
     
@@ -210,9 +267,25 @@ public class ErrorList{
             addError(e);
         }
         
+        public void fatalError( TransformerException e ) throws TransformerException {
+            addError(e);
+        }
+        
+        public void error( TransformerException e ) throws TransformerException {
+            addError(e);
+        }
+        
+        public void warning( TransformerException e ) throws TransformerException {
+            addError(e);
+        }
+        
         public void reset(){
             clear();
         }
+    }
+    
+    private void addError(TransformerException e){
+        addError(ErrorItem.fromTransformerException(e));
     }
     
     private void addError(ParseErrorMessage e){
@@ -224,7 +297,7 @@ public class ErrorList{
     }
     
     private void addError(ErrorItem item){
-        model.addElement(item);
+        model.add(item);
     }
     
     public void setFile(XFile f){

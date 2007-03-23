@@ -17,7 +17,8 @@ package net.sourceforge.bibtexml;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import de.mospace.xml.ResettableErrorHandler;
+import org.xml.sax.ErrorHandler;
+import javax.xml.transform.ErrorListener;
 /** An error handler for both BibTeX to XML and XML to whatever conversion. */ 
-public interface UniversalErrorHandler extends ResettableErrorHandler, BibTeXErrorHandler{
+public interface UniversalErrorHandler extends ErrorHandler, BibTeXErrorHandler, ErrorListener{
 }

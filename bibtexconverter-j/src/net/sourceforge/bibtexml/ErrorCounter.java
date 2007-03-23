@@ -18,26 +18,30 @@ package net.sourceforge.bibtexml;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
  
-import de.mospace.xml.ResettableErrorHandler;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXException;
+import javax.xml.transform.TransformerException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
 
 /** A resettable error handler that counts the errors in a single
 * parse or validation. */
-public class ErrorCounter implements UniversalErrorHandler{
+public class ErrorCounter extends UniversalErrorHandlerAdapter{
     private int count = 0;
     
     public ErrorCounter(){
     }
     
+    @Override
     public void fatalError( SAXParseException e ) throws SAXException{
         count++;
+        //100 errors are fatal
         if(count > 100){
             throw new SAXException("Stopped: more than 100 errors.");
         }
     }
     
+    
+    @Override
     public void error( SAXParseException e ) throws SAXException{
         count++;
         //100 errors are fatal
@@ -46,9 +50,26 @@ public class ErrorCounter implements UniversalErrorHandler{
         }
     }
     
-    public void warning( SAXParseException e ){
+    //ErrorListener
+    @Override
+    public void fatalError( TransformerException e ) throws TransformerException {
+        count++;
+        //100 errors are fatal
+        if(count > 100){
+            throw new TransformerException("Stopped: more than 100 errors.");
+        }
     }
     
+    @Override    
+    public void error( TransformerException e ) throws TransformerException {
+        count++;
+        //100 errors are fatal
+        if(count > 100){
+            throw new TransformerException("Stopped: more than 100 errors.");
+        }
+    }
+    
+    @Override
     public void error(ParseErrorMessage e){
         count++;
     }
@@ -61,6 +82,7 @@ public class ErrorCounter implements UniversalErrorHandler{
         return count;
     }
     
+    @Override
     public void reset(){
         count = 0;
     }

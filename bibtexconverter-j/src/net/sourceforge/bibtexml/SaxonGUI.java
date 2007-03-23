@@ -347,7 +347,10 @@ public class SaxonGUI extends JFrame implements ActionListener{
             if(hasStyles()){
                 for(StyleSheetController cssc : getStyles()){
                     if(cssc.isActive()){
-                        if(!cssc.transform(xml, dir, basename)){
+                        try{
+                            cssc.transform(xml, dir, basename);
+                        } catch (Exception ex){
+                            System.out.println(ex);
                             break FILELOOP;
                         }
                     } 

@@ -55,7 +55,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import de.mospace.lang.DefaultClassLoaderProvider;
 import de.mospace.swing.LookAndFeelMenu;
-import de.mospace.xml.ResettableErrorHandler;
 
 public class XMLConverter extends DefaultClassLoaderProvider{
     private TransformerFactory tf;
@@ -69,8 +68,7 @@ public class XMLConverter extends DefaultClassLoaderProvider{
     private Charset xmlenc = DEFAULT_ENC;
     public final static String TRANSFORMER_FACTORY_IMPLEMENTATION =
             "net.sf.saxon.TransformerFactoryImpl";
-    protected ErrorCounter ecount = new ErrorCounter();
-    protected ResettableErrorHandler saxErrorHandler = ecount;
+    protected ErrorHandler saxErrorHandler = new ErrorCounter();
 
     public XMLConverter(){
         /* add default library directories to class path if they exist */
@@ -118,19 +116,8 @@ public class XMLConverter extends DefaultClassLoaderProvider{
         return xmlenc;
     }
     
-    public void setXMLErrorHandler(ResettableErrorHandler handler){
-        if(handler == null){
-            saxErrorHandler = ecount;
-        } else {
-            UniversalErrorHandler b = (handler instanceof UniversalErrorHandler)
-                    ? (UniversalErrorHandler) handler
-                    : UniversalErrorHandlerAdapter.wrap(handler);
-            if(saxErrorHandler instanceof JointErrorHandler){
-                ((JointErrorHandler) saxErrorHandler).setSecond(b);
-            } else {
-                saxErrorHandler = new JointErrorHandler(ecount, b);
-            }
-        }
+    public void setValidationErrorHandler(ErrorHandler handler){
+        saxErrorHandler = handler;
     }
     
     /** @throws IllegalArgumentException if schema has an unknown extension or
@@ -171,25 +158,21 @@ public class XMLConverter extends DefaultClassLoaderProvider{
     }
     
     /** @return the number of errors that occured */
-    public synchronized int validate(File xml) throws SAXException, IOException{
-        int result = 0;
+    public synchronized void validate(File xml) throws SAXException, IOException{
         if(xmlValidator != null){
             InputStream in = null;
             try{
                 in = new BufferedInputStream(new FileInputStream(xml));
                 Source src = new SAXSource(new InputSource(in));
                 src.setSystemId(xml.toURI().toURL().toString());
-                saxErrorHandler.reset();
                 xmlValidator.setErrorHandler(saxErrorHandler);
                 xmlValidator.validate(src);
-                result = ecount.getErrorCount(); 
             } finally {
                 if (in != null){
                     in.close();
                 }
             }
         }
-        return result;
     }
 
     public String getSaxonVersion(){

@@ -31,6 +31,7 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;
+import javax.xml.transform.TransformerException;
 import de.mospace.swing.LookAndFeelMenu;
 import de.mospace.swing.PathInput;
 import de.mospace.swing.text.*;
@@ -75,7 +76,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private String xmlschema = "bibtexmlExtended";
     protected MessagePanel msgPane = new MessagePanel();
     protected File styledir;
-    
+    private final ErrorCounter ecount = new ErrorCounter();
+    private final UniversalErrorHandler errorHandler = new JointErrorHandler(ecount, msgPane.getErrorHandler());
 
     public BibTeXConverterController(){
         super("BibTeXConverter");
@@ -104,7 +106,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         }
         pack();
         
-        convert.setXMLErrorHandler(msgPane.getErrorHandler());
+        convert.setValidationErrorHandler(msgPane.getErrorHandler());
         convert.setBibTeXErrorHandler(msgPane.getErrorHandler());
         
         System.err.flush();
@@ -120,36 +122,19 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             StyleSheetController.newInstance(convert, RIS, ".ris",
                     getClass().getResource("xslt/bibxml2ris.xsl"),
                     false, false, true));
-        try{
-            addStyle(
-                new StyleSheetController(convert, HTMLFLAT, ".html",
-                        getClass().getResource("xslt/bibxml2html.xsl"),
-                        true, true, false){
+        addStyle(
+            StyleSheetController.newInstance(convert, HTMLFLAT, ".html",
+                    getClass().getResource("xslt/bibxml2html.xsl"),
+                    true, true, false));
+            /*{
                     public boolean transformImpl(File a, File b){
                         return checkPdfDirURI(params) && super.transformImpl(a, b);
                     }
-                });
-        } catch (SAXException ex){
-            System.err.println("Error compiling stylesheet for flat HTML output.");
-            System.err.println((ex.getCause() == null)? ex : ex.getCause());
-        } catch (IOException ex){
-            ex.printStackTrace();
-        }
-        try{
-            addStyle(
-                new StyleSheetController(convert, HTMLGROUPED, "g.html",
+                });*/
+        addStyle(
+            StyleSheetController.newInstance(convert, HTMLGROUPED, "g.html",
                         getClass().getResource("xslt/bibxml2htmlg.xsl"),
-                        true, true, false){
-                    public boolean transformImpl(File a, File b){
-                        return checkPdfDirURI(params) && super.transformImpl(a, b);
-                    }
-                });
-        } catch (SAXException ex){
-            System.err.println("Error compiling stylesheet for grouped HTML output.");
-            System.err.println((ex.getCause() == null)? ex : ex.getCause());
-        } catch (IOException ex){
-            ex.printStackTrace();
-        }
+                        true, true, false));
     }
     
     private void setValidationSchema(String cmd){
@@ -624,12 +609,15 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 
                 File xml = inputf;
                 
+                /* bibtex to bibxml */
                 if(input == InputType.BIBTEX){
                     xml = new File(dir, basename + ".xml");
                     System.out.println("Creating XML in " + xml.getPath());
                     System.out.flush();
                     try{
-                        parseErrors  = convert.bibTexToXml(inputf, xml);
+                        errorHandler.reset();
+                        convert.bibTexToXml(inputf, xml);
+                        parseErrors  = ecount.getErrorCount();
                     } catch (IOException ex){
                         convert.handleException("*** ERROR TRANSFORMING BIBTEX TO XML ***", ex);
                         parseErrors = 0;
@@ -656,17 +644,26 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         System.out.println("Validating "+ xml.getPath() + 
                             " using schema " + xmlschema + schemaLanguageExtension);
                         System.out.flush();
-                        parseErrors  = convert.validate(xml);
+                        errorHandler.reset();
+                        convert.validate(xml);
+                        parseErrors  = ecount.getErrorCount();
                     } catch (SAXParseException ex){
                         System.err.println("*** FATAL ERROR VALIDATING BIBXML ***");
-                        System.err.println(ex.getSystemId() + " line " + ex.getLineNumber());
-                        System.err.println(ex.getLocalizedMessage());
+                        try{
+                            //add the error to the error list
+                            //never mind if it has already been added
+                            //the SortedSetListModel of the errorlist will take
+                            //care of eliminating duplicates
+                            msgPane.getErrorHandler().fatalError(ex); 
+                        } catch (SAXException ignore){
+                        }
                         parseErrors  = 1;
                     } catch (SAXException ex){
                         System.err.println("*** FATAL ERROR VALIDATING BIBXML ***");
                         System.err.println(ex.getMessage());
                         parseErrors = 1;
-                    } catch (Exception ex){
+                        break FILELOOP;
+                    } catch (IOException ex){
                         convert.handleException("*** FATAL ERROR VALIDATING BIBXML ***", ex);
                         parseErrors  = 0;
                         break FILELOOP;
@@ -693,13 +690,39 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 if(hasStyles()){
                     for(StyleSheetController cssc : getStyles()){
                         if(cssc.isActive()){
-                            if(cssc.transform(xml, dir, basename)){
+                            try{
+                                errorHandler.reset();
+                                cssc.transform(xml, dir, basename);
+                                parseErrors = ecount.getErrorCount();
                                 if( cssc.getName().equals("HTML (flat)") ||
                                     cssc.getName().equals("HTML (grouped)") )
                                 {
                                     html = true;
                                 }
-                            } else {
+                            } catch (TransformerException ex){
+                                System.err.println("*** FATAL ERROR TRANSFORMING BIBXML ***");
+                                try{
+                                    //add the error to the error list
+                                    //never mind if it has already been added
+                                    //the SortedSetListModel of the errorlist will take
+                                    //care of eliminating duplicates
+                                    msgPane.getErrorHandler().fatalError(ex); 
+                                } catch (TransformerException ignore){
+                                }
+                                parseErrors  = 1;
+                            } catch (IOException ex){
+                                convert.handleException("*** FATAL ERROR TRANSFORMING BIBXML ***", ex);
+                                parseErrors  = 0;
+                                break FILELOOP;
+                            }
+                            if(parseErrors  > 0){
+                                ErrorList el = msgPane.getErrorList(); 
+                                el.setFile(new XFile(xml, InputType.BIBXML, convert.getXMLEncoding()));
+                                el.setTitle("Errors transforming " + xml.getName() + " to " + cssc.getName());
+                                el.setAllowDoubleClick(true);
+                                if(parseErrors != 1){
+                                    System.err.println(parseErrors  + " errors transforming " +  xml.getName());
+                                }
                                 break FILELOOP;
                             }
                             System.err.flush();
@@ -708,6 +731,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                     }
                 }
             }
+            System.err.flush();
+            System.out.flush();
             if(html){
                 try{
                     /* Creates CSS and JavaScript used by the HTML output. */
@@ -876,6 +901,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         enc.isSelected(),
                         crlf.isSelected());
                 addStyle(ssc);
+                ssc.setErrorHandler(errorHandler);
             } catch (Exception ex){
                 convert.handleException(null, ex);
             }
@@ -1079,8 +1105,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         public synchronized UniversalErrorHandler getErrorHandler(){
             if(errorhandler == null){
                 errorhandler = new JointErrorHandler(
-                    new MyErrorHandler(),
-                    errorlist.getErrorHandler());
+                    errorlist.getErrorHandler(),
+                    new MyErrorHandler());
             }
             return errorhandler;
         }
@@ -1110,6 +1136,18 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             }
         
             public void warning( SAXParseException e ) throws SAXException {
+                showErrors();
+            }
+            
+            public void fatalError( TransformerException e ) throws TransformerException {
+                showErrors();
+            }
+        
+            public void error( TransformerException ex ) throws TransformerException {
+                showErrors();
+            }
+        
+            public void warning( TransformerException e ) throws TransformerException {
                 showErrors();
             }
             
