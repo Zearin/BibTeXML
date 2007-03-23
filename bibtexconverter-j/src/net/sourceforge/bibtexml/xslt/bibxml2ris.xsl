@@ -8,7 +8,8 @@
 <xsl:stylesheet version="2.0"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:bibtex="http://bibtexml.sf.net/"
-        xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:foo="http://foo/bar/baz">
     <xsl:output method="text" indent="no" encoding="windows-1252"/>
     <xsl:strip-space elements="*"/>
 
@@ -20,13 +21,23 @@
         <xsl:apply-templates select="bibtex:entry"/>
     </xsl:template>
 
+    <!-- RIS spec requires TY to be first and ER to be last, apart from
+         that tag order can be arbitrary 
+         see http://www.refman.com/support/risformat_fields_02.asp -->
     <xsl:template match="bibtex:entry">
-        <xsl:apply-templates select="*"/>
+        <!-- process immediate children: TY -->
+        <xsl:apply-templates select="*"/> 
+        <!-- ID: this field has a maximum length of 20 characters
+             see http://www.refman.com/support/risformat_tags_01.asp -->
         <xsl:call-template name="field">
             <xsl:with-param name="risid" select="'ID'" />
-            <xsl:with-param name="value" select="@id" />
+            <xsl:with-param name="value" select="if (string-length(@id) > 20)
+                                                    then substring(@id, 1, 20)
+                                                 else @id" />
         </xsl:call-template>
+        <!-- process all but the immediate descendants -->
         <xsl:apply-templates select="descendant::node() except *"/>
+        <!-- ER -->
         <xsl:call-template name="end-of-record" />
     </xsl:template>
 
@@ -85,17 +96,35 @@
 <!-- author / editor -->
     <xsl:template
             match="bibtex:author|bibtex:editor">
-        <xsl:variable name="value"
-                select="if (contains(.,',')) then replace(text(),'&#160;',' ') else if (contains(.,',')) then text() else concat( replace(normalize-space(.),'&#160;',' '), ', ', replace(replace(.,'[^ ]+$',''),'&#160;',' ') )"/>
-        <xsl:call-template name="field">
-            <xsl:with-param
-                    name="risid"
-                    select="if (local-name() eq 'author') then 'AU' else 'ED'" />
-            <xsl:with-param
-                    name="value"
-                    select="$value" />
-        </xsl:call-template>
+        <xsl:variable name="risid" select="if (local-name() eq 'author') then 'AU  - ' else 'ED  - '" />
+        <xsl:for-each select="tokenize(normalize-space(text()), ' and ', 'i')"> 
+            <xsl:value-of select="$risid" />
+            <xsl:apply-templates select="foo:parse-author(.)/foo:person"/>
+            <xsl:text>&#xA;</xsl:text>
+        </xsl:for-each>
     </xsl:template>
+    
+    <!-- von Last[,First[,Jr]], at most 255 charaters
+         see http://www.refman.com/support/risformat_tags_02.asp
+    -->
+    <xsl:template
+            match="foo:person">
+        <xsl:variable name="formatted-author">
+        <xsl:value-of select="replace(foo:last,'&#160;', ' ')" />
+        <xsl:if test="foo:first">
+            <xsl:text>,</xsl:text>
+            <xsl:value-of select="replace(foo:first,'&#160;', ' ')"/>
+            <xsl:if test="foo:junior">
+                <xsl:text>,</xsl:text>
+                <xsl:value-of select="replace(foo:junior,'&#160;', ' ')" />
+            </xsl:if>
+        </xsl:if>
+        </xsl:variable>
+        <xsl:value-of select="if(string-length($formatted-author) > 255)
+                                then substring($formatted-author, 1, 255)
+                              else $formatted-author"/>
+    </xsl:template>
+
     
 <!-- booktitle -->
     <xsl:template match="bibtex:booktitle">
@@ -120,6 +149,9 @@
             <xsl:with-param
                     name="risid"
                     select="if(contains(.,'.')) then 'JO' else 'JF'" />
+            <!-- asterisk is not allowed in author, keywords or periodical name
+                 see http://www.refman.com/support/risformat_fields_02.asp -->
+            <xsl:with-param name="value" select="replace(normalize-space(.), '\*', '') "/>
         </xsl:call-template>
     </xsl:template>
 
@@ -128,6 +160,9 @@
         <xsl:if test="empty(./*)">
             <xsl:call-template name="field">
                 <xsl:with-param name="risid" select="'KW'" />
+                <!-- asterisk is not allowed in author, keywords or periodical name
+                     see http://www.refman.com/support/risformat_fields_02.asp -->
+                <xsl:with-param name="value" select="replace(normalize-space(.), '\*', '') "/>
             </xsl:call-template>
         </xsl:if>
     </xsl:template>
@@ -136,6 +171,9 @@
         <xsl:if test="empty(./*)">
             <xsl:call-template name="field">
                 <xsl:with-param name="risid" select="'KW'" />
+                <!-- asterisk is not allowed in author, keywords or periodical name
+                     see http://www.refman.com/support/risformat_fields_02.asp -->
+                <xsl:with-param name="value" select="replace(normalize-space(.), '\*', '') "/>
             </xsl:call-template>
         </xsl:if>
     </xsl:template>
@@ -220,7 +258,9 @@
 	special case for the often used
 	howpublished = "\url{http://www.example.com/}",
     -->
-        <xsl:if test="contains(.,'\url') and (not(exists(../bibtex:url)) or (../bibtex:url eq '')) and (not(exists(../bibtex:doi)) or (../bibtex:doi eq ''))">
+        <xsl:if test="contains(.,'\url') and 
+                      (not(exists(../bibtex:url)) or (../bibtex:url eq '')) and 
+                      (not(exists(../bibtex:doi)) or (../bibtex:doi eq ''))">
             <xsl:apply-templates select="." mode="internal" />
         </xsl:if>
     </xsl:template>
@@ -234,7 +274,11 @@
                 <xsl:with-param name="risid" select="'UR'"/>
                 <xsl:with-param
                         name="value"
-                        select="if(local-name() eq 'doi') then concat('http://dx.doi.org/', text()) else if(local-name() eq 'howpublished') then substring-after(text(),'\url') else text()" />
+                        select="if(local-name() eq 'doi') 
+                                    then concat('http://dx.doi.org/', text()) 
+                                else if(local-name() eq 'howpublished') 
+                                    then substring-after(text(),'\url') 
+                                else text()" />
             </xsl:call-template>
         </xsl:if>
     </xsl:template>
@@ -272,5 +316,56 @@
     </xsl:template>
 
     <xsl:template match="text()" priority="0.5" />
+    
+   <!-- returns a foo:author node with the 
+        children
+        foo:last
+        foo:first
+        foo:junior
+        where all elements except last may or may not be present
+   -->
+   <xsl:function name="foo:parse-author">
+       <xsl:param name="author-raw" as="xs:string"/>
+       <!-- asterisk is not allowed in author, keywords or periodical name
+                 see http://www.refman.com/support/risformat_fields_02.asp -->
+       <xsl:variable name="author" select="normalize-space(replace($author-raw, '\*', ''))"/>
+       <xsl:variable name="parts" select="tokenize($author, ',')" />
+       <xsl:variable name="numparts" select="count($parts)" />
+        <xsl:variable name="result">
+            <foo:person>
+                <xsl:choose>
+                   <xsl:when test="$numparts ge 3">
+                    <!-- von last, junior, first -->
+                        <foo:first><xsl:value-of select="normalize-space($parts[3])" /></foo:first>
+                        <foo:junior><xsl:value-of select="normalize-space($parts[2])" /></foo:junior>
+                        <foo:last><xsl:value-of select="normalize-space($parts[1])" /></foo:last>
+                    </xsl:when>
+                    <xsl:when test="$numparts eq 2">
+                    <!-- von last, first -->
+                        <foo:first><xsl:value-of select="normalize-space($parts[2])" /></foo:first>
+                        <foo:last><xsl:value-of select="normalize-space($parts[1])" /></foo:last>
+                    </xsl:when>
+                    <xsl:otherwise>
+                    <!-- first von last -->
+                        <xsl:choose>
+                            <xsl:when test="matches(normalize-space($author), ' \p{Ll}')">
+                                <!-- we have a word starting with a lowercase char, must be a von particle -->
+                                <foo:first><xsl:value-of select="normalize-space(replace($author, '^(.*?) (\p{Ll}.*)$', '$1'))"/></foo:first>
+                                <foo:last><xsl:value-of select="normalize-space(replace($author, '^(.*?) (\p{Ll}.*)$', '$2'))"/></foo:last>
+                            </xsl:when>
+                            <xsl:when test="matches(normalize-space($author), ' \p{Lu}')">
+                                <foo:first><xsl:value-of select="normalize-space(replace($author, '^(.*) (\p{Lu}.*)$', '$1'))"/></foo:first>
+                                <foo:last><xsl:value-of select="normalize-space(replace($author, '^(.*) (\p{Lu}.*)$', '$2'))"/></foo:last>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <foo:last><xsl:value-of select="normalize-space($author)"/></foo:last>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </foo:person>
+        </xsl:variable>
+        <xsl:sequence select="$result"/>
+    </xsl:function>
 
 </xsl:stylesheet>
