@@ -230,22 +230,10 @@ public final class BibXMLWriter extends DepthFirstAdapter {
         String[] values;
         if(key.equals("author")){
             values = AUTHOR_REX.split(value);
-            String[] authorparts;
-            StringBuilder builder;
             for(int i=0; i<values.length; i++){
-                values[i] = values[i].trim();
-                if(values[i].indexOf(',') == -1){
-                    authorparts = values[i].split("\\s+");
-                    if(authorparts.length > 1){
-                        final int n = authorparts.length - 1;
-                        builder = new StringBuilder();
-                        builder.append(authorparts[n]).append(", ");
-                        for(int j=0; j< n - 1; j++){
-                            builder.append(authorparts[j]).append(" ");
-                        }
-                        builder.append(authorparts[n - 1]);
-                        values[i] = builder.toString();
-                    }
+                try{
+                    values[i] = new Author(values[i]).toString();
+                } catch (java.text.ParseException ignore){
                 }
             }
         } else if (key.equals("keywords") || key.equals("refgroup")){
