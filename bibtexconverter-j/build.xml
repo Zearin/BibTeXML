@@ -59,7 +59,7 @@
       value="1.5"/>
   <property
       name="app.icon"
-      value="${src}\net\sourceforge\bibtexml\bibxml.png"/>
+      value="${src}\net\sourceforge\bibtexml\icon\ledgreen2.png"/>
   <property name="app.libraries"
       value="lib/jing-20070318.jar" />
   <property name="app.lib"
