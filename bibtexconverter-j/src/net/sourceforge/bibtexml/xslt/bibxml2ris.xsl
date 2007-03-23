@@ -3,8 +3,6 @@
 <!-- (c) Moritz Ringler, 2004                            -->
 <!-- XSLT stylesheet that converts bibliographic data    -->
 <!-- from BibXML to RIS format.                          -->
-<!-- The end-of-line comments avoid unwanted line breaks -->
-<!-- in the output. Do not remove them!                  -->
 <xsl:stylesheet version="2.0"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:bibtex="http://bibtexml.sf.net/"
