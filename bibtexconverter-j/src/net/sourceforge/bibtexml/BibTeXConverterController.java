@@ -208,7 +208,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         startbutton.setToolTipText(START_CONVERSION);
         startbutton.setActionCommand(START_CONVERSION);
         startbutton.setBorderPainted(false);
-        startbutton.setOpaque(false);
+        startbutton.setContentAreaFilled(false);
         startbutton.addActionListener(this);
         
         
@@ -400,7 +400,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         }
         label = new JLabel("BibTeX Encoding");
         label.setLabelFor(encodings);
-        ImageIcon ic = new ImageIcon((URL) getClass().getResource("jabref.png"));
+        ImageIcon ic = new ImageIcon((URL) getClass().getResource("icon/jabref.png"));
         JButton jb = new JButton(ic);
         jb.setToolTipText(JABREF_ENC);
         jb.setActionCommand(JABREF_ENC);

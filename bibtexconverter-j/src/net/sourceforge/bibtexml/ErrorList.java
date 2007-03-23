@@ -71,7 +71,7 @@ public class ErrorList{
             JPanel box = new JPanel(new BorderLayout());
             JButton b = new JButton(new ImageIcon(BibTeXConverterController.class.getResource("icon/fileclose.png")));
             b.setBorderPainted(false);
-            b.setOpaque(false);
+            b.setContentAreaFilled(false);
             b.setMargin(new Insets(0,0,0,0));
             b.addActionListener(close);
             box.add(b, BorderLayout.WEST);

@@ -340,7 +340,7 @@ public class StyleSheetController {
             expcoll = new JButton(config);
             expcoll.setToolTipText("Edit Parameters...");
             expcoll.setBorderPainted(false);
-            expcoll.setOpaque(false);
+            expcoll.setContentAreaFilled(false);
             expcoll.addActionListener(
             new ActionListener(){
                 public void actionPerformed(ActionEvent e){
