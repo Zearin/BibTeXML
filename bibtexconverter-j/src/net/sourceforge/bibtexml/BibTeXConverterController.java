@@ -44,7 +44,7 @@ import net.sourceforge.bibtexml.BibTeXConverter.Parser;
 public class BibTeXConverterController extends JFrame implements ActionListener{
     private static final Preferences PREF =
             Preferences.userNodeForPackage(BibTeXConverterController.class);
-    private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("bibxml.png"));
+    private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("icon/ledgreen2.png"));
 
     private InputType input = InputType.BIBTEX;
     BibTeXConverter convert = new BibTeXConverter();
@@ -106,8 +106,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         }
         pack();
         
-        convert.setValidationErrorHandler(msgPane.getErrorHandler());
-        convert.setBibTeXErrorHandler(msgPane.getErrorHandler());
+        convert.setValidationErrorHandler(errorHandler);
+        convert.setBibTeXErrorHandler(errorHandler);
         
         System.err.flush();
         System.out.flush();
@@ -204,15 +204,21 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
 
         gbc.gridy = 1;
 
+        startbutton = new JButton(new ImageIcon(BibTeXConverterController.class.getResource("icon/ledgreen.png")));
+        startbutton.setToolTipText(START_CONVERSION);
+        startbutton.setActionCommand(START_CONVERSION);
+        startbutton.setBorderPainted(false);
+        startbutton.setOpaque(false);
+        startbutton.addActionListener(this);
+        
+        
+        
         cp.add(createOutputPanel(), gbc);
 
-        gbc.gridy = 2;
-        startbutton = new JButton(START_CONVERSION);
-        startbutton.setActionCommand(START_CONVERSION);
-        startbutton.addActionListener(this);
-        cp.add(startbutton, gbc);
+//        gbc.gridy = 2;
+//        cp.add(startbutton, gbc);
 
-        gbc.gridy = 3;
+        gbc.gridy++;
         gbc.weighty = 1;
         
         cp.add(msgPane, gbc);
@@ -297,7 +303,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         about.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 (new About(BibTeXConverterController.this, 
-                    logo,
+                    new ImageIcon((URL) BibTeXConverterController.class.getResource("icon/ledgreen.png")),
                     convert.getSaxonVersion())).setVisible(true);
             }
         });
@@ -524,7 +530,10 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         /* styles */
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH;
-        addRow(result, null, styleContainer, gbc);
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(styleContainer, BorderLayout.CENTER);
+        panel.add(startbutton, BorderLayout.EAST);
+        addRow(result, null, panel, gbc);
         
         return result;
     }
@@ -647,6 +656,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         errorHandler.reset();
                         convert.validate(xml);
                         parseErrors  = ecount.getErrorCount();
+                        System.err.println(parseErrors);
                     } catch (SAXParseException ex){
                         System.err.println("*** FATAL ERROR VALIDATING BIBXML ***");
                         try{
@@ -662,7 +672,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         System.err.println("*** FATAL ERROR VALIDATING BIBXML ***");
                         System.err.println(ex.getMessage());
                         parseErrors = 1;
-                        break FILELOOP;
                     } catch (IOException ex){
                         convert.handleException("*** FATAL ERROR VALIDATING BIBXML ***", ex);
                         parseErrors  = 0;
@@ -1085,7 +1094,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         private final static String CONSOLE = "Console";
         private final static String ERRORS = "Error List";
         private final JEditorPane console = new JTextPane();
-        private final ErrorList errorlist = new ErrorList();
+        private final ErrorList errorlist;
         private UniversalErrorHandler errorhandler;
         
         public MessagePanel(){
@@ -1096,6 +1105,12 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             output = new DocumentOutputStream(console.getDocument());
             output.setColor(Color.red);
             System.setErr(new PrintStream(new BufferedOutputStream(output), false));
+            ActionListener close = new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    showConsole();
+                }
+            };
+            errorlist = new ErrorList(close);
             add(new JScrollPane(console), CONSOLE);
             add(errorlist.component(), ERRORS);
             showConsole();

@@ -56,16 +56,29 @@ public class ErrorList{
         }
     };
     
-    public ErrorList(){
+    public ErrorList(ActionListener close){
         list.setCellRenderer(new CellRenderer());
         list.addMouseListener(editorUpdater);
         //title.setBackground(Color.RED);
         title.setForeground(Color.RED);
         //title.setFont(title.getFont().deriveFont(Font.BOLD));
         title.setHorizontalAlignment(JLabel.CENTER);
-        title.setBorder(BorderFactory.createEtchedBorder());
         title.setOpaque(true);
-        ui.setColumnHeaderView(title);
+        if(close == null){
+            title.setBorder(BorderFactory.createEtchedBorder());
+            ui.setColumnHeaderView(title);
+        } else {
+            JPanel box = new JPanel(new BorderLayout());
+            JButton b = new JButton(new ImageIcon(BibTeXConverterController.class.getResource("icon/fileclose.png")));
+            b.setBorderPainted(false);
+            b.setOpaque(false);
+            b.setMargin(new Insets(0,0,0,0));
+            b.addActionListener(close);
+            box.add(b, BorderLayout.WEST);
+            box.add(title, BorderLayout.CENTER);
+            box.setBorder(BorderFactory.createEtchedBorder());
+            ui.setColumnHeaderView(box);
+        }
     }
     
     public synchronized UniversalErrorHandler getErrorHandler(){
