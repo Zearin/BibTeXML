@@ -656,7 +656,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         errorHandler.reset();
                         convert.validate(xml);
                         parseErrors  = ecount.getErrorCount();
-                        System.err.println(parseErrors);
                     } catch (SAXParseException ex){
                         System.err.println("*** FATAL ERROR VALIDATING BIBXML ***");
                         try{
