@@ -145,7 +145,7 @@
 <!-- journal -->
     <xsl:template
             match="bibtex:journal">
-        <xsl:call-template name="field">
+        <xsl:call-template name="field255">
             <xsl:with-param
                     name="risid"
                     select="if(contains(.,'.')) then 'JO' else 'JF'" />
@@ -158,11 +158,11 @@
 <!-- keywords -->
     <xsl:template match="bibtex:keywords|bibtex:category">
         <xsl:if test="empty(./*)">
-            <xsl:call-template name="field">
-                <xsl:with-param name="risid" select="'KW'" />
-                <!-- asterisk is not allowed in author, keywords or periodical name
+            <!-- asterisk is not allowed in author, keywords or periodical name
                      see http://www.refman.com/support/risformat_fields_02.asp -->
-                <xsl:with-param name="value" select="replace(normalize-space(.), '\*', '') "/>
+            <xsl:call-template name="field255">
+                <xsl:with-param name="risid" select="'KW'" />
+                <xsl:with-param name="value" select="replace(text(), '\*', '')"/>
             </xsl:call-template>
         </xsl:if>
     </xsl:template>
@@ -244,30 +244,22 @@
     
 <!-- url -->
     <xsl:template match="bibtex:url" priority="2">
-        <xsl:apply-templates select="." mode="internal" />
+        <xsl:apply-templates select="." mode="url" />
     </xsl:template>
 
     <xsl:template match="bibtex:doi" priority="2">
-        <xsl:if test="not(exists(../bibtex:url)) or (../bibtex:url eq '')">
-            <xsl:apply-templates select="." mode="internal" />
-        </xsl:if>
+        <!-- you can do other stuff here -->
+        <xsl:apply-templates select="." mode="url" />
     </xsl:template>
 
-    <xsl:template match="bibtex:howpublished">
-    <!--
-	special case for the often used
-	howpublished = "\url{http://www.example.com/}",
-    -->
-        <xsl:if test="contains(.,'\url') and 
-                      (not(exists(../bibtex:url)) or (../bibtex:url eq '')) and 
-                      (not(exists(../bibtex:doi)) or (../bibtex:doi eq ''))">
-            <xsl:apply-templates select="." mode="internal" />
-        </xsl:if>
+    <xsl:template match="bibtex:howpublished" priority="2">
+        <!-- you can do other stuff here -->
+        <xsl:apply-templates select="." mode="url" />
     </xsl:template>
 
     <xsl:template
             match="bibtex:url|bibtex:doi|bibtex:howpublished"
-            mode="internal"
+            mode="url"
             priority="1">
         <xsl:if test="not(./text() eq '')">
             <xsl:call-template name="field">
@@ -307,6 +299,18 @@
         <xsl:value-of select="$risid" />
         <xsl:text>  - </xsl:text>
         <xsl:value-of select="normalize-space($value)"/>
+        <xsl:text>&#xA;</xsl:text>
+    </xsl:template>
+    
+    <xsl:template name="field255">
+        <xsl:param name="risid" as="xs:string"/>
+        <xsl:param name="value" select="./text()" as="xs:string"/>
+        <xsl:variable name="value-trimmed" select="normalize-space($value)"/>
+        <xsl:value-of select="$risid" />
+        <xsl:text>  - </xsl:text>
+        <xsl:value-of select="if(string-length($value-trimmed) > 255)
+                                then substring($value-trimmed, 1, 255)
+                              else $value-trimmed"/>
         <xsl:text>&#xA;</xsl:text>
     </xsl:template>
     
