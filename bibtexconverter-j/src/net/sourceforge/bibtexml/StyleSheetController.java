@@ -54,16 +54,7 @@ import java.util.TreeSet;
 import java.util.Vector;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import javax.swing.InputVerifier;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SpringLayout;
+import javax.swing.*;
 import de.mospace.swing.SpringUtilities;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -96,6 +87,7 @@ public class StyleSheetController {
     private JButton expcoll = null;
     private JDialog dialog;
     private boolean active = true;
+    private static final ImageIcon config = new ImageIcon(BibTeXConverterController.class.getResource("icon/configure.png"));
     
     private String enc;
     protected Map<String, Object> params = null;
@@ -345,7 +337,10 @@ public class StyleSheetController {
         }
         final boolean customizable = customParams || customEncoding;
         if(customizable){
-            expcoll = new JButton("Edit parameters");
+            expcoll = new JButton(config);
+            expcoll.setToolTipText("Edit Parameters...");
+            expcoll.setBorderPainted(false);
+            expcoll.setOpaque(false);
             expcoll.addActionListener(
             new ActionListener(){
                 public void actionPerformed(ActionEvent e){
@@ -368,8 +363,9 @@ public class StyleSheetController {
             }
         });
         if(customizable){
-            JPanel p2 = new JPanel(new GridLayout(0,2));
+            Container p2 = Box.createHorizontalBox();
             p2.add(typeCheckBox);
+            p2.add(Box.createHorizontalStrut(5));
             p2.add(expcoll);
             panel.add(p2, BorderLayout.CENTER);
         } else {
@@ -449,6 +445,9 @@ public class StyleSheetController {
                                         5, 2);       //xPad, yPad
         active = pref.getBoolean(P_KEY_ACTIVE, true);
         typeCheckBox.setSelected(active);
+        if(expcoll != null){
+            expcoll.setEnabled(active);
+        }
     }
     
     private static Object getSavedParam(Preferences p, String key, Object o){
