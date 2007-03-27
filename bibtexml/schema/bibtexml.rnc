@@ -83,8 +83,8 @@ citekey.datatype = xsd:ID { pattern="[a-zA-Z0-9.:\-]+" }
 standard.common.fields.class = key? & crossref?
 common.fields.class = standard.common.fields.class
 
-##   Annotation is not used by the standard bibliography styles,
-##   if you prefer otherwise, incude it in BibTeXML.common.fields.class
+# Annotation is not used by the standard bibliography styles,
+# if you prefer otherwise, incude it in BibTeXML.common.fields.class
 #BibTeXML.common.fields.class &= annote
 
 
