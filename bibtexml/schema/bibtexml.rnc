@@ -1,4 +1,4 @@
-#  File: $Id$
+# $Id$
 #
 #  This schema expresses XML markup similar to the BibTeX language
 #  specified for LaTeX, or actually its content model.
@@ -30,9 +30,11 @@
 # Namespace and namespace prefix
 default namespace bibtex = "http://bibtexml.sf.net/"
 
-# Document top element
-start = file
-file = element file { attlist.file, entry* }
+## Specifies the document top element.
+start = file | entry
+file =
+   ## Collection of bibliographic references. (Document top element.)
+   element file { attlist.file, entry* }
 attlist.file &= empty
 
 
@@ -56,7 +58,13 @@ standard.entries.class =
     | unpublished
     | misc
 entry.content = standard.entries.class
-entry = element entry { attlist.entry, entry.content }
+entry =
+   ## A bibliographic reference.
+   ##     Standard available publication types are article book,
+   ##     booklet, manual, techreport, mastersthesis, phdthesis,
+   ##     inbook, incollection, proceedings, inproceedings,
+   ##     unpublished, misc
+   element entry { attlist.entry, entry.content }
 attlist.entry &=
    ## Citation key
    attribute citekey { citekey.datatype }
@@ -543,10 +551,10 @@ key =
 ##   missing. This field should not be confused with the key that appears
 ##   in the \cite command and at the beginning of the database entry.
 ##
-##   In addition to the fields listed above, each entry type also has
-##   an optional key field, used in some styles for alphabetizing, or
-##   for forming a \bibitem label. You should include a key field for
-##   any entry whose ``author'' information is missing;
+##   [..] each entry type also has an optional key field, used in some
+##   styles for alphabetizing, or for forming a \bibitem label. You
+##   should include a key field for any entry whose ``author''
+##   information is missing [..]
    element key { attlist.key, text }
 attlist.key &= empty
 
