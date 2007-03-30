@@ -1,0 +1,726 @@
+# $Id: bibtexml-groups.rnc 180 2007-03-26 21:35:16Z vidarg $
+#
+#  This schema expresses XML markup similar to the BibTeX language
+#  specified for LaTeX, or actually its content model.
+#  For documentation on BibTeX, see
+#    http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
+#
+#  Suggested invocation:
+#
+#    <?xml version="1.0" encoding="UTF-8"?>
+#    <!DOCTYPE bibtex:file PUBLIC
+#        "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
+#        "bibteXML.dtd" >
+#    <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+#    ...
+#    </bibtex:file>
+#
+#  Available from  http://bibtexml.sf.net/
+#
+#  This code originally developed by
+#    Vidar Bronken Gundersen
+#    Zeger W. Hendrikse
+#    Marco Kuhlmann
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License.
+#  See  http://www.gnu.org/copyleft/gpl.html
+#
+
+# Namespace and namespace prefix
+default namespace bibtex = "http://bibtexml.sf.net/"
+namespace m = "http://bibtexml.sf.net/module"
+
+# Document top element
+start = file
+file = element file { file.attlist, entry* }
+
+file.attlist  &= attribute structure {
+    [ m:structure="flat" ] ( "flat" ) |
+    [ m:structure="container" ] ( "container" )
+}?
+
+file.attlist &= attribute structure {
+    [ m:fields="core" ] ( "core" ) |
+    [ m:fields="user" ] ( "user" ) |
+    [ m:fields="arbitrary" ] ( "arbitrary" )
+}?
+
+file.attlist &= attribute datatypes {
+    [ m:datatypes="strict" ] ( "strict" ) |
+    [ m:datatypes="lax" ] ( "lax" )
+}?
+
+# .....................................................................
+# Main structure
+
+## Each entry may contain one of the bibliographic types.
+standard.entries.class =
+      article
+    | book
+    | booklet
+    | manual
+    | techreport
+    | mastersthesis
+    | phdthesis
+    | inbook
+    | incollection
+    | proceedings
+    | inproceedings
+    | conference
+    | unpublished
+    | misc
+entry.content = standard.entries.class
+entry = element entry { attlist.entry, entry.content }
+attlist.entry &=
+   ## Citation key
+   attribute citekey { citekey.datatype }
+citekey.datatype = xsd:ID { pattern="[a-zA-Z0-9.:\-]+" }
+
+
+# .....................................................................
+# Parameter entities
+
+author.required = [m:structure="container"] ( author ) |
+                  [m:structure="flat"] ( author+ )
+
+author.optional = [m:structure="container"] (author?) |
+                  [m:structure="flat"] ( author* )
+
+authorOrEditor.required = [m:structure="container"](author | editor) |
+                          [m:structure="flat"](author+ | editor+)
+
+authorOrEditor.optional = [m:structure="container"](author? & editor?) |
+                          [m:structure="flat"](author* & editor*)
+
+volumeOrNumber =
+        [ m:fields="core user" ] ((volume | number)?) |
+        [ m:fields="arbitrary" ] (volume? & number?)
+# .....................................................................
+# Entries in the BibTeX database
+
+## [article] An article from a journal or magazine.
+##   Required fields: author, title, journal, year.
+##   Optional fields: volume, number, pages, month, note.
+article = element article {
+   article.required  &
+   article.optional &
+   article.user
+}
+
+article.required =
+    [ m:fields="core user" ] ( author.required & title  & journal  & year ) |
+    [ m:fields="arbitrary" ] ( author.optional & title? & journal? & year?)
+
+article.optional = volume? & number? & pages? & month? & note?
+
+article.user =
+    user.elements &  element * - (article.nameclass | user.nameclass){ text }
+
+article.nameclass = author | title | journal | year |
+    volume | number | pages | month | note
+
+
+
+## [book] A book with an explicit publisher.
+##   Required fields: author or editor, title, publisher, year.
+##   Optional fields: volume or number, series, address,
+##      edition, month, note.
+book = element book {
+    book.required &
+    book.optional &
+    [ m:fields="user arbitrary"] ( book.user )
+}
+
+book.required =
+    [ m:fields="core user" ] ( authorOrEditor.required & title  & publisher  & year ) |
+    [ m:fields="arbitrary" ] ( authorOrEditor.optional & title? & publisher? & year?)
+
+book.optional =
+    volumeOrNumber & series? & address? & edition? & month? & note?
+
+book.user =
+    user.elements &
+    element * - (book.nameclass | user.nameclass){ text }
+
+book.nameclass = author | editor | title | publisher | year |
+    volume | number | series | address | edition | month | note
+
+
+
+## [booklet] A work that is printed and bound, but without a named
+##   publisher or sponsoring institution
+##   Required field: title.
+##   Optional fields: author, howpublished, address, month, year, note.
+booklet = element booklet {
+    booklet.required &
+    booklet.optional &
+    [ m:fields="user arbitrary"] ( booklet.user )
+}
+
+booklet.required =
+    [ m:fields="core user" ] ( title ) |
+    [ m:fields="arbitrary" ] ( title? )
+
+booklet.optional =
+    author.optional? & howpublished? & address? & month? & year? & note?
+
+booklet.user =
+    user.elements &
+    element * - (booklet.nameclass | user.nameclass){ text }
+
+booklet.nameclass =
+    title |
+    author | howpublished | address | month | year | note
+
+
+
+## [inbook] A part of a book, which may be a chapter (or section or
+##   whatever) and/or a range of pages.
+##   Required fields: author or editor, title, chapter and/or pages,
+##      publisher, year.
+##   Optional fields: volume or number, series, type, address,
+##      edition, month, note.
+inbook = element inbook {
+    inbook.required &
+    inbook.optional &
+    [ m:fields="user arbitrary"] ( inbook.user )
+}
+
+inbook.required =
+    [ m:fields="core user" ] (
+        authorOrEditor.required &
+        title &
+        ((chapter & pages?) | pages) &
+        publisher &
+        year
+    ) |
+    [ m:fields="arbitrary" ] (
+        authorOrEditor.optional &
+        title? &
+        chapter? &
+        pages? &
+        publisher? &
+        year?
+     )
+
+inbook.optional =
+    volumeOrNumber & series? & type? & address? & edition? & month? & note?
+
+inbook.user =
+    user.elements &
+    element * - (inbook.nameclass | user.nameclass){ text }
+
+inbook.nameclass =
+   author | editor | title | chapter | pages | publisher | year |
+   volume | number | series | type | address | edition | month | note
+
+
+
+## [incollection] A part of a book having its own title.
+##   Required fields: author, title, booktitle, publisher, year.
+##   Optional fields: editor, volume or number, series, type,
+##      chapter, pages, address, edition, month, note.
+incollection = element incollection {
+    incollection.required   &
+    incollection.optional &
+   [ m:fields="user arbitrary"] ( incollection.user )
+}
+
+incollection.required =
+    [ m:fields="core user" ] (
+        author.required &
+        title &
+        booktitle &
+        publisher &
+        year
+    ) |
+    [ m:fields="arbitrary" ] (
+        author.optional &
+        title? &
+        booktitle? &
+        publisher? &
+        year?
+    )
+
+incollection.optional =
+    editor? & volumeOrNumber & series? & type? & chapter? & pages? & address? &
+    edition? & month? & note?
+
+incollection.user =
+    user.elements &
+    element * - (incollection.nameclass | user.nameclass){ text }
+
+incollection.nameclass =
+    author | title | booktitle | publisher | year |
+    editor | volume | number | series | type | chapter | pages | address |
+    edition | month | note
+
+
+
+## [inproceedings] An article in a conference proceedings.
+##   Required fields: author, title, booktitle, year.
+##   Optional fields: editor, volume or number, series, pages,
+##      address, month, organization, publisher, note.
+inproceedings = element inproceedings { inproceedings.content }
+
+inproceedings.content =
+   inproceedings.required &
+   inproceedings.optional &
+   [ m:fields="user arbitrary"] ( inproceedings.user )
+
+inproceedings.required =
+    [ m:fields="core user" ] (author.required & title  & booktitle  & year) |
+    [ m:fields="arbitrary" ] (author.optional & title? & booktitle? & year?)
+
+inproceedings.optional =
+  editor? & volumeOrNumber? & series? & pages? & address? & month? &
+  organization? & publisher & note?
+
+inproceedings.user =
+    user.elements &
+    element * - (inproceedings.nameclass | user.nameclass){ text }
+
+inproceedings.nameclass =
+    author | title | booktitle | year |
+    editor | volume | number | series | pages | address | month |
+    organization | publisher | note
+
+
+
+## [conference] The same as INPROCEEDINGS,
+##   included for Scribe compatibility.
+conference =  element conference { inproceedings.content }
+
+
+
+## [manual] Technical documentation
+##   Required field: title.
+##   Optional fields: author, organization, address,
+##      edition, month, year, note.
+manual = element manual {
+    manual.required &
+    manual.optional &
+   [ m:fields="user arbitrary"] ( manual.user )
+}
+
+manual.required =
+    [ m:fields="core user" ] ( title ) |
+    [ m:fields="arbitrary" ] ( title? )
+
+manual.optional =
+    author.optional? & organization? & address? & edition? & month? & year? &
+    note?
+
+manual.user =
+    user.elements &
+    element * - (manual.nameclass | user.nameclass){ text }
+
+manual.nameclass =
+    title | author | organization | address | edition | month | year |
+    note
+
+
+
+## %thesis; mastersthesis and phdthesis are identical
+##   Required fields: author, title, school, year.
+##   Optional fields: type, address, month, note.
+thesis.content =
+    thesis.required &
+    thesis.optional &
+   [ m:fields="user arbitrary"] ( thesis.user )
+
+thesis.required =
+    [ m:fields="core user" ] ( author.required & title  & school  & year  ) |
+    [ m:fields="arbitrary" ] ( author.optional & title? & school? & year? )
+
+thesis.optional =
+    type? & address? & month? & note?
+
+thesis.user =
+    user.elements &
+    element * - (thesis.nameclass | user.nameclass){ text }
+
+thesis.nameclass =
+    author | title | school | year |
+    type | address | month | note
+
+
+
+## [mastersthesis] A Master's thesis.
+##   Required fields: author, title, school, year.
+##   Optional fields: type, address, month, note.
+mastersthesis = element mastersthesis { thesis.content }
+
+
+
+## [phdthesis] A PhD thesis.
+##   Required fields: author, title, school, year.
+##   Optional fields: type, address, month, note.
+phdthesis = element phdthesis { thesis.content }
+
+
+
+## [misc] Use this type when nothing else fits.
+##   Required fields: none.
+##   Optional fields: author, title, howpublished, month, year, note.
+misc = element misc {
+   misc.optional &
+   [ m:fields="user arbitrary"] ( misc.user )
+}
+
+misc.optional =
+    author.optional & title? & howpublished? & month? & year? & note?
+
+misc.user =
+    user.elements &
+    element * - (misc.nameclass | user.nameclass){ text }
+
+misc.nameclass =
+    author | title | howpublished | month | year | note
+
+
+
+## [proceedings] The proceedings of a conference.
+##   Required fields: title, year.
+##   Optional fields: editor, volume or number, series,
+##      address, month, organization, publisher, note.
+proceedings = element proceedings {
+   proceedings.required &
+   proceedings.optional &
+   [ m:fields="user arbitrary"] ( proceedings.user )
+}
+
+proceedings.required =
+   [ m:fields="core user" ] ( title  & year ) |
+   [ m:fields="arbitrary" ] ( title? & year? )
+
+proceedings.optional =
+    editor? & volumeOrNumber & series? & address? & month? & organization? &
+    publisher & note?
+
+proceedings.user =
+    user.elements &
+    element * - (proceedings.nameclass | user.nameclass){ text }
+
+proceedings.nameclass =
+    title | year |
+    volume | number | editor | series | address | month | organization |
+    publisher | note
+
+
+
+## [techreport] A report published by a school or other institution,
+##   usually numbered within a series.
+##   Required fields: author, title, institution, year.
+##   Optional fields: type, number, address, month, note.
+techreport = element techreport {
+    techreport.required &
+    techreport.optional &
+   [ m:fields="user arbitrary"] ( techreport.nameclass )
+}
+
+techreport.required =
+    [ m:fields="core user" ] ( author.required & title  & institution  & year )|
+    [ m:fields="arbitrary" ] ( author.optional & title? & institution? & year? )
+
+techreport.optional =
+    type? & number? & address? & month? & note?
+
+techreport.user =
+    user.elements &
+    element * - (techreport.nameclass | user.nameclass){ text }
+
+techreport.nameclass =
+    author | title | institution | year |
+    type | number | address | month | note
+
+
+
+## [unpublished] A document having an author and title, but not
+##   formally published.
+##   Required fields: author, title, note.
+##   Optional fields: month, year.
+unpublished = element unpublished {
+    unpublished.required &
+    unpublished.optional &
+   [ m:fields="user arbitrary"] ( unpublished.user )
+}
+
+unpublished.required =
+    [ m:fields="core user" ] ( author.required & title & note ) |
+    [ m:fields="arbitrary" ] ( author.optional & title? & note? )
+
+unpublished.optional =
+    month? & year?
+
+unpublished.user =
+    user.elements &
+    element * - (unpublished.nameclass | user.nameclass){ text }
+
+unpublished.nameclass =
+    author | title | note |
+    month | year
+
+
+# .....................................................................
+# Metadata fields for each bibliographic entry
+
+## [address] Usually the address of the publisher or other type of
+##   institution  For major publishing houses, van~Leunen recommends
+##   omitting the information entirely.  For small publishers, on the other
+##   hand, you can help the reader by giving the complete address.
+address = element address { text }
+
+## [author] The name(s) of the author(s),
+##   in the format described in the LaTeX book.
+author = element author { text }
+
+## [booktitle] Title of a book, part of which is being cited.  See the
+##   LaTeX book for how to type titles.  For book entries, use the title
+##   field instead.
+booktitle = element booktitle { text }
+
+## [chapter] A chapter (or section or whatever) number.
+chapter =  element chapter { xsd:positiveInteger }
+
+## [edition] The edition of a book-for example, ``Second''.  This
+##   should be an ordinal, and should have the first letter capitalized, as
+##   shown here; the standard styles convert to lower case when necessary.
+edition = element edition { [ m:datatypes="strict"] xsd:string { pattern="[A-Z].*" } |
+                            [ m:datatypes="lax"   ] text }
+
+## [editor] Name(s) of editor(s), typed as indicated in the LaTeX book.
+##   If there is also an author field, then the editor field gives the
+##   editor of the book or collection in which the reference appears.
+editor = element editor { text }
+
+## [howpublished] How something strange has been published.
+##   The first word should be capitalized.
+howpublished = element howpublished { text }
+
+## [institution] The sponsoring institution of a technical report.
+institution = element institution { text }
+
+## [journal] A journal name.  Abbreviations are provided for many
+##   journals; see the Local Guide.
+journal = element journal { text }
+
+## [month] The month in which the work was published or, for an
+##   unpublished work, in which it was written. You should use the
+##   standard three-letter abbreviation, as described in Appendix B.1.3 of
+##   the LaTeX book.
+##   The schema also allows a two digit month format, e.g. 05 (for May).
+month = element month { [ m:datatypes="strict" ] ( monthString.datatype | xsd:gMonth ) |
+                        [ m:datatypes="lax"] text }
+monthString.datatype =
+   string "Jan"
+ | string "Feb"
+ | string "Mar"
+ | string "Apr"
+ | string "May"
+ | string "Jun"
+ | string "Jul"
+ | string "Aug"
+ | string "Sep"
+ | string "Oct"
+ | string "Nov"
+ | string "Dec"
+
+## [note] Any additional information that can help the reader.
+##   The first word should be capitalized.
+note = element note { text }
+
+## [number] The number of a journal, magazine, technical report, or of a
+##   work in a series.  An issue of a journal or magazine is usually
+##   identified by its volume and number; the organization that issues a
+##   technical report usually gives it a number; and sometimes books are
+##   given numbers in a named series.
+number = element number { text }
+
+## [organization] The organization that sponsors a conference or that
+##   publishes a manual.
+organization = element organization { text }
+
+## [pages] One or more page numbers or range of numbers, such as 42-111
+##   or 7,41,73-97 or 43+ (the `+' in this last example indicates pages
+##   following that don't form a simple range).  To make it easier to
+##   maintain Scribe-compatible databases, the standard styles convert a
+##   single dash (as in 7-33) to the double dash used in TeX to denote
+##   number ranges (as in 7-33).
+pages = element pages {
+    [ m:datatypes="strict" ] xsd:string { pattern="[0-9]+((-{0,2}|–|,)[0-9]+)*\+?" } |
+    [m:datatypes="lax" ] text
+}
+
+## [publisher] The publisher's name.
+publisher = element publisher { text }
+
+## [school] The name of the school where a thesis was written
+school = element school {  text }
+
+## [series] The name of a series or set of books.  When citing an entire
+##   book, the the title field gives its title and an optional series field
+##   gives the name of a series or multi-volume set in which the book is
+##   published.
+series = element series { text }
+
+## [title] The work's title, typed as explained in the LaTeX book.
+title = element title { text }
+
+## [type] The type of a technical report-for example, ``Research Note''.
+type =   element type { text }
+
+## [volume] The volume of a journal or multivolume book.
+volume = element volume { text }
+
+## [year] The year of publication or, for an unpublished work, the year
+##   it was written.  Generally it should consist of four numerals, such as
+##   1984, although the standard styles can handle any year whose last four
+##   nonpunctuation characters are numerals, such as `(about 1984)'.
+##   The schema will restrict validation of the year to four numerals,
+##   as such a type is pre-defined in XML Schema.
+year = element year { xsd:gYear }
+
+## [annote] An annotation  It is not used by the standard bibliography
+##   styles, but may be used by others that produce an annotated
+##   bibliography.
+annote = element annote { text }
+
+## [crossref] The database key of the entry being cross referenced.
+##   BibTEX has a new cross-referencing feature, explained by an example.
+##     @INPROCEEDINGS(no-gnats,
+##         crossref = "gg-proceedings",
+##     @PROCEEDINGS(gg-proceedings,
+crossref = element crossref { xsd:NCName }
+
+## [key] Used for alphabetizing, cross referencing, and creating a label
+##   when the ``author'' information (described in Section [ref: ] is
+##   missing. This field should not be confused with the key that appears
+##   in the \cite command and at the beginning of the database entry.
+##
+##   In addition to the fields listed above, each entry type also has
+##   an optional key field, used in some styles for alphabetizing, or
+##   for forming a \bibitem label. You should include a key field for
+##   any entry whose ``author'' information is missing;
+key = element key { text }
+
+## Popular user fields
+##   BibTeX is extremely popular, and many people have used it to store
+##   information. Below is a list of some of the more common fields.
+##   When using BibTeX with LaTeX you need BibTeX style files
+##   to print these data.
+##   Ref: http://www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html
+user.elements =
+  abstract?
+& affiliation?
+& contents?
+& copyright?
+& isbn?
+& doi?
+& keywords?
+& language?
+& lccn?
+& location?
+& mrnumber?
+& price?
+& size?
+& url?
+& category?
+
+user.nameclass = (
+ abstract |
+ affiliation |
+ contents |
+ copyright |
+ isbn |
+ doi |
+ keywords |
+ language |
+ lccn |
+ location |
+ mrnumber |
+ price |
+ size |
+ url |
+ category
+)
+
+abstract =
+  ## [abstract]  An abstract of the work.
+  element abstract { text }
+
+affiliation =
+  ## [affiliation]  The authors affiliation.
+  element affiliation { text }
+
+contents =
+  ## [contents]  A Table of Contents
+  element contents { text }
+
+copyright =
+  ## [copyright]  Copyright information.
+  element copyright { text }
+
+isbn =
+  ## [ISBN]  The International Standard Book Number.
+  ##    Every ISBN consist of 13 digits, divided into five parts of
+  ##    variable length, separated by a hyphen. After January 1, 2007,
+  ##    the ISBN-13 officially becomes "ISBN"; and the use of the
+  ##    ISBN-10 should be phased out.
+  element isbn { ISBN-10.datatype | ISBN-13.datatype }
+ISBN-10.datatype = xsd:string { pattern="(\d(-{0,2}|–| )){9}[\dX]" }
+ISBN-13.datatype = xsd:string { pattern="(\d(-{0,2}|–| )){12}[0-9X]" }
+
+issn =
+  ## [ISSN]  The International Standard Serial Number.
+  ##         Used to identify a journal.
+  element issn { ISSN.datatype }
+ISSN.datatype = xsd:string { pattern="\d{4}(-{0,2}|–)\d{4}" }
+
+language =
+  ## [language]  The language the document is in.
+  element language { xsd:language }
+
+lccn =
+  ## [LCCN]  The Library of Congress Call Number.
+  ##         I've also seen this as lib-congress.
+  element lccn { text }
+
+location =
+  ## [location]  A location associated with the entry,
+  ##             such as the city in which a conference took place.
+  element location { text }
+
+mrnumber =
+  ## [mrnumber]  The Mathematical Reviews number.
+  element mrnumber { text }
+
+price =
+  ## [price]  The price of the document.
+  element price { text }
+
+size =
+  ## [size]  The physical dimensions of a work.
+  element size { text }
+
+url =
+  ## [URL]  The WWW Universal Resource Locator that points to the
+  ##    item being referenced. This often is used for technical
+  ##    reports to point to the ftp site where the postscript
+  ##    source of the report is located.
+  element url { xsd:anyURI }
+
+keywords =
+  ## [keywords]  Key words used for searching or possibly for annotation.
+  element keywords { text }
+
+category =
+  ## [category]  Category of this bibitem
+  element category { text }
+
+doi =
+  ## [DOI]  The Digital Object Identifier
+  ##    used to redirect to articles, a key like 10.1000/203
+  ##    Ref: http://www.doi.org/
+  element doi { xsd:string { pattern="\d{0,2}\.\d{0,4}/.*" } }
