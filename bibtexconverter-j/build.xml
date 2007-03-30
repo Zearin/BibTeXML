@@ -52,9 +52,6 @@
       name="app.name"
       value="BibTeXConverter"/>
   <property
-      name="app.src.lib"
-      value="src-lib/gpsdings-lib-1.0.src.zip src-lib/mp3dings-lib-1.0.src.zip"/>
-  <property
       name="app.javaVersion"
       value="1.5"/>
   <property
