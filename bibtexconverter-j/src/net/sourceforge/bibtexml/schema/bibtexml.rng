@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   File: $Id$
+   File: $Id: bibtexml-core.rng 170 2007-03-24 12:08:04Z ringler $
   
    This schema expresses XML markup similar to the BibTeX language
    specified for LaTeX, or actually its content model.
@@ -30,7 +30,7 @@
   
 -->
 <!-- Namespace and namespace prefix -->
-<grammar xmlns:bibtex="http://bibtexml.sf.net/" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" ns="http://bibtexml.sf.net/" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<grammar ns="http://bibtexml.sf.net/" xmlns:bibtex="http://bibtexml.sf.net/" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!-- Document top element -->
   <start>
     <ref name="file"/>
@@ -79,21 +79,9 @@
     </element>
   </define>
   <define name="attlist.entry" combine="interleave">
-    <choice>
-      <attribute name="citekey">
-        <a:documentation>Citation key</a:documentation>
-        <ref name="citekey.datatype"/>
-      </attribute>
-      <attribute name="id">
-        <a:documentation>Citation key, for backward compatibility</a:documentation>
-        <ref name="citekey.datatype"/>
-      </attribute>
-    </choice>
-  </define>
-  <define name="citekey.datatype">
-    <data type="ID">
-      <param name="pattern">[a-zA-Z0-9.:\-]+</param>
-    </data>
+    <attribute name="id">
+      <data type="ID"/>
+    </attribute>
   </define>
   <!--
     .....................................................................
@@ -104,14 +92,12 @@
 the standard BibTeX distribution, these must be added to the
 bibliography styles, otherwise these fields will be omitted by
 the formatter.</a:documentation>
-    <interleave>
-      <optional>
-        <ref name="key"/>
-      </optional>
-      <optional>
-        <ref name="crossref"/>
-      </optional>
-    </interleave>
+    <optional>
+      <ref name="key"/>
+    </optional>
+    <optional>
+      <ref name="crossref"/>
+    </optional>
   </define>
   <define name="common.fields.class">
     <ref name="standard.common.fields.class"/>
@@ -949,10 +935,15 @@ the formatter.</a:documentation>
   following that don't form a simple range).  To make it easier to
   maintain Scribe-compatible databases, the standard styles convert a
   single dash (as in 7-33) to the double dash used in TeX to denote
-  number ranges (as in 7-33).</a:documentation>
+  number ranges (as in 7-33).
+
+Modified by MR:
+allow also S10-S20 
+and 10(S)-20(S) (supplement)
+allow also 121403(R) (cp. http://dx.doi.org/10.1103/PhysRevB.69.121403)</a:documentation>
       <ref name="attlist.pages"/>
       <data type="string">
-        <param name="pattern">[0-9]+((-{0,2}|–|,)[0-9]+)*\+?</param>
+        <param name="pattern">[a-zA-Z]?[0-9]+(\([a-zA-Z]\))?((-{0,2}|–|,)[a-zA-Z]?[0-9]+(\([a-zA-Z]\))?)*\+?(\([a-zA-Z]\))?</param>
       </data>
     </element>
   </define>

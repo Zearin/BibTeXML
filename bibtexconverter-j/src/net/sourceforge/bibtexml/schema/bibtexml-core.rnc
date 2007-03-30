@@ -1,552 +1,76 @@
-#  File: $Id$
+#  $Id$
 #
 #  This schema expresses XML markup similar to the BibTeX language
 #  specified for LaTeX, or actually its content model.
 #  For documentation on BibTeX, see
 #    http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
 #
+#  Differences to the strict BibTeXML schema are
+#    * Order is irrelevant
+#    * Required fields must be present
+#    * Optional fields used by the BibTeX style files are retained
+#      for schema-aware XML editors, while other fields are ommitted.
+#
 #  Suggested invocation:
 #
 #    <?xml version="1.0" encoding="UTF-8"?>
-#    <!DOCTYPE bibtex:file PUBLIC
-#        "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
-#        "bibteXML.dtd" >
 #    <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
 #    ...
 #    </bibtex:file>
-#
+#  
 #  Available from  http://bibtexml.sf.net/
-#
+# 
 #  This code originally developed by
 #    Vidar Bronken Gundersen
-#    Zeger W. Hendrikse
-#    Marco Kuhlmann
-#
+# 
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License.
 #  See  http://www.gnu.org/copyleft/gpl.html
 #
 
+
 # Namespace and namespace prefix
 default namespace bibtex = "http://bibtexml.sf.net/"
 
-# Document top element
-start = file
-file = element file { attlist.file, entry* }
-attlist.file &= empty
+# Reuse the strict BibTeXML schema
+include "bibtexml-strict.rnc" {
 
+      # Allow fields in any order.
+      # Retain required and optional fields to aid schema-aware XML editors.
 
-# .....................................................................
-# Main structure
+      article.content = author & title & journal & year & volume? &
+         number? & pages? & month? & note? & common.fields.class
+      book.content = (author|editor) & title & publisher & year &
+         volume? & number? & series? & address? & edition? & month? &
+         note? & common.fields.class
+      booklet.content = title & author? & howpublished? & address? &
+         month? & year? & note? & common.fields.class
+      inbook.content = (author|editor) & title & ((chapter & pages?) |
+         pages) & publisher & year & volume? & number? & series? & type? &
+         address? & edition? & month? & note? & common.fields.class
+      incollection.content = author & title & booktitle & publisher & year &
+         editor? & volume? & number? & series? & type? & chapter? &
+         pages? & address? & edition? & month? & note? & common.fields.class
+      inproceedings.content = author & title & booktitle & year &
+         editor? & volume? & number? & series? & pages? & address? &
+         month? & organization? & publisher? & note? &
+         common.fields.class
+      manual.content = title & author? & organization? & address? &
+         edition? & month? & year? & note? & common.fields.class
+      thesis.content = author & title & school & year & type? &
+         address? & month? & note? & common.fields.class
+      misc.content = author? & title? & howpublished? & month? & year?
+         & note? & common.fields.class
+      proceedings.content = title & year & editor? & volume? &
+         number? & series? & address? & month? & organization? &
+         publisher? & note?  & common.fields.class
+      techreport.content = author & title & institution & year & type?
+         & number? & address? & month? & note? & common.fields.class
+      unpublished.content = author & title & note &
+         month? & year? & common.fields.class
 
-## Each entry may contain one of the bibliographic types.
-standard.entries.class =
-      article
-    | book
-    | booklet
-    | manual
-    | techreport
-    | mastersthesis
-    | phdthesis
-    | inbook
-    | incollection
-    | proceedings
-    | inproceedings
-    | conference
-    | unpublished
-    | misc
-entry.content = standard.entries.class
-entry = element entry { attlist.entry, entry.content }
-attlist.entry &= attribute id { xsd:ID }
+}
 
-
-# .....................................................................
-# Parameter entities
-
-## Additional elements often used, but not included in
-## the standard BibTeX distribution, these must be added to the
-## bibliography styles, otherwise these fields will be omitted by
-## the formatter.
-standard.common.fields.class = key?, crossref?
-common.fields.class = standard.common.fields.class
-
-##   Annotation is not used by the standard bibliography styles,
-##   if you prefer otherwise, incude it in BibTeXML.common.fields.class
-#BibTeXML.common.fields.class &= annote
-
-
-# .....................................................................
-# Entries in the BibTeX database
-
-## [article] An article from a journal or magazine.
-##   Required fields: author, title, journal, year.
-##   Optional fields: volume, number, pages, month, note.
-article.standard.class =
-      author,
-      title,
-      journal,
-      year,
-      volume?,
-      number?,
-      pages?,
-      month?,
-      note?
-article.content = article.standard.class, common.fields.class
-article = element article { attlist.article, article.content }
-attlist.article &= empty
-
-## [book] A book with an explicit publisher.
-##   Required fields: author or editor, title, publisher, year.
-##   Optional fields: volume or number, series, address,
-##      edition, month, note.
-book.standard.class =
-      (author | editor),
-      title,
-      publisher,
-      year,
-      (volume | number)?,
-      series?,
-      address?,
-      edition?,
-      month?,
-      note?
-book.content = book.standard.class, common.fields.class
-book = element book { attlist.book, book.content }
-attlist.book &= empty
-
-## [booklet] A work that is printed and bound, but without a named
-##   publisher or sponsoring institution
-##   Required field: title.
-##   Optional fields: author, howpublished, address, month, year, note.
-booklet.standard.class =
-      author?, title, howpublished?, address?, month?, year?, note?
-booklet.content = booklet.standard.class, common.fields.class
-booklet = element booklet { attlist.booklet, booklet.content }
-attlist.booklet &= empty
-
-## [inbook] A part of a book, which may be a chapter (or section or
-##   whatever) and/or a range of pages.
-##   Required fields: author or editor, title, chapter and/or pages,
-##      publisher, year.
-##   Optional fields: volume or number, series, type, address,
-##      edition, month, note.
-inbook.standard.class =
-      (author | editor),
-      title,
-      ((chapter, pages?) | pages),
-      publisher,
-      year,
-      (volume | number)?,
-      series?,
-      type?,
-      address?,
-      edition?,
-      month?,
-      note?
-inbook.content = inbook.standard.class, common.fields.class
-inbook = element inbook { attlist.inbook, inbook.content }
-attlist.inbook &= empty
-#  > I want to express that the elements a and/or b are legal that is
-#  > one of them or both must be present in the document instance
-#  > (see the element content for BibTeX entry `InBook').
-#
-#   in content model:   ((a , b?) | b)          if order matters
-#                       ((a , b?) | (b , a?))   otherwise
-
-## [incollection] A part of a book having its own title.
-##   Required fields: author, title, booktitle, publisher, year.
-##   Optional fields: editor, volume or number, series, type,
-##      chapter, pages, address, edition, month, note.
-incollection.standard.class =
-      author,
-      title,
-      booktitle,
-      publisher,
-      year,
-      editor?,
-      (volume | number)?,
-      series?,
-      type?,
-      chapter?,
-      pages?,
-      address?,
-      edition?,
-      month?,
-      note?
-incollection.content = incollection.standard.class, common.fields.class
-incollection =
-      element incollection {
-            attlist.incollection, incollection.content
-      }
-attlist.incollection &= empty
-
-## [inproceedings] An article in a conference proceedings.
-##   Required fields: author, title, booktitle, year.
-##   Optional fields: editor, volume or number, series, pages,
-##      address, month, organization, publisher, note.
-inproceedings.standard.class =
-      author,
-      title,
-      booktitle,
-      year,
-      editor?,
-      (volume | number)?,
-      series?,
-      pages?,
-      address?,
-      month?,
-      organization?,
-      publisher?,
-      note?
-inproceedings.content = inproceedings.standard.class, common.fields.class
-inproceedings =
-      element inproceedings {
-            attlist.inproceedings, inproceedings.content
-      }
-attlist.inproceedings &= empty
-
-## [conference] The same as INPROCEEDINGS,
-##   included for Scribe compatibility.
-conference.content = inproceedings.content
-conference =
-      element conference {
-            attlist.conference, conference.content
-      }
-attlist.conference &= empty
-
-## [manual] Technical documentation
-##   Required field: title.
-##   Optional fields: author, organization, address,
-##      edition, month, year, note.
-manual.standard.class =
-      author?,
-      title,
-      organization?,
-      address?,
-      edition?,
-      month?,
-      year?,
-      note?
-manual.content = manual.standard.class, common.fields.class
-manual = element manual { attlist.manual, manual.content }
-attlist.manual &= empty
-
-
-## %thesis; mastersthesis and phdthesis are identical
-##   Required fields: author, title, school, year.
-##   Optional fields: type, address, month, note.
-thesis.standard.class =
-      author, title, school, year, type?, address?, month?, note?
-thesis.content = thesis.standard.class, common.fields.class
-
-## [mastersthesis] A Master's thesis.
-##   Required fields: author, title, school, year.
-##   Optional fields: type, address, month, note.
-mastersthesis.content = thesis.content
-mastersthesis =
-      element mastersthesis {
-            attlist.mastersthesis, mastersthesis.content
-      }
-attlist.mastersthesis &= empty
-
-## [phdthesis] A PhD thesis.
-##   Required fields: author, title, school, year.
-##   Optional fields: type, address, month, note.
-phdthesis.content = thesis.content
-phdthesis =
-      element phdthesis {
-            attlist.phdthesis, phdthesis.content
-      }
-attlist.phdthesis &= empty
-
-## [misc] Use this type when nothing else fits.
-##   Required fields: none.
-##   Optional fields: author, title, howpublished, month, year, note.
-misc.standard.class =
-      author?, title?, howpublished?, month?, year?, note?
-misc.content = misc.standard.class, common.fields.class
-misc = element misc { attlist.misc, misc.content }
-attlist.misc &= empty
-
-## [proceedings] The proceedings of a conference.
-##   Required fields: title, year.
-##   Optional fields: editor, volume or number, series,
-##      address, month, organization, publisher, note.
-proceedings.standard.class =
-      editor?,
-      title,
-      year,
-      (volume | number)?,
-      series?,
-      address?,
-      month?,
-      organization?,
-      publisher?,
-      note?
-proceedings.content = proceedings.standard.class, common.fields.class
-proceedings =
-      element proceedings {
-            attlist.proceedings, proceedings.content
-      }
-attlist.proceedings &= empty
-
-## [techreport] A report published by a school or other institution,
-##   usually numbered within a series.
-##   Required fields: author, title, institution, year.
-##   Optional fields: type, number, address, month, note.
-techreport.standard.class =
-      author,
-      title,
-      institution,
-      year,
-      type?,
-      number?,
-      address?,
-      month?,
-      note?
-techreport.content = techreport.standard.class, common.fields.class
-techreport =
-      element techreport {
-            attlist.techreport, techreport.content
-      }
-attlist.techreport &= empty
-
-## [unpublished] A document having an author and title, but not
-##   formally published.
-##   Required fields: author, title, note.
-##   Optional fields: month, year.
-unpublished.standard.class =
-      author, title, note, month?, year?
-unpublished.content = unpublished.standard.class, common.fields.class
-unpublished =
-      element unpublished {
-            attlist.unpublished, unpublished.content
-      }
-attlist.unpublished &= empty
-
-
-# .....................................................................
-# Metadata fields for each bibliographic entry
-
-## Fields from the standard bibliography styles.
-##   Below follows fields recognized by the standard bibliography
-##   styles. An entry can also contain other fields, which are
-##   ignored by those styles. Included in the schema to enable reuse
-##   into a flat BibTeX markup scheme, with optional field order.
-all.standard.fields.class =
-   address?
- & annote?
- & author?
- & booktitle?
- & chapter?
- & crossref?
- & edition?
- & editor?
- & howpublished?
- & institution?
- & journal?
- & key?
- & month?
- & note?
- & number?
- & organization?
- & pages?
- & publisher?
- & school?
- & series?
- & title?
- & type?
- & volume?
- & year?
-
-address =
-## [address] Usually the address of the publisher or other type of
-##   institution  For major publishing houses, van~Leunen recommends
-##   omitting the information entirely.  For small publishers, on the other
-##   hand, you can help the reader by giving the complete address.
-   element address { attlist.address, text }
-attlist.address &= empty
-
-author =
-## [author] The name(s) of the author(s),
-##   in the format described in the LaTeX book.
-   element author { attlist.author, text }
-attlist.author &= empty
-
-booktitle =
-## [booktitle] Title of a book, part of which is being cited.  See the
-##   LaTeX book for how to type titles.  For book entries, use the title
-##   field instead.
-   element booktitle { attlist.booktitle, text }
-attlist.booktitle &= empty
-
-chapter =
-## [chapter] A chapter (or section or whatever) number.
-   element chapter { attlist.chapter, xsd:positiveInteger }
-attlist.chapter &= empty
-
-edition =
-## [edition] The edition of a book-for example, ``Second''.  This
-##   should be an ordinal, and should have the first letter capitalized, as
-##   shown here; the standard styles convert to lower case when necessary.
-   element edition { attlist.edition, xsd:string { pattern="[A-Z].*" } }
-attlist.edition &= empty
-
-editor =
-## [editor] Name(s) of editor(s), typed as indicated in the LaTeX book.
-##   If there is also an author field, then the editor field gives the
-##   editor of the book or collection in which the reference appears.
-   element editor { attlist.editor, text }
-attlist.editor &= empty
-
-howpublished =
-## [howpublished] How something strange has been published.
-##   The first word should be capitalized.
-   element howpublished { attlist.howpublished, text }
-attlist.howpublished &= empty
-
-institution =
-## [institution] The sponsoring institution of a technical report.
-   element institution { attlist.institution, text }
-attlist.institution &= empty
-
-journal =
-## [journal] A journal name.  Abbreviations are provided for many
-##   journals; see the Local Guide.
-   element journal { attlist.journal, text }
-attlist.journal &= empty
-
-month =
-## [month] The month in which the work was published or, for an
-##   unpublished work, in which it was written. You should use the
-##   standard three-letter abbreviation, as described in Appendix B.1.3 of
-##   the LaTeX book.
-##   The schema also allows a two digit month format, e.g. 05 (for May).
-   element month { attlist.month, ( monthString.datatype | xsd:gMonth ) }
-attlist.month &= empty
-monthString.datatype =
-   string "Jan"
- | string "Feb"
- | string "Mar"
- | string "Apr"
- | string "May"
- | string "Jun"
- | string "Jul"
- | string "Aug"
- | string "Sep"
- | string "Oct"
- | string "Nov"
- | string "Dec"
-
-note =
-## [note] Any additional information that can help the reader.
-##   The first word should be capitalized.
-   element note { attlist.note, text }
-attlist.note &= empty
-
-number =
-## [number] The number of a journal, magazine, technical report, or of a
-##   work in a series.  An issue of a journal or magazine is usually
-##   identified by its volume and number; the organization that issues a
-##   technical report usually gives it a number; and sometimes books are
-##   given numbers in a named series.
-   element number { attlist.number, text }
-attlist.number &= empty
-
-organization =
-## [organization] The organization that sponsors a conference or that
-##   publishes a manual.
-   element organization { attlist.organization, text }
-attlist.organization &= empty
-
-pages =
-## [pages] One or more page numbers or range of numbers, such as 42-111
-##   or 7,41,73-97 or 43+ (the `+' in this last example indicates pages
-##   following that don't form a simple range).  To make it easier to
-##   maintain Scribe-compatible databases, the standard styles convert a
-##   single dash (as in 7-33) to the double dash used in TeX to denote
-##   number ranges (as in 7-33).
-##
-## Modified by MR:
-## allow also S10-S20 
-## and 10(S)-20(S) (supplement)
-## allow also 121403(R) (cp. http://dx.doi.org/10.1103/PhysRevB.69.121403)
-   element pages {
-      attlist.pages,
-      xsd:string { pattern="[a-zA-Z]?[0-9]+(\([a-zA-Z]\))?((-{0,2}|–|,)[a-zA-Z]?[0-9]+(\([a-zA-Z]\))?)*\+?(\([a-zA-Z]\))?" }
-   }
-attlist.pages &= empty
-
-publisher =
-## [publisher] The publisher's name.
-   element publisher { attlist.publisher, text }
-attlist.publisher &= empty
-
-school =
-## [school] The name of the school where a thesis was written
-   element school { attlist.school, text }
-attlist.school &= empty
-
-series =
-## [series] The name of a series or set of books.  When citing an entire
-##   book, the the title field gives its title and an optional series field
-##   gives the name of a series or multi-volume set in which the book is
-##   published.
-   element series { attlist.series, text }
-attlist.series &= empty
-
-title =
-## [title] The work's title, typed as explained in the LaTeX book.
-   element title { attlist.title, text }
-attlist.title &= empty
-
-type =
-## [type] The type of a technical report-for example, ``Research Note''.
-   element type { attlist.type, text }
-attlist.type &= empty
-
-volume =
-## [volume] The volume of a journal or multivolume book.
-   element volume { attlist.volume, text }
-attlist.volume &= empty
-
-year =
-## [year] The year of publication or, for an unpublished work, the year
-##   it was written.  Generally it should consist of four numerals, such as
-##   1984, although the standard styles can handle any year whose last four
-##   nonpunctuation characters are numerals, such as `(about 1984)'.
-##   The schema will restrict validation of the year to four numerals,
-##   as such a type is pre-defined in XML Schema.
-   element year { attlist.year, xsd:gYear }
-attlist.year &= empty
-
-
-annote =
-## [annote] An annotation  It is not used by the standard bibliography
-##   styles, but may be used by others that produce an annotated
-##   bibliography.
-   element annote { attlist.annote, text }
-attlist.annote &= empty
-
-crossref =
-## [crossref] The database key of the entry being cross referenced.
-##   BibTEX has a new cross-referencing feature, explained by an example.
-##     @INPROCEEDINGS(no-gnats,
-##         crossref = "gg-proceedings",
-##     @PROCEEDINGS(gg-proceedings,
-   element crossref { attlist.crossref, xsd:NCName }
-attlist.crossref &= empty
-
-key =
-## [key] Used for alphabetizing, cross referencing, and creating a label
-##   when the ``author'' information (described in Section [ref: ] is
-##   missing. This field should not be confused with the key that appears
-##   in the \cite command and at the beginning of the database entry.
-##
-##   In addition to the fields listed above, each entry type also has
-##   an optional key field, used in some styles for alphabetizing, or
-##   for forming a \bibitem label. You should include a key field for
-##   any entry whose ``author'' information is missing;
-   element key { attlist.key, text }
-attlist.key &= empty
+# Extend common fields (at this point key? & crossref?)
+standard.common.fields.class &= annote?
 
