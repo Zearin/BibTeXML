@@ -67,9 +67,9 @@ import org.xml.sax.SAXException;
 
 public class StyleSheetController {
     static Preferences PREF =
-            Preferences.userNodeForPackage(BibTeXConverterController.class).node("styles");
+            Preferences.userNodeForPackage(StyleSheetController.class).node("styles");
     private final Preferences pref;
-    private final BibTeXConverter conv;
+    private final XMLConverter conv;
     private final String name;
     private final String ext;
     private final URL style;
@@ -87,7 +87,7 @@ public class StyleSheetController {
     private JButton expcoll = null;
     private JDialog dialog;
     private boolean active = true;
-    private static final ImageIcon config = new ImageIcon(BibTeXConverterController.class.getResource("icon/configure.png"));
+    private static final ImageIcon config = new ImageIcon(StyleSheetController.class.getResource("icon/configure.png"));
     
     private String enc;
     protected Map<String, Object> params = null;
@@ -132,7 +132,7 @@ public class StyleSheetController {
         }
     };
     
-    private StyleSheetController(BibTeXConverter conv, String name)
+    private StyleSheetController(XMLConverter conv, String name)
              throws SAXException, IOException
     {
         this.conv = conv;
@@ -153,7 +153,7 @@ public class StyleSheetController {
         init(customParams,  pref.get(P_KEY_ENCODING, null) != null);
     }
     
-    public StyleSheetController(BibTeXConverter conv, 
+    public StyleSheetController(XMLConverter conv, 
             String outputname,
             String outputSuffix,
             URL stylesheet,
@@ -175,7 +175,7 @@ public class StyleSheetController {
     }
     
     /** Doesn't throw any exceptions, prints errors to stderr. **/
-    public static StyleSheetController newInstance(BibTeXConverter conv, 
+    public static StyleSheetController newInstance(XMLConverter conv, 
             String outputname,
             String outputSuffix,
             URL stylesheet,
@@ -322,7 +322,7 @@ public class StyleSheetController {
                 in = new BufferedInputStream(style.openStream());
                 params = XSLParamHandler.getStyleSheetParameters(in);
                 for(String key : params.keySet().toArray(new String[0])){
-                    if(key.startsWith(BibTeXConverter.INTERNAL_PARAMETER_PREFIX)){
+                    if(key.startsWith(XMLConverter.INTERNAL_PARAMETER_PREFIX)){
                         params.remove(key);
                     }
                 }
@@ -376,9 +376,9 @@ public class StyleSheetController {
         JLabel label;
         int rowcount = 0;
         if(customEncoding){
-            String prefval = pref.get(P_KEY_ENCODING, BibTeXConverter.DEFAULT_ENC.name());
+            String prefval = pref.get(P_KEY_ENCODING, XMLConverter.DEFAULT_ENC.name());
             JComboBox outpEnc = new JComboBox(BibTeXConverterController.allEncodings);
-            outpEnc.setSelectedItem(BibTeXConverter.DEFAULT_ENC.name());
+            outpEnc.setSelectedItem(XMLConverter.DEFAULT_ENC.name());
             outpEnc.setEditable(true);
             if(Charset.isSupported(prefval)){
                 outpEnc.setSelectedItem(prefval);
@@ -468,12 +468,12 @@ public class StyleSheetController {
         return result;
     }
     
-    public static StyleSheetController load(BibTeXConverter cv, String name)  throws SAXException, IOException{
+    public static StyleSheetController load(XMLConverter cv, String name)  throws SAXException, IOException{
         StyleSheetController cssc = new StyleSheetController(cv, name);
         return cssc;
     }
     
-    public static StyleSheetController[] load(BibTeXConverter cv, String[] excludeNames)
+    public static StyleSheetController[] load(XMLConverter cv, String[] excludeNames)
             throws BackingStoreException{
         Collection<StyleSheetController> result = new Vector<StyleSheetController>();
         StyleSheetController cssc;
@@ -495,7 +495,7 @@ public class StyleSheetController {
         return result.toArray(new StyleSheetController[result.size()]);
     }
     
-    public static StyleSheetController[] load(BibTeXConverter cv)
+    public static StyleSheetController[] load(XMLConverter cv)
             throws BackingStoreException{
         return load(cv, (String[]) null);
     }
@@ -562,7 +562,7 @@ public class StyleSheetController {
                     "test", ".test", new File(argv[0]).toURI().toURL(), true, true, true));
                     btcc.addStyle(new StyleSheetController(btcc.convert,
                     "RIS (Reference Manager/Endnote)", ".ris",
-                    BibTeXConverter.class.getResource("bibxml2ris.xsl"),
+                    XMLConverter.class.getResource("bibxml2ris.xsl"),
                     false, false, true));
                 } catch (Exception ex){
                     throw new RuntimeException(ex);
