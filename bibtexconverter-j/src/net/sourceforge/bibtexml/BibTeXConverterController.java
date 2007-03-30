@@ -18,24 +18,66 @@ package net.sourceforge.bibtexml;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.BorderLayout;
+import java.awt.Insets;
+import java.awt.Container;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.FileFilter;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.*;
-import java.util.*;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
+import java.nio.charset.Charset;
+import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.Collection;
+import java.util.Map;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
+import javax.swing.BorderFactory;
+import javax.swing.JMenuBar;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.JToggleButton;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.AbstractButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.xml.transform.TransformerException;
 import de.mospace.swing.LookAndFeelMenu;
 import de.mospace.swing.PathInput;
-import de.mospace.swing.text.*;
 import de.mospace.xml.ResettableErrorHandler;
+import de.mospace.xml.XMLUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
@@ -45,10 +87,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private static final Preferences PREF =
             Preferences.userNodeForPackage(BibTeXConverterController.class);
     private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("icon/ledgreen2.png"));
-
-    private InputType input = InputType.BIBTEX;
-    BibTeXConverter convert = new BibTeXConverter();
-
     private final static String INPUT_PREFIX = InputType.class.getName()+":";
     final static String ENCODING_PREFIX = Charset.class.getName()+":";
     final static String VALIDATION_PREFIX = "javax.xml.validation:";
@@ -60,7 +98,14 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private final static String BIBTEX = "BibTeX";
     private final static String[] BUILTIN = new String[]{
         BIBTEX, RIS, HTMLFLAT, HTMLGROUPED};
+    
+    private final Container styleContainer = Box.createVerticalBox();    
+    private final StyleSheetManager styleManager;
+    private InputType input = InputType.BIBTEX;
+    BibTeXConverter convert = new BibTeXConverter();
+
     private String schemaLanguageExtension;
+    
 
     final static Object[] allEncodings = Charset.availableCharsets().keySet().toArray();
 
@@ -68,14 +113,12 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private JButton startbutton;
     private PathInput outputDir;
     private Map<JToggleButton, Set<Component>> dependencies = new HashMap<JToggleButton, Set<Component>>();
-    private Collection<StyleSheetController> styles;
     private JRadioButton bibTeXInput;
     private JComboBox encodings;
     private String groupingKey = "keywords";
-    private Container styleContainer = Box.createVerticalBox();
+    
     private String xmlschema = "bibtexmlExtended";
     protected MessagePanel msgPane = new MessagePanel();
-    protected File styledir;
     private final ErrorCounter ecount = new ErrorCounter();
     private final UniversalErrorHandler errorHandler = new JointErrorHandler(ecount, msgPane.getErrorHandler());
 
@@ -86,23 +129,13 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             tf = convert.loadTransformerFactory(this);
         }
         init(tf != null);
-        String styledirpath = PREF.get("styledir", null);
-        styledir = (styledirpath == null)? null : new File(styledirpath);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         if(tf == null){
             System.err.println("Saxon not found!");
             System.err.println("Only XML output is possible.");
+            styleManager = null;
         } else {
-            /* load built-in styles */
-            addBuiltInStyles();
-            try{
-                for(StyleSheetController style : 
-                    StyleSheetController.load(convert, BUILTIN)){
-                addStyle(style);
-                    }
-            } catch (Exception ex){
-                ex.printStackTrace();
-            }
+            styleManager = new StyleSheetManager(convert, styleContainer, builtInStyles(), errorHandler);
         }
         pack();
         
@@ -113,28 +146,33 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         System.out.flush();
     }
     
-    private void addBuiltInStyles(){
-        addStyle(
+    private Collection<StyleSheetController> builtInStyles(){
+        List<StyleSheetController> builtins = new ArrayList<StyleSheetController>();
+        builtins.add(
             StyleSheetController.newInstance(convert, BIBTEX, "-new.bib",
                     getClass().getResource("xslt/bibxml2bib.xsl"),
                     false, true, true));
-        addStyle(
+        builtins.add(
             StyleSheetController.newInstance(convert, RIS, ".ris",
                     getClass().getResource("xslt/bibxml2ris.xsl"),
                     false, false, true));
-        addStyle(
+        builtins.add(
             StyleSheetController.newInstance(convert, HTMLFLAT, ".html",
                     getClass().getResource("xslt/bibxml2html.xsl"),
                     true, true, false));
-            /*{
-                    public boolean transformImpl(File a, File b){
-                        return checkPdfDirURI(params) && super.transformImpl(a, b);
-                    }
-                });*/
-        addStyle(
+        builtins.add(
             StyleSheetController.newInstance(convert, HTMLGROUPED, "g.html",
                         getClass().getResource("xslt/bibxml2htmlg.xsl"),
                         true, true, false));
+        return builtins;
+    }
+    
+    public boolean addStyle(StyleSheetController cssc){
+        return styleManager.addStyle(cssc);
+    }
+    
+    public boolean removeStyle(StyleSheetController cssc){
+        return styleManager.removeStyle(cssc);
     }
     
     private void setValidationSchema(String cmd){
@@ -167,6 +205,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         }
     }
     
+    /*
     private boolean checkPdfDirURI(Map<String, Object> params){
         Object baseURI = params.get("pdfDirURI");
         if(baseURI == null){
@@ -187,6 +226,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         }
         return true;
     }
+    */
 
     private void init(boolean hasSaxon){
         JPanel cp = new JPanel(new GridBagLayout());
@@ -283,9 +323,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         group = new ButtonGroup();
         String prefval = PREF.get(VALIDATION_PREFIX, "None");
         for(String item : 
-        new String[]{"None", "bibtexmlFlat", "bibtexmlExtended", "bibtexml"}){
+        new String[]{"None", "bibtexml-core", "bibtexml-strict", "bibtexml-sloppy"}){
             mi = new JRadioButtonMenuItem(
-                item.equals("bibtexmlFlat") ?
+                item.equals("bibtexml-sloppy") ?
                 "<html>" + item + " <i>(recommended)</i></html>" :
                 item);
             mi.addActionListener(this);
@@ -330,10 +370,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             }
         }
         pack();
-    }
-    
-    protected String[] getBuiltinStyleNames(){
-        return BUILTIN;
     }
 
     private JComponent createInputPanel(){
@@ -619,7 +655,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 File xml = inputf;
                 
                 /* bibtex to bibxml */
+                Charset xmlencoding = null;
                 if(input == InputType.BIBTEX){
+                    xmlencoding = convert.getXMLEncoding();
                     xml = new File(dir, basename + ".xml");
                     System.out.println("Creating XML in " + xml.getPath());
                     System.out.flush();
@@ -642,6 +680,26 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         }
                         System.err.flush();
                         break FILELOOP;
+                    }
+                } else {
+                    InputStream is = null;
+                    try{
+                        is = new FileInputStream(xml);
+                        is = new BufferedInputStream(is); 
+                        String enc = XMLUtils.getXMLDeclarationEncoding(new InputStreamReader(is, "utf-8"), "utf-8");
+                        xmlencoding = Charset.forName(enc);
+                        System.out.println("XML Encoding: " + xmlencoding.name());
+                    } catch (IOException ex){
+                        convert.handleException("*** ERROR READING XML ***", ex);
+                        parseErrors = 0;
+                        break FILELOOP;
+                    } finally {
+                        if(is != null){
+                            try{
+                                is.close();
+                            } catch (Exception ignore){
+                            }
+                        }
                     }
                 }
                 System.err.flush();
@@ -678,7 +736,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                     }
                     if(parseErrors  > 0){
                         ErrorList el = msgPane.getErrorList(); 
-                        el.setFile(new XFile(xml, InputType.BIBXML, convert.getXMLEncoding()));
+                        el.setFile(new XFile(xml, InputType.BIBXML, xmlencoding));
                         el.setTitle("Errors validating " + xml.getName() + " against " + xmlschema + schemaLanguageExtension);
                         el.setAllowDoubleClick(true);
                         if(parseErrors != 1){
@@ -695,8 +753,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 System.out.flush();
                 
                 /* xslt transformation */
-                if(hasStyles()){
-                    for(StyleSheetController cssc : getStyles()){
+                if(styleManager.hasStyles()){
+                    for(StyleSheetController cssc : styleManager.getStyles()){
                         if(cssc.isActive()){
                             try{
                                 errorHandler.reset();
@@ -825,185 +883,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
 
     }
     
-    protected boolean hasStyles(){
-        return (styles != null) && (styles.size() != 0);
-    }
-    
-    protected StyleSheetController[] getStyles(){
-        return (hasStyles())? 
-            styles.toArray(new StyleSheetController[styles.size()]):
-            null;
-    }
-    
-    public boolean addStyle(){
-        JFileChooser jfc = new JFileChooser(styledir);
-        jfc.setDialogTitle("Choose an XSLT stylesheet");
-        jfc.setMultiSelectionEnabled(false);
-        int returnVal = jfc.showOpenDialog(this);
-        URL style = null;
-        if(returnVal == JFileChooser.APPROVE_OPTION){
-            try{
-                style = jfc.getSelectedFile().toURI().toURL();
-            } catch (Exception ex){
-                ex.printStackTrace();
-            }
-        }
-        File dir = jfc.getCurrentDirectory();
-        if(dir != null){
-            styledir = dir;
-            PREF.put("styledir", styledir.getAbsolutePath());
-        }
-        if(style == null){
-            return false;
-        }
-        String name = null;
-        name = JOptionPane.showInputDialog(this, "Please enter a name for the new output format.");
-        if(name == null){
-            return false;
-        } else {
-            name = name.replaceAll("[\\./]", " ");
-        }
-        while(nameExists(name)){
-            name = JOptionPane.showInputDialog(this, 
-            "This name is already in use, please enter another one.", name);
-            if(name == null){
-                return false;
-            } else {
-                name = name.replaceAll("[\\./]", " ");
-            }
-        }
-        String suffix = null;
-        suffix = JOptionPane.showInputDialog(this, "Please enter a filename suffix for the new output format.");
-        if(suffix == null){
-            return false;
-        }
-        while(suffixExists(suffix)){
-            suffix = JOptionPane.showInputDialog(this, 
-            "This suffix is already in use, please enter another one.", suffix);
-            if(suffix == null){
-                return false;
-            }
-        }
-        Box b = Box.createVerticalBox();
-        JCheckBox enc = new JCheckBox("Enable custom output encoding?");
-        b.add(enc);
-        JCheckBox params = new JCheckBox("Enable custom stylesheet parameters?");
-        b.add(params);
-        JCheckBox crlf = new JCheckBox("Force windows line terminators (CRLF)?");
-        b.add(crlf);
-        returnVal = JOptionPane.showConfirmDialog(
-            this,
-            b,
-            "XSLT options",
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE);
-        StyleSheetController ssc = null;
-        if(returnVal == JOptionPane.OK_OPTION){
-            try{
-                ssc = new StyleSheetController(
-                        convert,
-                        name,
-                        suffix,
-                        style,
-                        params.isSelected(),
-                        enc.isSelected(),
-                        crlf.isSelected());
-                addStyle(ssc);
-                ssc.setErrorHandler(errorHandler);
-            } catch (Exception ex){
-                convert.handleException(null, ex);
-            }
-        }
-        return ssc != null;
-    }
-    
-    private boolean nameExists(String name){
-        boolean result = false;
-        if(hasStyles()){
-            for(StyleSheetController ssc : getStyles()){
-                if(ssc.getName().equals(name)){
-                    result = true;
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-    
-    private boolean suffixExists(String suffix){
-        boolean result = false;
-        if(hasStyles()){
-            for(StyleSheetController ssc : getStyles()){
-                if(ssc.getSuffix().equals(suffix)){
-                    result = true;
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-    
-    synchronized public boolean addStyle(StyleSheetController cssc){
-        if(cssc == null){
-            return false;
-        }
-        if(styles == null){
-            styles = new HashSet<StyleSheetController>();
-        }
-        boolean result = styles.add(cssc);
-        if(result){
-            styleContainer.add(cssc.getUI());
-        }
-        return result;
-    }
-    
-    boolean removeStyle(){
-        if(hasStyles()){
-            Collection<StyleSheetController> v =
-                new Vector<StyleSheetController>();
-            Collection<String> c = Arrays.asList(getBuiltinStyleNames());
-            for(StyleSheetController style : getStyles()){
-                if(!c.contains(style.getName())){
-                    v.add(style);
-                }
-            }
-            if(v.size() != 0){
-                StyleSheetController result =
-                    (StyleSheetController)
-                    JOptionPane.showInputDialog(this,
-                    "Pick output style to remove",
-                    "Remove stylesheet",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    v.toArray(new StyleSheetController[v.size()]),
-                    null); 
-                if((result != null) && removeStyle(result)){
-                    try{
-                        result.destroyPrefNode();
-                    } catch (Exception ex){
-                        convert.handleException(null, ex);
-                    }
-                    return true;
-                }
-                return false;
-            }
-        }
-        JOptionPane.showMessageDialog(this,"There are currently no removable output styles!");
-        return false;
-    }
-    
-    synchronized public boolean removeStyle(StyleSheetController cssc){
-        if(!hasStyles()){
-            return false;
-        }
-        boolean result = styles.remove(cssc);
-        if(result){
-            styleContainer.remove(cssc.getUI());
-            cssc.dispose();
-        }
-        return result;
-    }
-
     private void handleButton(AbstractButton c){
         boolean selected = c.isSelected();
         String cmd = c.getActionCommand();
@@ -1019,12 +898,12 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             System.exit(0);
 
         } else if(cmd.equals("addXSLT")){
-            if(addStyle()){
+            if(styleManager.addStyle()){
                 pack();
             }
             
         } else if(cmd.equals("rmXSLT")){
-            if(removeStyle()){
+            if(styleManager.removeStyle()){
                 pack();
             }
         } else if(cmd.equals(JABREF_ENC)){
@@ -1088,93 +967,5 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         }
     }
     
-    private static class MessagePanel extends JPanel{
-        private final CardLayout layout = new CardLayout();
-        private final static String CONSOLE = "Console";
-        private final static String ERRORS = "Error List";
-        private final JEditorPane console = new JTextPane();
-        private final ErrorList errorlist;
-        private UniversalErrorHandler errorhandler;
-        
-        public MessagePanel(){
-            super();
-            setLayout(layout);
-            DocumentOutputStream output = new DocumentOutputStream(console.getDocument());
-            System.setOut(new PrintStream(new BufferedOutputStream(output), false));
-            output = new DocumentOutputStream(console.getDocument());
-            output.setColor(Color.red);
-            System.setErr(new PrintStream(new BufferedOutputStream(output), false));
-            ActionListener close = new ActionListener(){
-                public void actionPerformed(ActionEvent e){
-                    showConsole();
-                }
-            };
-            errorlist = new ErrorList(close);
-            add(new JScrollPane(console), CONSOLE);
-            add(errorlist.component(), ERRORS);
-            showConsole();
-            setPreferredSize(new Dimension(200,200));
-        }
-        
-        public synchronized UniversalErrorHandler getErrorHandler(){
-            if(errorhandler == null){
-                errorhandler = new JointErrorHandler(
-                    errorlist.getErrorHandler(),
-                    new MyErrorHandler());
-            }
-            return errorhandler;
-        }
-        
-        public void showConsole(){
-            layout.show(this, CONSOLE);
-        }
-        
-        public void showErrors(){
-            layout.show(this, ERRORS);
-        }
-        
-        protected ErrorList getErrorList(){
-            return errorlist;
-        }
-        
-        private class MyErrorHandler implements UniversalErrorHandler{
-            public MyErrorHandler(){
-            }
-        
-            public void fatalError( SAXParseException e ) throws SAXException {
-                showErrors();
-            }
-        
-            public void error( SAXParseException ex ) throws SAXException {
-                showErrors();
-            }
-        
-            public void warning( SAXParseException e ) throws SAXException {
-                showErrors();
-            }
-            
-            public void fatalError( TransformerException e ) throws TransformerException {
-                showErrors();
-            }
-        
-            public void error( TransformerException ex ) throws TransformerException {
-                showErrors();
-            }
-        
-            public void warning( TransformerException e ) throws TransformerException {
-                showErrors();
-            }
-            
-            public void error(ParseErrorMessage e) throws IOException {
-                showErrors();
-            }
-        
-            public synchronized void reset(){
-                errorlist.setAllowDoubleClick(false);
-                showConsole();
-            }
-            
-        }
-
-    }
+   
 }
