@@ -104,7 +104,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private InputType input = InputType.BIBTEX;
     BibTeXConverter convert = new BibTeXConverter();
 
-    private String schemaLanguageExtension;
+    private final String schemaLanguageExtension = ".rng";
     
 
     final static Object[] allEncodings = Charset.availableCharsets().keySet().toArray();
@@ -289,11 +289,14 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         JMenu menu = new JMenu("BibXML Validation");
         fm.add(menu);
         
+        ButtonGroup group;
+        JRadioButtonMenuItem mi;
+        //disable schema language selection. always use RNG
+        /*
         JMenu menu2 = new JMenu("Schema Language");
         ButtonGroup group = new ButtonGroup();
         schemaLanguageExtension = PREF.get("Schema Language", ".rng");
         JRadioButtonMenuItem mi;
-        
         Map<String, String> lang = new TreeMap<String, String>();
         lang.put("RELAX NG", ".rng");
         lang.put("W3C Schema", ".xsd");
@@ -318,7 +321,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 mi.setSelected(true);
             }
         }
-        menu.add(menu2);        
+        menu.add(menu2);
+        */        
         
         group = new ButtonGroup();
         String prefval = PREF.get(VALIDATION_PREFIX, "None");
