@@ -40,7 +40,7 @@ file.attlist  &= attribute structure {
     [ m:structure="container" ] ( "container" )
 }?
 
-file.attlist &= attribute structure {
+file.attlist &= attribute fields {
     [ m:fields="core" ] ( "core" ) |
     [ m:fields="user" ] ( "user" ) |
     [ m:fields="arbitrary" ] ( "arbitrary" )
@@ -74,8 +74,7 @@ entry.content = standard.entries.class
 entry = element entry { attlist.entry, entry.content }
 attlist.entry &=
    ## Citation key
-   attribute citekey { citekey.datatype }
-citekey.datatype = xsd:ID { pattern="[a-zA-Z0-9.:\-]+" }
+   attribute id { xsd:ID }
 
 
 # .....................................................................
@@ -105,7 +104,7 @@ volumeOrNumber =
 article = element article {
    article.required  &
    article.optional &
-   article.user
+   [ m:fields="user arbitrary"] ( article.user )
 }
 
 article.required =
@@ -115,10 +114,17 @@ article.required =
 article.optional = volume? & number? & pages? & month? & note?
 
 article.user =
-    user.elements &  element * - (article.nameclass | user.nameclass){ text }
-
-article.nameclass = author | title | journal | year |
-    volume | number | pages | month | note
+    user.elements & 
+    (element ( * - ( 
+    (
+        author | title | journal | year |
+        volume | number | pages | month | note
+    ) | ( 
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
+        keywords |  language |  lccn |  location |  mrnumber |  price |  
+        size |  url |  category 
+     )
+     )){ text })*
 
 
 
@@ -129,7 +135,7 @@ article.nameclass = author | title | journal | year |
 book = element book {
     book.required &
     book.optional &
-    [ m:fields="user arbitrary"] ( book.user )
+    [ m:fields="user arbitrary"] ( book.user* )
 }
 
 book.required =
@@ -141,10 +147,16 @@ book.optional =
 
 book.user =
     user.elements &
-    element * - (book.nameclass | user.nameclass){ text }
-
-book.nameclass = author | editor | title | publisher | year |
-    volume | number | series | address | edition | month | note
+    (element ( * - ( 
+    (
+        author | editor | title | publisher | year |
+        volume | number | series | address | edition | month | note
+    ) | ( 
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
+        keywords |  language |  lccn |  location |  mrnumber |  price |  
+        size |  url |  category 
+     )
+     )){ text })*
 
 
 
@@ -167,11 +179,16 @@ booklet.optional =
 
 booklet.user =
     user.elements &
-    element * - (booklet.nameclass | user.nameclass){ text }
-
-booklet.nameclass =
-    title |
-    author | howpublished | address | month | year | note
+    (element ( * - ( 
+    (
+        title |
+        author | howpublished | address | month | year | note
+    ) | ( 
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
+        keywords |  language |  lccn |  location |  mrnumber |  price |  
+        size |  url |  category 
+     )
+     )){ text })*
 
 
 
@@ -209,11 +226,16 @@ inbook.optional =
 
 inbook.user =
     user.elements &
-    element * - (inbook.nameclass | user.nameclass){ text }
-
-inbook.nameclass =
-   author | editor | title | chapter | pages | publisher | year |
-   volume | number | series | type | address | edition | month | note
+    (element ( * - ( 
+    (
+       author | editor | title | chapter | pages | publisher | year |
+       volume | number | series | type | address | edition | month | note
+    ) | ( 
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
+        keywords |  language |  lccn |  location |  mrnumber |  price |  
+        size |  url |  category 
+     )
+     )){ text })*
 
 
 
@@ -249,12 +271,17 @@ incollection.optional =
 
 incollection.user =
     user.elements &
-    element * - (incollection.nameclass | user.nameclass){ text }
-
-incollection.nameclass =
-    author | title | booktitle | publisher | year |
-    editor | volume | number | series | type | chapter | pages | address |
-    edition | month | note
+    (element ( * - ( 
+    (
+        author | title | booktitle | publisher | year |
+        editor | volume | number | series | type | chapter | pages | address |
+        edition | month | note
+    ) | ( 
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
+        keywords |  language |  lccn |  location |  mrnumber |  price |  
+        size |  url |  category 
+     )
+     )){ text })*
 
 
 
@@ -275,16 +302,21 @@ inproceedings.required =
 
 inproceedings.optional =
   editor? & volumeOrNumber? & series? & pages? & address? & month? &
-  organization? & publisher & note?
+  organization? & publisher? & note?
 
 inproceedings.user =
     user.elements &
-    element * - (inproceedings.nameclass | user.nameclass){ text }
-
-inproceedings.nameclass =
-    author | title | booktitle | year |
-    editor | volume | number | series | pages | address | month |
-    organization | publisher | note
+    (element ( * - ( 
+    (
+        author | title | booktitle | year |
+        editor | volume | number | series | pages | address | month |
+        organization | publisher | note
+    ) | ( 
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
+        keywords |  language |  lccn |  location |  mrnumber |  price |  
+        size |  url |  category 
+     )
+     )){ text })*
 
 
 
@@ -314,11 +346,16 @@ manual.optional =
 
 manual.user =
     user.elements &
-    element * - (manual.nameclass | user.nameclass){ text }
-
-manual.nameclass =
-    title | author | organization | address | edition | month | year |
-    note
+    (element ( * - ( 
+    (
+        title | author | organization | address | edition | month | year |
+        note
+    ) | ( 
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
+        keywords |  language |  lccn |  location |  mrnumber |  price |  
+        size |  url |  category 
+     )
+     )){ text })*
 
 
 
@@ -339,11 +376,16 @@ thesis.optional =
 
 thesis.user =
     user.elements &
-    element * - (thesis.nameclass | user.nameclass){ text }
-
-thesis.nameclass =
-    author | title | school | year |
-    type | address | month | note
+    (element ( * - ( 
+    (
+        author | title | school | year |
+        type | address | month | note
+    ) | ( 
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
+        keywords |  language |  lccn |  location |  mrnumber |  price |  
+        size |  url |  category 
+     )
+     )){ text })*
 
 
 
@@ -374,10 +416,15 @@ misc.optional =
 
 misc.user =
     user.elements &
-    element * - (misc.nameclass | user.nameclass){ text }
-
-misc.nameclass =
-    author | title | howpublished | month | year | note
+    (element ( * - ( 
+    (
+        author | title | howpublished | month | year | note
+    ) | ( 
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
+        keywords |  language |  lccn |  location |  mrnumber |  price |  
+        size |  url |  category 
+     )
+     )){ text })*
 
 
 
@@ -401,12 +448,17 @@ proceedings.optional =
 
 proceedings.user =
     user.elements &
-    element * - (proceedings.nameclass | user.nameclass){ text }
-
-proceedings.nameclass =
-    title | year |
-    volume | number | editor | series | address | month | organization |
-    publisher | note
+    (element ( * - ( 
+    (
+        title | year |
+        volume | number | editor | series | address | month | organization |
+        publisher | note
+    ) | ( 
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
+        keywords |  language |  lccn |  location |  mrnumber |  price |  
+        size |  url |  category 
+     )
+     )){ text })*
 
 
 
@@ -417,7 +469,7 @@ proceedings.nameclass =
 techreport = element techreport {
     techreport.required &
     techreport.optional &
-   [ m:fields="user arbitrary"] ( techreport.nameclass )
+   [ m:fields="user arbitrary"] ( techreport.user )
 }
 
 techreport.required =
@@ -429,11 +481,16 @@ techreport.optional =
 
 techreport.user =
     user.elements &
-    element * - (techreport.nameclass | user.nameclass){ text }
-
-techreport.nameclass =
-    author | title | institution | year |
-    type | number | address | month | note
+    (element ( * - ( 
+    (
+        author | title | institution | year |
+        type | number | address | month | note
+    ) | ( 
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
+        keywords |  language |  lccn |  location |  mrnumber |  price |  
+        size |  url |  category 
+     )
+     )){ text })*
 
 
 
@@ -456,11 +513,16 @@ unpublished.optional =
 
 unpublished.user =
     user.elements &
-    element * - (unpublished.nameclass | user.nameclass){ text }
-
-unpublished.nameclass =
-    author | title | note |
-    month | year
+    (element ( * - ( 
+    (
+        author | title | note |
+        month | year
+    ) | ( 
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
+        keywords |  language |  lccn |  location |  mrnumber |  price |  
+        size |  url |  category 
+     )
+     )){ text })*
 
 
 # .....................................................................
@@ -618,7 +680,7 @@ user.elements =
 & copyright?
 & isbn?
 & doi?
-& keywords?
+& keywords*
 & language?
 & lccn?
 & location?
@@ -626,25 +688,7 @@ user.elements =
 & price?
 & size?
 & url?
-& category?
-
-user.nameclass = (
- abstract |
- affiliation |
- contents |
- copyright |
- isbn |
- doi |
- keywords |
- language |
- lccn |
- location |
- mrnumber |
- price |
- size |
- url |
- category
-)
+& category*
 
 abstract =
   ## [abstract]  An abstract of the work.
