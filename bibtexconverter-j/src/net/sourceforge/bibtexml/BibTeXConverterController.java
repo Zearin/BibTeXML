@@ -327,7 +327,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         group = new ButtonGroup();
         String prefval = PREF.get(VALIDATION_PREFIX, "None");
         for(String item : 
-        new String[]{"None", "bibtexml-core", "bibtexml-strict", "bibtexml-sloppy"}){
+        new String[]{"None", "bibtexml-sloppy", "bibtexml-strict", "bibtexml-core"}){
             mi = new JRadioButtonMenuItem(
                 item.equals("bibtexml-sloppy") ?
                 "<html>" + item + " <i>(recommended)</i></html>" :
