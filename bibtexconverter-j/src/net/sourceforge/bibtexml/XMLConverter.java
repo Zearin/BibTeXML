@@ -25,36 +25,33 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.prefs.Preferences;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.URIResolver;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.sax.SAXSource;
 import javax.xml.validation.*;
-import javax.xml.XMLConstants;
+import de.mospace.lang.DefaultClassLoaderProvider;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import de.mospace.lang.DefaultClassLoaderProvider;
-import de.mospace.swing.LookAndFeelMenu;
 
 public class XMLConverter extends DefaultClassLoaderProvider{
     private TransformerFactory tf;
@@ -136,6 +133,14 @@ public class XMLConverter extends DefaultClassLoaderProvider{
         } else {
             throw new IllegalArgumentException("URL must end with .xsd or .rng");
         }
+        xmlValidator = getSchemaFactory(schemaLanguage).newSchema(schema).newValidator();
+    }
+    
+    public synchronized void setXMLSchema(Source schema, String schemaLanguage) throws SAXException{
+        xmlValidator = getSchemaFactory(schemaLanguage).newSchema(schema).newValidator();
+    }
+    
+    private SchemaFactory getSchemaFactory(String schemaLanguage){
         SchemaFactory sf = null;
         try{
             sf = SchemaFactory.newInstance(schemaLanguage);
@@ -150,7 +155,7 @@ public class XMLConverter extends DefaultClassLoaderProvider{
                 throw new IllegalArgumentException("No service provider found for schema language " + schemaLanguage);
             }
         }
-        xmlValidator = sf.newSchema(schema).newValidator();
+        return sf;
     }
     
     public boolean hasSchema(){
@@ -193,7 +198,7 @@ public class XMLConverter extends DefaultClassLoaderProvider{
     /** Converts BibXML using the specified transformer and configuration.
      * The result is optionally converted
      *  to CRLF format. **/
-    public synchronized void transform(Transformer t, File input, File output,
+    public static void transform(Transformer t, InputStream in, String systemID, OutputStream out,
             Map<String,Object> parameters, String encoding, boolean crlf)
             throws TransformerException, IOException{
 
@@ -209,23 +214,36 @@ public class XMLConverter extends DefaultClassLoaderProvider{
             t.setParameter(INTERNAL_PARAMETER_PREFIX +"encoding", encoding);
             t.setOutputProperty(OutputKeys.ENCODING, encoding);
         }
+    
+
+        //open the source xml document
+        in = new BufferedInputStream(in);
+        Source src = new StreamSource(in);
+        src.setSystemId(systemID);
+        //open the target xml document
+        out = new BufferedOutputStream(out);
+        if(crlf){
+            out = new CRLFOutputStream(out);
+        }
+        Result res = new StreamResult(out);
         
-        InputStream in = null;
+        t.transform(src, res);
+    }
+    
+    /** Converts BibXML using the specified transformer and configuration.
+     * The result is optionally converted
+     *  to CRLF format. **/
+    public static void transform(Transformer t, File input, File output,
+            Map<String,Object> parameters, String encoding, boolean crlf)
+            throws TransformerException, IOException{
+
+        //open the source xml document
+        InputStream in = new FileInputStream(input);
         OutputStream out = null;
         
         try{
-            //open the source xml document
-            in = new BufferedInputStream(new FileInputStream(input));
-            Source src = new StreamSource(in);
-            src.setSystemId(input.toURI().toURL().toString());
-            //open the target xml document
-            out = new BufferedOutputStream(new FileOutputStream(output));
-            if(crlf){
-                out = new CRLFOutputStream(out);
-            }
-            Result res = new StreamResult(out);
-            
-            t.transform(src, res);
+            out = new FileOutputStream(output);
+            transform(t, in, input.toURI().toURL().toString(), out, parameters, encoding, crlf);
         } finally {
             if(in != null){
                 try{
