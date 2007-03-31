@@ -1,3 +1,8 @@
+<!-- $Id$ -->
+<!-- This stylesheet allows to derived schemas with specific
+     features from bibtexml-generic.rng --> 
+<!-- Adapted from http://osteele.com/archives/2004/08/xml-schema-versions -->
+
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:m="http://bibtexml.sf.net/module"
                 exclude-result-prefixes="m"

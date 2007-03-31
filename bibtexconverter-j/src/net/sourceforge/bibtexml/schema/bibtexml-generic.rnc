@@ -20,6 +20,11 @@
 #    Zeger W. Hendrikse
 #    Marco Kuhlmann
 #
+# This is a generic master schema from which schemas
+# with specific features can be derived using schema.xsl.
+# The idea is taken from
+# http://osteele.com/archives/2004/08/xml-schema-versions
+#
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License.
 #  See  http://www.gnu.org/copyleft/gpl.html
