@@ -5,11 +5,11 @@
 
   <!-- stylesheet invoker should specifiy this -->
   <!-- one of container, flat -->
-  <xsl:param name="structure"/>
+  <xsl:param name="structure" select="'flat'"/>
   <!-- one of strict, lax -->
-  <xsl:param name="datatypes"/>
+  <xsl:param name="datatypes" select="'strict'"/>
   <!-- one of core, user, arbitrary -->
-  <xsl:param name="fields" />
+  <xsl:param name="fields" select="'user'" />
 
   <!-- copy the document, except for elements that match
        another template -->
