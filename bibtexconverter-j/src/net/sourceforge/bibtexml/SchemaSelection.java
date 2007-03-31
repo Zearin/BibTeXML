@@ -341,9 +341,9 @@ public class SchemaSelection{
             t = conv.loadStyleSheet(null, "schema/schema.xsl");
         }
         /* transform generic parent schema to specific child schema */ 
-        URL parentSchema = getClass().getResource("schema/bibtexml-groups2.rng");
+        URL parentSchema = getClass().getResource("schema/bibtexml-generic.rng");
         if(parentSchema == null){
-            throw new FileNotFoundException("schema/bibtexml-groups2.rng");
+            throw new FileNotFoundException("schema/bibtexml-generic.rng");
         }
         String systemID = parentSchema.toString();
         InputStream is = parentSchema.openStream();

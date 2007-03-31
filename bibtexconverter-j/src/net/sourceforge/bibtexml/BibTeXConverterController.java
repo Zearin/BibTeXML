@@ -69,7 +69,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToggleButton;
 import javax.xml.XMLConstants;
 import javax.xml.transform.TransformerException;
@@ -86,7 +85,10 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("icon/ledgreen2.png"));
     private final static String INPUT_PREFIX = InputType.class.getName()+":";
     final static String ENCODING_PREFIX = Charset.class.getName()+":";
+    private final static String ENCODING_XML = ENCODING_PREFIX + "XML";
     final static String VALIDATION_PREFIX = "javax.xml.validation:";
+    private final static String VALIDATION_ENABLED = VALIDATION_PREFIX + "enabled";
+    private final static String VALIDATION_CONFIG = VALIDATION_PREFIX + "configure";
     private final static String JABREF_ENC = "Look for JabRef encoding";
     private final static String START_CONVERSION = "Start conversion";
     private final static String RIS = "RIS (Reference Manager & Endnote)";
@@ -137,6 +139,14 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         
         convert.setValidationErrorHandler(errorHandler);
         convert.setBibTeXErrorHandler(errorHandler);
+        try{
+            convert.setXMLEncoding(Charset.forName(
+                PREF.get(ENCODING_XML, BibTeXConverter.DEFAULT_ENC.name())));
+        } catch (Exception ex){
+            System.err.println("Error setting XML encoding.");
+            System.err.println(ex);
+        }
+        
         System.err.flush();
         System.out.flush();
     }
@@ -195,34 +205,10 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             System.err.flush();
         }
     }
-    
-    /*
-    private boolean checkPdfDirURI(Map<String, Object> params){
-        Object baseURI = params.get("pdfDirURI");
-        if(baseURI == null){
-            return true;
-        }
-        String uri = (String) baseURI;
-        try{
-            new URI(uri);
-        } catch (URISyntaxException ex){
-            System.err.println("*** ERROR CREATING HTML OUTPUT ***");
-            System.err.println("Malformed PDF directory URI");
-            System.err.println(ex.getMessage());
-            System.err.flush();
-            return false;
-        }
-        if(!uri.endsWith("/")){
-            params.put("pdfDirURI", uri + "/");
-        }
-        return true;
-    }
-    */
 
     private void init(boolean hasSaxon){
         JPanel cp = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -241,13 +227,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         startbutton.setBorderPainted(false);
         startbutton.setContentAreaFilled(false);
         startbutton.addActionListener(this);
-        
-        
-        
-        cp.add(createOutputPanel(), gbc);
 
-//        gbc.gridy = 2;
-//        cp.add(startbutton, gbc);
+        cp.add(createOutputPanel(), gbc);
 
         gbc.gridy++;
         gbc.weighty = 1;
@@ -283,17 +264,17 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         ButtonGroup group;
         JMenuItem mi;
         
-        boolean prefval = PREF.getBoolean(VALIDATION_PREFIX, false);
+        boolean prefval = PREF.getBoolean(VALIDATION_ENABLED, false);
         mi = new JCheckBoxMenuItem("Enabled", false);
         mi.addActionListener(this);
-        mi.setActionCommand(VALIDATION_PREFIX + "enabled");
+        mi.setActionCommand(VALIDATION_ENABLED);
         menu.add(mi);
         if(prefval){
             mi.doClick();
         }
         
-        mi = new JMenuItem("Configure...");
-        mi.setActionCommand(VALIDATION_PREFIX + "configure");
+        mi = new JMenuItem("Configure...", StyleSheetController.config);
+        mi.setActionCommand(VALIDATION_CONFIG);
         mi.addActionListener(this);
         menu.add(mi);
 
@@ -462,6 +443,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         prefval = PREF.get(key, "");
         outputDir = new PathInput(prefval, JFileChooser.DIRECTORIES_ONLY);
         JLabel label = new JLabel("Output directory");
+        label.setBorder(BorderFactory.createEmptyBorder(0,0,0,2));
         label.setLabelFor(outputDir);
         result.add(label, gbc);
         gbc.gridx = 1;
@@ -474,24 +456,26 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         typeCheckBox.setSelected(true);
         typeCheckBox.setEnabled(false);
         Set<Component> bibTeXComps = dependencies.get(bibTeXInput);
-        bibTeXComps.add(typeCheckBox);
-        addRow(result, null, typeCheckBox, gbc);
 
-
-        /* - BibXML encoding */
-        key = ENCODING_PREFIX + "XML";
-        prefval = PREF.get(key, BibTeXConverter.DEFAULT_ENC.name());
-        JComboBox outpEnc = new JComboBox(allEncodings);
-        outpEnc.setEditable(true);
-        outpEnc.setActionCommand(key);
-        outpEnc.addActionListener(this);
-        if(Charset.isSupported(prefval)){
-            outpEnc.setSelectedItem(prefval);
-        }
-        label = new JLabel("XML Encoding");
-        bibTeXComps.add(label);
-        bibTeXComps.add(outpEnc);
-        addRow(result, label, outpEnc, gbc);
+        JButton expcoll = new JButton(StyleSheetController.config);
+        expcoll.setToolTipText("Configure...");
+        expcoll.setBorderPainted(false);
+        expcoll.setContentAreaFilled(false);
+        expcoll.addActionListener(
+            new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    configureBibXML();
+                    outputDir.requestFocusInWindow();
+            }
+        });
+        Container p2 = Box.createHorizontalBox();
+        p2.add(typeCheckBox);
+        p2.add(Box.createHorizontalStrut(5));
+        p2.add(expcoll);
+        addRow(result, null, p2, gbc);
+        
+        bibTeXComps.add(p2);
+        
         /* styles */
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH;
@@ -501,6 +485,30 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         addRow(result, null, panel, gbc);
         
         return result;
+    }
+    
+    private void configureBibXML(){
+        /* - BibXML encoding */
+        String prefVal = PREF.get(ENCODING_XML, 
+                BibTeXConverter.DEFAULT_ENC.name());
+        String result = (String) JOptionPane.showInputDialog(this,
+                                     "Please select the encoding for generated BibXML.",
+                                     "BibXML encoding",
+                                     JOptionPane.QUESTION_MESSAGE,
+                                     StyleSheetController.config,
+                                     allEncodings,
+                                     prefVal);
+         if(result != null){
+             try{
+                 Charset cs = Charset.forName(result);
+                 convert.setXMLEncoding(cs);
+                 PREF.put(ENCODING_XML, cs.name());
+             } catch (Exception ex){
+                 System.err.println("Error setting BibXML encoding");
+                 System.err.println(ex);
+                 System.err.flush();
+             }
+         }
     }
 
     private void doConversion(){
@@ -844,10 +852,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             PREF.put(INPUT_PREFIX, cmd);
 
         } else if(cmd.startsWith(VALIDATION_PREFIX)){
-            cmd = cmd.substring(VALIDATION_PREFIX.length());
-            if(cmd.equals("enabled")){
+            if(cmd.equals(VALIDATION_ENABLED)){
                 setValidationEnabled(c, c.isSelected());
-            } else if(cmd.equals("configure")){
+            } else if(cmd.equals(VALIDATION_CONFIG)){
                 configureValidation();
             }
         }
@@ -861,7 +868,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         if(schemaSelection.showDialog(this)){
             Map<String, String> newConfig = schemaSelection.getSelection();
             if (!oldConfig.equals(newConfig) && 
-               PREF.getBoolean(VALIDATION_PREFIX + "enabled", false)){
+               PREF.getBoolean(VALIDATION_ENABLED, false)){
                    setValidationEnabled(null, true);
             }
         }
@@ -891,7 +898,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 System.err.flush();
             }
         }
-        PREF.putBoolean(VALIDATION_PREFIX + "enabled", b);
+        PREF.putBoolean(VALIDATION_ENABLED, b);
     }
 
     private void handleComboBox(JComboBox c) throws Exception{
@@ -908,10 +915,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             PREF.put(cmd, sitem);
             //System.out.println("Input encoding is " + sitem);
 
-        } else if(cmd.startsWith(ENCODING_PREFIX)){
-            convert.setXMLEncoding(Charset.forName(sitem));
-            PREF.put(cmd, sitem);
-            //System.out.println(outp.toString() + " encoding is " + sitem);
         }
     }
 

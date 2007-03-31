@@ -8,9 +8,6 @@
 #  Suggested invocation:
 #
 #    <?xml version="1.0" encoding="UTF-8"?>
-#    <!DOCTYPE bibtex:file PUBLIC
-#        "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
-#        "bibteXML.dtd" >
 #    <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
 #    ...
 #    </bibtex:file>
@@ -18,6 +15,7 @@
 #  Available from  http://bibtexml.sf.net/
 #
 #  This code originally developed by
+#    Moritz Ringler
 #    Vidar Bronken Gundersen
 #    Zeger W. Hendrikse
 #    Marco Kuhlmann

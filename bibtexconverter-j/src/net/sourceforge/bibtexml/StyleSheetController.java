@@ -87,7 +87,7 @@ public class StyleSheetController {
     private JButton expcoll = null;
     private JDialog dialog;
     private boolean active = true;
-    private static final ImageIcon config = new ImageIcon(StyleSheetController.class.getResource("icon/configure.png"));
+    static final ImageIcon config = new ImageIcon(StyleSheetController.class.getResource("icon/configure.png"));
     
     private String enc;
     protected Map<String, Object> params = null;
