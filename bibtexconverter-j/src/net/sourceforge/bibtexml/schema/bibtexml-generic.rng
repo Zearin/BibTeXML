@@ -1,0 +1,1829 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  $Id: bibtexml-groups.rnc 180 2007-03-26 21:35:16Z vidarg $
+  
+   This schema expresses XML markup similar to the BibTeX language
+   specified for LaTeX, or actually its content model.
+   For documentation on BibTeX, see
+     http://www.ctan.org/tex-archive/biblio/bibtex/distribs/doc/
+  
+   Suggested invocation:
+  
+     <?xml version="1.0" encoding="UTF-8"?>
+     <!DOCTYPE bibtex:file PUBLIC
+         "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
+         "bibteXML.dtd" >
+     <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+     ...
+     </bibtex:file>
+  
+   Available from  http://bibtexml.sf.net/
+  
+   This code originally developed by
+     Vidar Bronken Gundersen
+     Zeger W. Hendrikse
+     Marco Kuhlmann
+  
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License.
+   See  http://www.gnu.org/copyleft/gpl.html
+  
+-->
+<!-- Namespace and namespace prefix -->
+<grammar ns="http://bibtexml.sf.net/" xmlns:bibtex="http://bibtexml.sf.net/" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:m="http://bibtexml.sf.net/module" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <!-- Document top element -->
+  <start>
+    <ref name="file"/>
+  </start>
+  <define name="file">
+    <element name="file">
+      <ref name="file.attlist"/>
+      <zeroOrMore>
+        <ref name="entry"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="file.attlist" combine="interleave">
+    <optional>
+      <attribute name="structure">
+        <choice>
+          <group m:structure="flat">
+            <value>flat</value>
+          </group>
+          <group m:structure="container">
+            <value>container</value>
+          </group>
+        </choice>
+      </attribute>
+    </optional>
+  </define>
+  <define name="file.attlist" combine="interleave">
+    <optional>
+      <attribute name="fields">
+        <choice>
+          <group m:fields="core">
+            <value>core</value>
+          </group>
+          <group m:fields="user">
+            <value>user</value>
+          </group>
+          <group m:fields="arbitrary">
+            <value>arbitrary</value>
+          </group>
+        </choice>
+      </attribute>
+    </optional>
+  </define>
+  <define name="file.attlist" combine="interleave">
+    <optional>
+      <attribute name="datatypes">
+        <choice>
+          <group m:datatypes="strict">
+            <value>strict</value>
+          </group>
+          <group m:datatypes="lax">
+            <value>lax</value>
+          </group>
+        </choice>
+      </attribute>
+    </optional>
+  </define>
+  <!--
+    .....................................................................
+    Main structure
+  -->
+  <define name="standard.entries.class">
+    <a:documentation>Each entry may contain one of the bibliographic types.</a:documentation>
+    <choice>
+      <ref name="article"/>
+      <ref name="book"/>
+      <ref name="booklet"/>
+      <ref name="manual"/>
+      <ref name="techreport"/>
+      <ref name="mastersthesis"/>
+      <ref name="phdthesis"/>
+      <ref name="inbook"/>
+      <ref name="incollection"/>
+      <ref name="proceedings"/>
+      <ref name="inproceedings"/>
+      <ref name="conference"/>
+      <ref name="unpublished"/>
+      <ref name="misc"/>
+    </choice>
+  </define>
+  <define name="entry.content">
+    <ref name="standard.entries.class"/>
+  </define>
+  <define name="entry">
+    <element name="entry">
+      <ref name="attlist.entry"/>
+      <ref name="entry.content"/>
+    </element>
+  </define>
+  <define name="attlist.entry" combine="interleave">
+    <attribute name="id">
+      <a:documentation>Citation key</a:documentation>
+      <data type="ID"/>
+    </attribute>
+  </define>
+  <!--
+    .....................................................................
+    Parameter entities
+  -->
+  <define name="author.required">
+    <choice>
+      <group m:structure="container">
+        <ref name="author"/>
+      </group>
+      <oneOrMore m:structure="flat">
+        <ref name="author"/>
+      </oneOrMore>
+    </choice>
+  </define>
+  <define name="author.optional">
+    <choice>
+      <optional m:structure="container">
+        <ref name="author"/>
+      </optional>
+      <zeroOrMore m:structure="flat">
+        <ref name="author"/>
+      </zeroOrMore>
+    </choice>
+  </define>
+  <define name="authorOrEditor.required">
+    <choice>
+      <choice m:structure="container">
+        <ref name="author"/>
+        <ref name="editor"/>
+      </choice>
+      <choice m:structure="flat">
+        <oneOrMore>
+          <ref name="author"/>
+        </oneOrMore>
+        <oneOrMore>
+          <ref name="editor"/>
+        </oneOrMore>
+      </choice>
+    </choice>
+  </define>
+  <define name="authorOrEditor.optional">
+    <choice>
+      <interleave m:structure="container">
+        <optional>
+          <ref name="author"/>
+        </optional>
+        <optional>
+          <ref name="editor"/>
+        </optional>
+      </interleave>
+      <interleave m:structure="flat">
+        <zeroOrMore>
+          <ref name="author"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="editor"/>
+        </zeroOrMore>
+      </interleave>
+    </choice>
+  </define>
+  <define name="volumeOrNumber">
+    <choice>
+      <optional m:fields="core user">
+        <choice>
+          <ref name="volume"/>
+          <ref name="number"/>
+        </choice>
+      </optional>
+      <interleave m:fields="arbitrary">
+        <optional>
+          <ref name="volume"/>
+        </optional>
+        <optional>
+          <ref name="number"/>
+        </optional>
+      </interleave>
+    </choice>
+  </define>
+  <!--
+    .....................................................................
+    Entries in the BibTeX database
+  -->
+  <define name="article">
+    <a:documentation>[article] An article from a journal or magazine.
+  Required fields: author, title, journal, year.
+  Optional fields: volume, number, pages, month, note.</a:documentation>
+    <element name="article">
+      <interleave>
+        <ref name="article.required"/>
+        <ref name="article.optional"/>
+        <group m:fields="user arbitrary">
+          <ref name="article.user"/>
+        </group>
+      </interleave>
+    </element>
+  </define>
+  <define name="article.required">
+    <choice>
+      <interleave m:fields="core user">
+        <ref name="author.required"/>
+        <ref name="title"/>
+        <ref name="journal"/>
+        <ref name="year"/>
+      </interleave>
+      <interleave m:fields="arbitrary">
+        <ref name="author.optional"/>
+        <optional>
+          <ref name="title"/>
+        </optional>
+        <optional>
+          <ref name="journal"/>
+        </optional>
+        <optional>
+          <ref name="year"/>
+        </optional>
+      </interleave>
+    </choice>
+  </define>
+  <define name="article.optional">
+    <interleave>
+      <optional>
+        <ref name="volume"/>
+      </optional>
+      <optional>
+        <ref name="number"/>
+      </optional>
+      <optional>
+        <ref name="pages"/>
+      </optional>
+      <optional>
+        <ref name="month"/>
+      </optional>
+      <optional>
+        <ref name="note"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="article.user">
+    <interleave>
+      <ref name="user.elements"/>
+      <zeroOrMore>
+        <element>
+          <anyName>
+            <except>
+              <choice>
+                <name>author</name>
+                <name>title</name>
+                <name>journal</name>
+                <name>year</name>
+                <name>volume</name>
+                <name>number</name>
+                <name>pages</name>
+                <name>month</name>
+                <name>note</name>
+              </choice>
+              <choice>
+                <name>abstract</name>
+                <name>affiliation</name>
+                <name>contents</name>
+                <name>copyright</name>
+                <name>isbn</name>
+                <name>doi</name>
+                <name>keywords</name>
+                <name>language</name>
+                <name>lccn</name>
+                <name>location</name>
+                <name>mrnumber</name>
+                <name>price</name>
+                <name>size</name>
+                <name>url</name>
+                <name>category</name>
+              </choice>
+            </except>
+          </anyName>
+          <text/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="book">
+    <a:documentation>[book] A book with an explicit publisher.
+  Required fields: author or editor, title, publisher, year.
+  Optional fields: volume or number, series, address,
+     edition, month, note.</a:documentation>
+    <element name="book">
+      <interleave>
+        <ref name="book.required"/>
+        <ref name="book.optional"/>
+        <zeroOrMore m:fields="user arbitrary">
+          <ref name="book.user"/>
+        </zeroOrMore>
+      </interleave>
+    </element>
+  </define>
+  <define name="book.required">
+    <choice>
+      <interleave m:fields="core user">
+        <ref name="authorOrEditor.required"/>
+        <ref name="title"/>
+        <ref name="publisher"/>
+        <ref name="year"/>
+      </interleave>
+      <interleave m:fields="arbitrary">
+        <ref name="authorOrEditor.optional"/>
+        <optional>
+          <ref name="title"/>
+        </optional>
+        <optional>
+          <ref name="publisher"/>
+        </optional>
+        <optional>
+          <ref name="year"/>
+        </optional>
+      </interleave>
+    </choice>
+  </define>
+  <define name="book.optional">
+    <interleave>
+      <ref name="volumeOrNumber"/>
+      <optional>
+        <ref name="series"/>
+      </optional>
+      <optional>
+        <ref name="address"/>
+      </optional>
+      <optional>
+        <ref name="edition"/>
+      </optional>
+      <optional>
+        <ref name="month"/>
+      </optional>
+      <optional>
+        <ref name="note"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="book.user">
+    <interleave>
+      <ref name="user.elements"/>
+      <zeroOrMore>
+        <element>
+          <anyName>
+            <except>
+              <choice>
+                <name>author</name>
+                <name>editor</name>
+                <name>title</name>
+                <name>publisher</name>
+                <name>year</name>
+                <name>volume</name>
+                <name>number</name>
+                <name>series</name>
+                <name>address</name>
+                <name>edition</name>
+                <name>month</name>
+                <name>note</name>
+              </choice>
+              <choice>
+                <name>abstract</name>
+                <name>affiliation</name>
+                <name>contents</name>
+                <name>copyright</name>
+                <name>isbn</name>
+                <name>doi</name>
+                <name>keywords</name>
+                <name>language</name>
+                <name>lccn</name>
+                <name>location</name>
+                <name>mrnumber</name>
+                <name>price</name>
+                <name>size</name>
+                <name>url</name>
+                <name>category</name>
+              </choice>
+            </except>
+          </anyName>
+          <text/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="booklet">
+    <a:documentation>[booklet] A work that is printed and bound, but without a named
+  publisher or sponsoring institution
+  Required field: title.
+  Optional fields: author, howpublished, address, month, year, note.</a:documentation>
+    <element name="booklet">
+      <interleave>
+        <ref name="booklet.required"/>
+        <ref name="booklet.optional"/>
+        <group m:fields="user arbitrary">
+          <ref name="booklet.user"/>
+        </group>
+      </interleave>
+    </element>
+  </define>
+  <define name="booklet.required">
+    <choice>
+      <group m:fields="core user">
+        <ref name="title"/>
+      </group>
+      <optional m:fields="arbitrary">
+        <ref name="title"/>
+      </optional>
+    </choice>
+  </define>
+  <define name="booklet.optional">
+    <interleave>
+      <optional>
+        <ref name="author.optional"/>
+      </optional>
+      <optional>
+        <ref name="howpublished"/>
+      </optional>
+      <optional>
+        <ref name="address"/>
+      </optional>
+      <optional>
+        <ref name="month"/>
+      </optional>
+      <optional>
+        <ref name="year"/>
+      </optional>
+      <optional>
+        <ref name="note"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="booklet.user">
+    <interleave>
+      <ref name="user.elements"/>
+      <zeroOrMore>
+        <element>
+          <anyName>
+            <except>
+              <choice>
+                <name>title</name>
+                <name>author</name>
+                <name>howpublished</name>
+                <name>address</name>
+                <name>month</name>
+                <name>year</name>
+                <name>note</name>
+              </choice>
+              <choice>
+                <name>abstract</name>
+                <name>affiliation</name>
+                <name>contents</name>
+                <name>copyright</name>
+                <name>isbn</name>
+                <name>doi</name>
+                <name>keywords</name>
+                <name>language</name>
+                <name>lccn</name>
+                <name>location</name>
+                <name>mrnumber</name>
+                <name>price</name>
+                <name>size</name>
+                <name>url</name>
+                <name>category</name>
+              </choice>
+            </except>
+          </anyName>
+          <text/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="inbook">
+    <a:documentation>[inbook] A part of a book, which may be a chapter (or section or
+  whatever) and/or a range of pages.
+  Required fields: author or editor, title, chapter and/or pages,
+     publisher, year.
+  Optional fields: volume or number, series, type, address,
+     edition, month, note.</a:documentation>
+    <element name="inbook">
+      <interleave>
+        <ref name="inbook.required"/>
+        <ref name="inbook.optional"/>
+        <group m:fields="user arbitrary">
+          <ref name="inbook.user"/>
+        </group>
+      </interleave>
+    </element>
+  </define>
+  <define name="inbook.required">
+    <choice>
+      <interleave m:fields="core user">
+        <ref name="authorOrEditor.required"/>
+        <ref name="title"/>
+        <choice>
+          <interleave>
+            <ref name="chapter"/>
+            <optional>
+              <ref name="pages"/>
+            </optional>
+          </interleave>
+          <ref name="pages"/>
+        </choice>
+        <ref name="publisher"/>
+        <ref name="year"/>
+      </interleave>
+      <interleave m:fields="arbitrary">
+        <ref name="authorOrEditor.optional"/>
+        <optional>
+          <ref name="title"/>
+        </optional>
+        <optional>
+          <ref name="chapter"/>
+        </optional>
+        <optional>
+          <ref name="pages"/>
+        </optional>
+        <optional>
+          <ref name="publisher"/>
+        </optional>
+        <optional>
+          <ref name="year"/>
+        </optional>
+      </interleave>
+    </choice>
+  </define>
+  <define name="inbook.optional">
+    <interleave>
+      <ref name="volumeOrNumber"/>
+      <optional>
+        <ref name="series"/>
+      </optional>
+      <optional>
+        <ref name="type"/>
+      </optional>
+      <optional>
+        <ref name="address"/>
+      </optional>
+      <optional>
+        <ref name="edition"/>
+      </optional>
+      <optional>
+        <ref name="month"/>
+      </optional>
+      <optional>
+        <ref name="note"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="inbook.user">
+    <interleave>
+      <ref name="user.elements"/>
+      <zeroOrMore>
+        <element>
+          <anyName>
+            <except>
+              <choice>
+                <name>author</name>
+                <name>editor</name>
+                <name>title</name>
+                <name>chapter</name>
+                <name>pages</name>
+                <name>publisher</name>
+                <name>year</name>
+                <name>volume</name>
+                <name>number</name>
+                <name>series</name>
+                <name>type</name>
+                <name>address</name>
+                <name>edition</name>
+                <name>month</name>
+                <name>note</name>
+              </choice>
+              <choice>
+                <name>abstract</name>
+                <name>affiliation</name>
+                <name>contents</name>
+                <name>copyright</name>
+                <name>isbn</name>
+                <name>doi</name>
+                <name>keywords</name>
+                <name>language</name>
+                <name>lccn</name>
+                <name>location</name>
+                <name>mrnumber</name>
+                <name>price</name>
+                <name>size</name>
+                <name>url</name>
+                <name>category</name>
+              </choice>
+            </except>
+          </anyName>
+          <text/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="incollection">
+    <a:documentation>[incollection] A part of a book having its own title.
+  Required fields: author, title, booktitle, publisher, year.
+  Optional fields: editor, volume or number, series, type,
+     chapter, pages, address, edition, month, note.</a:documentation>
+    <element name="incollection">
+      <interleave>
+        <ref name="incollection.required"/>
+        <ref name="incollection.optional"/>
+        <group m:fields="user arbitrary">
+          <ref name="incollection.user"/>
+        </group>
+      </interleave>
+    </element>
+  </define>
+  <define name="incollection.required">
+    <choice>
+      <interleave m:fields="core user">
+        <ref name="author.required"/>
+        <ref name="title"/>
+        <ref name="booktitle"/>
+        <ref name="publisher"/>
+        <ref name="year"/>
+      </interleave>
+      <interleave m:fields="arbitrary">
+        <ref name="author.optional"/>
+        <optional>
+          <ref name="title"/>
+        </optional>
+        <optional>
+          <ref name="booktitle"/>
+        </optional>
+        <optional>
+          <ref name="publisher"/>
+        </optional>
+        <optional>
+          <ref name="year"/>
+        </optional>
+      </interleave>
+    </choice>
+  </define>
+  <define name="incollection.optional">
+    <interleave>
+      <optional>
+        <ref name="editor"/>
+      </optional>
+      <ref name="volumeOrNumber"/>
+      <optional>
+        <ref name="series"/>
+      </optional>
+      <optional>
+        <ref name="type"/>
+      </optional>
+      <optional>
+        <ref name="chapter"/>
+      </optional>
+      <optional>
+        <ref name="pages"/>
+      </optional>
+      <optional>
+        <ref name="address"/>
+      </optional>
+      <optional>
+        <ref name="edition"/>
+      </optional>
+      <optional>
+        <ref name="month"/>
+      </optional>
+      <optional>
+        <ref name="note"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="incollection.user">
+    <interleave>
+      <ref name="user.elements"/>
+      <zeroOrMore>
+        <element>
+          <anyName>
+            <except>
+              <choice>
+                <name>author</name>
+                <name>title</name>
+                <name>booktitle</name>
+                <name>publisher</name>
+                <name>year</name>
+                <name>editor</name>
+                <name>volume</name>
+                <name>number</name>
+                <name>series</name>
+                <name>type</name>
+                <name>chapter</name>
+                <name>pages</name>
+                <name>address</name>
+                <name>edition</name>
+                <name>month</name>
+                <name>note</name>
+              </choice>
+              <choice>
+                <name>abstract</name>
+                <name>affiliation</name>
+                <name>contents</name>
+                <name>copyright</name>
+                <name>isbn</name>
+                <name>doi</name>
+                <name>keywords</name>
+                <name>language</name>
+                <name>lccn</name>
+                <name>location</name>
+                <name>mrnumber</name>
+                <name>price</name>
+                <name>size</name>
+                <name>url</name>
+                <name>category</name>
+              </choice>
+            </except>
+          </anyName>
+          <text/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="inproceedings">
+    <a:documentation>[inproceedings] An article in a conference proceedings.
+  Required fields: author, title, booktitle, year.
+  Optional fields: editor, volume or number, series, pages,
+     address, month, organization, publisher, note.</a:documentation>
+    <element name="inproceedings">
+      <ref name="inproceedings.content"/>
+    </element>
+  </define>
+  <define name="inproceedings.content">
+    <interleave>
+      <ref name="inproceedings.required"/>
+      <ref name="inproceedings.optional"/>
+      <group m:fields="user arbitrary">
+        <ref name="inproceedings.user"/>
+      </group>
+    </interleave>
+  </define>
+  <define name="inproceedings.required">
+    <choice>
+      <interleave m:fields="core user">
+        <ref name="author.required"/>
+        <ref name="title"/>
+        <ref name="booktitle"/>
+        <ref name="year"/>
+      </interleave>
+      <interleave m:fields="arbitrary">
+        <ref name="author.optional"/>
+        <optional>
+          <ref name="title"/>
+        </optional>
+        <optional>
+          <ref name="booktitle"/>
+        </optional>
+        <optional>
+          <ref name="year"/>
+        </optional>
+      </interleave>
+    </choice>
+  </define>
+  <define name="inproceedings.optional">
+    <interleave>
+      <optional>
+        <ref name="editor"/>
+      </optional>
+      <optional>
+        <ref name="volumeOrNumber"/>
+      </optional>
+      <optional>
+        <ref name="series"/>
+      </optional>
+      <optional>
+        <ref name="pages"/>
+      </optional>
+      <optional>
+        <ref name="address"/>
+      </optional>
+      <optional>
+        <ref name="month"/>
+      </optional>
+      <optional>
+        <ref name="organization"/>
+      </optional>
+      <optional>
+        <ref name="publisher"/>
+      </optional>
+      <optional>
+        <ref name="note"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="inproceedings.user">
+    <interleave>
+      <ref name="user.elements"/>
+      <zeroOrMore>
+        <element>
+          <anyName>
+            <except>
+              <choice>
+                <name>author</name>
+                <name>title</name>
+                <name>booktitle</name>
+                <name>year</name>
+                <name>editor</name>
+                <name>volume</name>
+                <name>number</name>
+                <name>series</name>
+                <name>pages</name>
+                <name>address</name>
+                <name>month</name>
+                <name>organization</name>
+                <name>publisher</name>
+                <name>note</name>
+              </choice>
+              <choice>
+                <name>abstract</name>
+                <name>affiliation</name>
+                <name>contents</name>
+                <name>copyright</name>
+                <name>isbn</name>
+                <name>doi</name>
+                <name>keywords</name>
+                <name>language</name>
+                <name>lccn</name>
+                <name>location</name>
+                <name>mrnumber</name>
+                <name>price</name>
+                <name>size</name>
+                <name>url</name>
+                <name>category</name>
+              </choice>
+            </except>
+          </anyName>
+          <text/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="conference">
+    <a:documentation>[conference] The same as INPROCEEDINGS,
+  included for Scribe compatibility.</a:documentation>
+    <element name="conference">
+      <ref name="inproceedings.content"/>
+    </element>
+  </define>
+  <define name="manual">
+    <a:documentation>[manual] Technical documentation
+  Required field: title.
+  Optional fields: author, organization, address,
+     edition, month, year, note.</a:documentation>
+    <element name="manual">
+      <interleave>
+        <ref name="manual.required"/>
+        <ref name="manual.optional"/>
+        <group m:fields="user arbitrary">
+          <ref name="manual.user"/>
+        </group>
+      </interleave>
+    </element>
+  </define>
+  <define name="manual.required">
+    <choice>
+      <group m:fields="core user">
+        <ref name="title"/>
+      </group>
+      <optional m:fields="arbitrary">
+        <ref name="title"/>
+      </optional>
+    </choice>
+  </define>
+  <define name="manual.optional">
+    <interleave>
+      <optional>
+        <ref name="author.optional"/>
+      </optional>
+      <optional>
+        <ref name="organization"/>
+      </optional>
+      <optional>
+        <ref name="address"/>
+      </optional>
+      <optional>
+        <ref name="edition"/>
+      </optional>
+      <optional>
+        <ref name="month"/>
+      </optional>
+      <optional>
+        <ref name="year"/>
+      </optional>
+      <optional>
+        <ref name="note"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="manual.user">
+    <interleave>
+      <ref name="user.elements"/>
+      <zeroOrMore>
+        <element>
+          <anyName>
+            <except>
+              <choice>
+                <name>title</name>
+                <name>author</name>
+                <name>organization</name>
+                <name>address</name>
+                <name>edition</name>
+                <name>month</name>
+                <name>year</name>
+                <name>note</name>
+              </choice>
+              <choice>
+                <name>abstract</name>
+                <name>affiliation</name>
+                <name>contents</name>
+                <name>copyright</name>
+                <name>isbn</name>
+                <name>doi</name>
+                <name>keywords</name>
+                <name>language</name>
+                <name>lccn</name>
+                <name>location</name>
+                <name>mrnumber</name>
+                <name>price</name>
+                <name>size</name>
+                <name>url</name>
+                <name>category</name>
+              </choice>
+            </except>
+          </anyName>
+          <text/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="thesis.content">
+    <a:documentation>%thesis; mastersthesis and phdthesis are identical
+  Required fields: author, title, school, year.
+  Optional fields: type, address, month, note.</a:documentation>
+    <interleave>
+      <ref name="thesis.required"/>
+      <ref name="thesis.optional"/>
+      <group m:fields="user arbitrary">
+        <ref name="thesis.user"/>
+      </group>
+    </interleave>
+  </define>
+  <define name="thesis.required">
+    <choice>
+      <interleave m:fields="core user">
+        <ref name="author.required"/>
+        <ref name="title"/>
+        <ref name="school"/>
+        <ref name="year"/>
+      </interleave>
+      <interleave m:fields="arbitrary">
+        <ref name="author.optional"/>
+        <optional>
+          <ref name="title"/>
+        </optional>
+        <optional>
+          <ref name="school"/>
+        </optional>
+        <optional>
+          <ref name="year"/>
+        </optional>
+      </interleave>
+    </choice>
+  </define>
+  <define name="thesis.optional">
+    <interleave>
+      <optional>
+        <ref name="type"/>
+      </optional>
+      <optional>
+        <ref name="address"/>
+      </optional>
+      <optional>
+        <ref name="month"/>
+      </optional>
+      <optional>
+        <ref name="note"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="thesis.user">
+    <interleave>
+      <ref name="user.elements"/>
+      <zeroOrMore>
+        <element>
+          <anyName>
+            <except>
+              <choice>
+                <name>author</name>
+                <name>title</name>
+                <name>school</name>
+                <name>year</name>
+                <name>type</name>
+                <name>address</name>
+                <name>month</name>
+                <name>note</name>
+              </choice>
+              <choice>
+                <name>abstract</name>
+                <name>affiliation</name>
+                <name>contents</name>
+                <name>copyright</name>
+                <name>isbn</name>
+                <name>doi</name>
+                <name>keywords</name>
+                <name>language</name>
+                <name>lccn</name>
+                <name>location</name>
+                <name>mrnumber</name>
+                <name>price</name>
+                <name>size</name>
+                <name>url</name>
+                <name>category</name>
+              </choice>
+            </except>
+          </anyName>
+          <text/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="mastersthesis">
+    <a:documentation>[mastersthesis] A Master's thesis.
+  Required fields: author, title, school, year.
+  Optional fields: type, address, month, note.</a:documentation>
+    <element name="mastersthesis">
+      <ref name="thesis.content"/>
+    </element>
+  </define>
+  <define name="phdthesis">
+    <a:documentation>[phdthesis] A PhD thesis.
+  Required fields: author, title, school, year.
+  Optional fields: type, address, month, note.</a:documentation>
+    <element name="phdthesis">
+      <ref name="thesis.content"/>
+    </element>
+  </define>
+  <define name="misc">
+    <a:documentation>[misc] Use this type when nothing else fits.
+  Required fields: none.
+  Optional fields: author, title, howpublished, month, year, note.</a:documentation>
+    <element name="misc">
+      <interleave>
+        <ref name="misc.optional"/>
+        <group m:fields="user arbitrary">
+          <ref name="misc.user"/>
+        </group>
+      </interleave>
+    </element>
+  </define>
+  <define name="misc.optional">
+    <interleave>
+      <ref name="author.optional"/>
+      <optional>
+        <ref name="title"/>
+      </optional>
+      <optional>
+        <ref name="howpublished"/>
+      </optional>
+      <optional>
+        <ref name="month"/>
+      </optional>
+      <optional>
+        <ref name="year"/>
+      </optional>
+      <optional>
+        <ref name="note"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="misc.user">
+    <interleave>
+      <ref name="user.elements"/>
+      <zeroOrMore>
+        <element>
+          <anyName>
+            <except>
+              <choice>
+                <name>author</name>
+                <name>title</name>
+                <name>howpublished</name>
+                <name>month</name>
+                <name>year</name>
+                <name>note</name>
+              </choice>
+              <choice>
+                <name>abstract</name>
+                <name>affiliation</name>
+                <name>contents</name>
+                <name>copyright</name>
+                <name>isbn</name>
+                <name>doi</name>
+                <name>keywords</name>
+                <name>language</name>
+                <name>lccn</name>
+                <name>location</name>
+                <name>mrnumber</name>
+                <name>price</name>
+                <name>size</name>
+                <name>url</name>
+                <name>category</name>
+              </choice>
+            </except>
+          </anyName>
+          <text/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="proceedings">
+    <a:documentation>[proceedings] The proceedings of a conference.
+  Required fields: title, year.
+  Optional fields: editor, volume or number, series,
+     address, month, organization, publisher, note.</a:documentation>
+    <element name="proceedings">
+      <interleave>
+        <ref name="proceedings.required"/>
+        <ref name="proceedings.optional"/>
+        <group m:fields="user arbitrary">
+          <ref name="proceedings.user"/>
+        </group>
+      </interleave>
+    </element>
+  </define>
+  <define name="proceedings.required">
+    <choice>
+      <interleave m:fields="core user">
+        <ref name="title"/>
+        <ref name="year"/>
+      </interleave>
+      <interleave m:fields="arbitrary">
+        <optional>
+          <ref name="title"/>
+        </optional>
+        <optional>
+          <ref name="year"/>
+        </optional>
+      </interleave>
+    </choice>
+  </define>
+  <define name="proceedings.optional">
+    <interleave>
+      <optional>
+        <ref name="editor"/>
+      </optional>
+      <ref name="volumeOrNumber"/>
+      <optional>
+        <ref name="series"/>
+      </optional>
+      <optional>
+        <ref name="address"/>
+      </optional>
+      <optional>
+        <ref name="month"/>
+      </optional>
+      <optional>
+        <ref name="organization"/>
+      </optional>
+      <ref name="publisher"/>
+      <optional>
+        <ref name="note"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="proceedings.user">
+    <interleave>
+      <ref name="user.elements"/>
+      <zeroOrMore>
+        <element>
+          <anyName>
+            <except>
+              <choice>
+                <name>title</name>
+                <name>year</name>
+                <name>volume</name>
+                <name>number</name>
+                <name>editor</name>
+                <name>series</name>
+                <name>address</name>
+                <name>month</name>
+                <name>organization</name>
+                <name>publisher</name>
+                <name>note</name>
+              </choice>
+              <choice>
+                <name>abstract</name>
+                <name>affiliation</name>
+                <name>contents</name>
+                <name>copyright</name>
+                <name>isbn</name>
+                <name>doi</name>
+                <name>keywords</name>
+                <name>language</name>
+                <name>lccn</name>
+                <name>location</name>
+                <name>mrnumber</name>
+                <name>price</name>
+                <name>size</name>
+                <name>url</name>
+                <name>category</name>
+              </choice>
+            </except>
+          </anyName>
+          <text/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="techreport">
+    <a:documentation>[techreport] A report published by a school or other institution,
+  usually numbered within a series.
+  Required fields: author, title, institution, year.
+  Optional fields: type, number, address, month, note.</a:documentation>
+    <element name="techreport">
+      <interleave>
+        <ref name="techreport.required"/>
+        <ref name="techreport.optional"/>
+        <group m:fields="user arbitrary">
+          <ref name="techreport.user"/>
+        </group>
+      </interleave>
+    </element>
+  </define>
+  <define name="techreport.required">
+    <choice>
+      <interleave m:fields="core user">
+        <ref name="author.required"/>
+        <ref name="title"/>
+        <ref name="institution"/>
+        <ref name="year"/>
+      </interleave>
+      <interleave m:fields="arbitrary">
+        <ref name="author.optional"/>
+        <optional>
+          <ref name="title"/>
+        </optional>
+        <optional>
+          <ref name="institution"/>
+        </optional>
+        <optional>
+          <ref name="year"/>
+        </optional>
+      </interleave>
+    </choice>
+  </define>
+  <define name="techreport.optional">
+    <interleave>
+      <optional>
+        <ref name="type"/>
+      </optional>
+      <optional>
+        <ref name="number"/>
+      </optional>
+      <optional>
+        <ref name="address"/>
+      </optional>
+      <optional>
+        <ref name="month"/>
+      </optional>
+      <optional>
+        <ref name="note"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="techreport.user">
+    <interleave>
+      <ref name="user.elements"/>
+      <zeroOrMore>
+        <element>
+          <anyName>
+            <except>
+              <choice>
+                <name>author</name>
+                <name>title</name>
+                <name>institution</name>
+                <name>year</name>
+                <name>type</name>
+                <name>number</name>
+                <name>address</name>
+                <name>month</name>
+                <name>note</name>
+              </choice>
+              <choice>
+                <name>abstract</name>
+                <name>affiliation</name>
+                <name>contents</name>
+                <name>copyright</name>
+                <name>isbn</name>
+                <name>doi</name>
+                <name>keywords</name>
+                <name>language</name>
+                <name>lccn</name>
+                <name>location</name>
+                <name>mrnumber</name>
+                <name>price</name>
+                <name>size</name>
+                <name>url</name>
+                <name>category</name>
+              </choice>
+            </except>
+          </anyName>
+          <text/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="unpublished">
+    <a:documentation>[unpublished] A document having an author and title, but not
+  formally published.
+  Required fields: author, title, note.
+  Optional fields: month, year.</a:documentation>
+    <element name="unpublished">
+      <interleave>
+        <ref name="unpublished.required"/>
+        <ref name="unpublished.optional"/>
+        <group m:fields="user arbitrary">
+          <ref name="unpublished.user"/>
+        </group>
+      </interleave>
+    </element>
+  </define>
+  <define name="unpublished.required">
+    <choice>
+      <interleave m:fields="core user">
+        <ref name="author.required"/>
+        <ref name="title"/>
+        <ref name="note"/>
+      </interleave>
+      <interleave m:fields="arbitrary">
+        <ref name="author.optional"/>
+        <optional>
+          <ref name="title"/>
+        </optional>
+        <optional>
+          <ref name="note"/>
+        </optional>
+      </interleave>
+    </choice>
+  </define>
+  <define name="unpublished.optional">
+    <interleave>
+      <optional>
+        <ref name="month"/>
+      </optional>
+      <optional>
+        <ref name="year"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="unpublished.user">
+    <interleave>
+      <ref name="user.elements"/>
+      <zeroOrMore>
+        <element>
+          <anyName>
+            <except>
+              <choice>
+                <name>author</name>
+                <name>title</name>
+                <name>note</name>
+                <name>month</name>
+                <name>year</name>
+              </choice>
+              <choice>
+                <name>abstract</name>
+                <name>affiliation</name>
+                <name>contents</name>
+                <name>copyright</name>
+                <name>isbn</name>
+                <name>doi</name>
+                <name>keywords</name>
+                <name>language</name>
+                <name>lccn</name>
+                <name>location</name>
+                <name>mrnumber</name>
+                <name>price</name>
+                <name>size</name>
+                <name>url</name>
+                <name>category</name>
+              </choice>
+            </except>
+          </anyName>
+          <text/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <!--
+    .....................................................................
+    Metadata fields for each bibliographic entry
+  -->
+  <define name="address">
+    <a:documentation>[address] Usually the address of the publisher or other type of
+  institution  For major publishing houses, van~Leunen recommends
+  omitting the information entirely.  For small publishers, on the other
+  hand, you can help the reader by giving the complete address.</a:documentation>
+    <element name="address">
+      <text/>
+    </element>
+  </define>
+  <define name="author">
+    <a:documentation>[author] The name(s) of the author(s),
+  in the format described in the LaTeX book.</a:documentation>
+    <element name="author">
+      <text/>
+    </element>
+  </define>
+  <define name="booktitle">
+    <a:documentation>[booktitle] Title of a book, part of which is being cited.  See the
+  LaTeX book for how to type titles.  For book entries, use the title
+  field instead.</a:documentation>
+    <element name="booktitle">
+      <text/>
+    </element>
+  </define>
+  <define name="chapter">
+    <a:documentation>[chapter] A chapter (or section or whatever) number.</a:documentation>
+    <element name="chapter">
+      <data type="positiveInteger"/>
+    </element>
+  </define>
+  <define name="edition">
+    <a:documentation>[edition] The edition of a book-for example, ``Second''.  This
+  should be an ordinal, and should have the first letter capitalized, as
+  shown here; the standard styles convert to lower case when necessary.</a:documentation>
+    <element name="edition">
+      <choice>
+        <data type="string" m:datatypes="strict">
+          <param name="pattern">[A-Z].*</param>
+        </data>
+        <text m:datatypes="lax"/>
+      </choice>
+    </element>
+  </define>
+  <define name="editor">
+    <a:documentation>[editor] Name(s) of editor(s), typed as indicated in the LaTeX book.
+  If there is also an author field, then the editor field gives the
+  editor of the book or collection in which the reference appears.</a:documentation>
+    <element name="editor">
+      <text/>
+    </element>
+  </define>
+  <define name="howpublished">
+    <a:documentation>[howpublished] How something strange has been published.
+  The first word should be capitalized.</a:documentation>
+    <element name="howpublished">
+      <text/>
+    </element>
+  </define>
+  <define name="institution">
+    <a:documentation>[institution] The sponsoring institution of a technical report.</a:documentation>
+    <element name="institution">
+      <text/>
+    </element>
+  </define>
+  <define name="journal">
+    <a:documentation>[journal] A journal name.  Abbreviations are provided for many
+  journals; see the Local Guide.</a:documentation>
+    <element name="journal">
+      <text/>
+    </element>
+  </define>
+  <define name="month">
+    <a:documentation>[month] The month in which the work was published or, for an
+  unpublished work, in which it was written. You should use the
+  standard three-letter abbreviation, as described in Appendix B.1.3 of
+  the LaTeX book.
+  The schema also allows a two digit month format, e.g. 05 (for May).</a:documentation>
+    <element name="month">
+      <choice>
+        <choice m:datatypes="strict">
+          <ref name="monthString.datatype"/>
+          <data type="gMonth"/>
+        </choice>
+        <text m:datatypes="lax"/>
+      </choice>
+    </element>
+  </define>
+  <define name="monthString.datatype">
+    <choice>
+      <value type="string" datatypeLibrary="">Jan</value>
+      <value type="string" datatypeLibrary="">Feb</value>
+      <value type="string" datatypeLibrary="">Mar</value>
+      <value type="string" datatypeLibrary="">Apr</value>
+      <value type="string" datatypeLibrary="">May</value>
+      <value type="string" datatypeLibrary="">Jun</value>
+      <value type="string" datatypeLibrary="">Jul</value>
+      <value type="string" datatypeLibrary="">Aug</value>
+      <value type="string" datatypeLibrary="">Sep</value>
+      <value type="string" datatypeLibrary="">Oct</value>
+      <value type="string" datatypeLibrary="">Nov</value>
+      <value type="string" datatypeLibrary="">Dec</value>
+    </choice>
+  </define>
+  <define name="note">
+    <a:documentation>[note] Any additional information that can help the reader.
+  The first word should be capitalized.</a:documentation>
+    <element name="note">
+      <text/>
+    </element>
+  </define>
+  <define name="number">
+    <a:documentation>[number] The number of a journal, magazine, technical report, or of a
+  work in a series.  An issue of a journal or magazine is usually
+  identified by its volume and number; the organization that issues a
+  technical report usually gives it a number; and sometimes books are
+  given numbers in a named series.</a:documentation>
+    <element name="number">
+      <text/>
+    </element>
+  </define>
+  <define name="organization">
+    <a:documentation>[organization] The organization that sponsors a conference or that
+  publishes a manual.</a:documentation>
+    <element name="organization">
+      <text/>
+    </element>
+  </define>
+  <define name="pages">
+    <a:documentation>[pages] One or more page numbers or range of numbers, such as 42-111
+  or 7,41,73-97 or 43+ (the `+' in this last example indicates pages
+  following that don't form a simple range).  To make it easier to
+  maintain Scribe-compatible databases, the standard styles convert a
+  single dash (as in 7-33) to the double dash used in TeX to denote
+  number ranges (as in 7-33).</a:documentation>
+    <element name="pages">
+      <choice>
+        <data type="string" m:datatypes="strict">
+          <param name="pattern">[0-9]+((-{0,2}|–|,)[0-9]+)*\+?</param>
+        </data>
+        <text m:datatypes="lax"/>
+      </choice>
+    </element>
+  </define>
+  <define name="publisher">
+    <a:documentation>[publisher] The publisher's name.</a:documentation>
+    <element name="publisher">
+      <text/>
+    </element>
+  </define>
+  <define name="school">
+    <a:documentation>[school] The name of the school where a thesis was written</a:documentation>
+    <element name="school">
+      <text/>
+    </element>
+  </define>
+  <define name="series">
+    <a:documentation>[series] The name of a series or set of books.  When citing an entire
+  book, the the title field gives its title and an optional series field
+  gives the name of a series or multi-volume set in which the book is
+  published.</a:documentation>
+    <element name="series">
+      <text/>
+    </element>
+  </define>
+  <define name="title">
+    <a:documentation>[title] The work's title, typed as explained in the LaTeX book.</a:documentation>
+    <element name="title">
+      <text/>
+    </element>
+  </define>
+  <define name="type">
+    <a:documentation>[type] The type of a technical report-for example, ``Research Note''.</a:documentation>
+    <element name="type">
+      <text/>
+    </element>
+  </define>
+  <define name="volume">
+    <a:documentation>[volume] The volume of a journal or multivolume book.</a:documentation>
+    <element name="volume">
+      <text/>
+    </element>
+  </define>
+  <define name="year">
+    <a:documentation>[year] The year of publication or, for an unpublished work, the year
+  it was written.  Generally it should consist of four numerals, such as
+  1984, although the standard styles can handle any year whose last four
+  nonpunctuation characters are numerals, such as `(about 1984)'.
+  The schema will restrict validation of the year to four numerals,
+  as such a type is pre-defined in XML Schema.</a:documentation>
+    <element name="year">
+      <data type="gYear"/>
+    </element>
+  </define>
+  <define name="annote">
+    <a:documentation>[annote] An annotation  It is not used by the standard bibliography
+  styles, but may be used by others that produce an annotated
+  bibliography.</a:documentation>
+    <element name="annote">
+      <text/>
+    </element>
+  </define>
+  <define name="crossref">
+    <a:documentation>[crossref] The database key of the entry being cross referenced.
+  BibTEX has a new cross-referencing feature, explained by an example.
+    @INPROCEEDINGS(no-gnats,
+        crossref = "gg-proceedings",
+    @PROCEEDINGS(gg-proceedings,</a:documentation>
+    <element name="crossref">
+      <data type="NCName"/>
+    </element>
+  </define>
+  <define name="key">
+    <a:documentation>[key] Used for alphabetizing, cross referencing, and creating a label
+  when the ``author'' information (described in Section [ref: ] is
+  missing. This field should not be confused with the key that appears
+  in the \cite command and at the beginning of the database entry.
+
+  In addition to the fields listed above, each entry type also has
+  an optional key field, used in some styles for alphabetizing, or
+  for forming a \bibitem label. You should include a key field for
+  any entry whose ``author'' information is missing;</a:documentation>
+    <element name="key">
+      <text/>
+    </element>
+  </define>
+  <define name="user.elements">
+    <a:documentation>Popular user fields
+  BibTeX is extremely popular, and many people have used it to store
+  information. Below is a list of some of the more common fields.
+  When using BibTeX with LaTeX you need BibTeX style files
+  to print these data.
+  Ref: http://www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html</a:documentation>
+    <interleave>
+      <optional>
+        <ref name="abstract"/>
+      </optional>
+      <optional>
+        <ref name="affiliation"/>
+      </optional>
+      <optional>
+        <ref name="contents"/>
+      </optional>
+      <optional>
+        <ref name="copyright"/>
+      </optional>
+      <optional>
+        <ref name="isbn"/>
+      </optional>
+      <optional>
+        <ref name="doi"/>
+      </optional>
+      <zeroOrMore>
+        <ref name="keywords"/>
+      </zeroOrMore>
+      <optional>
+        <ref name="language"/>
+      </optional>
+      <optional>
+        <ref name="lccn"/>
+      </optional>
+      <optional>
+        <ref name="location"/>
+      </optional>
+      <optional>
+        <ref name="mrnumber"/>
+      </optional>
+      <optional>
+        <ref name="price"/>
+      </optional>
+      <optional>
+        <ref name="size"/>
+      </optional>
+      <optional>
+        <ref name="url"/>
+      </optional>
+      <zeroOrMore>
+        <ref name="category"/>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="abstract">
+    <element name="abstract">
+      <a:documentation>[abstract]  An abstract of the work.</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="affiliation">
+    <element name="affiliation">
+      <a:documentation>[affiliation]  The authors affiliation.</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="contents">
+    <element name="contents">
+      <a:documentation>[contents]  A Table of Contents</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="copyright">
+    <element name="copyright">
+      <a:documentation>[copyright]  Copyright information.</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="isbn">
+    <element name="isbn">
+      <a:documentation>[ISBN]  The International Standard Book Number.
+   Every ISBN consist of 13 digits, divided into five parts of
+   variable length, separated by a hyphen. After January 1, 2007,
+   the ISBN-13 officially becomes "ISBN"; and the use of the
+   ISBN-10 should be phased out.</a:documentation>
+      <choice>
+        <ref name="ISBN-10.datatype"/>
+        <ref name="ISBN-13.datatype"/>
+      </choice>
+    </element>
+  </define>
+  <define name="ISBN-10.datatype">
+    <data type="string">
+      <param name="pattern">(\d(-{0,2}|–| )){9}[\dX]</param>
+    </data>
+  </define>
+  <define name="ISBN-13.datatype">
+    <data type="string">
+      <param name="pattern">(\d(-{0,2}|–| )){12}[0-9X]</param>
+    </data>
+  </define>
+  <define name="issn">
+    <element name="issn">
+      <a:documentation>[ISSN]  The International Standard Serial Number.
+        Used to identify a journal.</a:documentation>
+      <ref name="ISSN.datatype"/>
+    </element>
+  </define>
+  <define name="ISSN.datatype">
+    <data type="string">
+      <param name="pattern">\d{4}(-{0,2}|–)\d{4}</param>
+    </data>
+  </define>
+  <define name="language">
+    <element name="language">
+      <a:documentation>[language]  The language the document is in.</a:documentation>
+      <data type="language"/>
+    </element>
+  </define>
+  <define name="lccn">
+    <element name="lccn">
+      <a:documentation>[LCCN]  The Library of Congress Call Number.
+        I've also seen this as lib-congress.</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="location">
+    <element name="location">
+      <a:documentation>[location]  A location associated with the entry,
+            such as the city in which a conference took place.</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="mrnumber">
+    <element name="mrnumber">
+      <a:documentation>[mrnumber]  The Mathematical Reviews number.</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="price">
+    <element name="price">
+      <a:documentation>[price]  The price of the document.</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="size">
+    <element name="size">
+      <a:documentation>[size]  The physical dimensions of a work.</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="url">
+    <element name="url">
+      <a:documentation>[URL]  The WWW Universal Resource Locator that points to the
+   item being referenced. This often is used for technical
+   reports to point to the ftp site where the postscript
+   source of the report is located.</a:documentation>
+      <data type="anyURI"/>
+    </element>
+  </define>
+  <define name="keywords">
+    <element name="keywords">
+      <a:documentation>[keywords]  Key words used for searching or possibly for annotation.</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="category">
+    <element name="category">
+      <a:documentation>[category]  Category of this bibitem</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="doi">
+    <element name="doi">
+      <a:documentation>[DOI]  The Digital Object Identifier
+   used to redirect to articles, a key like 10.1000/203
+   Ref: http://www.doi.org/</a:documentation>
+      <data type="string">
+        <param name="pattern">\d{0,2}\.\d{0,4}/.*</param>
+      </data>
+    </element>
+  </define>
+</grammar>
