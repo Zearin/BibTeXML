@@ -376,16 +376,16 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         gbc.fill = GridBagConstraints.VERTICAL;
 
         /* Section BibXML */
-        JCheckBox typeCheckBox = new JCheckBox("BibXML");
-        typeCheckBox.setSelected(true);
-        typeCheckBox.setEnabled(false);
+        JCheckBox bibxmlCB = new JCheckBox("BibXML");
+        bibxmlCB.setSelected(true);
+        bibxmlCB.setEnabled(false);
         Set<Component> bibTeXComps = dependencies.get(bibTeXInput);
 
-        JButton expcoll = new JButton(StyleSheetController.config);
-        expcoll.setToolTipText("Configure...");
-        expcoll.setBorderPainted(false);
-        expcoll.setContentAreaFilled(false);
-        expcoll.addActionListener(
+        JButton bconfig = new JButton(StyleSheetController.config);
+        bconfig.setToolTipText("Configure...");
+        bconfig.setBorderPainted(false);
+        bconfig.setContentAreaFilled(false);
+        bconfig.addActionListener(
             new ActionListener(){
                 public void actionPerformed(ActionEvent e){
                     configureBibXML();
@@ -393,9 +393,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             }
         });
         Container p2 = Box.createHorizontalBox();
-        p2.add(typeCheckBox);
+        p2.add(bibxmlCB);
         p2.add(Box.createHorizontalStrut(5));
-        p2.add(expcoll);
+        p2.add(bconfig);
         
         gbc.gridy++;
         gbc.insets = new Insets(10,0,0,0);
@@ -521,9 +521,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 
                 File xml = inputf;
                 
-                /* bibtex to bibxml */
                 Charset xmlencoding = null;
                 if(input == InputType.BIBTEX){
+                    /* bibtex to bibxml */
                     xmlencoding = convert.getXMLEncoding();
                     xml = new File(dir, basename + ".xml");
                     System.out.println("Creating XML in " + xml.getPath());
@@ -549,6 +549,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         break FILELOOP;
                     }
                 } else {
+                    /* read xml encoding */
                     InputStream is = null;
                     try{
                         is = new FileInputStream(xml);
