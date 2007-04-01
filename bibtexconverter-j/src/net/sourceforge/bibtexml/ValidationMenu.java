@@ -52,93 +52,58 @@ public class ValidationMenu extends JMenu implements ActionListener{
     public ValidationMenu(XMLConverter converter){
         super("BibXML Validation");
         xmlconv = converter;
-        String prefVal = PREF.get("userSchemaURL", null);
-        if(prefVal != null){
-            try{
-                userSchemaURL = new URL(prefVal);
-            } catch (Exception ignore){
-            }
-        }
         init();
-    }
-    
-    private void setValidationSchema(URL schema) throws SAXException{
-        xmlconv.setXMLSchema(schema);
-        userSchemaURL = schema;
-        userSchema.setSelected(true);
-        PREF.put("userSchemaURL", schema.toString());
-        PREF.put(VALIDATION_PREFIX, VALIDATION_USER);
-    }
-    
-    private void setValidationSchema(File f) throws SAXException{
-        try{
-            URL schema = f.toURI().toURL();
-            setValidationSchema(schema);
-        } catch (MalformedURLException ex){
-            System.err.println("Warning: cannot load schema " + f.getName());
-            System.err.println(ex);
-            System.err.flush();
-        }
-    }
-    
-    private void setValidationSchema(String resource) throws SAXException{
-        URL schema = getClass().getResource(resource);
-        if(schema == null){
-            System.err.println("Warning: cannot load schema " + resource);
-            System.err.println("Resource not found.");
-            System.err.flush();
-        } else {
-            setValidationSchema(schema);
-        }
     }
     
     private void init(){
         JMenu menu = this;
         
-        String prefval = PREF.get(VALIDATION_PREFIX, VALIDATION_DISABLED);
-
         ButtonGroup schema = new ButtonGroup();        
-        disabled.setActionCommand(VALIDATION_DISABLED);
         menu.add(disabled);
         schema.add(disabled);
         disabled.addActionListener(this);
         
-        builtin.setActionCommand(VALIDATION_BUILTIN);
         menu.add(builtin);
         schema.add(builtin);
         builtin.addActionListener(this);
         
-        userSchema.setActionCommand(VALIDATION_USER);
         menu.add(userSchema);
         schema.add(userSchema);
         userSchema.addActionListener(this);
         
-        if(prefval.equals(VALIDATION_BUILTIN)){
-            builtin.doClick();
-        } else if(prefval.equals(VALIDATION_USER) && userSchema != null){
-            userSchema.doClick();
-        } else {
-            disabled.doClick();
-        }
-    }
-    
-    private void handleButton(AbstractButton c){
-        boolean selected = c.isSelected();
-        String cmd = c.getActionCommand();
-        System.out.println(cmd);
-        System.out.flush();
-        if(cmd.startsWith(VALIDATION_PREFIX)){
-            if(cmd.equals(VALIDATION_DISABLED)){
-                setValidationEnabled(false);
-            } else if(cmd.equals(VALIDATION_BUILTIN)){
-                configureValidation();
-            } else if(cmd.equals(VALIDATION_USER)){
-                setSchemaFile();
+        String prefval = PREF.get("userSchemaURL", null);
+        if(prefval != null){
+            try{
+                userSchemaURL = new URL(prefval);
+            } catch (Exception ignore){
             }
         }
+        
+        prefval = PREF.get(VALIDATION_PREFIX, VALIDATION_DISABLED);
+        if(prefval.equals(VALIDATION_BUILTIN)){
+            builtin.setSelected(true);
+            setValidationEnabled(true);
+        } else if(prefval.equals(VALIDATION_USER) && userSchema != null){
+            userSchema.setSelected(true);
+            setValidationEnabled(true);
+        } else {
+            disabled.setSelected(true);
+            setValidationEnabled(false);
+        }
     }
     
-    private void configureValidation(){
+    public void actionPerformed(ActionEvent e){
+        Object c = e.getSource();
+        if(c == disabled){
+            setValidationEnabled(false);
+        } else if(c == builtin){
+            configureBuiltInValidation();
+        } else if(c == userSchema){
+            setSchemaFile();
+        }
+    }
+    
+    private void configureBuiltInValidation(){
         PREF.put(VALIDATION_PREFIX, VALIDATION_BUILTIN);
         builtin.setSelected(true);
         if(schemaSelection.showDialog(this)){
@@ -207,7 +172,7 @@ public class ValidationMenu extends JMenu implements ActionListener{
         try{
             if(userSchema.isSelected()){
                 if(userSchemaURL != null){
-                    setValidationSchema(userSchemaURL);
+                    xmlconv.setXMLSchema(userSchemaURL);
                     ok = true;
                 }
             } else if(builtin.isSelected()){
@@ -228,14 +193,6 @@ public class ValidationMenu extends JMenu implements ActionListener{
             System.err.flush();
         }
         return ok;
-    }
-    
-    public void actionPerformed(ActionEvent e){
-        Object c = e.getSource();
-        
-        if(c instanceof AbstractButton){
-            handleButton((AbstractButton) c);
-        }
     }
     
     private static class SchemaFileFilter extends javax.swing.filechooser.FileFilter{
