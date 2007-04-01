@@ -66,6 +66,7 @@ public class XMLConverter extends DefaultClassLoaderProvider{
     public final static String TRANSFORMER_FACTORY_IMPLEMENTATION =
             "net.sf.saxon.TransformerFactoryImpl";
     protected ErrorHandler saxErrorHandler = new ErrorCounter();
+    private String xmlSchemaID = null;
 
     public XMLConverter(){
         /* add default library directories to class path if they exist */
@@ -134,10 +135,16 @@ public class XMLConverter extends DefaultClassLoaderProvider{
             throw new IllegalArgumentException("URL must end with .xsd or .rng");
         }
         xmlValidator = getSchemaFactory(schemaLanguage).newSchema(schema).newValidator();
+        xmlSchemaID = schema.toString();
     }
     
     public synchronized void setXMLSchema(Source schema, String schemaLanguage) throws SAXException{
         xmlValidator = getSchemaFactory(schemaLanguage).newSchema(schema).newValidator();
+        xmlSchemaID = schema.getSystemId();
+    }
+    
+    public String getXMLSchemaID(){
+        return xmlSchemaID;
     }
     
     private SchemaFactory getSchemaFactory(String schemaLanguage){

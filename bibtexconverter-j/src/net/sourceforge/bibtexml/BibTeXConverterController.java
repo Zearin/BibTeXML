@@ -57,7 +57,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -70,12 +69,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
-import javax.xml.XMLConstants;
 import javax.xml.transform.TransformerException;
 import de.mospace.swing.LookAndFeelMenu;
 import de.mospace.swing.PathInput;
 import de.mospace.xml.XMLUtils;
-import net.sourceforge.bibtexml.BibTeXConverter.Parser;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -86,17 +83,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private final static String INPUT_PREFIX = InputType.class.getName()+":";
     final static String ENCODING_PREFIX = Charset.class.getName()+":";
     private final static String ENCODING_XML = ENCODING_PREFIX + "XML";
-    final static String VALIDATION_PREFIX = "javax.xml.validation:";
-    private final static String VALIDATION_ENABLED = VALIDATION_PREFIX + "enabled";
-    private final static String VALIDATION_CONFIG = VALIDATION_PREFIX + "configure";
     private final static String JABREF_ENC = "Look for JabRef encoding";
     private final static String START_CONVERSION = "Start conversion";
-    private final static String RIS = "RIS (Reference Manager & Endnote)";
-    private final static String HTMLFLAT = "HTML (flat)";
-    private final static String HTMLGROUPED = "HTML (grouped)";
-    private final static String BIBTEX = "BibTeX";
-    private final static String[] BUILTIN = new String[]{
-        BIBTEX, RIS, HTMLFLAT, HTMLGROUPED};
     
     private final Container styleContainer = Box.createVerticalBox();    
     private final StyleSheetManager styleManager;
@@ -154,19 +142,19 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private Collection<StyleSheetController> builtInStyles(){
         List<StyleSheetController> builtins = new ArrayList<StyleSheetController>();
         builtins.add(
-            StyleSheetController.newInstance(convert, BIBTEX, "-new.bib",
+            StyleSheetController.newInstance(convert, "BibTeX", "-new.bib",
                     getClass().getResource("xslt/bibxml2bib.xsl"),
                     false, true, true));
         builtins.add(
-            StyleSheetController.newInstance(convert, RIS, ".ris",
+            StyleSheetController.newInstance(convert, "RIS (Reference Manager & Endnote)", ".ris",
                     getClass().getResource("xslt/bibxml2ris.xsl"),
                     false, false, true));
         builtins.add(
-            StyleSheetController.newInstance(convert, HTMLFLAT, ".html",
+            StyleSheetController.newInstance(convert, "HTML (flat)", ".html",
                     getClass().getResource("xslt/bibxml2html.xsl"),
                     true, true, false));
         builtins.add(
-            StyleSheetController.newInstance(convert, HTMLGROUPED, "g.html",
+            StyleSheetController.newInstance(convert, "HTML (grouped)", "g.html",
                         getClass().getResource("xslt/bibxml2htmlg.xsl"),
                         true, true, false));
         return builtins;
@@ -178,32 +166,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     
     public boolean removeStyle(StyleSheetController cssc){
         return styleManager.removeStyle(cssc);
-    }
-    
-    private void setValidationSchema(String name){
-        try{
-            if(name.equals("None")){
-                convert.setXMLSchema(null);
-            } else {
-                URL schema = getClass().getResource("schema/"+name);
-                if(schema == null){
-                    System.err.println("Warning: cannot load schema " + name);
-                    System.err.println("Resource not found.");
-                }
-                convert.setXMLSchema(schema);
-            }
-        } catch (SAXParseException ex){
-            convert.handleException("Warning: error in schema " + name 
-            + "\n" + ex.getSystemId() + " line " + ex.getLineNumber(), ex);
-        } catch (Exception ex){
-            convert.handleException("Warning: cannot load schema " + name, ex);
-            if(ex instanceof NullPointerException){
-                ex.printStackTrace();
-            }
-        } finally {
-            System.out.flush();
-            System.err.flush();
-        }
     }
 
     private void init(boolean hasSaxon){
@@ -258,27 +220,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         fm = new JMenu("Options");
         mb.add(fm);
         fm.add(new LookAndFeelMenu(PREF,this));
-        JMenu menu = new JMenu("BibXML Validation");
-        fm.add(menu);
+        fm.add(new ValidationMenu(convert));
         
-        ButtonGroup group;
-        JMenuItem mi;
-        
-        boolean prefval = PREF.getBoolean(VALIDATION_ENABLED, false);
-        mi = new JCheckBoxMenuItem("Enabled", false);
-        mi.addActionListener(this);
-        mi.setActionCommand(VALIDATION_ENABLED);
-        menu.add(mi);
-        if(prefval){
-            mi.doClick();
-        }
-        
-        mi = new JMenuItem("Configure...", StyleSheetController.config);
-        mi.setActionCommand(VALIDATION_CONFIG);
-        mi.addActionListener(this);
-        menu.add(mi);
-
-        menu = new JMenu("Help");
+        JMenu menu = new JMenu("Help");
         JMenuItem about = new JMenuItem("About");
         about.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -403,26 +347,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         return input;
     }
 
-    private final static Insets tab =  new Insets(0,5,0,0);
-    private final static Insets defInsets = new Insets(10,0,0,0);
-
-    private void addRow(Container c, JLabel label, Component cp, GridBagConstraints gbc){
-        if(label == null){
-            gbc.gridy++;
-            gbc.insets = defInsets;
-            gbc.gridx = 0;
-            c.add(cp, gbc);
-        } else {
-            label.setLabelFor(cp);
-            gbc.gridy++;
-            gbc.insets = tab;
-            gbc.gridx = 0;
-            c.add(label, gbc);
-            gbc.gridx = 1;
-            c.add(cp, gbc);
-        }
-    }
-
     private JComponent createOutputPanel(){
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridy = 0;
@@ -472,7 +396,11 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         p2.add(typeCheckBox);
         p2.add(Box.createHorizontalStrut(5));
         p2.add(expcoll);
-        addRow(result, null, p2, gbc);
+        
+        gbc.gridy++;
+        gbc.insets = new Insets(10,0,0,0);
+        gbc.gridx = 0;
+        result.add(p2, gbc);
         
         bibTeXComps.add(p2);
         
@@ -482,7 +410,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(styleContainer, BorderLayout.CENTER);
         panel.add(startbutton, BorderLayout.EAST);
-        addRow(result, null, panel, gbc);
+        
+        gbc.gridy++;
+        result.add(panel, gbc);
         
         return result;
     }
@@ -644,8 +574,19 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 
                 /* xml validation */
                 if(convert.hasSchema()){
+                    String schemaID = convert.getXMLSchemaID();
+                    if(schemaID == null){
+                        schemaID = "";
+                    } else {
+                        schemaID = convert.getXMLSchemaID();
+                        int lastslash = schemaID.lastIndexOf('/');
+                        if(lastslash >= 0 && ++lastslash < schemaID.length()){
+                            schemaID = schemaID.substring(lastslash);
+                        }
+                        schemaID = " against " + schemaID;
+                    }
                     try{
-                        System.out.println("Validating "+ xml.getPath());
+                        System.out.println("Validating "+ xml.getPath() + schemaID);
                         System.out.flush();
                         errorHandler.reset();
                         convert.validate(xml);
@@ -673,7 +614,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                     if(parseErrors  > 0){
                         ErrorList el = msgPane.getErrorList(); 
                         el.setFile(new XFile(xml, InputType.BIBXML, xmlencoding));
-                        el.setTitle("Errors validating " + xml.getName() );
+                        el.setTitle("Errors validating " + xml.getName() + schemaID);
                         el.setAllowDoubleClick(true);
                         if(parseErrors != 1){
                             System.err.println(parseErrors  + " errors validating " +  xml.getName());
@@ -851,70 +792,20 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             input = Enum.valueOf(InputType.class, cmd);
             PREF.put(INPUT_PREFIX, cmd);
 
-        } else if(cmd.startsWith(VALIDATION_PREFIX)){
-            if(cmd.equals(VALIDATION_ENABLED)){
-                setValidationEnabled(c, c.isSelected());
-            } else if(cmd.equals(VALIDATION_CONFIG)){
-                configureValidation();
-            }
         }
         if(c instanceof JToggleButton){
             updateDependentComponents();
         }
     }
     
-    private void configureValidation(){
-        Map<String, String> oldConfig = schemaSelection.getSelection();
-        if(schemaSelection.showDialog(this)){
-            Map<String, String> newConfig = schemaSelection.getSelection();
-            if (!oldConfig.equals(newConfig) && 
-               PREF.getBoolean(VALIDATION_ENABLED, false)){
-                   setValidationEnabled(null, true);
-            }
-        }
-    }
-    
-    private void setValidationEnabled(AbstractButton a, boolean b){
-        if(b){
-            try{
-                convert.setXMLSchema(
-                    schemaSelection.getSchemaSource(XMLConstants.RELAXNG_NS_URI, convert),
-                    XMLConstants.RELAXNG_NS_URI);
-            } catch (Exception exc){
-                if(a != null){
-                    a.setSelected(false);
-                }
-                b = false;
-                System.err.println("Error activating validation.");
-                System.err.println(exc.toString());
-                exc.printStackTrace();
-                System.err.flush();
-            }
-        } else {
-            try{
-               convert.setXMLSchema(null);
-            } catch (SAXException ex){
-                System.err.println(ex);
-                System.err.flush();
-            }
-        }
-        PREF.putBoolean(VALIDATION_ENABLED, b);
-    }
-
     private void handleComboBox(JComboBox c) throws Exception{
         String cmd = c.getActionCommand();
         Object item = c.getSelectedItem();
         String sitem = item.toString();
 
-        if(cmd.equals(Parser.class.getName())){
-            convert.setBibTeXParser((Parser) item);
-            PREF.put(cmd, ((Parser) item).name());
-
-        } else if(cmd.equals(ENCODING_PREFIX + InputType.class.getName())){
+        if(cmd.equals(ENCODING_PREFIX + InputType.class.getName())){
             convert.setBibTeXEncoding(Charset.forName(sitem));
             PREF.put(cmd, sitem);
-            //System.out.println("Input encoding is " + sitem);
-
         }
     }
 
