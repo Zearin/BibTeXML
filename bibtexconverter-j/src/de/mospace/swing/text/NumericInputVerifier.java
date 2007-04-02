@@ -2,7 +2,7 @@ package de.mospace.swing.text;
 
 /* de.mospace.swing library
 * Copyright (C) 2005 Moritz Ringler
-* $Id: NumericInputVerifier.java,v 1.4 2007/02/18 14:18:47 ringler Exp $
+* $Id: NumericInputVerifier.java,v 1.5 2007/04/02 13:06:15 ringler Exp $
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@ import javax.swing.text.JTextComponent;
 * range of numbers.
 * @deprecated use GeneralInputVerifier instead
 *
-* @version $Revision: 1.4 $ ($Date: 2007/02/18 14:18:47 $)
+* @version $Revision: 1.5 $ ($Date: 2007/04/02 13:06:15 $)
 * @author Moritz Ringler
 */
 public class NumericInputVerifier extends InputVerifier implements java.io.Serializable{
@@ -104,7 +104,7 @@ public class NumericInputVerifier extends InputVerifier implements java.io.Seria
             try {
                 constructor = c.getConstructor(new Class[]{String.class});
             } catch (NoSuchMethodException exc){
-                throw new IllegalArgumentException(exc);
+                throw new IllegalArgumentException("Caused by " + exc.toString());
             }
         }
         min = max = null;
