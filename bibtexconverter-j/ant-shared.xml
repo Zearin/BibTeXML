@@ -82,7 +82,7 @@
         source="${app.javaVersion}"
         deprecation="on"
         debug="true">
-        <!--<compilerarg value="-Xlint:unchecked"/>--></javac>
+        <compilerarg value="-Xlint:unchecked"/></javac>
   </target>
 
   <!-- MAKE BINARY-ONLY JAR-FILE -->
