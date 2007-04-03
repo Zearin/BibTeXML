@@ -9,7 +9,7 @@
                 version="2.0">
 
   <!-- stylesheet invoker should specifiy this -->
-  <!-- one of container, flat -->
+  <!-- one of nested, flat -->
   <xsl:param name="structure" select="'flat'"/>
   <!-- one of strict, loose -->
   <xsl:param name="datatypes" select="'strict'"/>

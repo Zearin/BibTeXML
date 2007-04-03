@@ -40,7 +40,8 @@ file = element file { file.attlist, entry* }
 
 file.attlist  &= attribute structure {
     [ m:structure="flat" ] ( "flat" ) |
-    [ m:structure="container" ] ( "container" )
+    [ m:structure="nested" ] ( "nested" ) |
+    [ m:structure="inline" ] ( "inline" ) 
 }?
 
 file.attlist &= attribute fields {
@@ -83,17 +84,42 @@ attlist.entry &=
 # .....................................................................
 # Parameter entities
 
-author.required = [m:structure="container"] ( author ) |
-                  [m:structure="flat"] ( author+ )
+person = 
+[m:structure="nested"] (firstname? & lastname & jr?) | text
 
-author.optional = [m:structure="container"] (author?) |
-                  [m:structure="flat"] ( author* )
+firstname = element firstname { text }
+lastname = element lastname { text }
+jr = element jr { text }
 
-authorOrEditor.required = [m:structure="container"](author | editor) |
-                          [m:structure="flat"](author+ | editor+)
+author = element author { person }
+authors = element authors { author+ }
 
-authorOrEditor.optional = [m:structure="container"](author? & editor?) |
-                          [m:structure="flat"](author* & editor*)
+editor = element editor { person }
+editors = element editors { editor+ }
+
+author.required = 
+    [m:structure="inline"] (author) |
+    [m:structure="flat"] (author+) |
+    [m:structure="nested"] (authors)
+
+author.optional =
+    [m:structure="inline"] (author?) |
+    [m:structure="flat"] (author*) |
+    [m:structure="nested"] (authors?)
+    
+editor.required = 
+    [m:structure="inline"] (editor) |
+    [m:structure="flat"] (editor+) |
+    [m:structure="nested"] (editors)
+    
+editor.optional =
+    [m:structure="inline"] (editor?) |
+    [m:structure="flat"] (editor*) |
+    [m:structure="nested"] (editors?)
+
+authorOrEditor.required = author.required | editor.required
+
+authorOrEditor.arbitrary = author.optional & editor.optional
 
 volumeOrNumber =
         [ m:fields="core user" ] ((volume | number)?) |
@@ -121,7 +147,7 @@ article.user =
     user.elements & 
     (element ( * - ( 
     (
-        author | title | journal | year |
+        author | authors | title | journal | year |
         volume | number | pages | month | note
     ) | ( 
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
@@ -145,7 +171,7 @@ element book {
 
 book.required =
     [ m:fields="core user" ] ( authorOrEditor.required & title  & publisher  & year ) |
-    [ m:fields="arbitrary" ] ( authorOrEditor.optional & title? & publisher? & year?)
+    [ m:fields="arbitrary" ] ( authorOrEditor.arbitrary & title? & publisher? & year?)
 
 book.optional =
     volumeOrNumber & series? & address? & edition? & month? & note?
@@ -154,7 +180,7 @@ book.user =
     user.elements &
     (element ( * - ( 
     (
-        author | editor | title | publisher | year |
+        author | authors | editor | editors | title | publisher | year |
         volume | number | series | address | edition | month | note
     ) | ( 
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
@@ -181,14 +207,14 @@ booklet.required =
     [ m:fields="arbitrary" ] ( title? )
 
 booklet.optional =
-    author.optional? & howpublished? & address? & month? & year? & note?
+    author.optional & howpublished? & address? & month? & year? & note?
 
 booklet.user =
     user.elements &
     (element ( * - ( 
     (
         title |
-        author | howpublished | address | month | year | note
+        author | authors | howpublished | address | month | year | note
     ) | ( 
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
         keywords |  language |  lccn |  location |  mrnumber |  price |  
@@ -220,7 +246,7 @@ inbook.required =
         year
     ) |
     [ m:fields="arbitrary" ] (
-        authorOrEditor.optional &
+        authorOrEditor.arbitrary &
         title? &
         chapter? &
         pages? &
@@ -235,7 +261,7 @@ inbook.user =
     user.elements &
     (element ( * - ( 
     (
-       author | editor | title | chapter | pages | publisher | year |
+       author | authors | editor | editors | title | chapter | pages | publisher | year |
        volume | number | series | type | address | edition | month | note
     ) | ( 
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
@@ -274,15 +300,15 @@ incollection.required =
     )
 
 incollection.optional =
-    editor? & volumeOrNumber & series? & type? & chapter? & pages? & address? &
+    editor.optional & volumeOrNumber & series? & type? & chapter? & pages? & address? &
     edition? & month? & note?
 
 incollection.user =
     user.elements &
     (element ( * - ( 
     (
-        author | title | booktitle | publisher | year |
-        editor | volume | number | series | type | chapter | pages | address |
+        author | authors | title | booktitle | publisher | year |
+        editor | editors | volume | number | series | type | chapter | pages | address |
         edition | month | note
     ) | ( 
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
@@ -310,15 +336,15 @@ inproceedings.required =
     [ m:fields="arbitrary" ] (author.optional & title? & booktitle? & year?)
 
 inproceedings.optional =
-  editor? & volumeOrNumber? & series? & pages? & address? & month? &
+  editor.optional & volumeOrNumber? & series? & pages? & address? & month? &
   organization? & publisher? & note?
 
 inproceedings.user =
     user.elements &
     (element ( * - ( 
     (
-        author | title | booktitle | year |
-        editor | volume | number | series | pages | address | month |
+        author | authors | title | booktitle | year |
+        editor | editors | volume | number | series | pages | address | month |
         organization | publisher | note
     ) | ( 
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
@@ -352,14 +378,14 @@ manual.required =
     [ m:fields="arbitrary" ] ( title? )
 
 manual.optional =
-    author.optional? & organization? & address? & edition? & month? & year? &
+    author.optional & organization? & address? & edition? & month? & year? &
     note?
 
 manual.user =
     user.elements &
     (element ( * - ( 
     (
-        title | author | organization | address | edition | month | year |
+        title | author | authors | organization | address | edition | month | year |
         note
     ) | ( 
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
@@ -389,7 +415,7 @@ thesis.user =
     user.elements &
     (element ( * - ( 
     (
-        author | title | school | year |
+        author | authors | title | school | year |
         type | address | month | note
     ) | ( 
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
@@ -432,7 +458,7 @@ misc.user =
     user.elements &
     (element ( * - ( 
     (
-        author | title | howpublished | month | year | note
+        author | authors | title | howpublished | month | year | note
     ) | ( 
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
         keywords |  language |  lccn |  location |  mrnumber |  price |  
@@ -458,7 +484,7 @@ proceedings.required =
    [ m:fields="arbitrary" ] ( title? & year? )
 
 proceedings.optional =
-    editor? & volumeOrNumber & series? & address? & month? & organization? &
+    editor.optional & volumeOrNumber & series? & address? & month? & organization? &
     publisher & note?
 
 proceedings.user =
@@ -466,7 +492,7 @@ proceedings.user =
     (element ( * - ( 
     (
         title | year |
-        volume | number | editor | series | address | month | organization |
+        volume | number | editor | editors | series | address | month | organization |
         publisher | note
     ) | ( 
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
@@ -499,7 +525,7 @@ techreport.user =
     user.elements &
     (element ( * - ( 
     (
-        author | title | institution | year |
+        author | authors | title | institution | year |
         type | number | address | month | note
     ) | ( 
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
@@ -532,7 +558,7 @@ unpublished.user =
     user.elements &
     (element ( * - ( 
     (
-        author | title | note |
+        author | authors | title | note |
         month | year
     ) | ( 
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
@@ -552,10 +578,7 @@ address =
 ##   hand, you can help the reader by giving the complete address.
 element address { text }
 
-author = 
-## [author] The name(s) of the author(s),
-##   in the format described in the LaTeX book.
-element author { text }
+
 
 booktitle = 
 ## [booktitle] Title of a book, part of which is being cited.  See the
@@ -573,12 +596,6 @@ edition =
 ##   shown here; the standard styles convert to lower case when necessary.
 element edition { [ m:datatypes="strict"] xsd:string { pattern="[A-Z].*" } |
                             [ m:datatypes="loose"   ] text }
-
-editor = 
-## [editor] Name(s) of editor(s), typed as indicated in the LaTeX book.
-##   If there is also an author field, then the editor field gives the
-##   editor of the book or collection in which the reference appears.
-element editor { text }
 
 howpublished = 
 ## [howpublished] How something strange has been published.

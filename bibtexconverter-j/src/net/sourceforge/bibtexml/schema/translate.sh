@@ -4,7 +4,7 @@ for fields in arbitrary user core
 do 
     for datatypes in strict loose
     do
-        for structure in container flat
+        for structure in nested inline flat
         do
             name=bibtexml-$fields-$datatypes-$structure
             echo $name

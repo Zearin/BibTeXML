@@ -53,8 +53,11 @@
           <group m:structure="flat">
             <value>flat</value>
           </group>
-          <group m:structure="container">
-            <value>container</value>
+          <group m:structure="nested">
+            <value>nested</value>
+          </group>
+          <group m:structure="inline">
+            <value>inline</value>
           </group>
         </choice>
       </attribute>
@@ -133,61 +136,122 @@
     .....................................................................
     Parameter entities
   -->
+  <define name="person">
+    <choice>
+      <interleave m:structure="nested">
+        <optional>
+          <ref name="firstname"/>
+        </optional>
+        <ref name="lastname"/>
+        <optional>
+          <ref name="jr"/>
+        </optional>
+      </interleave>
+      <text/>
+    </choice>
+  </define>
+  <define name="firstname">
+    <element name="firstname">
+      <text/>
+    </element>
+  </define>
+  <define name="lastname">
+    <element name="lastname">
+      <text/>
+    </element>
+  </define>
+  <define name="jr">
+    <element name="jr">
+      <text/>
+    </element>
+  </define>
+  <define name="author">
+    <element name="author">
+      <ref name="person"/>
+    </element>
+  </define>
+  <define name="authors">
+    <element name="authors">
+      <oneOrMore>
+        <ref name="author"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="editor">
+    <element name="editor">
+      <ref name="person"/>
+    </element>
+  </define>
+  <define name="editors">
+    <element name="editors">
+      <oneOrMore>
+        <ref name="editor"/>
+      </oneOrMore>
+    </element>
+  </define>
   <define name="author.required">
     <choice>
-      <group m:structure="container">
+      <group m:structure="inline">
         <ref name="author"/>
       </group>
       <oneOrMore m:structure="flat">
         <ref name="author"/>
       </oneOrMore>
+      <group m:structure="nested">
+        <ref name="authors"/>
+      </group>
     </choice>
   </define>
   <define name="author.optional">
     <choice>
-      <optional m:structure="container">
+      <optional m:structure="inline">
         <ref name="author"/>
       </optional>
       <zeroOrMore m:structure="flat">
         <ref name="author"/>
       </zeroOrMore>
+      <optional m:structure="nested">
+        <ref name="authors"/>
+      </optional>
+    </choice>
+  </define>
+  <define name="editor.required">
+    <choice>
+      <group m:structure="inline">
+        <ref name="editor"/>
+      </group>
+      <oneOrMore m:structure="flat">
+        <ref name="editor"/>
+      </oneOrMore>
+      <group m:structure="nested">
+        <ref name="editors"/>
+      </group>
+    </choice>
+  </define>
+  <define name="editor.optional">
+    <choice>
+      <optional m:structure="inline">
+        <ref name="editor"/>
+      </optional>
+      <zeroOrMore m:structure="flat">
+        <ref name="editor"/>
+      </zeroOrMore>
+      <optional m:structure="nested">
+        <ref name="editors"/>
+      </optional>
     </choice>
   </define>
   <define name="authorOrEditor.required">
     <choice>
-      <choice m:structure="container">
-        <ref name="author"/>
-        <ref name="editor"/>
-      </choice>
-      <choice m:structure="flat">
-        <oneOrMore>
-          <ref name="author"/>
-        </oneOrMore>
-        <oneOrMore>
-          <ref name="editor"/>
-        </oneOrMore>
-      </choice>
+      <ref name="author.required"/>
+      <ref name="editor.required"/>
     </choice>
   </define>
-  <define name="authorOrEditor.optional">
-    <choice>
-      <interleave m:structure="container">
-        <optional>
-          <ref name="author"/>
-        </optional>
-        <optional>
-          <ref name="editor"/>
-        </optional>
-      </interleave>
-      <interleave m:structure="flat">
-        <zeroOrMore>
-          <ref name="author"/>
-        </zeroOrMore>
-        <zeroOrMore>
-          <ref name="editor"/>
-        </zeroOrMore>
-      </interleave>
-    </choice>
+  <define name="authorOrEditor.arbitrary">
+    <interleave>
+      <ref name="author.optional"/>
+      <ref name="editor.optional"/>
+    </interleave>
   </define>
   <define name="volumeOrNumber">
     <choice>
@@ -275,6 +339,7 @@
             <except>
               <choice>
                 <name>author</name>
+                <name>authors</name>
                 <name>title</name>
                 <name>journal</name>
                 <name>year</name>
@@ -332,7 +397,7 @@
         <ref name="year"/>
       </interleave>
       <interleave m:fields="arbitrary">
-        <ref name="authorOrEditor.optional"/>
+        <ref name="authorOrEditor.arbitrary"/>
         <optional>
           <ref name="title"/>
         </optional>
@@ -374,7 +439,9 @@
             <except>
               <choice>
                 <name>author</name>
+                <name>authors</name>
                 <name>editor</name>
+                <name>editors</name>
                 <name>title</name>
                 <name>publisher</name>
                 <name>year</name>
@@ -437,9 +504,7 @@
   </define>
   <define name="booklet.optional">
     <interleave>
-      <optional>
-        <ref name="author.optional"/>
-      </optional>
+      <ref name="author.optional"/>
       <optional>
         <ref name="howpublished"/>
       </optional>
@@ -467,6 +532,7 @@
               <choice>
                 <name>title</name>
                 <name>author</name>
+                <name>authors</name>
                 <name>howpublished</name>
                 <name>address</name>
                 <name>month</name>
@@ -532,7 +598,7 @@
         <ref name="year"/>
       </interleave>
       <interleave m:fields="arbitrary">
-        <ref name="authorOrEditor.optional"/>
+        <ref name="authorOrEditor.arbitrary"/>
         <optional>
           <ref name="title"/>
         </optional>
@@ -583,7 +649,9 @@
             <except>
               <choice>
                 <name>author</name>
+                <name>authors</name>
                 <name>editor</name>
+                <name>editors</name>
                 <name>title</name>
                 <name>chapter</name>
                 <name>pages</name>
@@ -665,9 +733,7 @@
   </define>
   <define name="incollection.optional">
     <interleave>
-      <optional>
-        <ref name="editor"/>
-      </optional>
+      <ref name="editor.optional"/>
       <ref name="volumeOrNumber"/>
       <optional>
         <ref name="series"/>
@@ -704,11 +770,13 @@
             <except>
               <choice>
                 <name>author</name>
+                <name>authors</name>
                 <name>title</name>
                 <name>booktitle</name>
                 <name>publisher</name>
                 <name>year</name>
                 <name>editor</name>
+                <name>editors</name>
                 <name>volume</name>
                 <name>number</name>
                 <name>series</name>
@@ -786,9 +854,7 @@
   </define>
   <define name="inproceedings.optional">
     <interleave>
-      <optional>
-        <ref name="editor"/>
-      </optional>
+      <ref name="editor.optional"/>
       <optional>
         <ref name="volumeOrNumber"/>
       </optional>
@@ -824,10 +890,12 @@
             <except>
               <choice>
                 <name>author</name>
+                <name>authors</name>
                 <name>title</name>
                 <name>booktitle</name>
                 <name>year</name>
                 <name>editor</name>
+                <name>editors</name>
                 <name>volume</name>
                 <name>number</name>
                 <name>series</name>
@@ -896,9 +964,7 @@
   </define>
   <define name="manual.optional">
     <interleave>
-      <optional>
-        <ref name="author.optional"/>
-      </optional>
+      <ref name="author.optional"/>
       <optional>
         <ref name="organization"/>
       </optional>
@@ -929,6 +995,7 @@
               <choice>
                 <name>title</name>
                 <name>author</name>
+                <name>authors</name>
                 <name>organization</name>
                 <name>address</name>
                 <name>edition</name>
@@ -1019,6 +1086,7 @@
             <except>
               <choice>
                 <name>author</name>
+                <name>authors</name>
                 <name>title</name>
                 <name>school</name>
                 <name>year</name>
@@ -1109,6 +1177,7 @@
             <except>
               <choice>
                 <name>author</name>
+                <name>authors</name>
                 <name>title</name>
                 <name>howpublished</name>
                 <name>month</name>
@@ -1172,9 +1241,7 @@
   </define>
   <define name="proceedings.optional">
     <interleave>
-      <optional>
-        <ref name="editor"/>
-      </optional>
+      <ref name="editor.optional"/>
       <ref name="volumeOrNumber"/>
       <optional>
         <ref name="series"/>
@@ -1207,6 +1274,7 @@
                 <name>volume</name>
                 <name>number</name>
                 <name>editor</name>
+                <name>editors</name>
                 <name>series</name>
                 <name>address</name>
                 <name>month</name>
@@ -1303,6 +1371,7 @@
             <except>
               <choice>
                 <name>author</name>
+                <name>authors</name>
                 <name>title</name>
                 <name>institution</name>
                 <name>year</name>
@@ -1388,6 +1457,7 @@
             <except>
               <choice>
                 <name>author</name>
+                <name>authors</name>
                 <name>title</name>
                 <name>note</name>
                 <name>month</name>
@@ -1430,13 +1500,6 @@
       <text/>
     </element>
   </define>
-  <define name="author">
-    <element name="author">
-      <a:documentation>[author] The name(s) of the author(s),
-  in the format described in the LaTeX book.</a:documentation>
-      <text/>
-    </element>
-  </define>
   <define name="booktitle">
     <element name="booktitle">
       <a:documentation>[booktitle] Title of a book, part of which is being cited.  See the
@@ -1462,14 +1525,6 @@
         </data>
         <text m:datatypes="loose"/>
       </choice>
-    </element>
-  </define>
-  <define name="editor">
-    <element name="editor">
-      <a:documentation>[editor] Name(s) of editor(s), typed as indicated in the LaTeX book.
-  If there is also an author field, then the editor field gives the
-  editor of the book or collection in which the reference appears.</a:documentation>
-      <text/>
     </element>
   </define>
   <define name="howpublished">

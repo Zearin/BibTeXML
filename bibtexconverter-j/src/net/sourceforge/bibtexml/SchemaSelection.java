@@ -54,7 +54,38 @@ public class SchemaSelection{
     
     private enum DataTypes { strict, loose };
     private enum Fields { core, user, arbitrary };
-    private enum Structure { flat, container };
+    private enum Structure {  
+        flat("Multiple elements", 
+               "<html><pre>&lt;author&gt;Vidar B. Gundersen&lt;/author&gt;<br>" +
+               "&lt;author&gt;Moritz Ringler&lt;/author&gt;</pre></html>"),
+        nested("Multiple elements in container", 
+                "<html><pre>&lt;authors&gt;<br>" +
+                "  &lt;author&gt;Vidar B. Gundersen&lt;/author&gt;<br>" +
+                "  &lt;author&gt;<br>" +
+                "    &lt;firstname&gt;Moritz&lt;/firstname&gt;<br>" +
+                "    &lt;lastname&gt;Ringler&lt;lastname&gt;<br>" +
+                "  &lt;/author&gt;<br>" +
+                "&lt;authors&gt;</pre></html>"),
+        inline("Single element", 
+                "<html><pre>&lt;author&gt;Vidar B. Gundersen AND" + 
+                " Moritz Ringler&lt;/author&gt;</pre></html>");
+        
+        private final String longname;
+        private final String example;
+
+        Structure(String longname, String example){
+            this.longname = longname;
+            this.example = example;
+        }
+
+        public String toString(){
+            return longname;
+        }
+        
+        public String example(){
+            return example;
+        }
+    } 
     
     private final ButtonGroup datatypes = new ButtonGroup();
     private final ButtonGroup fields = new ButtonGroup();
@@ -114,19 +145,19 @@ public class SchemaSelection{
         ((Box) cp).setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         
         Container c;
+        JPanel section;
         JLabel label;
-        cp.add(makeTitle("BibTeX Fields"));
         
-        c = new JPanel(new SpringLayout());
-        ((JComponent) c).setBorder(BorderFactory.createEtchedBorder());
-        ((JComponent) c).setOpaque(true);
         JRadioButton button;
         Border cellBorder = BorderFactory.createCompoundBorder(
         BorderFactory.createMatteBorder(0,0,1,0,Color.gray),
         BorderFactory.createEmptyBorder(0,4,0,4)
         );
         
+        section = new JPanel(new BorderLayout());
+        section.add(makeTitle("BibTeX Fields"), BorderLayout.NORTH);
         
+        c = new JPanel(new SpringLayout());
         c.add(new JPanel());
         label = new JLabel("Required", JLabel.CENTER);
         label.setBorder(cellBorder);
@@ -185,7 +216,13 @@ public class SchemaSelection{
         0, 0,        //initX, initY
         0, 0);       //xPad, yPad
         
-        cp.add(c);
+        Box b = Box.createHorizontalBox();
+        b.add(c);
+        b.add(Box.createHorizontalGlue());
+        b.setBorder(BorderFactory.createEtchedBorder());
+        b.setOpaque(true);
+        section.add(b, BorderLayout.CENTER);
+        cp.add(section);
         
         c = Box.createHorizontalBox();
         label = new JLabel("<html>"+
@@ -202,41 +239,45 @@ public class SchemaSelection{
         
         cp.add(Box.createVerticalStrut(5));
         
+        section = new JPanel(new BorderLayout());
+        section.add(makeTitle("Datatypes"), BorderLayout.NORTH);
+        
         c = Box.createHorizontalBox();
-        ((JComponent) c).setOpaque(true);
+        ((JComponent) c).setOpaque(false);
         ((JComponent) c).setBorder(BorderFactory.createEtchedBorder());
-        cp.add(makeTitle("Datatypes"));
-        button = new JRadioButton("Strict");
-        button.setActionCommand(DataTypes.strict.name());
-        c.add(button);
-        datatypes.add(button);
-        c.add(Box.createHorizontalStrut(5));
-        button = new JRadioButton("Loose");
-        button.setActionCommand(DataTypes.loose.name());
-        c.add(button);
-        datatypes.add(button);
+        for(DataTypes dt : DataTypes.values()){
+            String name = dt.name();
+            button = new JRadioButton(upperFirst(name));
+            button.setActionCommand(name);
+            c.add(button);
+            datatypes.add(button);
+            c.add(Box.createHorizontalStrut(5));
+        }
         c.add(Box.createHorizontalGlue());
-        ((JComponent) c).setBackground(button.getBackground());
-        cp.add(c);
+        section.add(c, BorderLayout.CENTER);
+        cp.add(section);
         
         cp.add(Box.createVerticalStrut(5));
         
-        c = Box.createHorizontalBox();
-        ((JComponent) c).setBorder(BorderFactory.createEtchedBorder());
-        ((JComponent) c).setOpaque(true);
-        cp.add(makeTitle("Structure"));
-        button = new JRadioButton("Flat");
-        button.setActionCommand(Structure.flat.name());
-        c.add(button);
-        structure.add(button);
-        c.add(Box.createHorizontalStrut(5));
-        button = new JRadioButton("Nested");
-        button.setActionCommand(Structure.container.name());
-        c.add(button);
-        structure.add(button);
-        c.add(Box.createHorizontalGlue());
-        ((JComponent) c).setBackground(button.getBackground());
-        cp.add(c);
+        section = new JPanel(new BorderLayout());
+        c = Box.createVerticalBox();
+        ((JComponent) c).setOpaque(false);
+        section.add(makeTitle("Author and editor lists"), BorderLayout.NORTH);
+        
+        for(Structure struct : Structure.values()){
+            String name = struct.name();
+            button = new JRadioButton(upperFirst(struct.toString()));
+            button.setToolTipText(struct.example());
+            button.setActionCommand(name);
+            c.add(button);
+            structure.add(button);
+        }
+        c.add(Box.createVerticalGlue());
+        b = Box.createHorizontalBox();
+        b.add(c);
+        b.setBorder(BorderFactory.createEtchedBorder());
+        section.add(b, BorderLayout.CENTER);
+        cp.add(section);
         
         cp.add(Box.createVerticalStrut(5));
         
@@ -267,6 +308,10 @@ public class SchemaSelection{
         cp.add(c);
         }
         return cp;
+    }
+    
+    private static String upperFirst(String str){
+        return (new StringBuilder()).append(Character.toUpperCase(str.charAt(0))).append(str.substring(1)).toString();
     }
     
     public boolean showDialog(Component parent){
