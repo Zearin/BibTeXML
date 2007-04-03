@@ -52,7 +52,7 @@ public class SchemaSelection{
     private final static Font SANS_BOLD_12 = new Font("SansSerif", Font.BOLD, 12);
     private final static Color TITLE_COLOR = new Color(0.8f,0.8f,1.0f);
     
-    private enum DataTypes { strict, lax };
+    private enum DataTypes { strict, loose };
     private enum Fields { core, user, arbitrary };
     private enum Structure { flat, container };
     
@@ -69,9 +69,29 @@ public class SchemaSelection{
     
     public SchemaSelection(){
         Preferences pref = Preferences.userNodeForPackage(getClass()).node("schema");
-        settings.put(DATATYPES, pref.get(DATATYPES, DataTypes.strict.name()));
-        settings.put(FIELDS, pref.get(FIELDS, Fields.user.name()));
-        settings.put(STRUCTURE,  pref.get(STRUCTURE, Structure.flat.name()));
+        settings.put(DATATYPES, valueOf(
+            DataTypes.class,
+            pref.get(DATATYPES, DataTypes.strict.name()),
+            DataTypes.strict).name());
+        settings.put(FIELDS, valueOf(
+            Fields.class,
+            pref.get(FIELDS, Fields.user.name()),
+            Fields.user).name());
+        settings.put(STRUCTURE, valueOf(
+            Structure.class,
+            pref.get(STRUCTURE, Structure.flat.name()),
+            Structure.flat).name());
+    }
+    
+    private static <T extends Enum<T>> T valueOf(Class<T> enumType,
+                                            String name,
+                                            T defaultVal){
+        T result = defaultVal;
+        try{
+            result = Enum.valueOf(enumType, name);
+        } catch (Exception ignore){
+        }
+        return result;
     }
     
     private Component makeTitle(String text){
@@ -191,8 +211,8 @@ public class SchemaSelection{
         c.add(button);
         datatypes.add(button);
         c.add(Box.createHorizontalStrut(5));
-        button = new JRadioButton("Lax");
-        button.setActionCommand(DataTypes.lax.name());
+        button = new JRadioButton("Loose");
+        button.setActionCommand(DataTypes.loose.name());
         c.add(button);
         datatypes.add(button);
         c.add(Box.createHorizontalGlue());
@@ -303,7 +323,9 @@ public class SchemaSelection{
     }
     
     public Map<String, String> getSelection(){
-        return (Map<String, String>) settings.clone();
+        Map<String, String> result = new HashMap<String, String>();
+        result.putAll(settings);
+        return result;
     }
     
     private void select(ButtonGroup group, String actionCommand){

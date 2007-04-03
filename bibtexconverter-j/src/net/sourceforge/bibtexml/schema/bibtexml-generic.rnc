@@ -32,7 +32,7 @@
 
 # Namespace and namespace prefix
 default namespace bibtex = "http://bibtexml.sf.net/"
-namespace m = "http://bibtexml.sf.net/module"
+namespace m = "http://bibtexml.sourceforge.net/version-annotations"
 
 # Document top element
 start = file
@@ -51,7 +51,7 @@ file.attlist &= attribute fields {
 
 file.attlist &= attribute datatypes {
     [ m:datatypes="strict" ] ( "strict" ) |
-    [ m:datatypes="lax" ] ( "lax" )
+    [ m:datatypes="loose" ] ( "loose" )
 }?
 
 # .....................................................................
@@ -553,7 +553,7 @@ chapter =  element chapter { xsd:positiveInteger }
 ##   should be an ordinal, and should have the first letter capitalized, as
 ##   shown here; the standard styles convert to lower case when necessary.
 edition = element edition { [ m:datatypes="strict"] xsd:string { pattern="[A-Z].*" } |
-                            [ m:datatypes="lax"   ] text }
+                            [ m:datatypes="loose"   ] text }
 
 ## [editor] Name(s) of editor(s), typed as indicated in the LaTeX book.
 ##   If there is also an author field, then the editor field gives the
@@ -577,7 +577,7 @@ journal = element journal { text }
 ##   the LaTeX book.
 ##   The schema also allows a two digit month format, e.g. 05 (for May).
 month = element month { [ m:datatypes="strict" ] ( monthString.datatype | xsd:gMonth ) |
-                        [ m:datatypes="lax"] text }
+                        [ m:datatypes="loose"] text }
 monthString.datatype =
    string "Jan"
  | string "Feb"
@@ -615,7 +615,7 @@ organization = element organization { text }
 ##   number ranges (as in 7-33).
 pages = element pages {
     [ m:datatypes="strict" ] xsd:string { pattern="[0-9]+((-{0,2}|–|,)[0-9]+)*\+?" } |
-    [m:datatypes="lax" ] text
+    [m:datatypes="loose" ] text
 }
 
 ## [publisher] The publisher's name.

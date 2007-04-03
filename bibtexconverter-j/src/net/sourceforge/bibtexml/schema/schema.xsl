@@ -4,14 +4,14 @@
 <!-- Adapted from http://osteele.com/archives/2004/08/xml-schema-versions -->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:m="http://bibtexml.sf.net/module"
+                xmlns:m="http://bibtexml.sourceforge.net/version-annotations"
                 exclude-result-prefixes="m"
                 version="2.0">
 
   <!-- stylesheet invoker should specifiy this -->
   <!-- one of container, flat -->
   <xsl:param name="structure" select="'flat'"/>
-  <!-- one of strict, lax -->
+  <!-- one of strict, loose -->
   <xsl:param name="datatypes" select="'strict'"/>
   <!-- one of core, user, arbitrary -->
   <xsl:param name="fields" select="'user'" />

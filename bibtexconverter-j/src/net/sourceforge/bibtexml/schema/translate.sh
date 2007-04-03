@@ -2,7 +2,7 @@
 java -jar trang.jar bibtexml-generic.rnc bibtexml-generic.rng
 for fields in arbitrary user core
 do 
-    for datatypes in strict lax
+    for datatypes in strict loose
     do
         for structure in container flat
         do

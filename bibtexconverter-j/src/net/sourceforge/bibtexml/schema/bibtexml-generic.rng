@@ -33,7 +33,7 @@
   
 -->
 <!-- Namespace and namespace prefix -->
-<grammar ns="http://bibtexml.sf.net/" xmlns:bibtex="http://bibtexml.sf.net/" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:m="http://bibtexml.sf.net/module" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<grammar ns="http://bibtexml.sf.net/" xmlns:bibtex="http://bibtexml.sf.net/" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:m="http://bibtexml.sourceforge.net/version-annotations" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!-- Document top element -->
   <start>
     <ref name="file"/>
@@ -84,8 +84,8 @@
           <group m:datatypes="strict">
             <value>strict</value>
           </group>
-          <group m:datatypes="lax">
-            <value>lax</value>
+          <group m:datatypes="loose">
+            <value>loose</value>
           </group>
         </choice>
       </attribute>
@@ -1460,7 +1460,7 @@
         <data type="string" m:datatypes="strict">
           <param name="pattern">[A-Z].*</param>
         </data>
-        <text m:datatypes="lax"/>
+        <text m:datatypes="loose"/>
       </choice>
     </element>
   </define>
@@ -1504,7 +1504,7 @@
           <ref name="monthString.datatype"/>
           <data type="gMonth"/>
         </choice>
-        <text m:datatypes="lax"/>
+        <text m:datatypes="loose"/>
       </choice>
     </element>
   </define>
@@ -1560,7 +1560,7 @@
         <data type="string" m:datatypes="strict">
           <param name="pattern">[0-9]+((-{0,2}|–|,)[0-9]+)*\+?</param>
         </data>
-        <text m:datatypes="lax"/>
+        <text m:datatypes="loose"/>
       </choice>
     </element>
   </define>
