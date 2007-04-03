@@ -101,10 +101,11 @@ volumeOrNumber =
 # .....................................................................
 # Entries in the BibTeX database
 
+article = 
 ## [article] An article from a journal or magazine.
 ##   Required fields: author, title, journal, year.
 ##   Optional fields: volume, number, pages, month, note.
-article = element article {
+element article {
    article.required  &
    article.optional &
    [ m:fields="user arbitrary"] ( article.user )
@@ -131,11 +132,12 @@ article.user =
 
 
 
+book = 
 ## [book] A book with an explicit publisher.
 ##   Required fields: author or editor, title, publisher, year.
 ##   Optional fields: volume or number, series, address,
 ##      edition, month, note.
-book = element book {
+element book {
     book.required &
     book.optional &
     [ m:fields="user arbitrary"] ( book.user* )
@@ -163,11 +165,12 @@ book.user =
 
 
 
+booklet = 
 ## [booklet] A work that is printed and bound, but without a named
 ##   publisher or sponsoring institution
 ##   Required field: title.
 ##   Optional fields: author, howpublished, address, month, year, note.
-booklet = element booklet {
+element booklet {
     booklet.required &
     booklet.optional &
     [ m:fields="user arbitrary"] ( booklet.user )
@@ -195,13 +198,14 @@ booklet.user =
 
 
 
+inbook = 
 ## [inbook] A part of a book, which may be a chapter (or section or
 ##   whatever) and/or a range of pages.
 ##   Required fields: author or editor, title, chapter and/or pages,
 ##      publisher, year.
 ##   Optional fields: volume or number, series, type, address,
 ##      edition, month, note.
-inbook = element inbook {
+element inbook {
     inbook.required &
     inbook.optional &
     [ m:fields="user arbitrary"] ( inbook.user )
@@ -242,11 +246,12 @@ inbook.user =
 
 
 
+incollection = 
 ## [incollection] A part of a book having its own title.
 ##   Required fields: author, title, booktitle, publisher, year.
 ##   Optional fields: editor, volume or number, series, type,
 ##      chapter, pages, address, edition, month, note.
-incollection = element incollection {
+element incollection {
     incollection.required   &
     incollection.optional &
    [ m:fields="user arbitrary"] ( incollection.user )
@@ -288,11 +293,12 @@ incollection.user =
 
 
 
+inproceedings = 
 ## [inproceedings] An article in a conference proceedings.
 ##   Required fields: author, title, booktitle, year.
 ##   Optional fields: editor, volume or number, series, pages,
 ##      address, month, organization, publisher, note.
-inproceedings = element inproceedings { inproceedings.content }
+element inproceedings { inproceedings.content }
 
 inproceedings.content =
    inproceedings.required &
@@ -323,17 +329,19 @@ inproceedings.user =
 
 
 
+conference =  
 ## [conference] The same as INPROCEEDINGS,
 ##   included for Scribe compatibility.
-conference =  element conference { inproceedings.content }
+element conference { inproceedings.content }
 
 
 
+manual = 
 ## [manual] Technical documentation
 ##   Required field: title.
 ##   Optional fields: author, organization, address,
 ##      edition, month, year, note.
-manual = element manual {
+element manual {
     manual.required &
     manual.optional &
    [ m:fields="user arbitrary"] ( manual.user )
@@ -392,24 +400,27 @@ thesis.user =
 
 
 
+mastersthesis = 
 ## [mastersthesis] A Master's thesis.
 ##   Required fields: author, title, school, year.
 ##   Optional fields: type, address, month, note.
-mastersthesis = element mastersthesis { thesis.content }
+element mastersthesis { thesis.content }
 
 
 
+phdthesis = 
 ## [phdthesis] A PhD thesis.
 ##   Required fields: author, title, school, year.
 ##   Optional fields: type, address, month, note.
-phdthesis = element phdthesis { thesis.content }
+element phdthesis { thesis.content }
 
 
 
+misc = 
 ## [misc] Use this type when nothing else fits.
 ##   Required fields: none.
 ##   Optional fields: author, title, howpublished, month, year, note.
-misc = element misc {
+element misc {
    misc.optional &
    [ m:fields="user arbitrary"] ( misc.user )
 }
@@ -431,11 +442,12 @@ misc.user =
 
 
 
+proceedings = 
 ## [proceedings] The proceedings of a conference.
 ##   Required fields: title, year.
 ##   Optional fields: editor, volume or number, series,
 ##      address, month, organization, publisher, note.
-proceedings = element proceedings {
+element proceedings {
    proceedings.required &
    proceedings.optional &
    [ m:fields="user arbitrary"] ( proceedings.user )
@@ -465,11 +477,12 @@ proceedings.user =
 
 
 
+techreport = 
 ## [techreport] A report published by a school or other institution,
 ##   usually numbered within a series.
 ##   Required fields: author, title, institution, year.
 ##   Optional fields: type, number, address, month, note.
-techreport = element techreport {
+element techreport {
     techreport.required &
     techreport.optional &
    [ m:fields="user arbitrary"] ( techreport.user )
@@ -497,11 +510,12 @@ techreport.user =
 
 
 
+unpublished = 
 ## [unpublished] A document having an author and title, but not
 ##   formally published.
 ##   Required fields: author, title, note.
 ##   Optional fields: month, year.
-unpublished = element unpublished {
+element unpublished {
     unpublished.required &
     unpublished.optional &
    [ m:fields="user arbitrary"] ( unpublished.user )
@@ -531,52 +545,62 @@ unpublished.user =
 # .....................................................................
 # Metadata fields for each bibliographic entry
 
+address = 
 ## [address] Usually the address of the publisher or other type of
 ##   institution  For major publishing houses, van~Leunen recommends
 ##   omitting the information entirely.  For small publishers, on the other
 ##   hand, you can help the reader by giving the complete address.
-address = element address { text }
+element address { text }
 
+author = 
 ## [author] The name(s) of the author(s),
 ##   in the format described in the LaTeX book.
-author = element author { text }
+element author { text }
 
+booktitle = 
 ## [booktitle] Title of a book, part of which is being cited.  See the
 ##   LaTeX book for how to type titles.  For book entries, use the title
 ##   field instead.
-booktitle = element booktitle { text }
+element booktitle { text }
 
+chapter =  
 ## [chapter] A chapter (or section or whatever) number.
-chapter =  element chapter { xsd:positiveInteger }
+element chapter { xsd:positiveInteger }
 
+edition = 
 ## [edition] The edition of a book-for example, ``Second''.  This
 ##   should be an ordinal, and should have the first letter capitalized, as
 ##   shown here; the standard styles convert to lower case when necessary.
-edition = element edition { [ m:datatypes="strict"] xsd:string { pattern="[A-Z].*" } |
+element edition { [ m:datatypes="strict"] xsd:string { pattern="[A-Z].*" } |
                             [ m:datatypes="loose"   ] text }
 
+editor = 
 ## [editor] Name(s) of editor(s), typed as indicated in the LaTeX book.
 ##   If there is also an author field, then the editor field gives the
 ##   editor of the book or collection in which the reference appears.
-editor = element editor { text }
+element editor { text }
 
+howpublished = 
 ## [howpublished] How something strange has been published.
 ##   The first word should be capitalized.
-howpublished = element howpublished { text }
+element howpublished { text }
 
+institution = 
 ## [institution] The sponsoring institution of a technical report.
-institution = element institution { text }
+element institution { text }
 
+journal = 
 ## [journal] A journal name.  Abbreviations are provided for many
 ##   journals; see the Local Guide.
-journal = element journal { text }
+element journal { text }
 
+month = 
 ## [month] The month in which the work was published or, for an
 ##   unpublished work, in which it was written. You should use the
 ##   standard three-letter abbreviation, as described in Appendix B.1.3 of
 ##   the LaTeX book.
 ##   The schema also allows a two digit month format, e.g. 05 (for May).
-month = element month { [ m:datatypes="strict" ] ( monthString.datatype | xsd:gMonth ) |
+element month { [ m:datatypes="strict" ] ( monthString.datatype | xsd:gMonth ) |
                         [ m:datatypes="loose"] text }
 monthString.datatype =
    string "Jan"
@@ -592,73 +616,87 @@ monthString.datatype =
  | string "Nov"
  | string "Dec"
 
+note = 
 ## [note] Any additional information that can help the reader.
 ##   The first word should be capitalized.
-note = element note { text }
+element note { text }
 
+number = 
 ## [number] The number of a journal, magazine, technical report, or of a
 ##   work in a series.  An issue of a journal or magazine is usually
 ##   identified by its volume and number; the organization that issues a
 ##   technical report usually gives it a number; and sometimes books are
 ##   given numbers in a named series.
-number = element number { text }
+element number { text }
 
+organization = 
 ## [organization] The organization that sponsors a conference or that
 ##   publishes a manual.
-organization = element organization { text }
+element organization { text }
 
+pages = 
 ## [pages] One or more page numbers or range of numbers, such as 42-111
 ##   or 7,41,73-97 or 43+ (the `+' in this last example indicates pages
 ##   following that don't form a simple range).  To make it easier to
 ##   maintain Scribe-compatible databases, the standard styles convert a
 ##   single dash (as in 7-33) to the double dash used in TeX to denote
 ##   number ranges (as in 7-33).
-pages = element pages {
+element pages {
     [ m:datatypes="strict" ] xsd:string { pattern="[0-9]+((-{0,2}|–|,)[0-9]+)*\+?" } |
     [m:datatypes="loose" ] text
 }
 
+publisher = 
 ## [publisher] The publisher's name.
-publisher = element publisher { text }
+element publisher { text }
 
+school = 
 ## [school] The name of the school where a thesis was written
-school = element school {  text }
+element school {  text }
 
+series = 
 ## [series] The name of a series or set of books.  When citing an entire
 ##   book, the the title field gives its title and an optional series field
 ##   gives the name of a series or multi-volume set in which the book is
 ##   published.
-series = element series { text }
+element series { text }
 
+title = 
 ## [title] The work's title, typed as explained in the LaTeX book.
-title = element title { text }
+element title { text }
 
+type =   
 ## [type] The type of a technical report-for example, ``Research Note''.
-type =   element type { text }
+element type { text }
 
+volume = 
 ## [volume] The volume of a journal or multivolume book.
-volume = element volume { text }
+element volume { text }
 
+year = 
 ## [year] The year of publication or, for an unpublished work, the year
 ##   it was written.  Generally it should consist of four numerals, such as
 ##   1984, although the standard styles can handle any year whose last four
 ##   nonpunctuation characters are numerals, such as `(about 1984)'.
 ##   The schema will restrict validation of the year to four numerals,
 ##   as such a type is pre-defined in XML Schema.
-year = element year { xsd:gYear }
+element year { xsd:gYear }
 
+annote = 
 ## [annote] An annotation  It is not used by the standard bibliography
 ##   styles, but may be used by others that produce an annotated
 ##   bibliography.
-annote = element annote { text }
+element annote { text }
 
+crossref = 
 ## [crossref] The database key of the entry being cross referenced.
 ##   BibTEX has a new cross-referencing feature, explained by an example.
 ##     @INPROCEEDINGS(no-gnats,
 ##         crossref = "gg-proceedings",
 ##     @PROCEEDINGS(gg-proceedings,
-crossref = element crossref { xsd:NCName }
+element crossref { xsd:NCName }
 
+key = 
 ## [key] Used for alphabetizing, cross referencing, and creating a label
 ##   when the ``author'' information (described in Section [ref: ] is
 ##   missing. This field should not be confused with the key that appears
@@ -668,7 +706,7 @@ crossref = element crossref { xsd:NCName }
 ##   an optional key field, used in some styles for alphabetizing, or
 ##   for forming a \bibitem label. You should include a key field for
 ##   any entry whose ``author'' information is missing;
-key = element key { text }
+element key { text }
 
 ## Popular user fields
 ##   BibTeX is extremely popular, and many people have used it to store

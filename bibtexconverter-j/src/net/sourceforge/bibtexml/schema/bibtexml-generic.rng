@@ -33,7 +33,7 @@
   
 -->
 <!-- Namespace and namespace prefix -->
-<grammar ns="http://bibtexml.sf.net/" xmlns:bibtex="http://bibtexml.sf.net/" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:m="http://bibtexml.sourceforge.net/version-annotations" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<grammar xmlns:bibtex="http://bibtexml.sf.net/" xmlns:m="http://bibtexml.sourceforge.net/version-annotations" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" ns="http://bibtexml.sf.net/" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!-- Document top element -->
   <start>
     <ref name="file"/>
@@ -212,10 +212,10 @@
     Entries in the BibTeX database
   -->
   <define name="article">
-    <a:documentation>[article] An article from a journal or magazine.
+    <element name="article">
+      <a:documentation>[article] An article from a journal or magazine.
   Required fields: author, title, journal, year.
   Optional fields: volume, number, pages, month, note.</a:documentation>
-    <element name="article">
       <interleave>
         <ref name="article.required"/>
         <ref name="article.optional"/>
@@ -309,11 +309,11 @@
     </interleave>
   </define>
   <define name="book">
-    <a:documentation>[book] A book with an explicit publisher.
+    <element name="book">
+      <a:documentation>[book] A book with an explicit publisher.
   Required fields: author or editor, title, publisher, year.
   Optional fields: volume or number, series, address,
      edition, month, note.</a:documentation>
-    <element name="book">
       <interleave>
         <ref name="book.required"/>
         <ref name="book.optional"/>
@@ -411,11 +411,11 @@
     </interleave>
   </define>
   <define name="booklet">
-    <a:documentation>[booklet] A work that is printed and bound, but without a named
+    <element name="booklet">
+      <a:documentation>[booklet] A work that is printed and bound, but without a named
   publisher or sponsoring institution
   Required field: title.
   Optional fields: author, howpublished, address, month, year, note.</a:documentation>
-    <element name="booklet">
       <interleave>
         <ref name="booklet.required"/>
         <ref name="booklet.optional"/>
@@ -498,13 +498,13 @@
     </interleave>
   </define>
   <define name="inbook">
-    <a:documentation>[inbook] A part of a book, which may be a chapter (or section or
+    <element name="inbook">
+      <a:documentation>[inbook] A part of a book, which may be a chapter (or section or
   whatever) and/or a range of pages.
   Required fields: author or editor, title, chapter and/or pages,
      publisher, year.
   Optional fields: volume or number, series, type, address,
      edition, month, note.</a:documentation>
-    <element name="inbook">
       <interleave>
         <ref name="inbook.required"/>
         <ref name="inbook.optional"/>
@@ -623,11 +623,11 @@
     </interleave>
   </define>
   <define name="incollection">
-    <a:documentation>[incollection] A part of a book having its own title.
+    <element name="incollection">
+      <a:documentation>[incollection] A part of a book having its own title.
   Required fields: author, title, booktitle, publisher, year.
   Optional fields: editor, volume or number, series, type,
      chapter, pages, address, edition, month, note.</a:documentation>
-    <element name="incollection">
       <interleave>
         <ref name="incollection.required"/>
         <ref name="incollection.optional"/>
@@ -745,11 +745,11 @@
     </interleave>
   </define>
   <define name="inproceedings">
-    <a:documentation>[inproceedings] An article in a conference proceedings.
+    <element name="inproceedings">
+      <a:documentation>[inproceedings] An article in a conference proceedings.
   Required fields: author, title, booktitle, year.
   Optional fields: editor, volume or number, series, pages,
      address, month, organization, publisher, note.</a:documentation>
-    <element name="inproceedings">
       <ref name="inproceedings.content"/>
     </element>
   </define>
@@ -863,18 +863,18 @@
     </interleave>
   </define>
   <define name="conference">
-    <a:documentation>[conference] The same as INPROCEEDINGS,
-  included for Scribe compatibility.</a:documentation>
     <element name="conference">
+      <a:documentation>[conference] The same as INPROCEEDINGS,
+  included for Scribe compatibility.</a:documentation>
       <ref name="inproceedings.content"/>
     </element>
   </define>
   <define name="manual">
-    <a:documentation>[manual] Technical documentation
+    <element name="manual">
+      <a:documentation>[manual] Technical documentation
   Required field: title.
   Optional fields: author, organization, address,
      edition, month, year, note.</a:documentation>
-    <element name="manual">
       <interleave>
         <ref name="manual.required"/>
         <ref name="manual.optional"/>
@@ -1052,26 +1052,26 @@
     </interleave>
   </define>
   <define name="mastersthesis">
-    <a:documentation>[mastersthesis] A Master's thesis.
+    <element name="mastersthesis">
+      <a:documentation>[mastersthesis] A Master's thesis.
   Required fields: author, title, school, year.
   Optional fields: type, address, month, note.</a:documentation>
-    <element name="mastersthesis">
       <ref name="thesis.content"/>
     </element>
   </define>
   <define name="phdthesis">
-    <a:documentation>[phdthesis] A PhD thesis.
+    <element name="phdthesis">
+      <a:documentation>[phdthesis] A PhD thesis.
   Required fields: author, title, school, year.
   Optional fields: type, address, month, note.</a:documentation>
-    <element name="phdthesis">
       <ref name="thesis.content"/>
     </element>
   </define>
   <define name="misc">
-    <a:documentation>[misc] Use this type when nothing else fits.
+    <element name="misc">
+      <a:documentation>[misc] Use this type when nothing else fits.
   Required fields: none.
   Optional fields: author, title, howpublished, month, year, note.</a:documentation>
-    <element name="misc">
       <interleave>
         <ref name="misc.optional"/>
         <group m:fields="user arbitrary">
@@ -1140,11 +1140,11 @@
     </interleave>
   </define>
   <define name="proceedings">
-    <a:documentation>[proceedings] The proceedings of a conference.
+    <element name="proceedings">
+      <a:documentation>[proceedings] The proceedings of a conference.
   Required fields: title, year.
   Optional fields: editor, volume or number, series,
      address, month, organization, publisher, note.</a:documentation>
-    <element name="proceedings">
       <interleave>
         <ref name="proceedings.required"/>
         <ref name="proceedings.optional"/>
@@ -1239,11 +1239,11 @@
     </interleave>
   </define>
   <define name="techreport">
-    <a:documentation>[techreport] A report published by a school or other institution,
+    <element name="techreport">
+      <a:documentation>[techreport] A report published by a school or other institution,
   usually numbered within a series.
   Required fields: author, title, institution, year.
   Optional fields: type, number, address, month, note.</a:documentation>
-    <element name="techreport">
       <interleave>
         <ref name="techreport.required"/>
         <ref name="techreport.optional"/>
@@ -1337,11 +1337,11 @@
     </interleave>
   </define>
   <define name="unpublished">
-    <a:documentation>[unpublished] A document having an author and title, but not
+    <element name="unpublished">
+      <a:documentation>[unpublished] A document having an author and title, but not
   formally published.
   Required fields: author, title, note.
   Optional fields: month, year.</a:documentation>
-    <element name="unpublished">
       <interleave>
         <ref name="unpublished.required"/>
         <ref name="unpublished.optional"/>
@@ -1422,40 +1422,40 @@
     Metadata fields for each bibliographic entry
   -->
   <define name="address">
-    <a:documentation>[address] Usually the address of the publisher or other type of
+    <element name="address">
+      <a:documentation>[address] Usually the address of the publisher or other type of
   institution  For major publishing houses, van~Leunen recommends
   omitting the information entirely.  For small publishers, on the other
   hand, you can help the reader by giving the complete address.</a:documentation>
-    <element name="address">
       <text/>
     </element>
   </define>
   <define name="author">
-    <a:documentation>[author] The name(s) of the author(s),
-  in the format described in the LaTeX book.</a:documentation>
     <element name="author">
+      <a:documentation>[author] The name(s) of the author(s),
+  in the format described in the LaTeX book.</a:documentation>
       <text/>
     </element>
   </define>
   <define name="booktitle">
-    <a:documentation>[booktitle] Title of a book, part of which is being cited.  See the
+    <element name="booktitle">
+      <a:documentation>[booktitle] Title of a book, part of which is being cited.  See the
   LaTeX book for how to type titles.  For book entries, use the title
   field instead.</a:documentation>
-    <element name="booktitle">
       <text/>
     </element>
   </define>
   <define name="chapter">
-    <a:documentation>[chapter] A chapter (or section or whatever) number.</a:documentation>
     <element name="chapter">
+      <a:documentation>[chapter] A chapter (or section or whatever) number.</a:documentation>
       <data type="positiveInteger"/>
     </element>
   </define>
   <define name="edition">
-    <a:documentation>[edition] The edition of a book-for example, ``Second''.  This
+    <element name="edition">
+      <a:documentation>[edition] The edition of a book-for example, ``Second''.  This
   should be an ordinal, and should have the first letter capitalized, as
   shown here; the standard styles convert to lower case when necessary.</a:documentation>
-    <element name="edition">
       <choice>
         <data type="string" m:datatypes="strict">
           <param name="pattern">[A-Z].*</param>
@@ -1465,40 +1465,40 @@
     </element>
   </define>
   <define name="editor">
-    <a:documentation>[editor] Name(s) of editor(s), typed as indicated in the LaTeX book.
+    <element name="editor">
+      <a:documentation>[editor] Name(s) of editor(s), typed as indicated in the LaTeX book.
   If there is also an author field, then the editor field gives the
   editor of the book or collection in which the reference appears.</a:documentation>
-    <element name="editor">
       <text/>
     </element>
   </define>
   <define name="howpublished">
-    <a:documentation>[howpublished] How something strange has been published.
-  The first word should be capitalized.</a:documentation>
     <element name="howpublished">
+      <a:documentation>[howpublished] How something strange has been published.
+  The first word should be capitalized.</a:documentation>
       <text/>
     </element>
   </define>
   <define name="institution">
-    <a:documentation>[institution] The sponsoring institution of a technical report.</a:documentation>
     <element name="institution">
+      <a:documentation>[institution] The sponsoring institution of a technical report.</a:documentation>
       <text/>
     </element>
   </define>
   <define name="journal">
-    <a:documentation>[journal] A journal name.  Abbreviations are provided for many
-  journals; see the Local Guide.</a:documentation>
     <element name="journal">
+      <a:documentation>[journal] A journal name.  Abbreviations are provided for many
+  journals; see the Local Guide.</a:documentation>
       <text/>
     </element>
   </define>
   <define name="month">
-    <a:documentation>[month] The month in which the work was published or, for an
+    <element name="month">
+      <a:documentation>[month] The month in which the work was published or, for an
   unpublished work, in which it was written. You should use the
   standard three-letter abbreviation, as described in Appendix B.1.3 of
   the LaTeX book.
   The schema also allows a two digit month format, e.g. 05 (for May).</a:documentation>
-    <element name="month">
       <choice>
         <choice m:datatypes="strict">
           <ref name="monthString.datatype"/>
@@ -1525,37 +1525,37 @@
     </choice>
   </define>
   <define name="note">
-    <a:documentation>[note] Any additional information that can help the reader.
-  The first word should be capitalized.</a:documentation>
     <element name="note">
+      <a:documentation>[note] Any additional information that can help the reader.
+  The first word should be capitalized.</a:documentation>
       <text/>
     </element>
   </define>
   <define name="number">
-    <a:documentation>[number] The number of a journal, magazine, technical report, or of a
+    <element name="number">
+      <a:documentation>[number] The number of a journal, magazine, technical report, or of a
   work in a series.  An issue of a journal or magazine is usually
   identified by its volume and number; the organization that issues a
   technical report usually gives it a number; and sometimes books are
   given numbers in a named series.</a:documentation>
-    <element name="number">
       <text/>
     </element>
   </define>
   <define name="organization">
-    <a:documentation>[organization] The organization that sponsors a conference or that
-  publishes a manual.</a:documentation>
     <element name="organization">
+      <a:documentation>[organization] The organization that sponsors a conference or that
+  publishes a manual.</a:documentation>
       <text/>
     </element>
   </define>
   <define name="pages">
-    <a:documentation>[pages] One or more page numbers or range of numbers, such as 42-111
+    <element name="pages">
+      <a:documentation>[pages] One or more page numbers or range of numbers, such as 42-111
   or 7,41,73-97 or 43+ (the `+' in this last example indicates pages
   following that don't form a simple range).  To make it easier to
   maintain Scribe-compatible databases, the standard styles convert a
   single dash (as in 7-33) to the double dash used in TeX to denote
   number ranges (as in 7-33).</a:documentation>
-    <element name="pages">
       <choice>
         <data type="string" m:datatypes="strict">
           <param name="pattern">[0-9]+((-{0,2}|–|,)[0-9]+)*\+?</param>
@@ -1565,75 +1565,76 @@
     </element>
   </define>
   <define name="publisher">
-    <a:documentation>[publisher] The publisher's name.</a:documentation>
     <element name="publisher">
+      <a:documentation>[publisher] The publisher's name.</a:documentation>
       <text/>
     </element>
   </define>
   <define name="school">
-    <a:documentation>[school] The name of the school where a thesis was written</a:documentation>
     <element name="school">
+      <a:documentation>[school] The name of the school where a thesis was written</a:documentation>
       <text/>
     </element>
   </define>
   <define name="series">
-    <a:documentation>[series] The name of a series or set of books.  When citing an entire
+    <element name="series">
+      <a:documentation>[series] The name of a series or set of books.  When citing an entire
   book, the the title field gives its title and an optional series field
   gives the name of a series or multi-volume set in which the book is
   published.</a:documentation>
-    <element name="series">
       <text/>
     </element>
   </define>
   <define name="title">
-    <a:documentation>[title] The work's title, typed as explained in the LaTeX book.</a:documentation>
     <element name="title">
+      <a:documentation>[title] The work's title, typed as explained in the LaTeX book.</a:documentation>
       <text/>
     </element>
   </define>
   <define name="type">
-    <a:documentation>[type] The type of a technical report-for example, ``Research Note''.</a:documentation>
     <element name="type">
+      <a:documentation>[type] The type of a technical report-for example, ``Research Note''.</a:documentation>
       <text/>
     </element>
   </define>
   <define name="volume">
-    <a:documentation>[volume] The volume of a journal or multivolume book.</a:documentation>
     <element name="volume">
+      <a:documentation>[volume] The volume of a journal or multivolume book.</a:documentation>
       <text/>
     </element>
   </define>
   <define name="year">
-    <a:documentation>[year] The year of publication or, for an unpublished work, the year
+    <element name="year">
+      <a:documentation>[year] The year of publication or, for an unpublished work, the year
   it was written.  Generally it should consist of four numerals, such as
   1984, although the standard styles can handle any year whose last four
   nonpunctuation characters are numerals, such as `(about 1984)'.
   The schema will restrict validation of the year to four numerals,
   as such a type is pre-defined in XML Schema.</a:documentation>
-    <element name="year">
       <data type="gYear"/>
     </element>
   </define>
   <define name="annote">
-    <a:documentation>[annote] An annotation  It is not used by the standard bibliography
+    <element name="annote">
+      <a:documentation>[annote] An annotation  It is not used by the standard bibliography
   styles, but may be used by others that produce an annotated
   bibliography.</a:documentation>
-    <element name="annote">
       <text/>
     </element>
   </define>
   <define name="crossref">
-    <a:documentation>[crossref] The database key of the entry being cross referenced.
+    <element name="crossref">
+      <a:documentation>[crossref] The database key of the entry being cross referenced.
   BibTEX has a new cross-referencing feature, explained by an example.
     @INPROCEEDINGS(no-gnats,
         crossref = "gg-proceedings",
     @PROCEEDINGS(gg-proceedings,</a:documentation>
-    <element name="crossref">
       <data type="NCName"/>
     </element>
   </define>
   <define name="key">
-    <a:documentation>[key] Used for alphabetizing, cross referencing, and creating a label
+    <element name="key">
+      <a:documentation>[key] Used for alphabetizing, cross referencing, and creating a label
   when the ``author'' information (described in Section [ref: ] is
   missing. This field should not be confused with the key that appears
   in the \cite command and at the beginning of the database entry.
@@ -1642,7 +1643,6 @@
   an optional key field, used in some styles for alphabetizing, or
   for forming a \bibitem label. You should include a key field for
   any entry whose ``author'' information is missing;</a:documentation>
-    <element name="key">
       <text/>
     </element>
   </define>
