@@ -112,7 +112,7 @@ public class StyleSheetController {
                     params.put(param, val);
                     pref.node(P_NODE_PARAM).put(param, val.toString());
                 }
-            } else if (command.equals(BibTeXConverterController.ENCODING_PREFIX)){
+            } else if (command.equals(P_KEY_ENCODING)){
                 JComboBox cb = (JComboBox) source;
                 String cs = (String) cb.getSelectedItem();
                 if(Charset.isSupported(cs)){
@@ -377,7 +377,7 @@ public class StyleSheetController {
         int rowcount = 0;
         if(customEncoding){
             String prefval = pref.get(P_KEY_ENCODING, XMLConverter.DEFAULT_ENC.name());
-            JComboBox outpEnc = new JComboBox(BibTeXConverterController.allEncodings);
+            final JComboBox outpEnc = new JComboBox(BibTeXConverterController.allEncodings);
             outpEnc.setSelectedItem(XMLConverter.DEFAULT_ENC.name());
             outpEnc.setEditable(true);
             if(Charset.isSupported(prefval)){
@@ -387,6 +387,12 @@ public class StyleSheetController {
             pref.put(P_KEY_ENCODING, enc);
             outpEnc.setActionCommand(P_KEY_ENCODING);
             outpEnc.addActionListener(updater);
+            outpEnc.getEditor().getEditorComponent().addFocusListener(new FocusAdapter(){
+                    public void focusLost(FocusEvent e){
+                        System.err.flush();
+                        outpEnc.setSelectedItem(outpEnc.getEditor().getItem());
+                    }
+            });
             label = new JLabel("encoding");
             label.setLabelFor(outpEnc);
             custom.add(label);
