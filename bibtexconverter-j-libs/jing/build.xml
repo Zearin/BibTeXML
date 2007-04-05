@@ -107,8 +107,6 @@
         </service>
         <service type="org.iso_relax.verifier.VerifierFactoryLoader"
             provider="com.thaiopensource.relaxng.jarv.VerifierFactoryLoaderImpl"/>
-        <service type="org.relaxng.datatype.DatatypeLibraryFactory"
-            provider="com.thaiopensource.datatype.xsd.DatatypeLibraryFactoryImpl"/>
     </jar>
     <echo message="WARNING: POSSIBLY MISNAMED META-INF/service(s)" /> 
   </target>
