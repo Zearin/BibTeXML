@@ -62,12 +62,27 @@ class StyleSheetManager {
         this.styleContainer = styleContainer;
         this.errorHandler = errorHandler;
         this.convert = convert;
-        String styledirpath = Preferences.userNodeForPackage(getClass()).get("styledir", null);
-        styledir = (styledirpath == null)? null : new File(styledirpath);
+        
+        String[] builtInNames = new String[builtins.size()];
+        int i = 0;
         for(StyleSheetController style : builtins){
+            builtInNames[i++] = style.getName();
             addStyle(style);
         }
         this.builtins = builtins;
+        
+        Preferences pref = Preferences.userNodeForPackage(getClass());
+        String styledirpath = pref.get("styledir", null);
+        styledir = (styledirpath == null)? null : new File(styledirpath);
+        
+        try{
+        for(StyleSheetController style : StyleSheetController.load(convert, builtInNames)){
+            addStyle(style);
+        }
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+        
     }
     
     protected String[] getBuiltinStyleNames(){
