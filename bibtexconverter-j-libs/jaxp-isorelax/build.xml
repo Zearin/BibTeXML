@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--<!DOCTYPE project SYSTEM "http://mp3dings.sf.net/ant.dtd">-->
+<!--
+   $Id: build.xml,v 1.9 2007/02/08 14:39:03 Moritz.Ringler Exp $
+   Buildfile for ing + jarv + jarv-jaxp-bridge
+   This file needs ant-shared.xml present in the same directory.
+   (c) Moritz Ringler, 2007
+-->
+<project name="jaxp-isorelax" default="binjar" basedir=".">
+  <description>
+    Buildfile for jarv + jarv-jaxp-bridge under java 1.5+
+    To build this you need to have a libs directory in the project root that
+    contains the following libraries:
+    xalan-j 2.7.0 (xercesImpl.jar, xml-apis.jar, xalan.jar, serializer.jar)
+    saxon 6.5.5 (saxon.jar)
+    available from http://saxonsf.net and http://xml.apache.org/xalan-j/
+    
+  </description>
+  <!-- global properties used by ant-shared.xml -->
+  <property
+      name="src"
+      value="src"/>
+  <property
+      name="build"
+      value="classes"/>
+  <property
+      name="javadoc"
+      value="doc/api"/>
+  <property
+      name="app.packagePath"
+      value="jp/gr/xml/relax/**, org/iso_relax/**"/>
+
+  <property name="i" value="org.iso_relax" />
+  <property name="j" value="jp.gr.xml.relax" />
+  <property
+      name="app.packageList"
+      value="${i}.ant, ${i}.catalog, ${i}.dispatcher, ${i}.dispatcher.impl, ${i}.jaxp, ${i}.verifier, ${i}.verifier.impl, ${i}.verifier.jaxp.validation, ${j].dom, ${j}.dtd, ${j}.lib, ${j}.sax, ${j}.xml" />
+  <property
+      name="app.name"
+      value="jaxp-isorelax"/>
+  <property
+      name="app.javaVersion"
+      value="1.5"/>
+      <!--
+  <property name="app.libraries"
+      value="libs/saxon.jar;libs/xml-apis.jar;libs/xercesImpl.jar;libs/xalan.jar;libs/serializer.jar" />
+  <property name="app.lib"
+      value="libs/saxon.jar libs/xml-apis.jar libs/xercesImpl.jar libs/xalan.jar libs/serializer.jar" />
+  -->
+  
+ <!-- overwrite binjar to include services -->
+  <target name="binjar" depends="compile, license">
+    <jar
+        destfile="${binary}"
+        compress="true">
+      <fileset dir="${build}" includes="${app.packagePath}"/>
+      <fileset file="COPYING"/>
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Main-Class" value="${app.mainClass}"/>
+      </manifest>
+        <service type="javax.xml.validation.SchemaFactory">
+            <provider classname="org.iso_relax.verifier.jaxp.validation.MSVSchemaFactoryImpl"/>
+            <provider classname="org.iso_relax.verifier.jaxp.validation.JingSchemaFactoryImpl"/>
+            <provider classname="org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl"/>
+        </service>
+    </jar>
+    <echo message="WARNING: POSSIBLY MISNAMED META-INF/service(s)" /> 
+  </target>
+
+   <!-- IMPORT SHARED TARGETS -->
+  <import file="./ant-shared.xml"/>
+  
+  
+  <target name="license">
+   <!-- description="Prints the software license to a file called COPYING." -->
+    <echo file="COPYING">
+All rights reserved.
+Copyright (c) 2001-2002, SourceForge ISO-RELAX Project (ASAMI
+Tomoharu, Daisuke Okajima, Kohsuke Kawaguchi, and MURATA Makoto)
+Copyright (c) 2006 Kohsuke Kawaguchi
+Copyright (c) 2007 Moritz Ringler
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, this
+list of conditions and the following disclaimer in the documentation and/or
+other materials provided with the distribution.
+* Neither the name of the Thai Open Source Software Center Ltd nor the names of
+its contributors may be used to endorse or promote products derived from this
+software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   </echo>
+  </target>
+
+</project>
