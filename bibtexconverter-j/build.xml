@@ -13,6 +13,14 @@
     apache ant due to ant bug 41879 
     (http://issues.apache.org/bugzilla/show_bug.cgi?id=41879).
     It is expected that this bug will be fixed in ant 1.7.1.
+    
+    bibtexconverter by default uses jing for xml validation, to use
+    Sun msv instead,
+    get the msv binary zip file from http://msv.dev.java.net/
+    and isorelax-jaxp-bridge binary zip from https://isorelax-jaxp-bridge.dev.java.net/
+    and put every jar you find in them into the lib directory, then
+    start ant with
+    -Dapp.libraries="lib/msv.jar;lib/isorelax.jar;lib/isorelax-jaxp-bridge-1.0.jar"
   </description>
   <!-- global properties used by ant-shared.xml -->
   <property
@@ -57,10 +65,12 @@
   <property
       name="app.icon"
       value="${src}\net\sourceforge\bibtexml\icon\ledgreen2.png"/>
+  <!-- Do not change order! -->
   <property name="app.libraries"
-      value="lib/jing-20070318.jar" />
+      value="lib/msv.jar;lib/xsdlib.jar;lib/relaxngDatatype.jar;lib/jaxp-isorelax.jar;lib/jing.jar;" />
+  <!-- Do not change order! -->
   <property name="app.lib"
-      value="${app.libraries}" />
+      value=" lib/jing.jar lib/jaxp-isorelax.jar lib/relaxngDatatype.jar lib/xsdlib.jar lib/msv.jar" />
   <property name="app.includeLibs"
       value="true" />
   <!--
