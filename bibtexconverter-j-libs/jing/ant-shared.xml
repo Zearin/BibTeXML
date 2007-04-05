@@ -82,7 +82,8 @@
         source="${app.javaVersion}"
         deprecation="on"
         debug="true">
-        <!--<compilerarg value="-Xlint:unchecked"/>--></javac>
+        <!--<compilerarg value="-Xlint:unchecked"/>-->
+        </javac>
   </target>
 
   <!-- MAKE BINARY-ONLY JAR-FILE -->
@@ -307,9 +308,7 @@ org.xml.sax.helpers
       <fileset dir="${basedir}">
         <include name="${javadoc}/"/>
       </fileset>
-      <fileset dir=".">
-        <include name="${app.lib}" if="app.libraries" />
-      </fileset>
+      <fileset dir="." includes="${app.lib}" />
       <fileset file="COPYING"/>
       <fileset file="${java.io.tmpdir}/build.xml"/>
       <fileset file="./ant-shared.xml"/>
