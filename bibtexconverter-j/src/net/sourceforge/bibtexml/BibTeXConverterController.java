@@ -157,6 +157,10 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             StyleSheetController.newInstance(convert, "HTML (grouped)", "g.html",
                         getClass().getResource("xslt/bibxml2htmlg.xsl"),
                         true, true, false));
+        builtins.add(
+            StyleSheetController.newInstance(convert, "DocBook 4.5 bibliography", "-docbook.xml",
+                        getClass().getResource("xslt/bibxml2docbook.xsl"),
+                        true, true, false));
         return builtins;
     }
     
