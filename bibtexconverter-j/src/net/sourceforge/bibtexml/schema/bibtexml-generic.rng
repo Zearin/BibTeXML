@@ -140,9 +140,9 @@
     <choice>
       <interleave m:structure="nested">
         <optional>
-          <ref name="firstname"/>
+          <ref name="givennames"/>
         </optional>
-        <ref name="lastname"/>
+        <ref name="surname"/>
         <optional>
           <ref name="jr"/>
         </optional>
@@ -150,13 +150,13 @@
       <text/>
     </choice>
   </define>
-  <define name="firstname">
-    <element name="firstname">
+  <define name="givennames">
+    <element name="givennames">
       <text/>
     </element>
   </define>
-  <define name="lastname">
-    <element name="lastname">
+  <define name="surname">
+    <element name="surname">
       <text/>
     </element>
   </define>
