@@ -39,7 +39,6 @@
       value="com/thaiopensource/**"/>
 
   <property name="rex" value="${t}.datatype.xsd.regex" />
-  <property name="i" value="org.iso_relax" />
   <property
       name="app.packageList"
       value="${t}.datatype, ${t}.datatype.xsd, ${rex}, ${rex}.jdk1_4, ${rex}.jdk1_4.gen, ${rex}.test, ${t}.datatype.xsd, ${t}.relaxng, ${t}.relaxng, ${t}.relaxng.impl, , ${t}.relaxng.jarv, , ${t}.relaxng.parse, ${t}.relaxng.parse, ${t}.relaxng.parse.compact, , ${t}.relaxng.parse.sax, ${t}.relaxng, ${t}.relaxng.util, , ${t}.util, ${t}.validate, ${t}.validate.auto, ${t}.validate.jarv, ${t}.validate.jaxp, ${t}.validate.mns, ${t}.validate.nrl, ${t}.validate.rng, ${t}.validate.schmatron, ${t}.validate.xerces, ${t}.xml.sax, ${t}.validate.util" />
