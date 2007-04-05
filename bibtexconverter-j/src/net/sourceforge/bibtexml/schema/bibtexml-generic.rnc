@@ -85,10 +85,10 @@ attlist.entry &=
 # Parameter entities
 
 person = 
-[m:structure="nested"] (firstname? & lastname & jr?) | text
+[m:structure="nested"] (givennames? & surname & jr?) | text
 
-firstname = element firstname { text }
-lastname = element lastname { text }
+givennames = element givennames { text }
+surname = element surname { text }
 jr = element jr { text }
 
 author = element author { person }
