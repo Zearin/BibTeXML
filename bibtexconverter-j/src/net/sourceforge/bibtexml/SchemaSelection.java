@@ -240,7 +240,7 @@ public class SchemaSelection{
         cp.add(Box.createVerticalStrut(5));
         
         section = new JPanel(new BorderLayout());
-        section.add(makeTitle("Datatypes"), BorderLayout.NORTH);
+        section.add(makeTitle("Type checking"), BorderLayout.NORTH);
         
         c = Box.createHorizontalBox();
         ((JComponent) c).setOpaque(false);

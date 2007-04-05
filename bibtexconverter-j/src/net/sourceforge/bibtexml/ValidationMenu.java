@@ -21,16 +21,20 @@ package net.sourceforge.bibtexml;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.prefs.Preferences;
+import java.util.*;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.xml.XMLConstants;
+import javax.xml.validation.SchemaFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -38,6 +42,7 @@ public class ValidationMenu extends JMenu implements ActionListener{
     private static final Preferences PREF =
     Preferences.userNodeForPackage(BibTeXConverterController.class).node("schema");
     final static String VALIDATION_PREFIX = "javax.xml.validation:";
+    private final static String SF = "javax.xml.validation.SchemaFactory"; 
     private final static String VALIDATION_DISABLED = VALIDATION_PREFIX + "disabled";
     private final static String VALIDATION_BUILTIN = VALIDATION_PREFIX + "builtin";
     private final static String VALIDATION_USER = VALIDATION_PREFIX + "user";
@@ -90,7 +95,159 @@ public class ValidationMenu extends JMenu implements ActionListener{
             disabled.setSelected(true);
             setValidationEnabled(false);
         }
+        
+        List<JMenu> submenus = new Vector<JMenu>(); 
+        menu = engineSelection("Relax NG", XMLConstants.RELAXNG_NS_URI);
+        if(menu != null){
+            submenus.add(menu);
+        }
+        menu = engineSelection("W3C Schema", XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        if(menu != null){
+            submenus.add(menu);
+        }
+        switch (submenus.size()){
+            case 0: 
+                break;
+            case 1:
+                menu = submenus.get(0);
+                menu.setText("Engine");
+                addSeparator();
+                add(menu);
+                break;
+            default:
+                menu = new JMenu("Engines");
+                for(JMenu submenu : submenus){
+                    menu.add(submenu);
+                }
+                addSeparator();
+                add(menu);
+        }
+        
     }
+    
+    private JMenu engineSelection(String name, final String schemaLanguage){
+        String prefVal = PREF.get(SF + ":" + schemaLanguage, null);
+        List<JMenuItem> items = new Vector<JMenuItem>();
+        ButtonGroup bg = new ButtonGroup();
+        final ActionListener factorySwitcher = new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                setPreferredEngine(schemaLanguage, e.getActionCommand());
+            }
+        };
+        for(String provider : providers(schemaLanguage)){
+            if(provider.equals("org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl")){
+                /* Skip generic RELAXNGSchemaFactory */
+                continue;
+            }
+            String displayName = provider;
+            int lastdot = provider.lastIndexOf('.');
+            if(lastdot > 0 && ++lastdot < provider.length()){
+                displayName = provider.substring(lastdot);
+            }
+            displayName = displayName.replaceAll("SchemaFactoryImpl","");
+            JMenuItem jmi = new JRadioButtonMenuItem(displayName);
+            jmi.setActionCommand(provider);
+            jmi.addActionListener(factorySwitcher);
+            bg.add(jmi);
+            items.add(jmi);
+            if(provider.equals(prefVal)){
+                jmi.doClick();
+            }
+        }
+        
+        JMenu result = null;
+        if(items.size() > 1){
+            result = new JMenu(name);
+            for(JMenuItem item : items){
+                result.add(item);
+            }
+            add(result);
+        }
+        return result;
+    }
+    
+    
+    // K.K: the following providers method is copied from Apache Batik project.
+    
+    /*****************************************************************************
+     * Copyright (C) The Apache Software Foundation. All rights reserved.        *
+     * ------------------------------------------------------------------------- *
+     * This software is published under the terms of the Apache Software License *
+     * version 1.1, a copy of which has been included with this distribution in  *
+     * the LICENSE file.                                                         *
+     *****************************************************************************/
+    /*
+     * version  Service.java,v 1.1 2001/04/27 19:55:44 deweese Exp
+     */
+    private Map<String, List<String>> providerMap = new HashMap<String, List<String>>(); 
+    private synchronized Iterable<String> providers(String schemaLanguage) {
+        String serviceFile = "META-INF/services/"+SF;
+
+        // System.out.println("File: " + serviceFile);
+
+        List<String> v = providerMap.get(schemaLanguage);
+        if (v != null)
+            return v;
+
+        v = new Vector<String>();
+        providerMap.put(schemaLanguage, v);
+
+        ClassLoader cl = xmlconv.getClassLoader();
+        Enumeration<URL> e;
+        try {
+            e = cl.getResources(serviceFile);
+        } catch (IOException ioe) {
+            return v;
+        }
+
+        while (e.hasMoreElements()) {
+            try {
+                URL u = e.nextElement();
+//                System.out.println("URL: " + u);
+
+                InputStream    is = u.openStream();
+                Reader         r  = new InputStreamReader(is, "UTF-8");
+                BufferedReader br = new BufferedReader(r);
+
+                String line = br.readLine();
+                while (line != null) {
+                    try {
+                        // First strip any comment...
+                        int idx = line.indexOf('#');
+                        if (idx != -1)
+                            line = line.substring(0, idx);
+
+                        // Trim whitespace.
+                        line = line.trim();
+
+                        // If nothing left then loop around...
+                        if (line.length() == 0) {
+                            line = br.readLine();
+                            continue;
+                        }
+                        // System.out.println("Line: " + line);
+
+                        // Try and load the class 
+                        SchemaFactory sf = (SchemaFactory) Class.forName(line, true, cl).newInstance();
+                        // stick it into our vector...
+                        if(sf.isSchemaLanguageSupported(schemaLanguage)){
+                            if(!v.contains(line)){
+                                v.add(line);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        // Just try the next line
+                        ex.printStackTrace();
+                    }
+                    line = br.readLine();
+                }
+            } catch (Exception ex) {
+                // Just try the next file...
+            }
+        }
+        return v;
+    }
+
     
     public void actionPerformed(ActionEvent e){
         Object c = e.getSource();
@@ -147,6 +304,49 @@ public class ValidationMenu extends JMenu implements ActionListener{
             }
         }
         setValidationEnabled(false);
+    }
+    
+    public void setPreferredEngine(String schemaLanguage, String schemaFactoryClass){
+        boolean ok = true;
+        String systemProperty = SF + ":" +schemaLanguage;
+        String current = System.getProperty(systemProperty);
+        if(!schemaFactoryClass.equals(current)){
+            /* test if the schema factory works */
+            /*
+            try{
+                SchemaFactory sf = (SchemaFacotry) Class.forName(schemaFactoryClass, true, xmlconv.getClassLoader()).newInstance();
+                if(!sf.isSchemaLanguageSupported(schemaLanguage)){
+                    System.err.println(System.err.println(schemaFactoryClass + " does not support " + schemaLanguage));
+                }
+                ok = false;
+            } catch (Exception ex){
+                System.err.println("Error loading class " + schemaFactoryClass);
+                System.err.println(ex);
+                ok = false;
+            }
+            */
+            
+            if(ok){
+                /* set the system property */
+                System.setProperty(systemProperty, schemaFactoryClass);
+                
+                /* set the Preferences */
+                PREF.put(systemProperty, schemaFactoryClass);
+                
+                /* force recompilation of the schema by xmlconv */
+                if(!disabled.isSelected()){
+                    setValidationEnabled(true);
+                }
+            } else {
+                System.err.flush();
+            }
+        }
+        return;
+    }
+    
+    public String getPreferredEngine(String schemaLanguage){
+        String systemProperty = SF + ":" +schemaLanguage;
+        return(System.getProperty(systemProperty));
     }
     
     public boolean setValidationEnabled(boolean b){

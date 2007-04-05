@@ -104,6 +104,19 @@ public class XMLConverter extends DefaultClassLoaderProvider{
         System.setProperty("javax.xml.transform.TransformerFactory",
                             TRANSFORMER_FACTORY_IMPLEMENTATION);
         tf = tryToGetTransformerFactory();
+        
+        /* Restore preferred validation engine */
+        for (String schemaLanguage : 
+            new String[]{
+                XMLConstants.RELAXNG_NS_URI, 
+                XMLConstants.W3C_XML_SCHEMA_NS_URI
+            }){ 
+            String key = "javax.xml.validation.SchemaFactory:" + schemaLanguage;
+            String prefVal = Preferences.userNodeForPackage(getClass()).node("schema").get(key, null);
+            if(prefVal != null){
+                System.setProperty(key, prefVal);
+            }
+        }
     }
     
     public void setXMLEncoding(Charset chars){
@@ -154,13 +167,16 @@ public class XMLConverter extends DefaultClassLoaderProvider{
         } catch(IllegalArgumentException ex){
             if(schemaLanguage.equals(XMLConstants.RELAXNG_NS_URI)){
                 try{
-                    sf = new org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl();
+                    sf = (SchemaFactory) Class.forName("org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl").newInstance();
                 } catch (Exception ex2){
+                    ex2.printStackTrace();
                     throw new IllegalArgumentException("No service provider found for schema language " + schemaLanguage);
                 }
             } else {
                 throw new IllegalArgumentException("No service provider found for schema language " + schemaLanguage);
             }
+        } catch (Exception ex){
+            ex.printStackTrace();
         }
         return sf;
     }
