@@ -62,8 +62,8 @@ public class SchemaSelection{
                 "<html><pre>&lt;authors&gt;<br>" +
                 "  &lt;author&gt;Vidar B. Gundersen&lt;/author&gt;<br>" +
                 "  &lt;author&gt;<br>" +
-                "    &lt;firstname&gt;Moritz&lt;/firstname&gt;<br>" +
-                "    &lt;lastname&gt;Ringler&lt;lastname&gt;<br>" +
+                "    &lt;givennames&gt;Moritz&lt;/givennames&gt;<br>" +
+                "    &lt;surname&gt;Ringler&lt;surname&gt;<br>" +
                 "  &lt;/author&gt;<br>" +
                 "&lt;authors&gt;</pre></html>"),
         inline("Single element", 
