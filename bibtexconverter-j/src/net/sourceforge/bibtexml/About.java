@@ -98,10 +98,13 @@ final class About extends JDialog implements ActionListener {
 
             "&copy; 2006-2007, Moritz Ringler<br><br>" +
             "<b>BibTeX-Parser:</b><br>" +
-            "<u>texlipse.sf.net</u><br>&copy; 2004-2005, Oskar Ojala<br><br>" +
+            "<u>texlipse.sf.net</u><br>&copy; Oskar Ojala 2004-2005<br><br>" +
             "<b>RELAX NG validator:</b><br>" +
-            "<u>jing + jarv + jaxp</u><br>&copy; 2001-2007, Thai Open Source, " +
-            "SF ISO-RELAX Project, K. Kawaguchi, M. Ringler<br><br>" +
+            "<u>jarv</u><br>&copy; SF ISO-RELAX Project 2001-2002<br>" +
+            "<u>jarv-jaxp bridge</u><br>&copy; K. Kawaguchi 2006, M.Ringler 2007<br>" +
+            "<u>jing</u><br>&copy; Thai Open Source 2001-2003, M. Ringler 2007<br>" +
+            "<u>msv</u><br>&copy; Sun Microsystems, Inc. 2001-2007<br>" + 
+            "<br>" +
             /*"<u>bibtexml.sf.net</u><br>bibtex2xml.py: &copy; Vidar Bronken Gundersen, Sara Sprenkle<br>" +
             "Java port: &copy; Moritz Ringler, 2006<br><br>" +*/
             "<b>BibTeXML schemas</b><br>" +
