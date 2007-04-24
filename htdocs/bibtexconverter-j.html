@@ -9,7 +9,7 @@
       content="BibTeX XML, BibTeX DTD, XML markup for BibTeX,
                bibliography, bibliographic data,
                convert BibTeX in LaTeX syntax to XML,
-	       XML application kit for BibTeX,
+           XML application kit for BibTeX,
                XML, SGML, BibTeX, LaTeX"/>
 <meta name="description"
       content="Bibliography data in XML:
@@ -30,16 +30,16 @@
   <p>
     <a title="About the project: Scope"
        id="current"
-       href="index.html">BibTeXML</a> 
+       href="index.html">BibTeXML</a>
     <a title="Documentation: package contents and manual"
-       href="details.html">Details</a> 
+       href="details.html">Details</a>
     <a title="News: recent changes and related links"
-       href="news.html">News</a> 
+       href="news.html">News</a>
     <a title="Visit the sourceforge.net project page"
-       href="http://sourceforge.net/projects/bibtexml/">>Project page</a> 
+       href="http://sourceforge.net/projects/bibtexml/">>Project page</a>
     <a title="Get the distribution from sourceforge.net"
        href="http://sourceforge.net/project/showfiles.php?group_id=56234"
-        >>Download</a> 
+        >>Download</a>
   </p>
 </div>
 
@@ -48,24 +48,18 @@
 <h1>BibTeX converter: A Java GUI tool for BibTeX conversion</h1>
 
 <p>
-BibTeX converter is an all-Java GUI application
-that converts BibTeX to BibXML and onwards.
+BibTeX converter is an all-Java GUI application that converts BibTeX to
+BibTeXML and onwards.
 </p>
 <p>
-For the first step the user can choose between a java port of the
-bibtexml.sf.net Python BibTeX parser and the sablecc-generated
-texlipse parser by Oskar Ojala. Both give good results on valid input,
-but the texlipse parser is faster and produces useful error messages.
+The onward-conversions are implemented with XSLT&nbsp;2.0. There are several
+built-in stylesheets (HTML, RIS, ...), and user-made stylesheets can easily be
+loaded into the application (File menu).
 </p>
 <p>
-The second step is done via XSLT. There are three built-in XSLT&nbsp;2.0 stylesheets
-(two HTML and one RIS). Custom user-stylesheets can easily be loaded into the
-application (File menu).
-<!--
-Unfortunately, I used a rather early BibXML DTD, so that one might need
-to modify your stylesheets a bit to make them run within this app (if I
-find the time I will maybe alter the program to use the latest BibTeXML
-schema).-->
+BibTeXConverter can optionally validate the BibTeXML that you supply
+or that it creates from your BibTeX input. Together with the BibTeXML-to-BibTeX
+stylesheet this can help you to find and fix errors in your reference database.
 </p>
 <p>
 BibTeXConverter needs Java&nbsp;1.5 or higher und is published
@@ -77,13 +71,6 @@ You can
 BibTeXConverter source and binaries from the BibTeXML SF.net project site.
 Or <a href="jws/bibtexconverter.jnlp">run BibTexConverter</a> instantly with
 Java Web Start.
-<!--
-You can download the BibTeX converter source code with 
-<a href="http://subversion.tigris.org/">subversion</a> from
-<pre>https://bibtexml.svn.sf.net/svnroot/bibtexml/trunk/bibtexconverter-j</pre>
-An <a href="http://ant.apache.org">ant</a> script is supplied for easy
-compilation.
--->
 </p>
 
 <table>
