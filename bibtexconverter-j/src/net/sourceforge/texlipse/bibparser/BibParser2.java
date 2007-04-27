@@ -107,12 +107,17 @@ public class BibParser2 {
         return er.getEntries();
     }
 
-    public void printXML(SaxXMLWriter writer){
+    public void printXML(SaxXMLWriter writer) throws IOException{
         BibXMLWriter xmlmaker = new BibXMLWriter(writer);
         ast.apply(xmlmaker);
         if(xmlmaker.checkError()){
-            System.err.println("Error writing xml file");
-            xmlmaker.getError().printStackTrace();
+            IOException ex = new IOException("Error writing xml file.");
+            ex.initCause(xmlmaker.getError());
+            throw ex;
+        } else {
+            if(xmlmaker.getEntryCount() == 0){
+                throw new IOException("No BibTeX entries found.");
+            }
         }
     }
 

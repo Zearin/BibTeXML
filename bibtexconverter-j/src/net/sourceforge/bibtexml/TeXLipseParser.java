@@ -67,7 +67,7 @@ public class TeXLipseParser extends AbstractBibTeXParser{
         }
         return new String[0];
     }
-    
+
 
     protected void writeBibXML(String[] data, OutputStream out ) throws IOException{
         if(!hasErrors){

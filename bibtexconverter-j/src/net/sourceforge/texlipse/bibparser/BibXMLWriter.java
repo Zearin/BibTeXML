@@ -45,8 +45,9 @@ public final class BibXMLWriter extends DepthFirstAdapter {
     protected final static Pattern AUTHOR_REX = Pattern.compile("\\s+and\\s+");
     protected final static Pattern KEYWORDS_REX = Pattern.compile("\\s*[,;]\\s*");
     protected final static Pattern WHITESPACE_REX = Pattern.compile("\\s+");
-    private String key = "";
-    private String entryType;
+    private transient String key = "";
+    private transient String entryType;
+    private transient int entryCount = 0;
 
     private static String replacements(String txt){
         String text = txt.replaceAll("\\s+", " ");
@@ -171,6 +172,7 @@ public final class BibXMLWriter extends DepthFirstAdapter {
     public void inAEntrybraceEntry(AEntrybraceEntry node) {
         attribute("id", node.getIdentifier().getText());
         startElement("entry");
+        entryCount++;
     }
 
     /**
@@ -263,5 +265,9 @@ public final class BibXMLWriter extends DepthFirstAdapter {
 
     public void outAIdValOrSid(AIdValOrSid node) {
         shortTextNode(node.getIdentifier().getText());
+    }
+
+    public int getEntryCount(){
+        return entryCount;
     }
 }
