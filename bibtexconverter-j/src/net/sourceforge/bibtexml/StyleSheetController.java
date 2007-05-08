@@ -74,26 +74,26 @@ public class StyleSheetController {
     private final String ext;
     private final URL style;
     private final boolean crlf;
-    
+
     private final static String P_NODE_PARAM = "param";
     private final static String P_KEY_STYLE = "stylesheet";
     private final static String P_KEY_NEWLINE = "newline";
     private final static String P_KEY_SUFFIX = "suffix";
     private final static String P_KEY_ENCODING = "encoding";
     private final static String P_KEY_ACTIVE = "active";
-    
+
     private final JPanel panel = new JPanel(new BorderLayout());
     private final Container custom = new JPanel(new SpringLayout());
     private JButton expcoll = null;
     private JDialog dialog;
     private boolean active = true;
     static final ImageIcon config = new ImageIcon(StyleSheetController.class.getResource("icon/configure.png"));
-    
+
     private String enc;
     protected Map<String, Object> params = null;
     private Transformer t;
     private final static String PARAM_PREFIX = "{http://www.w3.org/1999/XSL/Transform}param=";
-    
+
     private final ActionListener updater = new ActionListener(){
         public void actionPerformed(ActionEvent e){
             String command = e.getActionCommand();
@@ -104,7 +104,7 @@ public class StyleSheetController {
                 if(source instanceof JFormattedTextField){
                     val = ((JFormattedTextField) source).getValue();
                 } else if (source instanceof JCheckBox){
-                    val = Boolean.valueOf(((JCheckBox) source).isSelected()); 
+                    val = Boolean.valueOf(((JCheckBox) source).isSelected());
                 } else if (source instanceof JTextField){
                     val = ((JTextField) source).getText();
                 }
@@ -117,21 +117,21 @@ public class StyleSheetController {
                 String cs = (String) cb.getSelectedItem();
                 if(Charset.isSupported(cs)){
                     enc = cs;
-                    pref.put(P_KEY_ENCODING,cs); 
+                    pref.put(P_KEY_ENCODING,cs);
                 } else {
                     cb.setSelectedItem(enc);
                 }
             }
         }
     };
-    
+
     private final FocusListener fireActionOnFocusLost = new FocusAdapter(){
         public void focusLost(FocusEvent e){
             JTextField tf = (JTextField) e.getSource();
             tf.postActionEvent();
         }
     };
-    
+
     private StyleSheetController(XMLConverter conv, String name)
              throws SAXException, IOException
     {
@@ -152,8 +152,8 @@ public class StyleSheetController {
         }
         init(customParams,  pref.get(P_KEY_ENCODING, null) != null);
     }
-    
-    public StyleSheetController(XMLConverter conv, 
+
+    public StyleSheetController(XMLConverter conv,
             String outputname,
             String outputSuffix,
             URL stylesheet,
@@ -173,9 +173,9 @@ public class StyleSheetController {
         pref.putBoolean(P_KEY_NEWLINE, crlf);
         init(customParams, customEncoding);
     }
-    
+
     /** Doesn't throw any exceptions, prints errors to stderr. **/
-    public static StyleSheetController newInstance(XMLConverter conv, 
+    public static StyleSheetController newInstance(XMLConverter conv,
             String outputname,
             String outputSuffix,
             URL stylesheet,
@@ -195,7 +195,7 @@ public class StyleSheetController {
         }
         return ssc;
     }
-    
+
     private synchronized void setConfigVisible(boolean b){
         if(dialog != null && dialog.isVisible()){
             if(b){
@@ -208,7 +208,7 @@ public class StyleSheetController {
             if(dialog == null){
                 dialog = (w instanceof Dialog)
                 ? new JDialog((Dialog) w, name, false)
-                : new JDialog((Frame) 
+                : new JDialog((Frame)
                 ((w instanceof Frame)? w : null), name, false);
                 dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
                 dialog.setContentPane(custom);
@@ -218,7 +218,7 @@ public class StyleSheetController {
             dialog.setVisible(true);
         }
     }
-    
+
     private static boolean snapTo(Rectangle screen, Rectangle w,
             Rectangle target, Collection<Rectangle> others, int where){
             Point p = target.getLocation();
@@ -239,7 +239,7 @@ public class StyleSheetController {
         }
         return false;
     }
-    
+
     private static boolean intersects(Rectangle w, Collection<Rectangle> others){
         for(Rectangle r : others){
             if(w.intersects(r)){
@@ -248,7 +248,7 @@ public class StyleSheetController {
         }
         return false;
     }
-    
+
     static boolean placeWindow(Window w, Window owner){
         if(owner == null){
             return false;
@@ -299,19 +299,19 @@ public class StyleSheetController {
         }
         return placed;
     }
-    
+
     public String toString(){
         return getName();
     }
-    
+
     public String getName(){
         return name;
     }
-    
+
     public String getSuffix(){
         return ext;
     }
-    
+
     private void init(boolean customParams, boolean customEncoding) throws SAXException, IOException{
         InputStream in = null;
         try{
@@ -359,7 +359,7 @@ public class StyleSheetController {
                         setConfigVisible(false);
                     }
                 }
-                pref.putBoolean(P_KEY_ACTIVE, active); 
+                pref.putBoolean(P_KEY_ACTIVE, active);
             }
         });
         if(customizable){
@@ -455,7 +455,7 @@ public class StyleSheetController {
             expcoll.setEnabled(active);
         }
     }
-    
+
     private static Object getSavedParam(Preferences p, String key, Object o){
         Object result = o;
         Class c = o.getClass();
@@ -473,12 +473,12 @@ public class StyleSheetController {
         p.put(key, result.toString());
         return result;
     }
-    
+
     public static StyleSheetController load(XMLConverter cv, String name)  throws SAXException, IOException{
         StyleSheetController cssc = new StyleSheetController(cv, name);
         return cssc;
     }
-    
+
     public static StyleSheetController[] load(XMLConverter cv, String[] excludeNames)
             throws BackingStoreException{
         Collection<StyleSheetController> result = new Vector<StyleSheetController>();
@@ -493,6 +493,7 @@ public class StyleSheetController {
                     cssc = load(cv, name);
                 } catch (Exception ex){
                     cv.handleException("Cannot load output format " + name, ex);
+                    PREF.node(name).removeNode();
                     continue;
                 }
                 result.add(cssc);
@@ -500,24 +501,24 @@ public class StyleSheetController {
         }
         return result.toArray(new StyleSheetController[result.size()]);
     }
-    
+
     public static StyleSheetController[] load(XMLConverter cv)
             throws BackingStoreException{
         return load(cv, (String[]) null);
     }
-    
+
     public void destroyPrefNode() throws BackingStoreException{
         pref.removeNode();
     }
-    
+
     private static class FormattedTextFieldVerifier extends InputVerifier {
         public FormattedTextFieldVerifier(){
         }
-        
+
         public boolean verify(JComponent input) {
             if (input instanceof JFormattedTextField) {
                 JFormattedTextField ftf = (JFormattedTextField)input;
-                JFormattedTextField.AbstractFormatter formatter = 
+                JFormattedTextField.AbstractFormatter formatter =
                 ftf.getFormatter();
                 if (formatter != null) {
                     String text = ftf.getText();
@@ -535,28 +536,28 @@ public class StyleSheetController {
             return verify(input);
         }
     }
-    
+
     public boolean isActive(){
         return active;
     }
-    
+
     public void transform(File xml,
                            File dir,
                            String basename) throws TransformerException, IOException{
-        File xslout = new File(dir, basename + ext);               
+        File xslout = new File(dir, basename + ext);
         System.out.printf("Creating %s in %s\n", name, xslout.toString());
         System.out.flush();
         transformImpl(xml, xslout);
     }
-    
+
     protected void transformImpl(File xml, File xslout) throws TransformerException, IOException{
         conv.transform(t, xml, xslout, params, enc, crlf);
     }
-    
+
     public void setErrorHandler(ErrorListener handler){
         t.setErrorListener(handler);
     }
-    
+
     public static void main(final String[] argv){
         SwingUtilities.invokeLater(new Runnable(){
             public void run(){
@@ -564,7 +565,7 @@ public class StyleSheetController {
                     BibTeXConverterController btcc =
                     new BibTeXConverterController();
                     btcc.setVisible(true);
-                    btcc.addStyle(new StyleSheetController(btcc.convert, 
+                    btcc.addStyle(new StyleSheetController(btcc.convert,
                     "test", ".test", new File(argv[0]).toURI().toURL(), true, true, true));
                     btcc.addStyle(new StyleSheetController(btcc.convert,
                     "RIS (Reference Manager/Endnote)", ".ris",
@@ -576,7 +577,7 @@ public class StyleSheetController {
             }
         });
     }
-    
+
     public synchronized void dispose(){
         if(dialog != null){
             dialog.setVisible(false);
@@ -584,11 +585,11 @@ public class StyleSheetController {
         }
         dialog = null;
     }
-    
+
     public Component getUI(){
         return panel;
     }
-    
+
     public boolean equals(Object o){
         if(!(o instanceof StyleSheetController)){
             return false;
@@ -600,7 +601,7 @@ public class StyleSheetController {
             (StyleSheetController) o;
         return name.equals(other.name);
     }
-    
+
     public int hashCode(){
         int result = 43;
         result = 37 * 43 + name.hashCode();
