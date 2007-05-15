@@ -349,7 +349,7 @@ public class LookAndFeelMenu extends JMenu {
                 return;
         }
         if(setLookAndFeel(lafClass)) {
-             
+
             /*
             *  if we did indeed switch update GUI and prefs
             */
@@ -611,14 +611,22 @@ public class LookAndFeelMenu extends JMenu {
                             idir,
                             iprops);
                     LaFInstaller.LaFPackage laf = lafi.queryLaF();
-                    if (laf != null && lafi.installLaF(laf, clp)) {
-                        JMenuItem item = addLookAndFeel(laf);
-                        if(clp == null){
-                            item.setEnabled(false);
+                    if (laf == null){
+                        System.err.println("No Look and Feel found.");
+                    } else {
+                        System.err.print(laf);
+                        if(lafi.installLaF(laf, clp)) {
+                            JMenuItem item = addLookAndFeel(laf);
+                            if(clp == null){
+                                item.setEnabled(false);
+                            } else {
+                                cl = clp.getClassLoader();
+                                item.addActionListener(lnfListener);
+                                item.doClick();
+                            }
+                            System.err.println(" installed");
                         } else {
-                            cl = clp.getClassLoader();
-                            item.addActionListener(lnfListener);
-                            item.doClick();
+                            System.err.println(" not installed.");
                         }
                     }
                 } catch (Exception ex) {
@@ -627,6 +635,8 @@ public class LookAndFeelMenu extends JMenu {
             } else {
                 LaFInstaller.warnCannotInstall(parent, iprops);
             }
+            System.err.flush();
+            System.out.flush();
         }
     }
 
