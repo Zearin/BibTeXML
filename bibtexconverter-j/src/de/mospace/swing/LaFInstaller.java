@@ -264,7 +264,7 @@ public final class LaFInstaller extends ExtensionInstaller {
         LaFPackage[] lafp = null;
         if (ppath.endsWith(".zip")) {
             lafp = LaFPackage.fromZip(in);
-            //System.out.println(Arrays.asList(lafp));
+            //System.err.println(Arrays.asList(lafp));
         } else if (ppath.endsWith(".jar")) {
             lafp = LaFPackage.fromJar(in);
         } else {
@@ -281,6 +281,7 @@ public final class LaFInstaller extends ExtensionInstaller {
         }
         } catch (Exception ioerror){
             System.err.println(ioerror.getMessage());
+            System.err.flush();
             result = null;
         }
         return result;
