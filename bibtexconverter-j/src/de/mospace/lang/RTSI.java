@@ -438,14 +438,14 @@ public class RTSI {
             "testClass",
             "Candidate class: " + classname +
             "; Class Definition not found!");
-            System.err.println(ncdfe);
+            //System.err.println(ncdfe);
         } catch (ClassNotFoundException cnfex) {
             logger.logp(Level.FINE,
             RTSI.class.getName(),
             "testClass",
             "Candidate class: " + classname +
             "; Class not found!");
-            System.err.println(cnfex);
+            //System.err.println(cnfex);
         } catch (InstantiationException iex) {
             // We try to instanciate an interface
             // or an object that does not have a
@@ -463,6 +463,13 @@ public class RTSI {
             "testClass",
             "Candidate class: " + classname +
             "; Class is not accessible!");
+        } catch(Throwable ex){
+            // An unexpected error
+            logger.logp(Level.FINE,
+            RTSI.class.getName(),
+            "testClass",
+            "Candidate class: " + classname +
+            "; Unexpected exception " + ex.toString());
         }
         return result;
     }
