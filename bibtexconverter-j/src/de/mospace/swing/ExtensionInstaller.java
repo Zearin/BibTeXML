@@ -292,7 +292,7 @@ public class ExtensionInstaller {
         dialogcp.add(messageArea);
         PathInput pinz = new PathInput("", selectionmode);
         dialogcp.add(pinz);
-        JOptionPane pane = new JOptionPane(dialogcp, 
+        JOptionPane pane = new JOptionPane(dialogcp,
             JOptionPane.QUESTION_MESSAGE,
             JOptionPane.OK_CANCEL_OPTION);
         JDialog d = pane.createDialog(parent, title);
@@ -483,6 +483,7 @@ public class ExtensionInstaller {
              */
             File extdir = getTargetDirectory();
             if (extdir == null) {
+                warn("No valid target directory.", "Installation failed");
                 return false;
             }
             if(!extdir.exists()){
@@ -511,6 +512,7 @@ public class ExtensionInstaller {
                     }
                     File f = checkWritable(myOut);
                     if (f == null) {
+                        warn("Cannot write to file " + myOut, "Installation failed");
                         return false;
                     } else if (!f.equals(myOut)) {
                         repeat = true;
@@ -542,11 +544,8 @@ public class ExtensionInstaller {
                     clp.registerLibrary(myOut);
                 }
             }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-            return false;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            warn(ex.toString(), "Installation failed");
             return false;
         }
         return true;
