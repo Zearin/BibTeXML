@@ -3,9 +3,9 @@
 <!--
 ###############################################################################
 #
-# bibtexconverter.jnlp	
+# bibtexconverter.jnlp
 #
-# JNLP File for BibTeX Converter, based on the JNLP file for 
+# JNLP File for BibTeX Converter, based on the JNLP file for
 # JabRef (http://jabref.sourceforge.net)
 #
 ###############################################################################
@@ -16,22 +16,22 @@
       codebase="http://bibtexml.sourceforge.net/jws/"
       href="bibtexconverter.jnlp">
 
-   <information> 
-      <title>BibTeX Converter</title> 
+   <information>
+      <title>BibTeX Converter</title>
       <vendor>BibTeXML Project</vendor>
       <homepage href="http://bibtexml.sourceforge.net"/>
       <description>BibTeX Converter is an all-Java GUI application that converts BibTeX to BibXML and onwards.</description>
       <description kind="short">BibTeX Converter converts BibTeX to BibXML and onwards.</description>
       <icon href="bibxml-duke.png" width="65" height="76" kind="default"/>
-      <offline-allowed/> 
-   </information> 
+      <offline-allowed/>
+   </information>
   <security>
       <all-permissions/>
   </security>
    <resources>
       <j2se version="1.5+" href="http://java.sun.com/products/autodl/j2se"/>
       <j2se version="1.5+"/>
-      <jar href="bibtexconverter-0.1.jar" main="true" download="eager"/>
+      <jar href="bibtexconverter-0.2.jar" main="true" download="eager"/>
    </resources>
    <application-desc/>
-</jnlp> 
+</jnlp>
