@@ -2,7 +2,7 @@ package de.mospace.xml;
 
 import java.io.*;
 
-/** Useful stuff for xml handling. From 
+/** Useful stuff for xml handling. From
  * derived from org.apache.batik.xml.XMLUtilities
  *
  * @author <a href="mailto:stephane@hillion.org">Stephane Hillion</a>
@@ -15,10 +15,10 @@ public class XMLUtils{
         0,134176768,-2013265922,134217726,
         };
 
-    
+
     private XMLUtils(){
     }
-    
+
     /**
      * Tests whether the given character is a valid space.
      */
@@ -29,7 +29,7 @@ public class XMLUtils{
                  (1L << 0x000D) |
                  (1L << 0x0020)) >> c) & 1L) != 0);
     }
-    
+
     /**
      * Tests whether the given character is a valid XML version character.
      */
@@ -37,19 +37,18 @@ public class XMLUtils{
         return (c < 128) &&
             (VERSION_CHARACTER[c / 32] & (1 << (c % 32))) != 0;
     }
-    
+
     /**
      * Reads an XML declaration to get the encoding declaration value.
-     * @param r a reader positioned just after '&lt;?xm'.
      * @param r a reader positioned at the start of an xml document
      * @param e the encoding to return by default or on error.
      */
     public static String getXMLDeclarationEncoding(Reader r, String e)
         throws IOException {
         int c;
-        
+
         while (isXMLSpace((char)(c = r.read())));
-        
+
         if (c != '<') {
             return e;
         }
@@ -71,7 +70,7 @@ public class XMLUtils{
         }
 
         while (isXMLSpace((char)(c = r.read())));
-            
+
         if (c != 'v') {
             return e;
         }
@@ -93,7 +92,7 @@ public class XMLUtils{
         if ((c = r.read()) != 'n') {
             return e;
         }
-             
+
         c = r.read();
         while (isXMLSpace((char)c)) {
             c = r.read();
@@ -104,7 +103,7 @@ public class XMLUtils{
         }
 
         while (isXMLSpace((char)(c = r.read())));
-            
+
         if (c != '"' && c != '\'') {
             return e;
         }
@@ -160,7 +159,7 @@ public class XMLUtils{
         }
 
         while (isXMLSpace((char)(c = r.read())));
-            
+
         if (c != '"' && c != '\'') {
             return e;
         }
