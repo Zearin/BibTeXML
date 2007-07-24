@@ -2,7 +2,7 @@ package de.mospace.lang;
 
 /* Mp3dings - manage mp3 meta-information
  * Copyright (C) 2003 Moritz Ringler
- * $Id: Array.java,v 1.14 2007/02/18 14:15:46 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@ import java.util.Arrays;
 /**
  * Array utilities.
  * @author Moritz Ringler
- * @version $Revision: 1.14 $ ($Date: 2007/02/18 14:15:46 $)
+ * @version $Revision$ ($Date$)
  */
 public class Array{
     private Array(){

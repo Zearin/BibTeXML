@@ -2,7 +2,7 @@ package de.mospace.lang;
 
 /* Mp3dings - manage mp3 meta-information
  * Copyright (C) 2003 Moritz Ringler
- * $Id: FullTextString.java,v 1.13 2007/01/30 15:58:24 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@ package de.mospace.lang;
  * a wrapper around a String (needed for JTable where cell renderer and cell
  * editor are determined from the column class.)
  * @author Moritz Ringler
- * @version $Revision: 1.13 $ ($Date: 2007/01/30 15:58:24 $)
+ * @version $Revision$ ($Date$)
  **/
 public final class FullTextString implements Serializable{
     private final String me;

@@ -2,7 +2,7 @@ package de.mospace.lang;
 
 /* Mp3dings - manage mp3 meta-information
  * Copyright (C) 2003 Moritz Ringler
- * $Id: LogSupport.java,v 1.3 2007/02/18 14:15:47 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
