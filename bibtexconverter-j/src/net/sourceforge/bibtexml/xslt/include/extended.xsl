@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
 <xsl:stylesheet version="2.0"
-		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-		xmlns:bibtex="http://bibtexml.sf.net/">
+        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:bibtex="http://bibtexml.sf.net/">
 
   <!--
       The following adds support for BibTeXML extended schema
@@ -34,12 +34,12 @@
   </xsl:template>
 
   <xsl:template match="bibtex:title/bibtex:title|
-		       bibtex:chapter/bibtex:title">
+               bibtex:chapter/bibtex:title">
     <xsl:apply-templates/>
   </xsl:template>
 
   <xsl:template match="bibtex:title/bibtex:subtitle|
-		       bibtex:chapter/bibtex:subtitle">
+               bibtex:chapter/bibtex:subtitle">
     <xsl:text>: </xsl:text>
     <xsl:apply-templates/>
   </xsl:template>
@@ -58,10 +58,10 @@
 
 
   <xsl:template name="bibtexml-latex-warning">
-    <xsl:text 
+    <xsl:text
     disable-output-escaping="yes"><![CDATA[This file was created with JabRef % it was not, but this makes jabref read the encoding
-Encoding: ]]></xsl:text><xsl:value-of 
-select="$bibtexml.sf.net.encoding"/><xsl:text 
+Encoding: ]]></xsl:text><xsl:value-of
+select="$bibtexml.sf.net.encoding"/><xsl:text
 disable-output-escaping="yes"><![CDATA[
 %%% BibTeX-file {
 %%%    author	 = "",
@@ -75,7 +75,7 @@ disable-output-escaping="yes"><![CDATA[",
 %%%    email     = "",
 %%%    codetable = "]]></xsl:text><xsl:value-of
 select="$bibtexml.sf.net.encoding"/><xsl:text
-disable-output-escaping="yes"><![CDATA[,
+disable-output-escaping="yes"><![CDATA[",
 %%%    supported = "yes|no",
 %%%    docstring = "",
 %%%    keywords  = "",
