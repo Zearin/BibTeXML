@@ -1,5 +1,5 @@
 /*
-*  $Id: PopupIcon.java,v 1.4 2007/02/18 14:20:23 ringler Exp $
+*  $Id$
 *  This class is part of the de.mospace.swing library.
 *  Copyright (C) 2005-2006 Moritz Ringler
 *
@@ -30,7 +30,7 @@ import javax.swing.Icon;
 /** A Java icon with a black triangle pointing downwards, similar to the
 * combo box control for displaying the combo box selection.
 * @author Moritz Ringler
-* @version $Revision: 1.4 $ ($Date: 2007/02/18 14:20:23 $)
+* @version $Revision$ ($Date$)
 */
 public class PopupIcon implements Icon {
     /** The default size of this icon. */

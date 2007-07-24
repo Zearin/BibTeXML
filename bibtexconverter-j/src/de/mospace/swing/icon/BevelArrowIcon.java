@@ -10,7 +10,7 @@ import javax.swing.UIManager;
 * Original package: jp.gr.java_conf.tame.swing.icon
 * This class is in the public domain.
 *
-* @version $Revision: 1.2 $ ($Date: 2007/02/18 14:20:23 $)
+* @version $Revision$ ($Date$)
 */
 public class BevelArrowIcon implements Icon {
     /** Constant for arrows pointing up. */
