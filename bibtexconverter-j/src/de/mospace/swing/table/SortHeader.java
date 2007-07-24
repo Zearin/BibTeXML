@@ -63,8 +63,8 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
     private final Action sortAction;
     private final Action randomizeAction;
     private transient MouseEvent trigger;
-    private JButton noneButton;
-    private ArrowButton arrowButton;
+    private final JButton noneButton;
+    private final ArrowButton arrowButton;
 
     private static class ArrowButton extends JButton{
         BevelArrowIcon icon, pressedIcon;
@@ -86,12 +86,12 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
         }
     }
 
-    /** Constructs a new SortHeader associated with the specified JTable. 
+    /** Constructs a new SortHeader associated with the specified JTable.
     * @throws IllegalArgumentException if the TableModel of the table
     * does not implement {@link SortableTableModel}.
     */
     public SortHeader(JTable table) {
-        setTable(table);
+        setTableImpl(table);
         MouseListener ml = new MouseListener();
         addMouseListener(ml);
 
@@ -128,6 +128,10 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
     * does not implement {@link SortableTableModel}.
     */
     public void setTable(JTable table){
+        setTableImpl(table);
+    }
+
+    private final void setTableImpl(JTable table){
         if (!(table.getModel() instanceof SortableTableModel)){
             throw new IllegalArgumentException("Table is not sortable!"+
                 "Its TableModel does not implement the" +
