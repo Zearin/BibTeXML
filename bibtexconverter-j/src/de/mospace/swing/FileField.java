@@ -42,7 +42,7 @@ import javax.swing.JPanel;
 * @deprecated use PathInput instead
 **/
 public class FileField extends JPanel {
-    private JLabel file;
+    private final JLabel file;
 
     /** Constructs a new FileField with the specified title and initial
     * file path.
@@ -76,6 +76,7 @@ public class FileField extends JPanel {
                 try{
                     jfc.setCurrentDirectory(getFile());
                 } catch (Exception ex){
+                    System.err.println(ex);
                 }
                 if (jfc.showOpenDialog(FileField.this) == JFileChooser.APPROVE_OPTION){
                     file.setText(jfc.getSelectedFile().getAbsolutePath());

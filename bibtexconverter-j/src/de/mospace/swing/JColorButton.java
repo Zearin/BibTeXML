@@ -49,7 +49,7 @@ public class JColorButton extends JButton{
     };
 
     /** (Re-)initializes this button with the given name and color. **/
-    protected void init(String name, Color c){
+    protected final void init(String name, Color c){
         myColor = c;
         title = name;
         setBackground(myColor);
@@ -89,13 +89,13 @@ public class JColorButton extends JButton{
     public JColorButton(String name, Color c, boolean foreground){
         super("       ");
         fg = foreground;
-        if(!foreground){
-            init(name,c);
-        } else {
+        if(foreground){
             myColor = c;
             title = name;
             setForeground(myColor);
             addActionListener(onClick);
+        } else {
+            init(name,c);
         }
     }
 

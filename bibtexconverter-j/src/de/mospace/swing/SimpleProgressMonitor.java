@@ -75,7 +75,7 @@ import javax.swing.UIManager;
       * @param min integer corresponding to 0% progress
       * @param max integer corresponding to 100% progress
      **/
-     private void reset(Frame f, String title, String note,
+     private final void reset(Frame f, String title, String note,
      int min, int max){
          canceled = false;
          progressText = new JLabel((note == null)? "": note);

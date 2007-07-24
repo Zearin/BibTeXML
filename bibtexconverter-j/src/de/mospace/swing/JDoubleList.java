@@ -70,13 +70,11 @@ public class JDoubleList extends JPanel{
     public static final int LEFT = 0;
     public static final int CENTER = 1;
     public static final int RIGHT = 2;
-    private JList listL, listR;
+    private final JList listL, listR;
     JList activeList = null;
     private ScrollPane left, right;
     private JPanel buttonPane;
     private JButton[] buttons;
-    private int[] selLeft  = {};
-    private int[] selRight = {};
     private JComponent[] compo;
     private boolean symmetric = true;
     private boolean rightOrderFixed = false;
@@ -136,7 +134,7 @@ public class JDoubleList extends JPanel{
     * double list to the other.
     **/
     public static class ListElement{
-        private Object obj;
+        private final Object obj;
         private boolean mov;
 
         /** Constructs a new DoubleList element with the
@@ -360,7 +358,7 @@ public class JDoubleList extends JPanel{
     * - if there is no selection - after the last item
     * in the target list.
     **/
-    public void moveLeft(){
+    public final void moveLeft(){
         move(listR, listL);
     }
 
@@ -370,7 +368,7 @@ public class JDoubleList extends JPanel{
     * - if there is no selection - after the last item
     * in the target list.
     **/
-    public void moveRight(){
+    public final void moveRight(){
         move(listL, listR);
     }
 

@@ -48,14 +48,14 @@ import javax.swing.JToolBar;
 public class MiniShell extends JPanel {
 
     private JDialog dialg;
-    private Action dockAction = new AbstractAction(GLOBALS.getString("Dock")) {
+    private final Action dockAction = new AbstractAction(GLOBALS.getString("Dock")) {
         public void actionPerformed(ActionEvent e) {
             dock();
         }
     };
 
     private JButton dockButton;
-    private Action floatAction = new AbstractAction(GLOBALS.getString("Float")) {
+    private final Action floatAction = new AbstractAction(GLOBALS.getString("Float")) {
         public void actionPerformed(ActionEvent e) {
             undock();
         }
@@ -63,13 +63,13 @@ public class MiniShell extends JPanel {
 
     private JButton floatButton;
     private boolean floating= false;
-    private JSplitPane jsp = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-    private JToolBar jtb = new JToolBar();
+    private final JSplitPane jsp = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+    private final JToolBar jtb = new JToolBar();
     private String name;
     private JFrame parent;
     private ProcessIOPane piop;
     /* must not fail when the ActionEvent is null */
-    private Action showAction = new AbstractAction(GLOBALS.getString("Console")){
+    private final Action showAction = new AbstractAction(GLOBALS.getString("Console")){
         public void actionPerformed(ActionEvent e) {
             if (isFloating()) {
                 showDialog();
@@ -79,7 +79,7 @@ public class MiniShell extends JPanel {
         }
     };
 
-    private Action closeAction = new AbstractAction(GLOBALS.getString("Close")){
+    private final Action closeAction = new AbstractAction(GLOBALS.getString("Close")){
         public void actionPerformed(ActionEvent e) {
             close();
         }
@@ -117,7 +117,7 @@ public class MiniShell extends JPanel {
     public MiniShell(JFrame f, int w, int h, String title, boolean floating) {
         init(f, w, h, title, new ProcessIOPane(5, 50){
             protected boolean builtin(String s){
-                return  super.builtin(s) || (s.equals("exit") && close());
+                return  super.builtin(s) || ("exit".equals(s) && close());
             }
 
             protected Preferences getPref(){

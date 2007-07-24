@@ -60,7 +60,7 @@ public class IOPane extends JPanel {
     /** whether to prepend a prompt sign to the echoed input **/
     protected boolean prependPrompt = true;
     /** holds history items as strings **/
-    private transient History history = new VectorHistory();
+    private final transient History history = new VectorHistory();
     /** the input field */
     private final JTextField input = new JTextField();
     private final JScrollPane jsp = new JScrollPane(
@@ -112,6 +112,7 @@ public class IOPane extends JPanel {
             }
 
             public void removeUpdate(DocumentEvent e) {
+                //does nothing
             }
 
             public void changedUpdate(DocumentEvent e) {
@@ -141,6 +142,7 @@ public class IOPane extends JPanel {
         });
         addFocusListener(new FocusListener() {
             public void focusLost(FocusEvent e) {
+               //does nothing
             }
             ;public void focusGained(FocusEvent e) {
                 input.requestFocusInWindow();
@@ -164,7 +166,7 @@ public class IOPane extends JPanel {
      *
      * @param c the desired background Color
      */
-    public void setBackground(Color c) {
+    public final void setBackground(Color c) {
         super.setBackground(c);
 
         Component[] comp = getComponents();
@@ -343,6 +345,8 @@ public class IOPane extends JPanel {
                             jta.getDocument().notifyAll();
                         }
                     } catch (BadLocationException ex) {
+                        System.err.println(ex);
+                        System.err.flush();
                     }
                 }
             });
@@ -521,10 +525,10 @@ public class IOPane extends JPanel {
          * @return the previous item in this history
          */
         public String previous() {
-            if (currentItem != 0) {
-                return (String) get(--currentItem);
-            } else {
+            if (currentItem == 0) {
                 return (String) get(0);
+            } else {
+                return (String) get(--currentItem);
             }
         }
 

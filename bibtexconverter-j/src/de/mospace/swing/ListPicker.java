@@ -46,32 +46,32 @@ public class ListPicker extends JDialog{
     private ListModel model;
     private final JList list = new JList();
     private Object value;
-    private Container customButtons = new JPanel();
-    
+    private final Container customButtons = new JPanel();
+
     public ListPicker(Frame f, Object[] obj){
         super(f);
         model = new DefaultComboBoxModel(obj);
         init(f);
     }
-    
+
     public ListPicker(Dialog d, Object[] obj){
         super(d);
         model = new DefaultComboBoxModel(obj);
         init(null);
     }
-    
+
     public ListPicker(Frame f, Collection c){
         super(f);
         model = makeModel(c);
         init(f);
     }
-    
+
     public ListPicker(Dialog d, Collection c){
         super(d);
         model = makeModel(c);
         init(null);
     }
-    
+
     private ListModel makeModel(Collection c){
         Vector v = null;
         if(c instanceof Vector){
@@ -82,11 +82,11 @@ public class ListPicker extends JDialog{
         }
         return new DefaultComboBoxModel(v);
     }
-    
+
     private void init(Frame f){
         setModal(true);
         JPanel panel = new JPanel(new BorderLayout());
-        
+
         list.setModel(model);
         list.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         Action okAction = new AbstractAction(UIManager.getString("OptionPane.okButtonText")){
@@ -99,17 +99,17 @@ public class ListPicker extends JDialog{
         };
         list.getInputMap().put(KeyStroke.getKeyStroke("ENTER"),"commit");
         list.getActionMap().put("commit", okAction);
-        
-        
+
+
         JScrollPane sp = new JScrollPane(list);
         panel.add(sp, BorderLayout.CENTER);
-        
+
         JButton buttonOK     = new JButton(okAction);
         JButton buttonCancel = new JButton();
         buttonCancel.setText(UIManager.getString("OptionPane.cancelButtonText"));
         buttonOK.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
-
+                    //do nothing
                 }
         });
         buttonCancel.addActionListener(new ActionListener(){
@@ -139,24 +139,24 @@ public class ListPicker extends JDialog{
             list.setSelectedIndex(0);
         }
     }
-    
+
     public void addButton(Component c){
         customButtons.add(c);
     }
-    
+
     public Object getValue(){
         return value;
     }
-    
-    
+
+
     public void setValue(Object o){
         value = o;
     }
-    
+
     private static class PickerButton extends JButton{
         final String bvalue;
         final ListPicker picker;
-        
+
         public PickerButton(String title, String pvalue, ListPicker picker){
             super(title);
             this.bvalue = pvalue;
@@ -169,35 +169,35 @@ public class ListPicker extends JDialog{
             });
         }
     }
-    
+
     public void addPickerButton(String title, String pvalue){
         JButton pb = new PickerButton(title, pvalue, this);
         addButton(pb);
     }
-    
+
     public void setVisible(boolean b){
         super.setVisible(b);
         if(b){
             list.requestFocusInWindow();
         }
     }
-    
+
     public void setCellRenderer(ListCellRenderer renderer){
         list.setCellRenderer(renderer);
     }
-    
+
     private void setModel(){
         list.setModel(model);
         if(model.getSize() > 0){
             list.setSelectedIndex(0);
         }
     }
-    
+
     public void setChoice(Object[] obj){
         model = new DefaultComboBoxModel(obj);
         setModel();
     }
-    
+
     public void setChoice(Collection c){
         model = makeModel(c);
         setModel();

@@ -97,7 +97,7 @@ public class VariableRangeSlider extends JPanel {
             MIN_LOG_RANGE, MAX_LOG_RANGE, 1));
 
     /** The List that holds all registered changeListeners. */
-    private List changeListeners = new ArrayList();
+    private final List changeListeners = new ArrayList();
 
         /** Tells the slider change listener whether the change is caused
         by a slider reset. **/
@@ -108,7 +108,7 @@ public class VariableRangeSlider extends JPanel {
     /** Timer that resets the slider 1
      *  milliseconds after it has been released.
      **/
-    private Timer resetSlider = new Timer(1, new ActionListener() {
+    private final Timer resetSlider = new Timer(1, new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
             isReset = true;
             slider.setValueIsAdjusting(true);

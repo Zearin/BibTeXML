@@ -29,7 +29,7 @@ import java.util.*;
 **/
 public class SortedSetListModel extends AbstractListModel {
     private final SortedSet set;
-    
+
     public SortedSetListModel(){
         set = new TreeSet();
     }
@@ -37,11 +37,11 @@ public class SortedSetListModel extends AbstractListModel {
     public SortedSetListModel(SortedSet s){
         set = s;
     }
-    
+
     public int getSize(){
         return set.size();
     }
-    
+
     public synchronized Object getElementAt(int index){
         if(index < 0 || index >= getSize()){
             throw new ArrayIndexOutOfBoundsException(index);
@@ -52,21 +52,20 @@ public class SortedSetListModel extends AbstractListModel {
         }
         return it.next();
     }
-    
+
     public synchronized void add(Object element){
-        if(set.add(element)){ 
+        if(set.add(element)){
             fireContentsChanged(this, 0, getSize());
         }
     }
-    
+
     public synchronized void remove(Object element){
         if(set.remove(element)){
             fireContentsChanged(this, 0, getSize());
         }
     }
-    
+
     public synchronized void clear(){
-       final int n = getSize();
        set.clear();
        fireContentsChanged(this, 0, getSize());
     }

@@ -30,8 +30,8 @@ import javax.swing.Timer;
  * @version $Revision: 1.6 $ ($Date: 2006/03/14 11:49:18 $)
  */
 public class StatusBar extends JLabel{
-      private Timer clearTimer;
-      private ActionListener clearTimerActionListener;
+      private final Timer clearTimer;
+      private final ActionListener clearTimerActionListener;
       private int defaultTimeout;
       /** initial timeout */
       final public static int INITIAL_TIMEOUT=1000;
@@ -40,19 +40,7 @@ public class StatusBar extends JLabel{
        * StatusBar(StatusBar.INITIAL_TIMEOUT).
        **/
       public StatusBar(){
-        this.setFont(new java.awt.Font("Dialogue", 0, 9));
-        this.setBackground(Color.white);
-        this.setOpaque(true);
-        this.setBorder(BorderFactory.createEtchedBorder());
-        clear();
-        clearTimerActionListener = new ActionListener(){
-          public void actionPerformed(ActionEvent evt){
-            clear();
-          }
-        };
-        defaultTimeout=INITIAL_TIMEOUT;
-        clearTimer = new Timer(defaultTimeout,clearTimerActionListener);
-        clearTimer.setRepeats(false);
+        this(INITIAL_TIMEOUT);
       }
 
       /** Constructs a new instance of this class. Status bar messages
@@ -64,7 +52,7 @@ public class StatusBar extends JLabel{
         this.setBackground(Color.white);
         this.setOpaque(true);
         this.setBorder(BorderFactory.createEtchedBorder());
-        this.clear();
+        this.setText(" ");
         clearTimerActionListener = new ActionListener(){
           public void actionPerformed(ActionEvent evt){
             clear();

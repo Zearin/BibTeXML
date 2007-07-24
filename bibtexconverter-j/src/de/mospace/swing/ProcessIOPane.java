@@ -51,31 +51,31 @@ import de.mospace.swing.text.DocumentOutputStream;
  *  @author Moritz Ringler
  **/
 public class ProcessIOPane extends IOPane{
-     private boolean closeWhenDone = false;
+     //private boolean closeWhenDone = false;
      private File pwd;
-     private RunnableQueue myProcesses = new RunnableQueue();
-     private OutputStream iopOut = new DocumentOutputStream(getDocument());
+     private final RunnableQueue myProcesses = new RunnableQueue();
+     private final OutputStream iopOut = new DocumentOutputStream(getDocument());
      private static String systemShell = "";
 
-     private ExceptionHandler printExceptionHandler = new ExceptionHandler(){
+     private final ExceptionHandler printExceptionHandler = new ExceptionHandler(){
         public void handleException(Throwable ex){
            (new PrintStream(iopOut)).print(ex.getLocalizedMessage().trim()+"\n");
         }
     };
-    private Action interruptAction = new AbstractAction(
+    private final Action interruptAction = new AbstractAction(
             GLOBALS.getString("Interrupt")){
         public void actionPerformed(ActionEvent e){
             interrupt();
         }
     };
 
-    private Action clearAction = new AbstractAction(GLOBALS.getString("Clear")){
+    private final Action clearAction = new AbstractAction(GLOBALS.getString("Clear")){
         public void actionPerformed(ActionEvent e){
             getOutputArea().setText("");
         }
     };
 
-    private Action systemShellAction = new AbstractAction(GLOBALS.getString("System shell")){
+    private final Action systemShellAction = new AbstractAction(GLOBALS.getString("System shell")){
         public void actionPerformed(ActionEvent e){
             if (systemShell == null || systemShell.equals("")){
                 setSystemShell(querySystemShell());
@@ -108,7 +108,7 @@ public class ProcessIOPane extends IOPane{
     public static String guessSystemShell(){
         String os = System.getProperty("os.name");
         boolean isWindows = os.startsWith("Windows");
-        boolean isJava14 = 
+        boolean isJava14 =
             System.getProperty("java.version").equals("1.4") ||
             System.getProperty("java.version").startsWith("1.4.");
         String result = (isWindows)
@@ -255,13 +255,14 @@ public class ProcessIOPane extends IOPane{
      * the 'cd' built-in.
      */
      public void setWorkingDirectory(String path){
-         if (path == null || path.equals("")){
-             path = ".";
-         }
+         final String ppath =
+            (path == null || path.length() == 0)
+            ? "."
+            : path;
          try{
-            File newPwd = new File(path);
+            File newPwd = new File(ppath);
             if (pwd != null && !newPwd.isAbsolute()){
-                newPwd = new File(pwd, path);
+                newPwd = new File(pwd, ppath);
             }
             if(newPwd.isDirectory()){
                 pwd = newPwd.getCanonicalFile();
@@ -299,7 +300,7 @@ public class ProcessIOPane extends IOPane{
                  ex.printStackTrace(new PrintStream(iopOut));
              }
 
-         } else if (strim.equals("") || builtin(strim)){
+         } else if (strim.length() == 0 || builtin(strim)){
              /* do nothing for empty command
               * execute builtins */
          } else if (strim.endsWith("&")){ /* new background process */
@@ -316,7 +317,7 @@ public class ProcessIOPane extends IOPane{
      **/
     protected boolean builtin(String s){
         boolean result = true;
-        if (s.equals("clear")){ /* clear textarea */
+        if ("clear".equals(s)){ /* clear textarea */
              clearAction.actionPerformed(null);
 
         } else if (s.matches("^cd(\\s.+)?")){ /* change working directory */
@@ -345,11 +346,7 @@ public class ProcessIOPane extends IOPane{
         myProcesses.registerExceptionHandler(printExceptionHandler);
         myProcesses.addChangeListener(new ChangeListener(){
             public void stateChanged(ChangeEvent e){
-                if(!myProcesses.isRunning()){
-                    prependPrompt = true;
-                } else {
-                    prependPrompt = false;
-                }
+                prependPrompt = !myProcesses.isRunning();
             }
         });
         getInput().getInputMap().put(KeyStroke.getKeyStroke("ctrl C"),"ir");

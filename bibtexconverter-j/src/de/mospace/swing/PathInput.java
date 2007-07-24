@@ -75,7 +75,7 @@ public class PathInput extends Box{
 
     protected void browse(){
         String path = getPath();
-        if(path.equals("")){
+        if(path.length() == 0){
             path = ".";
         }
         JFileChooser jfc = new JFileChooser(path);
@@ -109,6 +109,10 @@ public class PathInput extends Box{
         }
     }
 
+    public void setPath(String p){
+        textfield.setText(p);
+    }
+
     public String getPath(){
         return textfield.getText();
     }
@@ -124,7 +128,7 @@ public class PathInput extends Box{
     }
 
     private static class FileTransferHandler extends TransferHandler{
-        private TransferHandler parent;
+        private final TransferHandler parent;
 
         public FileTransferHandler(TransferHandler parent){
             this.parent =  parent;
@@ -165,10 +169,13 @@ public class PathInput extends Box{
                 List data = null;
                 try{
                    data = (List) t.getTransferData(DataFlavor.javaFileListFlavor);
-                } catch (UnsupportedFlavorException ignore){
-                } catch (IOException ignore){
+                } catch (UnsupportedFlavorException ex){
+                    throw new Error(ex);
+                } catch (IOException ex){
+                    System.err.println(ex);
+                    System.err.flush();
                 }
-                if(data != null && data.size() > 0){
+                if(data != null && !data.isEmpty()){
                     ((JTextField) comp).setText(((File) data.get(0)).getAbsolutePath());
                     return true;
                 }

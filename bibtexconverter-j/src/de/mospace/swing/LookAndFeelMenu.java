@@ -74,7 +74,7 @@ public class LookAndFeelMenu extends JMenu {
     private Component dialogParent = null;
     private ClassLoader cl = ClassLoader.getSystemClassLoader();
     private ClassLoaderProvider clp;
-    private ActionListener lnfListener =
+    private final ActionListener lnfListener =
             new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     switchLaF((LaFMenuItem) e.getSource());
@@ -82,7 +82,7 @@ public class LookAndFeelMenu extends JMenu {
                 }
             };
 
-    private PropertyChangeListener LaFListener = new PropertyChangeListener(){
+    private final PropertyChangeListener LaFListener = new PropertyChangeListener(){
         public void propertyChange(PropertyChangeEvent e){
             if(
                 e.getPropertyName().equals("lookAndFeel") &&
@@ -348,7 +348,7 @@ public class LookAndFeelMenu extends JMenu {
         if (lafClass.equals(currentLaF())){
                 return;
         }
-        if(setLookAndFeel(lafClass)) {
+        if(LookAndFeelMenu.setLookAndFeel(lafClass, cl)) {
 
             /*
             *  if we did indeed switch update GUI and prefs
@@ -447,7 +447,10 @@ public class LookAndFeelMenu extends JMenu {
             try{
                 UIManager.setLookAndFeel(oldLAF);
                 System.err.println("Successfully switched back to " + oldLAF.toString());
-            } catch (Exception ignore){}
+            } catch (Exception ignore){
+                System.err.println(ignore);
+                System.err.flush();
+            }
             result = false;
         }
         return result;
@@ -504,7 +507,7 @@ public class LookAndFeelMenu extends JMenu {
      * @author ringler
      */
     private static class LaFMenuItem extends JRadioButtonMenuItem {
-        private LookAndFeelInfo lafInfo;
+        private final LookAndFeelInfo lafInfo;
 
 
         /**
@@ -579,8 +582,8 @@ public class LookAndFeelMenu extends JMenu {
      * @author ringler
      */
     private class LafInstallerMenuItem extends JMenuItem implements ActionListener {
-        private File idir;
-        private File iprops;
+        private final File idir;
+        private final File iprops;
 
 
         /**

@@ -102,7 +102,6 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
     }
 
     private JPanel cont;
-    private JPanel options;
     private TextField replWhat;
     private TextField replWith;
     /** The action event that has triggered the dialogue **/
@@ -151,7 +150,7 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
                 boolean zAll=false;
                 if(e.getSource()==replAll){
                     zAll=true;
-                };
+                }
                 String lookFor=replWhat.getText();
                 if(lookFor==null || lookFor.length() == 0){
                     return;
@@ -301,24 +300,22 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
         //setKeyToAction(neast,ret,findAction);
     }
 
-    /** Binds a key to an action in a component and all of its children.
-     */
-    private void setKeyToAction(Component component, KeyStroke k, Action a){
-        try {
-            JComponent c = (JComponent) component;
-            c.getInputMap().put(k,"cancel");
-            c.getActionMap().put("cancel",a);
-        } catch (ClassCastException ex) {
-        }
-        try{
-            Container container = (Container) component;
-            Component[] components = container.getComponents();
-            for (int i=0; i< components.length; i++){
-                setKeyToAction(components[i],k,a);
-            }
-        } catch (ClassCastException ex){
-        }
-    }
+    // /** Binds a key to an action in a component and all of its children.
+     // */
+    // private void setKeyToAction(Component component, KeyStroke k, Action a){
+        // if(component instanceof JComponent){
+            // JComponent c = (JComponent) component;
+            // c.getInputMap().put(k,"cancel");
+            // c.getActionMap().put("cancel",a);
+            // if(component instanceof Container){
+                // Container container = (Container) component;
+                // Component[] components = container.getComponents();
+                // for (int i=0; i< components.length; i++){
+                    // setKeyToAction(components[i],k,a);
+                // }
+            // }
+        // }
+    // }
 
     /** Specifies the scope of the next search.
      * @see #performReplace(String what, String with, boolean mWord,
@@ -363,6 +360,7 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
             case MATCH_WORD:matchWord.setVisible(enabled);break;
             case MATCH_CASE:matchCase.setVisible(enabled);break;
             case REG_EXP:regExp.setVisible(enabled);break;
+            default: throw new IllegalArgumentException("Unknown option " + option);
         }
     }
 

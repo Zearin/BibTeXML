@@ -29,8 +29,8 @@ import javax.swing.JSlider;
 * @see javax.swing.JSlider
 **/
 public class JSliderDouble extends JSlider{
-    private double mmin = 0;
-    private double sstep = 0.1;
+    private final double mmin;
+    private final double sstep;
 
     /** Constructs a new instance of this class.
     * @param min the minimum value of the slider
@@ -82,10 +82,12 @@ public class JSliderDouble extends JSlider{
 
     /** Disabled. **/
     public void setLabelTable(Hashtable ht){
+        //disabled
     }
 
     /** Disabled. **/
     public void setMajorTickSpacing(int i){
+        //disabled
     }
 
     /** Returns the current value of the slider.

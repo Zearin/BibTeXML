@@ -61,7 +61,7 @@ import de.mospace.lang.ClassLoaderProvider;
  */
 public class ExtensionInstaller {
     private static String javaext = null;
-    private Component parent = null;
+    protected final Component parent;
     private File targetDirectory;
     private File fallbackTargetDirectory;
 
@@ -74,7 +74,9 @@ public class ExtensionInstaller {
             String tempdir = System.getProperty("java.io.tmpdir");
             tempdir = (new File(tempdir)).getCanonicalPath();
             result = file.getCanonicalPath().startsWith(tempdir);
-        } catch (IOException ignore){}
+        } catch (IOException ignore){
+            System.err.println(ignore);
+        }
         return result;
     }
 
@@ -104,15 +106,15 @@ public class ExtensionInstaller {
         if (targetDirectory == null) {
             String wed = getWritableExtensionDirectoryImpl();
             if (wed == null) {
-                if (fallbackTargetDirectory != null) {
+                if (fallbackTargetDirectory == null) {
+                    wed = getWritableExtensionDirectoryFallback();
+                } else {
                     if (!fallbackTargetDirectory.exists()) {
                         fallbackTargetDirectory.mkdirs();
                     }
                     if (canWrite(fallbackTargetDirectory)) {
                         targetDirectory = fallbackTargetDirectory;
                     }
-                } else {
-                    wed = getWritableExtensionDirectoryFallback();
                 }
             }
             if (wed != null) {

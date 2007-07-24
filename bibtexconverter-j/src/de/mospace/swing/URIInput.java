@@ -67,10 +67,10 @@ public class URIInput extends PathInput{
         try{
             getURI();
         } catch (URISyntaxException ex){
-            if(oldURI != null){
-                getTextfield().setText(oldURI.toString());
-            } else {
+            if(oldURI == null){
                 getTextfield().setText("./");
+            } else {
+                getTextfield().setText(oldURI.toString());
             }
         }
     }

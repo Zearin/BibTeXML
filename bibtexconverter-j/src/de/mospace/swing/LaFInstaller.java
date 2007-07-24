@@ -66,7 +66,7 @@ import de.mospace.lang.ClassLoaderProvider;
  */
 public final class LaFInstaller extends ExtensionInstaller {
     private static String javahome = System.getProperty("java.home");
-    private Properties swingp =
+    private final Properties swingp =
         new Properties() {
             /*
              *  This hack causes sorted output, if store()
@@ -99,8 +99,7 @@ public final class LaFInstaller extends ExtensionInstaller {
              */
         };
     private static File swingpf = new File(new File(javahome, "lib"), "swing.properties");
-    private Set installedlafs = new HashSet();
-    private Component parent = null;
+    private final Set installedlafs = new HashSet();
     private File fallbackProps = null;
 
 
@@ -133,7 +132,7 @@ public final class LaFInstaller extends ExtensionInstaller {
     private void init(){
         readProps(swingpf);
         readProps(fallbackProps);
-        if(installedlafs.size() == 0){
+        if(installedlafs.isEmpty()){
             LookAndFeelInfo[] lafi = UIManager.getInstalledLookAndFeels();
             for (int i = 0; i < lafi.length; i++) {
                 installedlafs.add(new LaFPackage(lafi[i]));
@@ -411,7 +410,11 @@ public final class LaFInstaller extends ExtensionInstaller {
 
     /** Updates UIManagers installedLookAndFeels with the current state of installedlafs. */
     public void updateUIManagerInstalledLafs() {
-        UIManager.setInstalledLookAndFeels((LookAndFeelInfo[]) installedlafs.toArray(new LookAndFeelInfo[0]));
+        UIManager.setInstalledLookAndFeels(
+            (LookAndFeelInfo[]) installedlafs.toArray(
+                new LookAndFeelInfo[installedlafs.size()]
+            )
+        );
     }
 
 
@@ -599,7 +602,7 @@ public final class LaFInstaller extends ExtensionInstaller {
                 }
             }
 
-            return (LaFPackage[]) result.toArray(new LaFPackage[0]);
+            return (LaFPackage[]) result.toArray(new LaFPackage[result.size()]);
         }
 
 
@@ -715,7 +718,7 @@ public final class LaFInstaller extends ExtensionInstaller {
                     }
                 }
             }
-            return (LaFPackage[]) result.toArray(new LaFPackage[0]);
+            return (LaFPackage[]) result.toArray(new LaFPackage[result.size()]);
         }
 
 
