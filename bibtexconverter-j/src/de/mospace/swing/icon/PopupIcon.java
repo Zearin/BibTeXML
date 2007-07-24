@@ -35,17 +35,19 @@ import javax.swing.Icon;
 public class PopupIcon implements Icon {
     /** The default size of this icon. */
     private final static int DEFAULT_SIZE = 10;
-    
+
     private int size = DEFAULT_SIZE;
-    
-    
+
+
     /**
     * Constructs a new PopupIcon that has the default size.
     *
     */
-    public PopupIcon() { }
-    
-    
+    public PopupIcon() {
+        //sole constructor
+    }
+
+
     /**
     * Constructs a new PopupIcon with the specified size.
     *
@@ -54,8 +56,8 @@ public class PopupIcon implements Icon {
     public PopupIcon(int size) {
         this.size = size;
     }
-    
-    
+
+
     /** Paints this icon on the specified graphics object at the
     * specified location.
     * @param c ignored, may be <code>null</code>
@@ -66,7 +68,7 @@ public class PopupIcon implements Icon {
     public void paintIcon(Component c, Graphics g, int xo, int yo) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.black);
-        
+
         /*
         *  draw the arrow
         */
@@ -80,28 +82,28 @@ public class PopupIcon implements Icon {
             polygon.lineTo(x1Points[index], y1Points[index]);
         }
         polygon.closePath();
-        
+
         /*
         *  rotate, scale and translate
         */
         AffineTransform arrowt = new AffineTransform();
         arrowt.translate(xo, yo);
         arrowt.scale(size * 1. / DEFAULT_SIZE, size * 1. / DEFAULT_SIZE);
-        double center = DEFAULT_SIZE / 2;
-        
+        //double center = DEFAULT_SIZE / 2;
+
         /*
         *  draw the arrow
         */
         AffineTransform savedt = g2.getTransform();
         g2.transform(arrowt);
-        
+
         g2.setPaint(Color.black);
         g2.fill(polygon);
         g2.draw(polygon);
         g2.setTransform(savedt);
-        
+
     }
-    
+
     /**
     * Gets the width of this icon.
     *
@@ -110,8 +112,8 @@ public class PopupIcon implements Icon {
     public int getIconWidth() {
         return size;
     }
-    
-    
+
+
    /**
     * Gets the height of this icon.
     *
@@ -120,5 +122,5 @@ public class PopupIcon implements Icon {
     public int getIconHeight() {
         return size;
     }
-    
+
 }
