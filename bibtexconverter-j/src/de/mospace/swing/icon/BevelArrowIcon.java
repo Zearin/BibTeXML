@@ -9,25 +9,25 @@ import javax.swing.UIManager;
 /** A java icon with a triangular shadowed arrow pointing up or down.
 * Original package: jp.gr.java_conf.tame.swing.icon
 * This class is in the public domain.
-* 
+*
 * @version $Revision: 1.2 $ ($Date: 2007/02/18 14:20:23 $)
 */
 public class BevelArrowIcon implements Icon {
     /** Constant for arrows pointing up. */
     public static final int UP    = 0;
-    
+
     /** Constant for arrows pointing down. */
     public static final int DOWN  = 1;
-    
+
     /** The default size of this icon. */
     private static final int DEFAULT_SIZE = 11;
-    
+
     private Color edge1;
     private Color edge2;
     private Color fill;
     private int size;
     private int direction;
-    
+
     /**
     * Constructs a default size bevel arrow icon with the specified style
     * and an arrow that points in the specified direction.
@@ -64,7 +64,7 @@ public class BevelArrowIcon implements Icon {
             }
         }
     }
-    
+
     /**
     * Constructs a new bevel arrow icon with the specified colors, size
     * and orientation.
@@ -80,7 +80,7 @@ public class BevelArrowIcon implements Icon {
     int size, int direction) {
         init(edge1, edge2, fill, size, direction);
     }
-    
+
     /** @param d one of UP or DOWN **/
     public void setDirection(int d){
         if(d!=UP && d!= DOWN){
@@ -88,7 +88,7 @@ public class BevelArrowIcon implements Icon {
         }
         direction = d;
     }
-    
+
     /** Paints this icon on the specified graphics object at the
     * specified location.
     * @param c ignored, may be <code>null</code>
@@ -99,10 +99,10 @@ public class BevelArrowIcon implements Icon {
     public void paintIcon(Component c, Graphics g, int x, int y) {
         switch (direction) {
             case DOWN: drawDownArrow(g, x, y); break;
-            case   UP: drawUpArrow(g, x, y);   break;
+            default: drawUpArrow(g, x, y);   break;
         }
     }
-    
+
     /**
     * Gets the width of this bevel arrow icon.
     *
@@ -111,7 +111,7 @@ public class BevelArrowIcon implements Icon {
     public int getIconWidth() {
         return size;
     }
-    
+
     /**
     * Gets the height of this bevel arrow icon.
     *
@@ -120,8 +120,8 @@ public class BevelArrowIcon implements Icon {
     public int getIconHeight() {
         return size;
     }
-    
-    
+
+
     private void init(Color edge1, Color edge2, Color fill,
     int size, int direction) {
         this.edge1 = edge1;
@@ -130,7 +130,7 @@ public class BevelArrowIcon implements Icon {
         this.size = size;
         this.direction = direction;
     }
-    
+
     private void drawDownArrow(Graphics g, int xo, int yo) {
         g.setColor(edge1);
         g.drawLine(xo, yo,   xo+size-1, yo);
@@ -159,7 +159,7 @@ public class BevelArrowIcon implements Icon {
         g.setColor(edge1);
         g.drawLine(xo+(size/2), yo+size-1, xo+(size/2), yo+size-1);
     }
-    
+
     private void drawUpArrow(Graphics g, int xo, int yo) {
         g.setColor(edge1);
         int x = xo+(size/2);
