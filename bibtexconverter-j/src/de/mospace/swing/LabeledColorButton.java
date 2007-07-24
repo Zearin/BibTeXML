@@ -26,12 +26,6 @@ import java.awt.Color;
  *  @author Moritz Ringler
  */
 public class LabeledColorButton extends JColorButton{
-    /** (Re-)initializes this button with the given name and color. **/
-    protected void init(String name, Color c){
-        super.init(name,c);
-        setText(name);
-    }
-
     /** Sets the background of this button to c and its foreground
      * to the complementary color of c .**/
     public void setBackground(Color c){
@@ -55,6 +49,7 @@ public class LabeledColorButton extends JColorButton{
     /** Constructs a new ColorButton with the given name and color. **/
     public LabeledColorButton(String name, Color c){
         super(name,c);
+        setText(name);
     }
 
     /** Constructs a new ColorButton with the given name and color. **/
@@ -69,11 +64,13 @@ public class LabeledColorButton extends JColorButton{
     **/
     public LabeledColorButton(String name, int c){
         super(name,c);
+        setText(name);
     }
 
     /** Constructs a new ColorButton with the given name and white as its
       * associated color. **/
     public LabeledColorButton(String name){
         super(name);
+        setText(name);
     }
 }
