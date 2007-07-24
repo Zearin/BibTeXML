@@ -1,7 +1,7 @@
 package de.mospace.xml;
 
 /*
- * $Id: XSLParamHandler.java,v 1.1 2007/02/23 14:32:32 ringler Exp $
+ * $Id$
  * (c) Moritz Ringler, 2006
  *
  * This program is free software; you can redistribute it and/or
