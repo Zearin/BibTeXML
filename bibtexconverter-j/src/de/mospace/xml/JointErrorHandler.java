@@ -7,52 +7,52 @@ import org.xml.sax.SAXException;
 public class JointErrorHandler implements ResettableErrorHandler{
     private ResettableErrorHandler first;
     private ResettableErrorHandler second;
-    
+
     public JointErrorHandler(ResettableErrorHandler first, ResettableErrorHandler second){
         this.first = first;
         this.second = second;
     }
-        
+
     public synchronized void fatalError( SAXParseException e ) throws SAXException {
         if(first != null){
             first.fatalError(e);
         }
         second.fatalError(e);
     }
-    
+
     public synchronized void error( SAXParseException e ) throws SAXException {
         if(first != null){
             first.error(e);
         }
         second.error(e);
     }
-    
+
     public synchronized void warning( SAXParseException e ) throws SAXException {
         if(first != null){
             first.error(e);
         }
         second.error(e);
     }
-    
+
     public synchronized void reset(){
         if(first != null){
             first.reset();
         }
         second.reset();
     }
-    
+
     public void setFirst(ResettableErrorHandler eh){
         first = eh;
     }
-    
+
     public void setSecond(ResettableErrorHandler eh){
-        first = eh;
+        second = eh;
     }
-    
+
     public ResettableErrorHandler getFirst(){
         return first;
     }
-    
+
     public ResettableErrorHandler getSecond(){
         return second;
     }

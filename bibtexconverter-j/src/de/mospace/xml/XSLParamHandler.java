@@ -18,7 +18,7 @@ package de.mospace.xml;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -36,7 +36,7 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-/** Extracts top-level stylesheet parameters from an XSL Stylesheet. 
+/** Extracts top-level stylesheet parameters from an XSL Stylesheet.
 * The types of non-string parameters should be declared via
 * <code>as="<i>xs</i>:<i>type</i>"</code> where <code><i>type</i></code> is one
 * of <code>boolean, integer, float, double</code>, and <code>xs</code>
@@ -51,21 +51,21 @@ import org.xml.sax.helpers.XMLReaderFactory;
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     exclude-result-prefixes="xs [...]">
 </pre>
-*<p>This class will not 
+*<p>This class will not
 * evaluate complex x-path expressions in <code>select</code> attributes
 * or nested elements inside the <code>param</code> element.
 *
 */
 public class XSLParamHandler extends DefaultHandler{
     private final transient List<XSLParam> xslParam
-            = new Vector<XSLParam>(); 
+            = new Vector<XSLParam>();
     transient int level = 0;
     transient XSLParam p;
     transient StringBuilder contents;
     transient String xsPrefix = "";
     public final static String XS_NAMESPACE =
             "http://www.w3.org/2001/XMLSchema";
-    public final static String XSL_NAMESPACE = 
+    public final static String XSL_NAMESPACE =
             "http://www.w3.org/1999/XSL/Transform";
     private final static Pattern selectString = Pattern.compile("'(.*)'");
     private static final Class[] knownTypes = {
@@ -75,7 +75,7 @@ public class XSLParamHandler extends DefaultHandler{
         Double.class,
         String.class
     };
-    
+
     private static final Object[] defaults = new Object[]{
         Boolean.FALSE,
         Long.valueOf(0l),
@@ -83,20 +83,20 @@ public class XSLParamHandler extends DefaultHandler{
         Double.valueOf(0.0),
         ""
     };
-        
-            
+
+
     private static class XSLParam{
         public Class type = null;
         public Object defaultValue;
         public String name;
-        
+
         public XSLParam(String name) throws SAXException{
             if(name == null){
                 throw new SAXException("Empty parameter name not allowed.");
             }
             this.name = name;
         }
-        
+
         public String toString(){
             StringBuilder sb = new StringBuilder();
             sb.append("XSLParam ").append(name).append(' ');
@@ -105,49 +105,49 @@ public class XSLParamHandler extends DefaultHandler{
             return sb.toString();
         }
     }
-    
+
     public XSLParamHandler(){
-        
+
     }
-    
+
     public void startDocument() throws SAXException{
         xslParam.clear();
         level++;
     }
-    
+
     public void endDocument() throws SAXException{
         level --;
     }
-    
+
     public void startElement(String uri, String localname, String rawname,
             Attributes atts) throws SAXException{
                 if(
                     (level == 2) &&
                     uri.equals(XSL_NAMESPACE) &&
-                    localname.equals("param")
+                    "param".equals(localname)
                 ){
                     startParam(atts.getValue("name"), atts);
                 }
                 level ++;
     }
-    
+
     private void startParam(String name, Attributes atts) throws SAXException{
         p = new XSLParam(name);
         String as = atts.getValue("as");
         if(as != null && xsPrefix != null && as.startsWith(xsPrefix)){
             as = as.substring(xsPrefix.length()); //strip prefix
-            if(as.equals("string")){
+            if("string".equals(as)){
                 p.type = String.class;
-            } else if (as.equals("boolean")){
+            } else if ("boolean".equals(as)){
                 p.type = Boolean.class;
-            } else if (as.equals("double")){
+            } else if ("double".equals(as)){
                 p.type = Double.class;
-            } else if (as.equals("float")){
+            } else if ("float".equals(as)){
                 p.type = Float.class;
-            } else if (as.equals("integer")){
+            } else if ("integer".equals(as)){
                 p.type = Long.class;
             } else {
-                throw new SAXException("Parameter type not supported" 
+                throw new SAXException("Parameter type not supported"
                         + as + " (" + name + ")");
             }
         }
@@ -161,7 +161,7 @@ public class XSLParamHandler extends DefaultHandler{
                 }
                 select = m.group(1);
             }
-            
+
             /* if we have no type, try all known types one after the other */
             if(p.type == null){
                 for(Class type : knownTypes){
@@ -172,17 +172,17 @@ public class XSLParamHandler extends DefaultHandler{
                     }
                 }
             } else {
-                
+
                 /* else try to make a value for the specified type */
                 p.defaultValue = makeValue(select, p.type);
             }
         }
         if(p.type == null){
-            /* default to string type */ 
+            /* default to string type */
             p.type = String.class;
         }
     }
-    
+
     private Object makeValue(String val, Class c){
         Object result = null;
         if(c.equals(String.class)){
@@ -190,9 +190,9 @@ public class XSLParamHandler extends DefaultHandler{
         }
         if(c.equals(Boolean.class)){
             String vval = val.toLowerCase();
-            if(vval.equals("true")){
+            if("true".equals(vval)){
                 return Boolean.TRUE;
-            } else if(vval.equals("false")){
+            } else if("false".equals(vval)){
                 return Boolean.FALSE;
             } else {
                 return null;
@@ -206,19 +206,19 @@ public class XSLParamHandler extends DefaultHandler{
         }
         return result;
     }
-    
+
     public void endElement(String uri, String localname, String rawname)
             throws SAXException{
         level--;
         if(
             (level == 2) &&
             uri.equals(XSL_NAMESPACE) &&
-            localname.equals("param")
+            "param".equals(localname)
         ){
             endParam();
         }
     }
-    
+
     private void endParam() throws SAXException{
         if(contents != null){
             String select = contents.toString().trim();
@@ -241,7 +241,7 @@ public class XSLParamHandler extends DefaultHandler{
         p = null;
         contents = null;
     }
-    
+
     public void characters(char[] ch, int start, int length)
             throws SAXException{
         if(p != null && level == 3){
@@ -251,18 +251,18 @@ public class XSLParamHandler extends DefaultHandler{
             contents.append(ch, start, length);
         }
     }
-    
+
     public static void main(String[] argv) throws Exception{
         System.out.println(getStyleSheetParameters(XSLParamHandler.class.getResourceAsStream("bibxml2htmlg.xsl"), null));
     }
-    
+
     /** For backwards compatibility. This has the same effect as using a null
     EntityResolver. **/
     public static Map<String, Object> getStyleSheetParameters(InputStream in)
     throws SAXException, IOException{
         return getStyleSheetParameters(in, null);
     }
-    
+
     public static Map<String, Object> getStyleSheetParameters(InputStream in, EntityResolver resolver)
     throws SAXException, IOException
     {
@@ -277,19 +277,19 @@ public class XSLParamHandler extends DefaultHandler{
         reader.parse(new InputSource(in));
         return params.getStyleSheetParameters();
     }
-    
+
     public void startPrefixMapping(String prefix,String uri) throws SAXException{
         if(uri.equals(XS_NAMESPACE)){
             xsPrefix = prefix+":";
         }
     }
-    
+
     public void endPrefixMapping(String prefix) throws SAXException{
         if(prefix.equals(xsPrefix)){
-            xsPrefix = null; 
+            xsPrefix = null;
         }
     }
-     
+
     public Map<String, Object> getStyleSheetParameters(){
         Map<String, Object> result = new TreeMap<String, Object>();
         for(XSLParam pp : xslParam){

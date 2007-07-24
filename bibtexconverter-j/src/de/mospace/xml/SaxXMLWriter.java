@@ -25,7 +25,7 @@ public class SaxXMLWriter{
     private AttributesImpl atts;
     private String namesp = "";
 
-    private Map<String, String> prefixes = new HashMap<String, String>();
+    private final Map<String, String> prefixes = new HashMap<String, String>();
 
     public SaxXMLWriter() throws SAXException{
         this.out = System.out;
@@ -35,6 +35,7 @@ public class SaxXMLWriter{
         try{
             init(props);
         } catch (UnsupportedEncodingException wonthappen){
+            throw new Error(wonthappen);
         }
     }
 
@@ -151,7 +152,7 @@ public class SaxXMLWriter{
     public void text(String text) throws SAXException {
         hd.characters(text.toCharArray(), 0, text.length());
     }
-    
+
     /** Ends the document without closing the underlying outputstream. **/
     public void endDocument() throws SAXException {
         try{
