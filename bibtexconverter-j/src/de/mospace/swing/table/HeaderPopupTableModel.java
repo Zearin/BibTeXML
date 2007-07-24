@@ -2,7 +2,7 @@ package de.mospace.swing.table;
 
 /* Mp3dings - manage mp3 meta-information
  * Copyright (C) 2003 Moritz Ringler
- * $Id: HeaderPopupTableModel.java,v 1.5 2007/02/18 14:20:24 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@ import javax.swing.table.TableModel;
 /** A TableModel that provides a context menu for column headers in the
 * associated JTable.
 *
-* @version $Revision: 1.5 $ ($Date: 2007/02/18 14:20:24 $)
+* @version $Revision$ ($Date$)
 * @author Moritz Ringler
 **/
 public interface HeaderPopupTableModel extends TableModel{

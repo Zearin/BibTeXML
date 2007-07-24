@@ -2,7 +2,7 @@ package de.mospace.swing.table;
 
 /* Mp3dings - manage mp3 meta-information
  * Copyright (C) 2003 Moritz Ringler
- * $Id: FieldAssociatedTableModel.java,v 1.6 2007/02/18 14:20:23 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@ import javax.swing.table.TableModel;
  * @deprecated This class is no longer used by mp3dings, integer
  * field identifiers have been replaced by Field objects.
  *
- * @version $Revision: 1.6 $ ($Date: 2007/02/18 14:20:23 $)
+ * @version $Revision$ ($Date$)
  * @author Moritz Ringler
  **/
 public interface FieldAssociatedTableModel extends TableModel{

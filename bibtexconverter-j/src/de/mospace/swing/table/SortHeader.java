@@ -1,4 +1,4 @@
-/* $Id: SortHeader.java,v 1.17 2007/02/18 14:20:24 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -54,7 +54,7 @@ import de.mospace.swing.icon.BlankIcon;
 * de.mospace.swing.table.HeaderPopupTableModel#getHeaderPopup(MouseEvent e)
 * getHeaderPopup} method are added to the column headers' context menus.
 *
-* @version $Revision: 1.17 $ ($Date: 2007/02/18 14:20:24 $)
+* @version $Revision$ ($Date$)
 * @author Moritz Ringler
 */
 public class SortHeader extends JTableHeader implements TableCellRenderer {

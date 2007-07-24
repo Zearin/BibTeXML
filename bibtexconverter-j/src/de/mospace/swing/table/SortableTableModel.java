@@ -2,7 +2,7 @@ package de.mospace.swing.table;
 
 /* Mp3dings - manage mp3 meta-information
  * Copyright (C) 2003 Moritz Ringler
- * $Id: SortableTableModel.java,v 1.11 2007/02/18 14:20:24 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,7 +34,7 @@ import javax.swing.table.TableModel;
      * this.setValueAt(anotherSTM.getValueAt(anotherSTM.getRows(getEntries(row)),col), row, col)
      * </code>
      * @author Moritz Ringler
-     * @version $Revision: 1.11 $ ($Date: 2007/02/18 14:20:24 $)
+     * @version $Revision$ ($Date$)
      */
 public interface SortableTableModel extends TableModel{
     /** Constant for ascending sort order */
