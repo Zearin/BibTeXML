@@ -23,7 +23,7 @@ import java.util.Random;
 
 /**
  * A Table sorter along the lines of the TableSorter from Sun's Swing Tutorial.
- * For a given {@link SortableTableModel} its {@link #sort sort} and 
+ * For a given {@link SortableTableModel} its {@link #sort sort} and
  * {@link #randomize randomize} methods produce a one-to-one mapping
  * between entries and row numbers.
  *
@@ -46,6 +46,7 @@ public class TableSorter {
     * multiple table models.
     */
     public TableSorter(){
+        //sole constructor
     }
 
     private int compareRowsByColumn(int row1, int row2, int column){
@@ -65,7 +66,7 @@ public class TableSorter {
 
         double result = 0;
         /* If both values are identical, return 0. */
-        if (o1 == o2) {
+        if (o1 == o2) { //objects may be null at this stage ->don't use equals()
             result = 0;
 
         /* Define null less than everything. */
@@ -73,6 +74,8 @@ public class TableSorter {
             result = -1;
         } else if (o2 == null) {
             result = 1;
+        } else if (o1.equals(o2)){
+            return 0;
 
         /* Compare numbers numerically */
         } else if (Number.class.isAssignableFrom(type)) {
@@ -252,7 +255,7 @@ public class TableSorter {
     * @param m the data to randomize
     * @return a 2D array holding the new row-for-entry mapping at
     *         index FWD and the inverse mapping at index INV.
-    */    
+    */
     public synchronized int[][] randomize(SortableTableModel m){
         model = m;
         /* initialize indexes with the identity mapping */
