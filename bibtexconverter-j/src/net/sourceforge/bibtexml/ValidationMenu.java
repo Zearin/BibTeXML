@@ -21,14 +21,21 @@ package net.sourceforge.bibtexml;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.prefs.Preferences;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Vector;
+import java.util.List;
+import java.util.Map;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -38,52 +45,54 @@ import javax.xml.validation.SchemaFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-public class ValidationMenu extends JMenu implements ActionListener{
+public final class ValidationMenu extends JMenu implements ActionListener{
     private static final Preferences PREF =
     Preferences.userNodeForPackage(BibTeXConverterController.class).node("schema");
     final static String VALIDATION_PREFIX = "javax.xml.validation:";
-    private final static String SF = "javax.xml.validation.SchemaFactory"; 
+    private final static String SF = "javax.xml.validation.SchemaFactory";
     private final static String VALIDATION_DISABLED = VALIDATION_PREFIX + "disabled";
     private final static String VALIDATION_BUILTIN = VALIDATION_PREFIX + "builtin";
     private final static String VALIDATION_USER = VALIDATION_PREFIX + "user";
-    
+
     private final SchemaSelection schemaSelection = new SchemaSelection();
     private final XMLConverter xmlconv;
     private final AbstractButton disabled = new JRadioButtonMenuItem("Disabled", true);
     private final AbstractButton userSchema = new JRadioButtonMenuItem("Custom schema...");
     private final AbstractButton builtin = new JRadioButtonMenuItem("Built-in schema...");
     private URL userSchemaURL;
-    
+
     public ValidationMenu(XMLConverter converter){
         super("BibXML Validation");
         xmlconv = converter;
         init();
     }
-    
+
     private void init(){
         JMenu menu = this;
-        
-        ButtonGroup schema = new ButtonGroup();        
+
+        ButtonGroup schema = new ButtonGroup();
         menu.add(disabled);
         schema.add(disabled);
         disabled.addActionListener(this);
-        
+
         menu.add(builtin);
         schema.add(builtin);
         builtin.addActionListener(this);
-        
+
         menu.add(userSchema);
         schema.add(userSchema);
         userSchema.addActionListener(this);
-        
+
         String prefval = PREF.get("userSchemaURL", null);
         if(prefval != null){
             try{
                 userSchemaURL = new URL(prefval);
-            } catch (Exception ignore){
+            } catch (Exception ex){
+                System.err.println(ex);
+                System.err.flush();
             }
         }
-        
+
         prefval = PREF.get(VALIDATION_PREFIX, VALIDATION_DISABLED);
         if(prefval.equals(VALIDATION_BUILTIN)){
             builtin.setSelected(true);
@@ -95,8 +104,8 @@ public class ValidationMenu extends JMenu implements ActionListener{
             disabled.setSelected(true);
             setValidationEnabled(false);
         }
-        
-        List<JMenu> submenus = new Vector<JMenu>(); 
+
+        List<JMenu> submenus = new Vector<JMenu>();
         menu = engineSelection("Relax NG", XMLConstants.RELAXNG_NS_URI);
         if(menu != null){
             submenus.add(menu);
@@ -106,7 +115,7 @@ public class ValidationMenu extends JMenu implements ActionListener{
             submenus.add(menu);
         }
         switch (submenus.size()){
-            case 0: 
+            case 0:
                 break;
             case 1:
                 menu = submenus.get(0);
@@ -122,9 +131,9 @@ public class ValidationMenu extends JMenu implements ActionListener{
                 addSeparator();
                 add(menu);
         }
-        
+
     }
-    
+
     private JMenu engineSelection(String name, final String schemaLanguage){
         String prefVal = PREF.get(SF + ":" + schemaLanguage, null);
         List<JMenuItem> items = new Vector<JMenuItem>();
@@ -135,7 +144,7 @@ public class ValidationMenu extends JMenu implements ActionListener{
             }
         };
         for(String provider : providers(schemaLanguage)){
-            if(provider.equals("org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl")){
+            if("org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl".equals(provider)){
                 /* Skip generic RELAXNGSchemaFactory */
                 continue;
             }
@@ -154,7 +163,7 @@ public class ValidationMenu extends JMenu implements ActionListener{
                 jmi.doClick();
             }
         }
-        
+
         JMenu result = null;
         if(items.size() > 1){
             result = new JMenu(name);
@@ -165,10 +174,10 @@ public class ValidationMenu extends JMenu implements ActionListener{
         }
         return result;
     }
-    
-    
+
+
     // K.K: the following providers method is copied from Apache Batik project.
-    
+
     /*****************************************************************************
      * Copyright (C) The Apache Software Foundation. All rights reserved.        *
      * ------------------------------------------------------------------------- *
@@ -179,15 +188,16 @@ public class ValidationMenu extends JMenu implements ActionListener{
     /*
      * version  Service.java,v 1.1 2001/04/27 19:55:44 deweese Exp
      */
-    private Map<String, List<String>> providerMap = new HashMap<String, List<String>>(); 
+    private final Map<String, List<String>> providerMap = new HashMap<String, List<String>>();
     private synchronized Iterable<String> providers(String schemaLanguage) {
         String serviceFile = "META-INF/services/"+SF;
 
         // System.out.println("File: " + serviceFile);
 
         List<String> v = providerMap.get(schemaLanguage);
-        if (v != null)
+        if (v != null){
             return v;
+        }
 
         v = new Vector<String>();
         providerMap.put(schemaLanguage, v);
@@ -214,8 +224,9 @@ public class ValidationMenu extends JMenu implements ActionListener{
                     try {
                         // First strip any comment...
                         int idx = line.indexOf('#');
-                        if (idx != -1)
+                        if (idx != -1){
                             line = line.substring(0, idx);
+                        }
 
                         // Trim whitespace.
                         line = line.trim();
@@ -227,13 +238,14 @@ public class ValidationMenu extends JMenu implements ActionListener{
                         }
                         // System.out.println("Line: " + line);
 
-                        // Try and load the class 
+                        // Try and load the class
                         SchemaFactory sf = (SchemaFactory) Class.forName(line, true, cl).newInstance();
                         // stick it into our vector...
-                        if(sf.isSchemaLanguageSupported(schemaLanguage)){
-                            if(!v.contains(line)){
-                                v.add(line);
-                            }
+                        if(
+                            sf.isSchemaLanguageSupported(schemaLanguage) &&
+                            !v.contains(line)
+                        ){
+                            v.add(line);
                         }
                     } catch (Exception ex) {
                         // Just try the next line
@@ -248,7 +260,7 @@ public class ValidationMenu extends JMenu implements ActionListener{
         return v;
     }
 
-    
+
     public void actionPerformed(ActionEvent e){
         Object c = e.getSource();
         if(c == disabled){
@@ -259,7 +271,7 @@ public class ValidationMenu extends JMenu implements ActionListener{
             setSchemaFile();
         }
     }
-    
+
     private void configureBuiltInValidation(){
         PREF.put(VALIDATION_PREFIX, VALIDATION_BUILTIN);
         builtin.setSelected(true);
@@ -269,11 +281,11 @@ public class ValidationMenu extends JMenu implements ActionListener{
             setValidationEnabled(false);
         }
     }
-    
+
     private void setSchemaFile(){
         PREF.put(VALIDATION_PREFIX, VALIDATION_USER);
         userSchema.setSelected(true);
-        
+
         /* configure file chooser */
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new SchemaFileFilter());
@@ -282,12 +294,14 @@ public class ValidationMenu extends JMenu implements ActionListener{
                 File f = new File(userSchemaURL.toURI());
                 chooser.setSelectedFile(f);
             } catch (Exception ignore){
+                System.err.println(ignore);
+                System.err.flush();
             }
         }
         chooser.setMultiSelectionEnabled(false);
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setDialogTitle("Choose a Relax NG or W3C Schema file");
-        
+
         //open file selection dialog
         if(chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
             File f = chooser.getSelectedFile();
@@ -305,7 +319,7 @@ public class ValidationMenu extends JMenu implements ActionListener{
         }
         setValidationEnabled(false);
     }
-    
+
     public void setPreferredEngine(String schemaLanguage, String schemaFactoryClass){
         boolean ok = true;
         String systemProperty = SF + ":" +schemaLanguage;
@@ -325,14 +339,14 @@ public class ValidationMenu extends JMenu implements ActionListener{
                 ok = false;
             }
             */
-            
+
             if(ok){
                 /* set the system property */
                 System.setProperty(systemProperty, schemaFactoryClass);
-                
+
                 /* set the Preferences */
                 PREF.put(systemProperty, schemaFactoryClass);
-                
+
                 /* force recompilation of the schema by xmlconv */
                 if(!disabled.isSelected()){
                     setValidationEnabled(true);
@@ -341,14 +355,13 @@ public class ValidationMenu extends JMenu implements ActionListener{
                 System.err.flush();
             }
         }
-        return;
     }
-    
+
     public String getPreferredEngine(String schemaLanguage){
         String systemProperty = SF + ":" +schemaLanguage;
         return(System.getProperty(systemProperty));
     }
-    
+
     public boolean setValidationEnabled(boolean b){
         disabled.setSelected(!b);
         if(b){
@@ -366,7 +379,7 @@ public class ValidationMenu extends JMenu implements ActionListener{
         }
         return b;
     }
-    
+
     private boolean enableValidation(){
         boolean ok = false;
         try{
@@ -394,15 +407,15 @@ public class ValidationMenu extends JMenu implements ActionListener{
         }
         return ok;
     }
-    
+
     private static class SchemaFileFilter extends javax.swing.filechooser.FileFilter{
         public boolean accept(File f){
             return f.isDirectory() || f.getName().endsWith(".xsd") || f.getName().endsWith(".rng");
         }
-        
+
         public String getDescription(){
             return "*.rng, *.xsd";
         }
     }
-    
+
 }

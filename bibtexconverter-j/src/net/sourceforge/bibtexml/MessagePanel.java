@@ -22,25 +22,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.*;
 import java.util.*;
-import java.util.prefs.Preferences;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.xml.transform.TransformerException;
-import de.mospace.swing.LookAndFeelMenu;
-import de.mospace.swing.PathInput;
 import de.mospace.swing.text.*;
-import de.mospace.xml.ResettableErrorHandler;
-import de.mospace.xml.XMLUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
-import net.sourceforge.bibtexml.BibTeXConverter.Parser;
 
 class MessagePanel extends JPanel{
     private final CardLayout layout = new CardLayout();
@@ -49,7 +38,7 @@ class MessagePanel extends JPanel{
     private final JEditorPane console = new JTextPane();
     private final ErrorList errorlist;
     private UniversalErrorHandler errorhandler;
-    
+
     public MessagePanel(){
         super();
         setLayout(layout);
@@ -58,18 +47,18 @@ class MessagePanel extends JPanel{
         output = new DocumentOutputStream(console.getDocument());
         output.setColor(Color.red);
         System.setErr(new PrintStream(new BufferedOutputStream(output), false));
-        ActionListener close = new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        final ActionListener close = new ActionListener(){
+            public void actionPerformed(final ActionEvent e){
                 showConsole();
             }
         };
         errorlist = new ErrorList(close);
         add(new JScrollPane(console), CONSOLE);
         add(errorlist.component(), ERRORS);
-        showConsole();
+        layout.show(this, CONSOLE);
         setPreferredSize(new Dimension(200,200));
     }
-    
+
     public synchronized UniversalErrorHandler getErrorHandler(){
         if(errorhandler == null){
             errorhandler = new JointErrorHandler(
@@ -78,56 +67,57 @@ class MessagePanel extends JPanel{
         }
         return errorhandler;
     }
-    
+
     public void showConsole(){
         layout.show(this, CONSOLE);
     }
-    
+
     public void showErrors(){
         layout.show(this, ERRORS);
     }
-    
+
     protected ErrorList getErrorList(){
         return errorlist;
     }
-    
+
     private class MyErrorHandler implements UniversalErrorHandler{
         public MyErrorHandler(){
+            //sole constructor
         }
-        
-        public void fatalError( SAXParseException e ) throws SAXException {
+
+        public void fatalError(final SAXParseException e ) throws SAXException {
             showErrors();
         }
-        
-        public void error( SAXParseException ex ) throws SAXException {
+
+        public void error(final SAXParseException ex ) throws SAXException {
             showErrors();
         }
-        
-        public void warning( SAXParseException e ) throws SAXException {
+
+        public void warning(final SAXParseException e ) throws SAXException {
             showErrors();
         }
-        
-        public void fatalError( TransformerException e ) throws TransformerException {
+
+        public void fatalError(final TransformerException e ) throws TransformerException {
             showErrors();
         }
-        
-        public void error( TransformerException ex ) throws TransformerException {
+
+        public void error(final TransformerException ex ) throws TransformerException {
             showErrors();
         }
-        
-        public void warning( TransformerException e ) throws TransformerException {
+
+        public void warning(final TransformerException e ) throws TransformerException {
             showErrors();
         }
-        
-        public void error(ParseErrorMessage e) throws IOException {
+
+        public void error(final ParseErrorMessage e) throws IOException {
             showErrors();
         }
-        
+
         public synchronized void reset(){
             errorlist.setAllowDoubleClick(false);
             showConsole();
         }
-        
+
     }
-    
+
 }

@@ -17,13 +17,12 @@ package net.sourceforge.bibtexml;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import de.mospace.xml.ResettableErrorHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
- 
+
 /** Allows to combine two error handlers. Each of the error
 * handling methods delegates to both the methods of the first and the
 * second handler (in this order).
@@ -31,80 +30,80 @@ import net.sourceforge.texlipse.model.ParseErrorMessage;
 public class JointErrorHandler implements UniversalErrorHandler{
     private UniversalErrorHandler first;
     private UniversalErrorHandler second;
-    
+
     public JointErrorHandler(UniversalErrorHandler first, UniversalErrorHandler second){
         this.first = first;
         this.second = second;
     }
-        
-    public void fatalError( SAXParseException e ) throws SAXException {
+
+    public void fatalError(final SAXParseException e) throws SAXException {
         if(first != null){
             first.fatalError(e);
         }
         second.fatalError(e);
     }
-    
-    public void error( SAXParseException e ) throws SAXException {
+
+    public void error(final SAXParseException e) throws SAXException {
         if(first != null){
             first.error(e);
         }
         second.error(e);
     }
-    
-    public void warning( SAXParseException e ) throws SAXException {
+
+    public void warning(final SAXParseException e) throws SAXException {
         if(first != null){
             first.warning(e);
         }
         second.warning(e);
     }
-    
-    public void fatalError( TransformerException e ) throws TransformerException {
+
+    public void fatalError(final TransformerException e) throws TransformerException {
         if(first != null){
             first.fatalError(e);
         }
         second.fatalError(e);
     }
-    
-    public void error( TransformerException e ) throws TransformerException {
+
+    public void error(final TransformerException e) throws TransformerException {
         if(first != null){
             first.error(e);
         }
         second.error(e);
     }
-    
-    public void warning( TransformerException e ) throws TransformerException {
+
+    public void warning(final TransformerException e) throws TransformerException {
         if(first != null){
             first.warning(e);
         }
         second.warning(e);
     }
-    
-    public void error(ParseErrorMessage e) throws IOException {
+
+    public void error(final ParseErrorMessage e) throws IOException {
         if(first != null){
             first.error(e);
         }
         second.error(e);
     }
-    
+
     public void reset(){
         if(first != null){
             first.reset();
         }
         second.reset();
     }
-    
-    public void setFirst(UniversalErrorHandler eh){
+
+    public void setFirst(final UniversalErrorHandler eh){
         first = eh;
     }
-    
-    public void setSecond(UniversalErrorHandler eh){
-        first = eh;
+
+    public void setSecond(final UniversalErrorHandler eh){
+        second = eh;
     }
-    
+
     public UniversalErrorHandler getFirst(){
         return first;
     }
-    
+
     public UniversalErrorHandler getSecond(){
         return second;
     }

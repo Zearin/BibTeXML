@@ -20,11 +20,7 @@ package net.sourceforge.bibtexml;
 
 import java.util.List;
 import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -32,37 +28,26 @@ import java.util.HashSet;
 import java.util.Vector;
 import java.util.Collection;
 import java.util.prefs.Preferences;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
 import javax.swing.JCheckBox;
 import javax.swing.Box;
-import javax.xml.transform.TransformerException;
-import de.mospace.swing.LookAndFeelMenu;
-import de.mospace.swing.PathInput;
-import de.mospace.xml.ResettableErrorHandler;
-import de.mospace.xml.XMLUtils;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import net.sourceforge.texlipse.model.ParseErrorMessage;
-import net.sourceforge.bibtexml.BibTeXConverter.Parser;
 import javax.xml.transform.ErrorListener;
 
 class StyleSheetManager {
     private Collection<StyleSheetController> styles;
-    private final XMLConverter convert; 
+    private final XMLConverter convert;
     private final Collection<StyleSheetController> builtins;
     private final Container styleContainer; // = Box.createVerticalBox();
     private final ErrorListener errorHandler;
     protected File styledir;
 
-    public StyleSheetManager(XMLConverter convert, Container styleContainer, 
+    public StyleSheetManager(XMLConverter convert, Container styleContainer,
         Collection<StyleSheetController> builtins, ErrorListener errorHandler){
         this.styleContainer = styleContainer;
         this.errorHandler = errorHandler;
         this.convert = convert;
-        
+
         String[] builtInNames = new String[builtins.size()];
         int i = 0;
         for(StyleSheetController style : builtins){
@@ -70,11 +55,11 @@ class StyleSheetManager {
             addStyle(style);
         }
         this.builtins = builtins;
-        
+
         Preferences pref = Preferences.userNodeForPackage(getClass());
         String styledirpath = pref.get("styledir", null);
         styledir = (styledirpath == null)? null : new File(styledirpath);
-        
+
         try{
         for(StyleSheetController style : StyleSheetController.load(convert, builtInNames)){
             addStyle(style);
@@ -82,9 +67,9 @@ class StyleSheetManager {
         } catch (Exception ex){
             ex.printStackTrace();
         }
-        
+
     }
-    
+
     protected String[] getBuiltinStyleNames(){
         if(builtins == null){
             return new String[0];
@@ -95,17 +80,17 @@ class StyleSheetManager {
         }
         return (String[]) result.toArray(new String[result.size()]);
     }
-    
+
     protected boolean hasStyles(){
-        return (styles != null) && (styles.size() != 0);
+        return (styles != null) && (!styles.isEmpty());
     }
-    
+
     protected StyleSheetController[] getStyles(){
-        return (hasStyles())? 
+        return (hasStyles())?
             styles.toArray(new StyleSheetController[styles.size()]):
             null;
     }
-    
+
     public boolean addStyle(){
         JFileChooser jfc = new JFileChooser(styledir);
         jfc.setDialogTitle("Choose an XSLT stylesheet");
@@ -135,7 +120,7 @@ class StyleSheetManager {
             name = name.replaceAll("[\\./]", " ");
         }
         while(nameExists(name)){
-            name = JOptionPane.showInputDialog(styleContainer, 
+            name = JOptionPane.showInputDialog(styleContainer,
             "This name is already in use, please enter another one.", name);
             if(name == null){
                 return false;
@@ -149,7 +134,7 @@ class StyleSheetManager {
             return false;
         }
         while(suffixExists(suffix)){
-            suffix = JOptionPane.showInputDialog(styleContainer, 
+            suffix = JOptionPane.showInputDialog(styleContainer,
             "This suffix is already in use, please enter another one.", suffix);
             if(suffix == null){
                 return false;
@@ -187,7 +172,7 @@ class StyleSheetManager {
         }
         return ssc != null;
     }
-    
+
     private boolean nameExists(String name){
         boolean result = false;
         if(hasStyles()){
@@ -200,7 +185,7 @@ class StyleSheetManager {
         }
         return result;
     }
-    
+
     private boolean suffixExists(String suffix){
         boolean result = false;
         if(hasStyles()){
@@ -213,7 +198,7 @@ class StyleSheetManager {
         }
         return result;
     }
-    
+
     synchronized public boolean addStyle(StyleSheetController cssc){
         if(cssc == null){
             return false;
@@ -227,7 +212,7 @@ class StyleSheetManager {
         }
         return result;
     }
-    
+
     boolean removeStyle(){
         if(hasStyles()){
             Collection<StyleSheetController> v =
@@ -238,7 +223,7 @@ class StyleSheetManager {
                     v.add(style);
                 }
             }
-            if(v.size() != 0){
+            if(!v.isEmpty()){
                 StyleSheetController result =
                     (StyleSheetController)
                     JOptionPane.showInputDialog(styleContainer,
@@ -247,7 +232,7 @@ class StyleSheetManager {
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     v.toArray(new StyleSheetController[v.size()]),
-                    null); 
+                    null);
                 if((result != null) && removeStyle(result)){
                     try{
                         result.destroyPrefNode();
@@ -262,7 +247,7 @@ class StyleSheetManager {
         JOptionPane.showMessageDialog(styleContainer,"There are currently no removable output styles!");
         return false;
     }
-    
+
     synchronized public boolean removeStyle(StyleSheetController cssc){
         if(!hasStyles()){
             return false;
@@ -274,5 +259,5 @@ class StyleSheetManager {
         }
         return result;
     }
-   
+
 }

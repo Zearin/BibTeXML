@@ -67,27 +67,27 @@ final class About extends JDialog implements ActionListener {
     public About(JFrame parent, ImageIcon logo, String saxonVersion) {
         super(parent);
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-        init(parent, logo, saxonVersion);
+        init(logo, saxonVersion);
         pack();
     }
 
     /**Component initialization*/
-    private void init(JFrame parent, ImageIcon logo, String saxonVersion) {
-        Container cp = getContentPane();
+    private void init(final ImageIcon logo, final String saxonVersion) {
+        final Container cp = getContentPane();
         setTitle("About BibTeXConverter");
         setResizable(false);
-        
+
         String version = "";
         try{
-            Properties p = new Properties();
+            final Properties p = new Properties();
             p.load(getClass().getResourceAsStream("version.properties"));
             version = p.getProperty("version") + " (build " + p.getProperty("build") + ")";
         } catch (Exception ex){
             ex.printStackTrace();
         }
-        
-        JLabel image = new JLabel(logo);
-        JLabel text = new JLabel(
+
+        final JLabel image = new JLabel(logo);
+        final JLabel text = new JLabel(
             "<html>" +
             "<b>BibTeXConverter " + version + "</b><br>" +
 
@@ -103,7 +103,7 @@ final class About extends JDialog implements ActionListener {
             "<u>jarv</u><br>&copy; SF ISO-RELAX Project 2001-2002<br>" +
             "<u>jarv-jaxp bridge</u><br>&copy; K. Kawaguchi 2006, M.Ringler 2007<br>" +
             "<u>jing</u><br>&copy; Thai Open Source 2001-2003, M. Ringler 2007<br>" +
-            "<u>msv</u><br>&copy; Sun Microsystems, Inc. 2001-2007<br>" + 
+            "<u>msv</u><br>&copy; Sun Microsystems, Inc. 2001-2007<br>" +
             "<br>" +
             /*"<u>bibtexml.sf.net</u><br>bibtex2xml.py: &copy; Vidar Bronken Gundersen, Sara Sprenkle<br>" +
             "Java port: &copy; Moritz Ringler, 2006<br><br>" +*/
@@ -120,7 +120,7 @@ final class About extends JDialog implements ActionListener {
         );
         text.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 10));
 
-        JTextArea license = new JTextArea(
+        final JTextArea license = new JTextArea(
         "This program is free software; you can redistribute it and/or\n"+
         "modify it under the terms of the GNU General Public License\n"+
         "as published by the Free Software Foundation; either version 2\n"+
@@ -140,12 +140,12 @@ final class About extends JDialog implements ActionListener {
             BorderFactory.createEmptyBorder(5,5,5,5)
         ));
 
-        JButton button =
+        final JButton button =
                 new JButton(UIManager.getString("OptionPane.okButtonText"));
         button.addActionListener(this);
 
         cp.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
+        final GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -175,7 +175,7 @@ final class About extends JDialog implements ActionListener {
     }
 
     /**Overridden so we can exit when window is closed*/
-    protected void processWindowEvent(WindowEvent e) {
+    protected void processWindowEvent(final WindowEvent e) {
         if (e.getID() == WindowEvent.WINDOW_CLOSING) {
             dispose();
         }
@@ -183,26 +183,28 @@ final class About extends JDialog implements ActionListener {
     }
 
     /**Close the dialog on a button event*/
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         dispose();
     }
 
-    private static void addDir(Set<File> set, File f){
+    private static void addDir(final Set<File> set, final File f){
         if(f != null &&
            !DefaultClassLoaderProvider.isTemporary(f) &&
            ExtensionInstaller.canWrite(f) &&
            !f.isFile())
         {
+            File file = f;
             try{
-                f = f.getCanonicalFile();
+                file = f.getCanonicalFile();
             } catch (IOException ignore) {
+                file = f;
             }
-            set.add(f);
+            set.add(file);
         }
     }
 
     private static File[] getUserInstallTargets(){
-        Set<File> userInstallTargets = new TreeSet<File>();
+        final Set<File> userInstallTargets = new TreeSet<File>();
         addDir(userInstallTargets, new File(System.getProperty("user.dir"),
                 "lib"));
         try{
@@ -212,14 +214,14 @@ final class About extends JDialog implements ActionListener {
         } catch (Exception ignore){
             System.err.println(ignore.getMessage());
         }
-        String appdata = System.getenv("APPDATA");
+        final String appdata = System.getenv("APPDATA");
         if(appdata != null){
             addDir(userInstallTargets, new File(appdata, "bibtexconverter"));
         }
         addDir(userInstallTargets, new File(System.getProperty("user.home") +
                 File.separator + ".bibtexconverter",
                 "lib"));
-        String prefTarget =
+        final String prefTarget =
                 Preferences.userNodeForPackage(BibTeXConverter.class)
                 .get("saxon", null);
         if(prefTarget != null){
@@ -228,14 +230,14 @@ final class About extends JDialog implements ActionListener {
         }
         return userInstallTargets.toArray(new File[userInstallTargets.size()]);
     }
-    
-    public static boolean installSaxon(final JFrame trigger, ClassLoaderProvider clp){
-        String jhjars = "saxon8.jar";
+
+    public static boolean installSaxon(final JFrame trigger, final ClassLoaderProvider clp){
+        final String jhjars = "saxon8.jar";
         final String saxonURI =
           "http://sf.net/project/showfiles.php?group_id=29872&package_id=21888";
-        ExtensionInstaller extInst = new ExtensionInstaller(trigger);
-        String systemInstallTarget = extInst.getWritableExtensionDirectory();
-        File[] userInstallTargets = getUserInstallTargets();
+        final ExtensionInstaller extInst = new ExtensionInstaller(trigger);
+        final String systemInstallTarget = extInst.getWritableExtensionDirectory();
+        final File[] userInstallTargets = getUserInstallTargets();
 
         Box dialogPane = Box.createVerticalBox();
         JLabel text = new JLabel(
@@ -262,7 +264,7 @@ final class About extends JDialog implements ActionListener {
         JDialog dialog = optionPane.createDialog(trigger, "Saxon installation");
         dialog.setModal(true);
         dialog.setVisible(true);
-        Object value = optionPane.getValue();
+        final Object value = optionPane.getValue();
         boolean freshInstall = true;
         if(value == null){
             return false;
@@ -271,14 +273,14 @@ final class About extends JDialog implements ActionListener {
         } else if (value.equals(options[0])){
             //freshInstall = true;
         }
-        
+
         JButton button;
         dialogPane = Box.createVerticalBox();
         if(freshInstall){
             button = new JButton(
                     "Open a web browser at http://sf.net/projects/saxon/files/");
             button.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
+                public void actionPerformed(final ActionEvent e){
                     try{
                         BrowserLauncher.openURL(saxonURI);
                     } catch (IOException ex){
@@ -288,7 +290,7 @@ final class About extends JDialog implements ActionListener {
                     }
                 }
             });
-            JPanel dl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            final JPanel dl = new JPanel(new FlowLayout(FlowLayout.LEFT));
             dl.add(button);
             dl.add(new JLabel(" and download saxonb(\u22678-8)j.zip."));
             for(Component c : dl.getComponents()){
@@ -297,24 +299,24 @@ final class About extends JDialog implements ActionListener {
             dialogPane.add(Box.createVerticalStrut(10));
             dialogPane.add(dl);//2
         }
-        
+
         final String filename = (freshInstall? "downloaded Saxon zip" : jhjars);
         text = new JLabel(
             "<html><br>Please enter the location of the "+
-                filename + 
+                filename +
                 " file here.</html>");
         dialogPane.add(text);//3
-        PathInput pinz = new PathInput("", freshInstall? ".zip" : ".jar");
+        final PathInput pinz = new PathInput("", freshInstall? ".zip" : ".jar");
         dialogPane.add(pinz);//4
-        
-        ButtonGroup targets = new ButtonGroup();
+
+        final ButtonGroup targets = new ButtonGroup();
         if(freshInstall){
             text = new JLabel(
                 "<html><br>Press OK to install saxon...</html>");
             dialogPane.add(text);//5
             JRadioButton btarget;
             boolean targetSelected = false;
-            Insets bmargin = new Insets(0,20,0,0);
+            final Insets bmargin = new Insets(0,20,0,0);
             if(systemInstallTarget != null){
                 dialogPane.add(Box.createVerticalStrut(5));
                 text = new JLabel("system-wide (may affect other Java applications)");
@@ -343,12 +345,12 @@ final class About extends JDialog implements ActionListener {
             btarget.setMargin(bmargin);
             targets.add(btarget);
             dialogPane.add(btarget);
-    
+
             for(Component c : dialogPane.getComponents()){
                 ((JComponent) c).setAlignmentX(0.0f);
             }
         }
-        
+
         optionPane = new JOptionPane(
                 dialogPane,
                 JOptionPane.INFORMATION_MESSAGE,
@@ -361,15 +363,15 @@ final class About extends JDialog implements ActionListener {
         boolean success = false;
         for(boolean repeat = true; repeat;){
             dialog.setVisible(true);
-            Object result = (Integer) optionPane.getValue();
+            final Object result = (Integer) optionPane.getValue();
             if(result == null){
                 repeat = false;
             } else if(result == JOptionPane.UNINITIALIZED_VALUE){
             } else if(result instanceof Integer){
-                int res = ((Integer) result).intValue();
+                final int res = ((Integer) result).intValue();
                 if(res == JOptionPane.OK_OPTION){
-                    boolean emptySaxonZip = pinz.getPath().equals("");
-                    boolean emptyTarget = freshInstall && (targets.getSelection() == null);
+                    final boolean emptySaxonZip = pinz.getPath().equals("");
+                    final boolean emptyTarget = freshInstall && (targets.getSelection() == null);
                     repeat = emptySaxonZip || emptyTarget;
                     success = !repeat;
                     if(repeat){
@@ -388,11 +390,11 @@ final class About extends JDialog implements ActionListener {
         String starget = null;
         if(freshInstall && success){
             starget = targets.getSelection().getActionCommand();
-            if(starget.equals("*")){
-                JFileChooser jfc = new JFileChooser();
+            if("*".equals(starget)){
+                final JFileChooser jfc = new JFileChooser();
                 jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 jfc.setMultiSelectionEnabled(false);
-                int returnVal = jfc.showOpenDialog(trigger);
+                final int returnVal = jfc.showOpenDialog(trigger);
                 if(returnVal == JFileChooser.APPROVE_OPTION){
                     starget = jfc.getSelectedFile().getAbsolutePath();
                 } else {
@@ -407,7 +409,7 @@ final class About extends JDialog implements ActionListener {
                 File ftarget = new File(starget);
                 ftarget.mkdirs();
                 extInst.setTargetDirectory(ftarget);
-                String saxon_jar = (new File(jhjars)).getName();
+                final String saxon_jar = (new File(jhjars)).getName();
                 ftarget = new File(ftarget, saxon_jar);
                 Preferences.userNodeForPackage(BibTeXConverter.class)
                         .put("saxon", ftarget.getAbsolutePath());
@@ -426,7 +428,7 @@ final class About extends JDialog implements ActionListener {
                 }
             }
         } else if (success){
-            File ftarget = new File(pinz.getPath());
+            final File ftarget = new File(pinz.getPath());
             Preferences.userNodeForPackage(BibTeXConverter.class)
                         .put("saxon", ftarget.getAbsolutePath());
             success  = clp.registerLibrary(ftarget);

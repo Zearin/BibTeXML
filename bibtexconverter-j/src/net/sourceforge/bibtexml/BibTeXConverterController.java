@@ -85,32 +85,29 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private final static String ENCODING_XML = ENCODING_PREFIX + "XML";
     private final static String JABREF_ENC = "Look for JabRef encoding";
     private final static String START_CONVERSION = "Start conversion";
-    
-    private final Container styleContainer = Box.createVerticalBox();    
+
+    private final Container styleContainer = Box.createVerticalBox();
     private final StyleSheetManager styleManager;
     private InputType input = InputType.BIBTEX;
     BibTeXConverter convert = new BibTeXConverter();
-
-    private final SchemaSelection schemaSelection = new SchemaSelection();
-    
 
     final static Object[] allEncodings = Charset.availableCharsets().keySet().toArray();
 
     private PathInput inputFile;
     private JButton startbutton;
     private PathInput outputDir;
-    private Map<JToggleButton, Set<Component>> dependencies = new HashMap<JToggleButton, Set<Component>>();
+    private final Map<JToggleButton, Set<Component>> dependencies = new HashMap<JToggleButton, Set<Component>>();
     private JRadioButton bibTeXInput;
+    private JRadioButton xmlInput;
     private JComboBox encodings;
-    private String groupingKey = "keywords";
-    
+
     protected MessagePanel msgPane = new MessagePanel();
     private final ErrorCounter ecount = new ErrorCounter();
     private final UniversalErrorHandler errorHandler = new JointErrorHandler(ecount, msgPane.getErrorHandler());
 
     public BibTeXConverterController(){
         super("BibTeXConverter");
-        Object tf = convert.tryToGetTransformerFactory(); 
+        Object tf = convert.tryToGetTransformerFactory();
         if(tf == null){
             tf = convert.loadTransformerFactory(this);
         }
@@ -124,7 +121,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             styleManager = new StyleSheetManager(convert, styleContainer, builtInStyles(), errorHandler);
         }
         pack();
-        
+
         convert.setValidationErrorHandler(errorHandler);
         convert.setBibTeXErrorHandler(errorHandler);
         try{
@@ -134,13 +131,13 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             System.err.println("Error setting XML encoding.");
             System.err.println(ex);
         }
-        
+
         System.err.flush();
         System.out.flush();
     }
-    
+
     private Collection<StyleSheetController> builtInStyles(){
-        List<StyleSheetController> builtins = new ArrayList<StyleSheetController>();
+        final List<StyleSheetController> builtins = new ArrayList<StyleSheetController>();
         builtins.add(
             StyleSheetController.newInstance(convert, "BibTeX", "-new.bib",
                     getClass().getResource("xslt/bibxml2bib.xsl"),
@@ -163,17 +160,17 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         true, true, false));
         return builtins;
     }
-    
-    public boolean addStyle(StyleSheetController cssc){
+
+    public boolean addStyle(final StyleSheetController cssc){
         return styleManager.addStyle(cssc);
     }
-    
-    public boolean removeStyle(StyleSheetController cssc){
+
+    public boolean removeStyle(final StyleSheetController cssc){
         return styleManager.removeStyle(cssc);
     }
 
-    private void init(boolean hasSaxon){
-        JPanel cp = new JPanel(new GridBagLayout());
+    private void init(final boolean hasSaxon){
+        final JPanel cp = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.gridx = 0;
@@ -198,46 +195,46 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
 
         gbc.gridy++;
         gbc.weighty = 1;
-        
+
         cp.add(msgPane, gbc);
 
         setContentPane(cp);
-        JMenuBar mb = new JMenuBar();
+        final JMenuBar mb = new JMenuBar();
         JMenu fm = new JMenu("File");
         if(hasSaxon){
             JMenuItem mi = new JMenuItem("Add output style");
             mi.setActionCommand("addXSLT");
             mi.addActionListener(this);
             fm.add(mi);
-            
+
             mi = new JMenuItem("Remove output style");
             mi.setActionCommand("rmXSLT");
             mi.addActionListener(this);
             fm.add(mi);
         }
-        JMenuItem exit = new JMenuItem("Exit");
+        final JMenuItem exit = new JMenuItem("Exit");
         exit.setActionCommand("exit");
         exit.addActionListener(this);
         fm.add(exit);
         mb.add(fm);
-        
+
         fm = new JMenu("Options");
         mb.add(fm);
         fm.add(new LookAndFeelMenu(PREF,this));
         fm.add(new ValidationMenu(convert));
-        
-        JMenu menu = new JMenu("Help");
-        JMenuItem about = new JMenuItem("About");
+
+        final JMenu menu = new JMenu("Help");
+        final JMenuItem about = new JMenuItem("About");
         about.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                (new About(BibTeXConverterController.this, 
+                (new About(BibTeXConverterController.this,
                     new ImageIcon((URL) BibTeXConverterController.class.getResource("icon/ledgreen.png")),
                     convert.getSaxonVersion())).setVisible(true);
             }
         });
         menu.add(about);
         mb.add(menu);
-        
+
         setJMenuBar(mb);
 
         setIconImage(logo.getImage());
@@ -246,12 +243,12 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     }
 
     private void updateDependentComponents(){
-        Set<JToggleButton> toggles = dependencies.keySet();
+        final Set<JToggleButton> toggles = dependencies.keySet();
         Set<Component> comps;
         for(JToggleButton toggle : toggles){
             comps = dependencies.get(toggle);
             if(comps != null){
-                boolean b = toggle.isSelected();
+                final boolean b = toggle.isSelected();
                 for(Component comp : comps){
                     comp.setVisible(b);
                 }
@@ -260,9 +257,36 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         pack();
     }
 
+    void setInputFile(final XFile f){
+        setInputFile((File) f);
+        setInputType(f.getType());
+    }
+
+    protected void setInputFile(final File f){
+        inputFile.setPath(f.getAbsolutePath());
+    }
+
+    protected File getInputFile(){
+      final String path = inputFile.getPath();
+      return path.length() == 0? null : new File(path);
+    }
+
+    protected void setInputType(final InputType t){
+        switch(t){
+        case BIBXML:
+            xmlInput.doClick();
+            break;
+        case BIBTEX:
+            bibTeXInput.doClick();
+            break;
+        default:
+            System.err.println("Unknown input type " + t.name());
+        }
+    }
+
     private JComponent createInputPanel(){
-        GridBagConstraints gbc = new GridBagConstraints();
-        JPanel input = new JPanel(new GridBagLayout());
+        final GridBagConstraints gbc = new GridBagConstraints();
+        final JPanel input = new JPanel(new GridBagLayout());
         input.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(),"Input"));
         JLabel label;
@@ -277,12 +301,12 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         gbc.gridwidth = 1;
 
         /* Input type: BibXML or BibTeX */
-        ButtonGroup bgroup = new ButtonGroup();
-        JRadioButton button = new JRadioButton("BibXML");
-        button.setActionCommand(INPUT_PREFIX + InputType.BIBXML.name());
-        button.addActionListener(this);
-        bgroup.add(button);
-        input.add(button, gbc);
+        final ButtonGroup bgroup = new ButtonGroup();
+        xmlInput = new JRadioButton("BibXML");
+        xmlInput.setActionCommand(INPUT_PREFIX + InputType.BIBXML.name());
+        xmlInput.addActionListener(this);
+        bgroup.add(xmlInput);
+        input.add(xmlInput, gbc);
 
         gbc.gridx = 1;
         gbc.gridwidth = 1;
@@ -291,13 +315,13 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         bibTeXInput.setActionCommand(INPUT_PREFIX + InputType.BIBTEX.name());
         bibTeXInput.addActionListener(this);
         bgroup.add(bibTeXInput);
-        Set<Component> bibtexComps = new HashSet<Component>();
+        final Set<Component> bibtexComps = new HashSet<Component>();
         dependencies.put(bibTeXInput, bibtexComps);
         input.add(bibTeXInput, gbc);
 
         String prefval = PREF.get(INPUT_PREFIX, InputType.BIBTEX.name());
         if(prefval.equals(InputType.BIBXML.name())){
-            button.doClick();
+            xmlInput.doClick();
         } else {
             bibTeXInput.doClick();
         }
@@ -313,7 +337,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         input.add(inputFile, gbc);
 
         /* BibTeX input encodings */
-        String key = ENCODING_PREFIX + InputType.class.getName();
+        final String key = ENCODING_PREFIX + InputType.class.getName();
         prefval = PREF.get(key, BibTeXConverter.DEFAULT_ENC.name());
         encodings = new JComboBox(allEncodings);
         encodings.setActionCommand(key);
@@ -324,8 +348,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         }
         label = new JLabel("BibTeX Encoding");
         label.setLabelFor(encodings);
-        ImageIcon ic = new ImageIcon((URL) getClass().getResource("icon/jabref.png"));
-        JButton jb = new JButton(ic);
+        final ImageIcon ic =
+                new ImageIcon((URL) getClass().getResource("icon/jabref.png"));
+        final JButton jb = new JButton(ic);
         jb.setToolTipText(JABREF_ENC);
         jb.setActionCommand(JABREF_ENC);
         jb.addActionListener(this);
@@ -360,17 +385,16 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.WEST;
 
-        JPanel result = new JPanel(new GridBagLayout());
+        final JPanel result = new JPanel(new GridBagLayout());
         result.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(),"Output"));
         String key, prefval;
-        boolean bprefval;
 
         /* Output directory */
         key = "OutputDir";
         prefval = PREF.get(key, "");
         outputDir = new PathInput(prefval, JFileChooser.DIRECTORIES_ONLY);
-        JLabel label = new JLabel("Output directory");
+        final JLabel label = new JLabel("Output directory");
         label.setBorder(BorderFactory.createEmptyBorder(0,0,0,2));
         label.setLabelFor(outputDir);
         result.add(label, gbc);
@@ -380,12 +404,12 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         gbc.fill = GridBagConstraints.VERTICAL;
 
         /* Section BibXML */
-        JCheckBox bibxmlCB = new JCheckBox("BibXML");
+        final JCheckBox bibxmlCB = new JCheckBox("BibXML");
         bibxmlCB.setSelected(true);
         bibxmlCB.setEnabled(false);
-        Set<Component> bibTeXComps = dependencies.get(bibTeXInput);
+        final Set<Component> bibTeXComps = dependencies.get(bibTeXInput);
 
-        JButton bconfig = new JButton(StyleSheetController.config);
+        final JButton bconfig = new JButton(StyleSheetController.config);
         bconfig.setToolTipText("Configure...");
         bconfig.setBorderPainted(false);
         bconfig.setContentAreaFilled(false);
@@ -396,36 +420,36 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                     outputDir.requestFocusInWindow();
             }
         });
-        Container p2 = Box.createHorizontalBox();
+        final Container p2 = Box.createHorizontalBox();
         p2.add(bibxmlCB);
         p2.add(Box.createHorizontalStrut(5));
         p2.add(bconfig);
-        
+
         gbc.gridy++;
         gbc.insets = new Insets(10,0,0,0);
         gbc.gridx = 0;
         result.add(p2, gbc);
-        
+
         bibTeXComps.add(p2);
-        
+
         /* styles */
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH;
-        JPanel panel = new JPanel(new BorderLayout());
+        final JPanel panel = new JPanel(new BorderLayout());
         panel.add(styleContainer, BorderLayout.CENTER);
         panel.add(startbutton, BorderLayout.EAST);
-        
+
         gbc.gridy++;
         result.add(panel, gbc);
-        
+
         return result;
     }
-    
+
     private void configureBibXML(){
         /* - BibXML encoding */
-        String prefVal = PREF.get(ENCODING_XML, 
+        final String prefVal = PREF.get(ENCODING_XML,
                 BibTeXConverter.DEFAULT_ENC.name());
-        String result = (String) JOptionPane.showInputDialog(this,
+        final String result = (String) JOptionPane.showInputDialog(this,
                                      "Please select the encoding for generated BibXML.",
                                      "BibXML encoding",
                                      JOptionPane.QUESTION_MESSAGE,
@@ -434,7 +458,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                                      prefVal);
          if(result != null){
              try{
-                 Charset cs = Charset.forName(result);
+                 final Charset cs = Charset.forName(result);
                  convert.setXMLEncoding(cs);
                  PREF.put(ENCODING_XML, cs.name());
              } catch (Exception ex){
@@ -447,29 +471,27 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
 
     private void doConversion(){
         msgPane.showConsole();
-        
-        String path = inputFile.getPath();
-        if(path.equals("")){
-            return;
-        }
 
-        File inp = new File(path);
-        if(!inp.exists()){
-            convert.handleException("No input", new FileNotFoundException("Input file "+path+" does not exist."));
+        final File inp = getInputFile();
+        if(inp == null || !inp.exists()){
+            final String msg = (inp == null)
+                    ? "Input file not specified."
+                    : "Input file "+inp.getPath()+" does not exist.";
+            convert.handleException("No input", new FileNotFoundException(msg));
             System.err.flush();
             return;
         }
-        
+
         startbutton.setEnabled(false);
         try{
             File dir = inp.isDirectory()
                 ? inp
                 : inp.getAbsoluteFile().getParentFile();
             PREF.put("InputFile", inp.getAbsolutePath());
-            
-            path = outputDir.getPath();
-            if(!path.equals("")){
-                File x = new File(path);
+
+            final String path = outputDir.getPath();
+            if(path.length() != 0){
+                final File x = new File(path);
                 if(x.isAbsolute()){
                     dir = x;
                 } else {
@@ -493,7 +515,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 }
             }
             PREF.put("OutputDir", dir.getPath());
-            
+
             File[] inf = null;
             inf = inp.isDirectory()?
             inp.listFiles(
@@ -504,10 +526,10 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 }
                 )
             : new File[]{inp};
-            
+
             boolean html = false;
             int parseErrors  = 0;
-            
+
             int i = 0;
             FILELOOP: for(File inputf : inf){
                 if(i++ != 0){
@@ -516,15 +538,13 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 System.out.println("CONVERTING " + inputf.getPath());
                 System.out.flush();
                 String basename = inputf.getName();
-                int lastdot = basename.lastIndexOf(".");
-                String extension = "";
+                final int lastdot = basename.lastIndexOf('.');
                 if(lastdot >= 0){
-                    extension = basename.substring(lastdot);
                     basename = basename.substring(0, lastdot);
                 }
-                
+
                 File xml = inputf;
-                
+
                 Charset xmlencoding = null;
                 if(input == InputType.BIBTEX){
                     /* bibtex to bibxml */
@@ -542,7 +562,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         break FILELOOP;
                     }
                     if(parseErrors  > 0){
-                        ErrorList el = msgPane.getErrorList(); 
+                        final ErrorList el = msgPane.getErrorList();
                         el.setFile(new XFile(inputf, InputType.BIBTEX, convert.getBibTeXEncoding()));
                         el.setTitle("Errors parsing " + inputf.getName());
                         el.setAllowDoubleClick(true);
@@ -557,8 +577,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                     InputStream is = null;
                     try{
                         is = new FileInputStream(xml);
-                        is = new BufferedInputStream(is); 
-                        String enc = XMLUtils.getXMLDeclarationEncoding(new InputStreamReader(is, "utf-8"), "utf-8");
+                        is = new BufferedInputStream(is);
+                        final String enc = XMLUtils.getXMLDeclarationEncoding(new InputStreamReader(is, "utf-8"), "utf-8");
                         xmlencoding = Charset.forName(enc);
                         System.out.println("XML Encoding: " + xmlencoding.name());
                     } catch (IOException ex){
@@ -569,14 +589,16 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         if(is != null){
                             try{
                                 is.close();
-                            } catch (Exception ignore){
+                            } catch (Exception ex){
+                                System.err.println(ex);
+                                System.err.flush();
                             }
                         }
                     }
                 }
                 System.err.flush();
                 System.out.flush();
-                
+
                 /* xml validation */
                 if(convert.hasSchema()){
                     String schemaID = convert.getXMLSchemaID();
@@ -603,7 +625,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                             //never mind if it has already been added
                             //the SortedSetListModel of the errorlist will take
                             //care of eliminating duplicates
-                            msgPane.getErrorHandler().fatalError(ex); 
+                            msgPane.getErrorHandler().fatalError(ex);
                         } catch (SAXException ignore){
                         }
                         parseErrors  = 1;
@@ -617,7 +639,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         break FILELOOP;
                     }
                     if(parseErrors  > 0){
-                        ErrorList el = msgPane.getErrorList(); 
+                        final ErrorList el = msgPane.getErrorList();
                         el.setFile(new XFile(xml, InputType.BIBXML, xmlencoding));
                         el.setTitle("Errors validating " + xml.getName() + schemaID);
                         el.setAllowDoubleClick(true);
@@ -633,7 +655,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 }
                 System.err.flush();
                 System.out.flush();
-                
+
                 /* xslt transformation */
                 if(styleManager.hasStyles()){
                     for(StyleSheetController cssc : styleManager.getStyles()){
@@ -654,7 +676,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                                     //never mind if it has already been added
                                     //the SortedSetListModel of the errorlist will take
                                     //care of eliminating duplicates
-                                    msgPane.getErrorHandler().fatalError(ex); 
+                                    msgPane.getErrorHandler().fatalError(ex);
                                 } catch (TransformerException ignore){
                                 }
                                 parseErrors  = 1;
@@ -664,7 +686,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                                 break FILELOOP;
                             }
                             if(parseErrors  > 0){
-                                ErrorList el = msgPane.getErrorList(); 
+                                final ErrorList el = msgPane.getErrorList();
                                 el.setFile(new XFile(xml, InputType.BIBXML, convert.getXMLEncoding()));
                                 el.setTitle("Errors transforming " + xml.getName() + " to " + cssc.getName());
                                 el.setAllowDoubleClick(true);
@@ -675,7 +697,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                             }
                             System.err.flush();
                             System.out.flush();
-                        } 
+                        }
                     }
                 }
             }
@@ -707,13 +729,13 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     }
 
     private void jabrefEncoding(){
-        String path = inputFile.getPath();
-        if(path.equals("")){
+        final String path = inputFile.getPath();
+        if(path.length() == 0){
             System.err.println("No input file specified.");
             return;
         }
 
-        File inp = new File(path);
+        final File inp = new File(path);
         if(inp.isDirectory()){
             convert.handleException("No input", new FileNotFoundException("Input path "+path+" denotes a directory."));
             return;
@@ -727,7 +749,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         try{
             reader = new BufferedReader(new FileReader(inp));
             String line;
-            Matcher m = Pattern.compile("(?i)Encoding:?\\s*([\\w_-]+)").matcher("");
+            final Matcher m = Pattern.compile("(?i)Encoding:?\\s*([\\w_-]+)").matcher("");
             for(int i=0; i<5; i++){
                 line = reader.readLine();
                 if(line == null){
@@ -735,7 +757,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 }
                 if(m.reset(line).find()){
                     String match = m.group(1);
-                    String charset = Charset.forName(match).name();
+                    final String charset = Charset.forName(match).name();
                     if(!charset.equals(match)){
                         match = match + " (" + charset + ")";
                     }
@@ -756,7 +778,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             if(reader != null){
                 try{
                     reader.close();
-                } catch (IOException ignore){
+                } catch (IOException ex){
+                    System.err.println(ex);
+                    System.err.flush();
                 }
             }
             System.out.flush();
@@ -764,9 +788,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         }
 
     }
-    
-    private void handleButton(AbstractButton c){
-        boolean selected = c.isSelected();
+
+    private void handleButton(final AbstractButton c){
+        //boolean selected = c.isSelected();
         String cmd = c.getActionCommand();
 
         if (cmd.equals(START_CONVERSION)){
@@ -776,15 +800,15 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 }
             }).start();
 
-        } else if (cmd.equals("exit")){
+        } else if ("exit".equals(cmd)){
             System.exit(0);
 
-        } else if(cmd.equals("addXSLT")){
+        } else if("addXSLT".equals(cmd)){
             if(styleManager.addStyle()){
                 pack();
             }
-            
-        } else if(cmd.equals("rmXSLT")){
+
+        } else if("rmXSLT".equals(cmd)){
             if(styleManager.removeStyle()){
                 pack();
             }
@@ -802,11 +826,11 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             updateDependentComponents();
         }
     }
-    
-    private void handleComboBox(JComboBox c) throws Exception{
-        String cmd = c.getActionCommand();
-        Object item = c.getSelectedItem();
-        String sitem = item.toString();
+
+    private void handleComboBox(final JComboBox c) throws Exception{
+        final String cmd = c.getActionCommand();
+        final Object item = c.getSelectedItem();
+        final String sitem = item.toString();
 
         if(cmd.equals(ENCODING_PREFIX + InputType.class.getName())){
             convert.setBibTeXEncoding(Charset.forName(sitem));
@@ -814,14 +838,14 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         }
     }
 
-    public void actionPerformed(ActionEvent e){
-        Object c = e.getSource();
+    public void actionPerformed(final ActionEvent e){
+        final Object c = e.getSource();
 
         if(c instanceof AbstractButton){
             handleButton((AbstractButton) c);
 
         } else if(c instanceof JComboBox){
-            JComboBox jcb = (JComboBox) c;
+            final JComboBox jcb = (JComboBox) c;
             try{
                 handleComboBox(jcb);
             } catch (Exception ex){
@@ -834,6 +858,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             }
         }
     }
-    
-   
+
+
 }

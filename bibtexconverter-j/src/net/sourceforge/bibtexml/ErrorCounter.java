@@ -17,7 +17,7 @@ package net.sourceforge.bibtexml;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXException;
 import javax.xml.transform.TransformerException;
@@ -27,61 +27,63 @@ import net.sourceforge.texlipse.model.ParseErrorMessage;
 * parse or validation. */
 public class ErrorCounter extends UniversalErrorHandlerAdapter{
     private int count = 0;
-    
+    private final static String MAX_ERRORS_REACHED = "Stopped: more than 100 errors.";
+
     public ErrorCounter(){
+        //sole constructor
     }
-    
+
     @Override
-    public void fatalError( SAXParseException e ) throws SAXException{
+    public void fatalError(final SAXParseException e) throws SAXException{
         count++;
         //100 errors are fatal
         if(count > 100){
-            throw new SAXException("Stopped: more than 100 errors.");
+            throw new SAXException(MAX_ERRORS_REACHED);
         }
     }
-    
-    
+
+
     @Override
-    public void error( SAXParseException e ) throws SAXException{
+    public void error(final SAXParseException e ) throws SAXException{
         count++;
         //100 errors are fatal
         if(count > 100){
-            throw new SAXException("Stopped: more than 100 errors.");
+            throw new SAXException(MAX_ERRORS_REACHED);
         }
     }
-    
+
     //ErrorListener
     @Override
-    public void fatalError( TransformerException e ) throws TransformerException {
+    public void fatalError(final TransformerException e ) throws TransformerException {
         count++;
         //100 errors are fatal
         if(count > 100){
-            throw new TransformerException("Stopped: more than 100 errors.");
+            throw new TransformerException(MAX_ERRORS_REACHED);
         }
     }
-    
-    @Override    
-    public void error( TransformerException e ) throws TransformerException {
-        count++;
-        //100 errors are fatal
-        if(count > 100){
-            throw new TransformerException("Stopped: more than 100 errors.");
-        }
-    }
-    
+
     @Override
-    public void error(ParseErrorMessage e){
+    public void error(final TransformerException e ) throws TransformerException {
+        count++;
+        //100 errors are fatal
+        if(count > 100){
+            throw new TransformerException(MAX_ERRORS_REACHED);
+        }
+    }
+
+    @Override
+    public void error(final ParseErrorMessage e){
         count++;
     }
-    
+
     public boolean hasError(){
         return count > 0;
     }
-    
+
     public int getErrorCount(){
         return count;
     }
-    
+
     @Override
     public void reset(){
         count = 0;

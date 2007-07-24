@@ -84,7 +84,6 @@ package net.sourceforge.bibtexml;
   these (and unknown) limitations.
   */
 
-import java.io.IOException;
 import java.io.*;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
@@ -134,17 +133,17 @@ public class Bib2BibXML extends AbstractBibTeXParser{
     }
 
     /** Returns the string parameter without braces **/
-    private String removeBraces(String str){
+    private String removeBraces(final String str){
         return REMBRACES_REX.matcher(str).replaceAll("");
     }
 
-    private static String lstrip(String in){
-        return in.replaceFirst("^\\s+","");
-    }
+    //private static String lstrip(String in){
+    //    return in.replaceFirst("^\\s+","");
+    //}
 
-    private String makeXMLList(String data, String tag, Pattern p){
-        StringBuilder bibtex = new StringBuilder(data.length() + 50);
-        String[] list = p.split(data);
+    private String makeXMLList(final String data, final String tag, final Pattern p){
+        final StringBuilder bibtex = new StringBuilder(data.length() + 50);
+        final String[] list = p.split(data);
         for(String element : list){
             bibtex.append("<bibtex:").append(tag).append(">");
             bibtex.append(removeBraces(element.trim()).trim());
@@ -153,7 +152,7 @@ public class Bib2BibXML extends AbstractBibTeXParser{
         return bibtex.toString().trim();
     }
 
-    private String makeXMLTag(String data, String tag){
+    private String makeXMLTag(final String data, final String tag){
         return "<bibtex:" + tag + ">" +
                removeBraces(data).trim() +
                "</bibtex:" + tag + ">";
@@ -167,9 +166,9 @@ public class Bib2BibXML extends AbstractBibTeXParser{
     * We output lastname, firstname. An xsl stylesheet can easily
     * convert this to firstname lastname using tokenize().
     **/
-    private String bibtexAuthor(String data){
-        String[] list = AUTHOR_REX.split(data);
-        StringBuilder bibtex = new StringBuilder();
+    private String bibtexAuthor(final String data){
+        final String[] list = AUTHOR_REX.split(data);
+        final StringBuilder bibtex = new StringBuilder();
         String[] authorparts;
         for(String element : list){
             bibtex.append("<bibtex:author>");
@@ -201,7 +200,7 @@ public class Bib2BibXML extends AbstractBibTeXParser{
      * @param data the title string input
      * @return the bibtex for the title
      */
-    private String bibtexTitle(String data){
+    private String bibtexTitle(final String data){
         return makeXMLTag(data, "title");
     }
 
@@ -209,41 +208,41 @@ public class Bib2BibXML extends AbstractBibTeXParser{
      * Keywords are assumed to be delimited by , or ;
      * @return the bibtex for the keyword
      */
-    private String bibtexKeyword(String data){
+    private String bibtexKeyword(final String data){
         return makeXMLList(data, "keywords", KEYWORDS_REX);
     }
 
-    /**
-    * data = title string
-    * @return the capitalized title (first letter is capitalized), rest are capitalized
-    * only if capitalized inside braces
-    **/
-    private String capitalizeTitle(String data){
-        StringBuilder title = new StringBuilder(data.length() + 50);
-        String[] titleList = splitWithSeparators(data, CAPITALIZE_REX);
-
-        int count = 0;
-        for(String phrase : titleList){
-            String check = lstrip(phrase);
-            //keep phrase's capitalization the same
-            if(check.indexOf('{') == 0){
-                title.append(removeBraces(phrase));
-            } else if(check.length() > 0){
-                //first word --> capitalize first letter (after spaces)
-                if (count == 0){
-                    title.append(Character.toUpperCase(check.charAt(0)));
-                    if(check.length() > 1){
-                        title.append(check.substring(1));
-                    }
-                } else {
-                    title.append(phrase.toLowerCase());
-                }
-            }
-            count++;
-        }
-
-        return title.toString();
-    }
+    // /**
+    // * data = title string
+    // * @return the capitalized title (first letter is capitalized), rest are capitalized
+    // * only if capitalized inside braces
+    // **/
+    // private String capitalizeTitle(String data){
+        // StringBuilder title = new StringBuilder(data.length() + 50);
+        // String[] titleList = splitWithSeparators(data, CAPITALIZE_REX);
+//
+        // int count = 0;
+        // for(String phrase : titleList){
+            // String check = lstrip(phrase);
+            // //keep phrase's capitalization the same
+            // if(check.indexOf('{') == 0){
+                // title.append(removeBraces(phrase));
+            // } else if(check.length() > 0){
+                // //first word --> capitalize first letter (after spaces)
+                // if (count == 0){
+                    // title.append(Character.toUpperCase(check.charAt(0)));
+                    // if(check.length() > 1){
+                        // title.append(check.substring(1));
+                    // }
+                // } else {
+                    // title.append(phrase.toLowerCase());
+                // }
+            // }
+            // count++;
+        // }
+//
+        // return title.toString();
+    // }
 
     /**
      * Creates the XML for the transformed "filecontents"
@@ -253,9 +252,9 @@ public class Bib2BibXML extends AbstractBibTeXParser{
         String endEntry = null;
 
         // want @<alphanumeric chars><spaces>{<spaces><any chars>,
-        Pattern pubTypeRex = Pattern.compile("@(\\w*)\\s*\\{\\s*(.*),");
-        Pattern endTypeRex = Pattern.compile("\\}\\s*$");
-        Pattern endTagRex = Pattern.compile("^\\s*\\}\\s*$");
+        final Pattern pubTypeRex = Pattern.compile("@(\\w*)\\s*\\{\\s*(.*),");
+        final Pattern endTypeRex = Pattern.compile("\\}\\s*$");
+        final Pattern endTagRex = Pattern.compile("^\\s*\\}\\s*$");
 
         //contains pairs of data and field patterns
         Pattern[][] patterns = new Pattern[3][2];
@@ -264,14 +263,14 @@ public class Bib2BibXML extends AbstractBibTeXParser{
         final int _FIELD = 1;
         //Pattern braceFieldRex = Pattern.compile("\\s*(\\w*)\\s*=\\s*(.*)");
         //Pattern braceDataRex = Pattern.compile("\\s*(\\w*)\\s*=\\s*\\{(.*)\\},?");
-        Pattern braceFieldRex = Pattern.compile("\\s*([^=\\s]*)\\s*=\\s*(.*)");
-        Pattern braceDataRex = Pattern.compile("\\s*([^=\\s]*)\\s*=\\s*\\{(.*)\\},?");
+        final Pattern braceFieldRex = Pattern.compile("\\s*([^=\\s]*)\\s*=\\s*(.*)");
+        final Pattern braceDataRex = Pattern.compile("\\s*([^=\\s]*)\\s*=\\s*\\{(.*)\\},?");
 
         patterns[0][_DATA] = braceDataRex;
         patterns[0][_FIELD] = braceFieldRex;
 
-        Pattern quoteFieldRex = Pattern.compile("\\s*(\\w*)\\s*=\\s*(.*)");
-        Pattern quoteDataRex = Pattern.compile("\\s*(\\w*)\\s*=\\s*\"(.*)\",?");
+        final Pattern quoteFieldRex = Pattern.compile("\\s*(\\w*)\\s*=\\s*(.*)");
+        final Pattern quoteDataRex = Pattern.compile("\\s*(\\w*)\\s*=\\s*\"(.*)\",?");
         patterns[1][_DATA] = quoteDataRex;
         patterns[1][_FIELD] = quoteFieldRex;
 
@@ -382,10 +381,12 @@ public class Bib2BibXML extends AbstractBibTeXParser{
                 openBrace--;
             } else if (phrase.equals("\"")){
                 openQuote = (openQuote == 1)? 0 : 1;
-            } else if (abbrRex.matcher(phrase).find()){
-                if(openBrace == 0 && openQuote == 0){
-                    return true;
-                }
+            } else if (
+                abbrRex.matcher(phrase).find() &&
+                openBrace == 0 &&
+                openQuote == 0
+            ){
+                return true;
             }
         }
         return false;
@@ -495,11 +496,12 @@ public class Bib2BibXML extends AbstractBibTeXParser{
                 continue;
             }
 
-            if (waitingForEndString){
-                if ( line.indexOf('}') >= 0 ){
-                    waitingForEndString = false;
-                    continue;
-                }
+            if (
+                waitingForEndString &&
+                line.indexOf('}') >= 0
+            ){
+                waitingForEndString = false;
+                continue;
             }
 
             m = abbrDefRex.matcher(line);
@@ -524,13 +526,14 @@ public class Bib2BibXML extends AbstractBibTeXParser{
             //# replace subsequent abbreviations with the value
             for (String abbr : abbrList.keySet()){
                 m = abbrRex.get(abbr).matcher(line);
-                if (m.find()){
-                    if (verifyOutOfBraces(line, abbr)){
-                        line = abbrList.get(abbr) + m.group(1);
-                        // Check for # concatenations
-                        if (CONCATSPLIT_REX.matcher(line).find()){
-                            line = concatLine(line);
-                        }
+                if (
+                    m.find()
+                    &&(verifyOutOfBraces(line, abbr))
+                ){
+                    line = abbrList.get(abbr) + m.group(1);
+                    // Check for # concatenations
+                    if (CONCATSPLIT_REX.matcher(line).find()){
+                        line = concatLine(line);
                     }
                 }
             }
@@ -559,7 +562,6 @@ public class Bib2BibXML extends AbstractBibTeXParser{
         Matcher m = regex.matcher(input);
         int start = 0;
         int end = 0;
-        String element;
         List<String> result = new Vector<String>(50);
         while(m.find()){
             //add non-matching part

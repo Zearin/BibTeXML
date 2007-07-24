@@ -55,7 +55,7 @@ public class TeXLipseParser extends AbstractBibTeXParser{
         hasErrors = false;
         parser = new BibParser2(reader);
         ArrayList errors = parser.getErrors();
-        if(errors != null && errors.size() > 0){
+        if(errors != null && !errors.isEmpty()){
             hasErrors = true;
             for(Object error : errors){
                 if(errorhandler == null){

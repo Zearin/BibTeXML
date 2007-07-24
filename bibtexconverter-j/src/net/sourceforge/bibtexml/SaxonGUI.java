@@ -78,7 +78,6 @@ public class SaxonGUI extends JFrame implements ActionListener{
             Preferences.userNodeForPackage(BibTeXConverterController.class).node("saxongui");
     private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("bibconvert.png"));
 
-    private InputType input = InputType.BIBXML;
     BibTeXConverter convert = new BibTeXConverter();
 
     private final static String INPUT_PREFIX = InputType.class.getName()+":";
@@ -92,14 +91,12 @@ public class SaxonGUI extends JFrame implements ActionListener{
     private PathInput inputFile;
     private PathInput outputDir;
     private Collection<StyleSheetController> styles;
-    private JComboBox encodings;
-    private String groupingKey = "keywords";
-    private Container styleContainer = Box.createVerticalBox();
+    private final Container styleContainer = Box.createVerticalBox();
     protected File styledir;
 
     private SaxonGUI() throws SAXException, IOException{
         super("Saxon GUI");
-        Object tf = convert.tryToGetTransformerFactory(); 
+        Object tf = convert.tryToGetTransformerFactory();
         if(tf == null){
             tf = convert.loadTransformerFactory(this);
         }
@@ -113,7 +110,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
         } else {
             /* load styles */
                 try{
-                    for(StyleSheetController style : 
+                    for(StyleSheetController style :
                             StyleSheetController.load(convert)){
                         addStyle(style);
                     }
@@ -123,7 +120,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
         }
         pack();
     }
-    
+
     private void init(boolean hasSaxon){
         JPanel cp = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -169,7 +166,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
             mi.setActionCommand("addXSLT");
             mi.addActionListener(this);
             fm.add(mi);
-            
+
             mi = new JMenuItem("Remove output style");
             mi.setActionCommand("rmXSLT");
             mi.addActionListener(this);
@@ -187,7 +184,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
         setIconImage(logo.getImage());
 
     }
-    
+
     protected String[] getBuiltinStyleNames(){
         return new String[0];
     }
@@ -197,7 +194,6 @@ public class SaxonGUI extends JFrame implements ActionListener{
         JPanel input = new JPanel(new GridBagLayout());
         input.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(),"Input"));
-        JLabel label;
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -256,7 +252,6 @@ public class SaxonGUI extends JFrame implements ActionListener{
         result.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(),"Output"));
         String key, prefval;
-        boolean bprefval;
 
         /* Output directory */
         key = "OutputDir";
@@ -274,7 +269,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH;
         addRow(result, null, styleContainer, gbc);
-        
+
         return result;
     }
 
@@ -337,9 +332,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
             System.out.println("CONVERTING "+inputf.getPath());
             String basename = inputf.getName();
             int lastdot = basename.lastIndexOf(".");
-            String extension = "";
             if(lastdot >= 0){
-                extension = basename.substring(lastdot);
                 basename = basename.substring(0, lastdot);
             }
 
@@ -353,7 +346,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
                             System.out.println(ex);
                             break FILELOOP;
                         }
-                    } 
+                    }
                 }
             }
         }
@@ -363,13 +356,13 @@ public class SaxonGUI extends JFrame implements ActionListener{
     protected boolean hasStyles(){
         return (styles != null) && (styles.size() != 0);
     }
-    
+
     protected StyleSheetController[] getStyles(){
-        return (hasStyles())? 
+        return (hasStyles())?
             styles.toArray(new StyleSheetController[styles.size()]):
             null;
     }
-    
+
     public boolean addStyle(){
         JFileChooser jfc = new JFileChooser(styledir);
         jfc.setDialogTitle("Choose an XSLT stylesheet");
@@ -399,7 +392,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
             name = name.replaceAll("[\\./]", " ");
         }
         while(nameExists(name)){
-            name = JOptionPane.showInputDialog(this, 
+            name = JOptionPane.showInputDialog(this,
             "This name is already in use, please enter another one.", name);
             if(name == null){
                 return false;
@@ -413,7 +406,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
             return false;
         }
         while(suffixExists(suffix)){
-            suffix = JOptionPane.showInputDialog(this, 
+            suffix = JOptionPane.showInputDialog(this,
             "This suffix is already in use, please enter another one.", suffix);
             if(suffix == null){
                 return false;
@@ -450,7 +443,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
         }
         return ssc != null;
     }
-    
+
     private boolean nameExists(String name){
         boolean result = false;
         if(hasStyles()){
@@ -463,7 +456,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
         }
         return result;
     }
-    
+
     private boolean suffixExists(String suffix){
         boolean result = false;
         if(hasStyles()){
@@ -476,7 +469,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
         }
         return result;
     }
-    
+
     synchronized public boolean addStyle(StyleSheetController cssc){
         if(styles == null){
             styles = new HashSet<StyleSheetController>();
@@ -487,7 +480,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
         }
         return result;
     }
-    
+
     boolean removeStyle(){
         if(hasStyles()){
             Collection<StyleSheetController> v =
@@ -507,7 +500,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     v.toArray(new StyleSheetController[v.size()]),
-                    null); 
+                    null);
                 if((result != null) && removeStyle(result)){
                     try{
                         result.destroyPrefNode();
@@ -522,7 +515,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
         JOptionPane.showMessageDialog(this,"There are currently no removable output styles!");
         return false;
     }
-    
+
     synchronized public boolean removeStyle(StyleSheetController cssc){
         if(!hasStyles()){
             return false;
@@ -553,16 +546,11 @@ public class SaxonGUI extends JFrame implements ActionListener{
             if(addStyle()){
                 pack();
             }
-            
+
         } else if(cmd.equals("rmXSLT")){
             if(removeStyle()){
                 pack();
             }
-
-        } else if(cmd.startsWith(INPUT_PREFIX)){
-            cmd = cmd.substring(INPUT_PREFIX.length());
-            input = Enum.valueOf(InputType.class, cmd);
-            PREF.put(INPUT_PREFIX, cmd);
 
         }
     }
@@ -608,7 +596,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
             }
         }
     }
-    
+
     /** The method that starts up the BibTeXConverter Application. **/
     public static void main(String[] argv) throws Exception{
         StyleSheetController.PREF = PREF.node("styles");

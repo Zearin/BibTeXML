@@ -47,7 +47,8 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.*;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import de.mospace.lang.DefaultClassLoaderProvider;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -55,10 +56,10 @@ import org.xml.sax.SAXException;
 
 public class XMLConverter extends DefaultClassLoaderProvider{
     private TransformerFactory tf;
-    private Validator xmlValidator; 
+    private Validator xmlValidator;
     protected final static Charset DEFAULT_ENC = Charset.defaultCharset();
     protected final static String INTERNAL_PARAMETER_PREFIX = "bibtexml.sf.net.";
-    public final static String RELAXNG_SF 
+    public final static String RELAXNG_SF
         = "javax.xml.validation.SchemaFactory:" + XMLConstants.RELAXNG_NS_URI;
     public final static String JARV_RELAXNG_SF
         = "org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl";
@@ -78,7 +79,10 @@ public class XMLConverter extends DefaultClassLoaderProvider{
                 DefaultClassLoaderProvider
                 .getRepositoryRootDir(BibTeXConverter.class),
                 "lib").getAbsolutePath());
-        } catch(Exception ignore){}
+        } catch(Exception ignore){
+            System.err.println(ignore);
+            System.err.flush();
+        }
         String appdata = System.getenv("APPDATA");
         if(appdata != null){
             candidates.add(appdata + fs + "bibtexconverter");
@@ -104,13 +108,13 @@ public class XMLConverter extends DefaultClassLoaderProvider{
         System.setProperty("javax.xml.transform.TransformerFactory",
                             TRANSFORMER_FACTORY_IMPLEMENTATION);
         tf = tryToGetTransformerFactory();
-        
+
         /* Restore preferred validation engine */
-        for (String schemaLanguage : 
+        for (String schemaLanguage :
             new String[]{
-                XMLConstants.RELAXNG_NS_URI, 
+                XMLConstants.RELAXNG_NS_URI,
                 XMLConstants.W3C_XML_SCHEMA_NS_URI
-            }){ 
+            }){
             String key = "javax.xml.validation.SchemaFactory:" + schemaLanguage;
             String prefVal = Preferences.userNodeForPackage(getClass()).node("schema").get(key, null);
             if(prefVal != null){
@@ -118,19 +122,19 @@ public class XMLConverter extends DefaultClassLoaderProvider{
             }
         }
     }
-    
+
     public void setXMLEncoding(Charset chars){
         xmlenc = chars;
     }
-    
+
     public Charset getXMLEncoding(){
         return xmlenc;
     }
-    
+
     public void setValidationErrorHandler(ErrorHandler handler){
         saxErrorHandler = handler;
     }
-    
+
     /** @throws IllegalArgumentException if schema has an unknown extension or
     * no SchemaFactory for its language is available. */
     public synchronized void setXMLSchema(URL schema) throws SAXException{
@@ -150,16 +154,16 @@ public class XMLConverter extends DefaultClassLoaderProvider{
         xmlValidator = getSchemaFactory(schemaLanguage).newSchema(schema).newValidator();
         xmlSchemaID = schema.toString();
     }
-    
+
     public synchronized void setXMLSchema(Source schema, String schemaLanguage) throws SAXException{
         xmlValidator = getSchemaFactory(schemaLanguage).newSchema(schema).newValidator();
         xmlSchemaID = schema.getSystemId();
     }
-    
+
     public String getXMLSchemaID(){
         return xmlSchemaID;
     }
-    
+
     private SchemaFactory getSchemaFactory(String schemaLanguage){
         SchemaFactory sf = null;
         try{
@@ -180,11 +184,11 @@ public class XMLConverter extends DefaultClassLoaderProvider{
         }
         return sf;
     }
-    
+
     public boolean hasSchema(){
         return xmlValidator != null;
     }
-    
+
     /** @return the number of errors that occured */
     public synchronized void validate(File xml) throws SAXException, IOException{
         if(xmlValidator != null){
@@ -206,18 +210,21 @@ public class XMLConverter extends DefaultClassLoaderProvider{
     public String getSaxonVersion(){
         return getSaxonVersion("ProductTitle");
     }
-    
+
     public String getSaxonVersion(String what){
         String result = null;
         try{
             Class c = Class.forName("net.sf.saxon.Version", true, getClassLoader());
             java.lang.reflect.Method m = c.getMethod("get" + what);
             result = (String) m.invoke(null);
-        } catch (Exception ignore){}
+        } catch (Exception ignore){
+            System.err.println(ignore);
+            System.err.flush();
+        }
         return result;
     }
 
-    /* XSLT transformations */    
+    /* XSLT transformations */
     /** Converts BibXML using the specified transformer and configuration.
      * The result is optionally converted
      *  to CRLF format. **/
@@ -237,22 +244,22 @@ public class XMLConverter extends DefaultClassLoaderProvider{
             t.setParameter(INTERNAL_PARAMETER_PREFIX +"encoding", encoding);
             t.setOutputProperty(OutputKeys.ENCODING, encoding);
         }
-    
+
 
         //open the source xml document
-        in = new BufferedInputStream(in);
-        Source src = new StreamSource(in);
+        InputStream bin = new BufferedInputStream(in);
+        Source src = new StreamSource(bin);
         src.setSystemId(systemID);
         //open the target xml document
-        out = new BufferedOutputStream(out);
+        OutputStream bout = new BufferedOutputStream(out);
         if(crlf){
-            out = new CRLFOutputStream(out);
+            bout = new CRLFOutputStream(bout);
         }
-        Result res = new StreamResult(out);
-        
+        Result res = new StreamResult(bout);
+
         t.transform(src, res);
     }
-    
+
     /** Converts BibXML using the specified transformer and configuration.
      * The result is optionally converted
      *  to CRLF format. **/
@@ -263,7 +270,7 @@ public class XMLConverter extends DefaultClassLoaderProvider{
         //open the source xml document
         InputStream in = new FileInputStream(input);
         OutputStream out = null;
-        
+
         try{
             out = new FileOutputStream(output);
             transform(t, in, input.toURI().toURL().toString(), out, parameters, encoding, crlf);
@@ -271,16 +278,22 @@ public class XMLConverter extends DefaultClassLoaderProvider{
             if(in != null){
                 try{
                     in.close();
-                } catch (IOException ignore) {}
+                } catch (IOException ignore) {
+                    System.err.println(ignore);
+                    System.err.flush();
+                }
             }
             if(out != null){
                 try{
                     out.close();
-                } catch (IOException ignore) {}
+                } catch (IOException ignore) {
+                    System.err.println(ignore);
+                    System.err.flush();
+                }
             }
         }
     }
-    
+
     protected Transformer loadStyleSheet(ClassLoader cl, String resource) throws TransformerConfigurationException{
         InputStream in = (cl == null)
             ? getClass().getResourceAsStream(resource)
@@ -301,7 +314,7 @@ public class XMLConverter extends DefaultClassLoaderProvider{
         }
         return result;
     }
-    
+
     protected Transformer loadStyleSheet(InputStream in, URL systemId) throws TransformerConfigurationException{
         Transformer t = null;
         Source styleSrc = new StreamSource(in);
@@ -368,6 +381,9 @@ public class XMLConverter extends DefaultClassLoaderProvider{
                     }
                     saxonversion = Double.parseDouble(sv);
                 } catch (Exception ignore){
+                    System.err.println("Cannot parse saxon version.");
+                    System.err.println(ignore);
+                    System.err.flush();
                 }
                 System.out.println("Saxon version: " + saxonversion);
                 if(saxonversion >= 8.9){
@@ -423,12 +439,16 @@ public class XMLConverter extends DefaultClassLoaderProvider{
                 try{
                     in.close();
                 } catch (IOException ignore){
+                    System.err.println(ignore);
+                    System.err.flush();
                 }
             }
             if(out != null){
                 try{
                     out.close();
                 } catch (IOException ignore){
+                    System.err.println(ignore);
+                    System.err.flush();
                 }
             }
         }
@@ -449,7 +469,7 @@ public class XMLConverter extends DefaultClassLoaderProvider{
     private static class JarAwareURIResolver implements URIResolver{
         public JarAwareURIResolver(){
         }
-        
+
         public Source resolve(String href,
                       String base)
                 throws TransformerException{

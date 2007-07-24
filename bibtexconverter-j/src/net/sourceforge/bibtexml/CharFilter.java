@@ -27,8 +27,8 @@ import java.util.*;
 
 public class CharFilter extends FilterReader{
     private final String chars;
-    private final List<int[]> forbidden = new Vector<int[]>();
-    private final Matcher htmlEscape = Pattern.compile("&#(\\d{1,3});").matcher("");
+    private final List<int[]> forbidden = new ArrayList<int[]>();
+    //private final Matcher htmlEscape = Pattern.compile("&#(\\d{1,3});").matcher("");
     private final Set<Integer> illegalsFound = new TreeSet<Integer>();
     private final Map<Character, Character> replaceMap = new TreeMap<Character, Character>();
     private final CharsetEncoder enc;
@@ -44,7 +44,7 @@ public class CharFilter extends FilterReader{
         return (int) checkChar((char) in.read());
     }
 
-    private void cleanupArray(char[] cbuf, int limit){
+    private void cleanupArray(final char[] cbuf, final int limit){
         Character cr;
         for(int i=0; i<limit; i++){
             if( isForbidden(cbuf[i]) ){
@@ -54,32 +54,32 @@ public class CharFilter extends FilterReader{
         }
     }
 
-    public int read(char[] cbuf, int off, int len) throws IOException{
-        int result = in.read(cbuf, off, len);
+    public int read(final char[] cbuf, final int off, final int len) throws IOException{
+        final int result = in.read(cbuf, off, len);
         cleanupArray(cbuf, result);
         return result;
     }
 
-    public int read(char[] cbuf) throws IOException{
-        int result = in.read(cbuf);
+    public int read(final char[] cbuf) throws IOException{
+        final int result = in.read(cbuf);
         cleanupArray(cbuf, result);
         return result;
     }
 
-    /** Not implemented. Always throws an UnsupportedOperationException. 
-    * @throws UnsupportedOperationException 
+    /** Not implemented. Always throws an UnsupportedOperationException.
+    * @throws UnsupportedOperationException
     */
-    public int read(CharBuffer target) throws IOException{
+    public int read(final CharBuffer target) throws IOException{
         throw new UnsupportedOperationException("Not implemented!");
     }
 
-    public int cleanupFile(File input, File output){
+    public int cleanupFile(final File input, final File output){
         int lc = 0;
         BufferedReader br = null;
         PrintWriter bw = null;
         try{
             br = new BufferedReader(new InputStreamReader(new FileInputStream(input), chars));
-            File f = (output == null)
+            final File f = (output == null)
                 ? new File(input.getAbsoluteFile().getParent(),"cleaned"+input.getName())
                 : output;
             bw = new PrintWriter(f, chars);
@@ -88,7 +88,7 @@ public class CharFilter extends FilterReader{
             for(lc=1; line != null; lc++){
                 bw.println(cleanupString(line, lc));
                 line = br.readLine();
-            } while(line != null);
+            }
 
         } catch (Exception ex) {
             System.err.println("Cleanup of file" + input.toString() + " failed.");
@@ -98,15 +98,21 @@ public class CharFilter extends FilterReader{
 
             try{
                 br.close();
-            } catch(Exception ignore) {}
+            } catch(Exception ex) {
+                System.err.println(ex);
+                System.err.flush();
+            }
             try{
                 bw.close();
-            } catch(Exception ignore) {}
+            } catch(Exception ex) {
+                System.err.println(ex);
+                System.err.flush();
+            }
         }
         return lc;
     }
 
-    public String cleanupString(String line, int lc){
+    public String cleanupString(final String line, final int lc){
         char ci;
         Character cr;
         String result = line;
@@ -123,15 +129,15 @@ public class CharFilter extends FilterReader{
         return result;
     }
 
-    public char checkChar(char ci){
+    public char checkChar(final char ci){
         if( isForbidden(ci) ){
-            Character cr = replaceMap.get(ci);
+            final Character cr = replaceMap.get(ci);
             return (cr== null)? repl : cr;
         }
         return ci;
     }
 
-    public void addForbiddenRange(int lower, int upper){
+    public void addForbiddenRange(final int lower, final int upper){
         if(upper >= lower){
             forbidden.add(new int[]{lower, upper});
         } else {
@@ -147,7 +153,7 @@ public class CharFilter extends FilterReader{
         illegalsFound.clear();
     }
 
-    private boolean isForbidden(char c){
+    private boolean isForbidden(final char c){
         if(! enc.canEncode(c)){
             return false;
         }
@@ -160,11 +166,11 @@ public class CharFilter extends FilterReader{
         return false;
     }
 
-    public void setDefaultReplacement(char c){
+    public void setDefaultReplacement(final char c){
         repl = c;
     }
 
-    public void setReplacement(char replace, char with){
+    public void setReplacement(final char replace,final char with){
         replaceMap.put(replace, with);
     }
 
@@ -172,36 +178,36 @@ public class CharFilter extends FilterReader{
         replaceMap.clear();
     }
 
-    private String resolveHtmlEscapes(String line){
-        StringBuffer sb = new StringBuffer();
-        boolean found = false;
-        String result = line;
-        htmlEscape.reset(line);
-        while (htmlEscape.find()) {
-            int i = -1;
-            try{
-                i = Integer.parseInt(htmlEscape.group(1));
-            } catch (NumberFormatException ex){
-                ex.printStackTrace();
-            }
-            if(i != -1){
-                htmlEscape.appendReplacement(sb,String.valueOf((char) i));
-                //System.out.println("replacing html escape "+ htmlEscape.group(0) + " by " + ((char) i));
-                found = true;
-            }
-        }
-        if (found) {
-            htmlEscape.appendTail(sb);
-            result = sb.toString();
-        }
-        return result;
-    }
+    // private String resolveHtmlEscapes(String line){
+        // StringBuffer sb = new StringBuffer();
+        // boolean found = false;
+        // String result = line;
+        // htmlEscape.reset(line);
+        // while (htmlEscape.find()) {
+            // int i = -1;
+            // try{
+                // i = Integer.parseInt(htmlEscape.group(1));
+            // } catch (NumberFormatException ex){
+                // ex.printStackTrace();
+            // }
+            // if(i != -1){
+                // htmlEscape.appendReplacement(sb,String.valueOf((char) i));
+                // //System.out.println("replacing html escape "+ htmlEscape.group(0) + " by " + ((char) i));
+                // found = true;
+            // }
+        // }
+        // if (found) {
+            // htmlEscape.appendTail(sb);
+            // result = sb.toString();
+        // }
+        // return result;
+    // }
 
     /** Convenience method for creating a CharFilter that suppresses all
     * characters that do not belong to the ISO-8859-1  charset.
     */
-    public static CharFilter getIsoLatin1Reader(Reader in){
-        CharFilter ric = new CharFilter(in, "ISO-8859-1");
+    public static CharFilter getIsoLatin1Reader(final Reader in){
+        final CharFilter ric = new CharFilter(in, "ISO-8859-1");
         ric.addForbiddenRange(127, 159);
         ric.addForbiddenRange(0, 9);
         //10 is linefeed
@@ -211,9 +217,9 @@ public class CharFilter extends FilterReader{
 
     /** Reads the file specified as this methods first argument using an
     * isoLatinReader and prints the result to stdout. */
-    public static void main(String[] argv){
-        CharFilter ric = getIsoLatin1Reader(null);
-        int lc = ric.cleanupFile(new File(argv[0]), null);
+    public static void main(final String[] argv){
+        final CharFilter ric = getIsoLatin1Reader(null);
+        final int lc = ric.cleanupFile(new File(argv[0]), null);
         System.out.println("Number of lines processed: " + lc);
         System.out.println("Illegal characters found: " + Arrays.asList(ric.getIllegalsFound()).toString());
     }

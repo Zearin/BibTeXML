@@ -21,7 +21,7 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/** This FilterOutputStream replaces single linefeeds (LF, '\n') with 
+/** This FilterOutputStream replaces single linefeeds (LF, '\n') with
  * linefeed + carriage returns (CRLF, '\n\r'). Does not work for utf-16
  * encoding, may not work with utf-8 **/
 public class CRLFOutputStream extends FilterOutputStream{
@@ -33,7 +33,7 @@ public class CRLFOutputStream extends FilterOutputStream{
         super(outs);
     }
 
-    public void write(int b) throws IOException{
+    public void write(final int b) throws IOException{
         if(b == LF && lastb != CR){
             out.write(CR);
         }
@@ -41,7 +41,9 @@ public class CRLFOutputStream extends FilterOutputStream{
         lastb = b;
     }
 
-    public void write(byte[] b, int off, int len) throws IOException{
+    public void write(final byte[] b, final int off, final int len)
+    throws IOException
+    {
         final int limit = off + len;
         for(int i = off; i < limit; i++){
             write(b[i]);

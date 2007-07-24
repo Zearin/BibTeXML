@@ -48,7 +48,7 @@ public abstract class AbstractBibTeXParser{
         return outputCharset;
     }
 
-    public void setInputCharset(String charset){
+    public void setInputCharset(final String charset){
         Charset.forName(charset);
         inputCharset = charset;
     }
@@ -77,7 +77,10 @@ public abstract class AbstractBibTeXParser{
     }
 
     //processFile
-    public void processFile(File bibTeXIn, File bibXMLOut) throws IOException{
+    public void processFile(final File bibTeXIn, final File bibXMLOut) throws IOException{
+        if(bibTeXIn.equals(bibXMLOut)){
+            throw new IOException("Trying to overwrite input file.");
+        }
         InputStream ins = null;
         OutputStream outs = null;
         String[] data = null;
@@ -97,13 +100,17 @@ public abstract class AbstractBibTeXParser{
             if(a != null){
                 try{
                     a.close();
-                } catch (IOException ignore){
+                } catch (IOException ex){
+                    System.err.println(ex);
+                    System.err.flush();
                 }
             }
             if(ins != null){
                 try{
                     ins.close();
-                } catch (IOException ignore){
+                } catch (IOException ex){
+                    System.err.println(ex);
+                    System.err.flush();
                 }
             }
         }
@@ -115,7 +122,9 @@ public abstract class AbstractBibTeXParser{
                 if(outs != null){
                     try{
                         outs.close();
-                    } catch (IOException ignore){
+                    } catch (IOException ex){
+                        System.err.println(ex);
+                        System.err.flush();
                     }
                 }
             }
@@ -123,18 +132,21 @@ public abstract class AbstractBibTeXParser{
     }
 
     /** does not close stream */
-    protected void writeBibXML(String[] data, OutputStream out ) throws IOException{
-        StringBuilder header = new StringBuilder(200);
+    protected void writeBibXML(final String[] data, final OutputStream out ) throws IOException{
+        final StringBuilder header = new StringBuilder(200);
         header.append("<?xml version=\"1.0\" encoding=\""+outputCharset+"\"?>\n");
         //header.append("<!DOCTYPE bibtex:file SYSTEM \"bibtexml-strict.dtd\" >\n");
         header.append("<bibtex:file xmlns:bibtex=\"http://bibtexml.sf.net/\">\n");
-        String footer = "<!-- manual cleanup may be required... -->\n" +
+        final String footer = "<!-- manual cleanup may be required... -->\n" +
             "</bibtex:file>";
         write(data, header.toString(), footer, out);
     }
 
-    private void write(String[] lines, String header, String footer, OutputStream out) throws IOException{
-        PrintWriter bw = new PrintWriter(new BufferedWriter(
+    private void write(final String[] lines,
+                       final String header,
+                       final String footer,
+                       final OutputStream out) throws IOException{
+        final PrintWriter bw = new PrintWriter(new BufferedWriter(
                 new OutputStreamWriter(out, outputCharset)), true );
         if(header != null){
             bw.println(header);
@@ -146,8 +158,8 @@ public abstract class AbstractBibTeXParser{
             bw.println(footer);
         }
     }
-    
-    public void setErrorHandler(BibTeXErrorHandler handler){
+
+    public void setErrorHandler(final BibTeXErrorHandler handler){
         errorhandler = handler;
     }
 

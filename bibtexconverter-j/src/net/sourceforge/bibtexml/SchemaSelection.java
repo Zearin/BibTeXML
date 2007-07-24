@@ -39,7 +39,6 @@ import javax.swing.border.Border;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import de.mospace.swing.SpringUtilities;
@@ -51,14 +50,14 @@ public class SchemaSelection{
 
     private final static Font SANS_BOLD_12 = new Font("SansSerif", Font.BOLD, 12);
     private final static Color TITLE_COLOR = new Color(0.8f,0.8f,1.0f);
-    
+
     private enum DataTypes { strict, loose };
     private enum Fields { core, user, arbitrary };
-    private enum Structure {  
-        flat("Multiple elements", 
+    private enum Structure {
+        flat("Multiple elements",
                "<html><pre>&lt;author&gt;Vidar B. Gundersen&lt;/author&gt;<br>" +
                "&lt;author&gt;Moritz Ringler&lt;/author&gt;</pre></html>"),
-        nested("Multiple elements in container", 
+        nested("Multiple elements in container",
                 "<html><pre>&lt;authors&gt;<br>" +
                 "  &lt;author&gt;Vidar B. Gundersen&lt;/author&gt;<br>" +
                 "  &lt;author&gt;<br>" +
@@ -66,10 +65,10 @@ public class SchemaSelection{
                 "    &lt;surname&gt;Ringler&lt;surname&gt;<br>" +
                 "  &lt;/author&gt;<br>" +
                 "&lt;authors&gt;</pre></html>"),
-        inline("Single element", 
-                "<html><pre>&lt;author&gt;Vidar B. Gundersen AND" + 
+        inline("Single element",
+                "<html><pre>&lt;author&gt;Vidar B. Gundersen AND" +
                 " Moritz Ringler&lt;/author&gt;</pre></html>");
-        
+
         private final String longname;
         private final String example;
 
@@ -81,25 +80,25 @@ public class SchemaSelection{
         public String toString(){
             return longname;
         }
-        
+
         public String example(){
             return example;
         }
-    } 
-    
+    }
+
     private final ButtonGroup datatypes = new ButtonGroup();
     private final ButtonGroup fields = new ButtonGroup();
     private final ButtonGroup structure = new ButtonGroup();
-    
+
     private Container cp;
-    
+
     private boolean ok = false;
-    private TreeMap<String, String> settings = new TreeMap<String, String>();
-    
+    private final TreeMap<String, String> settings = new TreeMap<String, String>();
+
     private Transformer t;
-    
+
     public SchemaSelection(){
-        Preferences pref = Preferences.userNodeForPackage(getClass()).node("schema");
+        final Preferences pref = Preferences.userNodeForPackage(getClass()).node("schema");
         settings.put(DATATYPES, valueOf(
             DataTypes.class,
             pref.get(DATATYPES, DataTypes.strict.name()),
@@ -113,23 +112,23 @@ public class SchemaSelection{
             pref.get(STRUCTURE, Structure.flat.name()),
             Structure.flat).name());
     }
-    
-    private static <T extends Enum<T>> T valueOf(Class<T> enumType,
-                                            String name,
-                                            T defaultVal){
+
+    private static <T extends Enum<T>> T valueOf(final Class<T> enumType,
+                                            final String name,
+                                            final T defaultVal){
         T result = defaultVal;
         try{
             result = Enum.valueOf(enumType, name);
         } catch (Exception ignore){
+            //return defaultVal
         }
         return result;
     }
-    
-    private Component makeTitle(String text){
-        Container c = new JPanel(new BorderLayout()); 
+
+    private Component makeTitle(final String text){
+        final Container c = new JPanel(new BorderLayout());
         ((JComponent) c).setBorder(BorderFactory.createEtchedBorder());
-        JLabel label;
-        label = new JLabel(text, JLabel.LEFT);
+        final JLabel label = new JLabel(text, JLabel.LEFT);
         label.setOpaque(true);
         label.setBackground(TITLE_COLOR);
         label.setFont(SANS_BOLD_12);
@@ -138,25 +137,25 @@ public class SchemaSelection{
         c.add(label, BorderLayout.CENTER);
         return c;
     }
-    
+
     private synchronized Container contentPane(){
         if(cp == null){
         cp = Box.createVerticalBox();
         ((Box) cp).setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-        
+
         Container c;
         JPanel section;
         JLabel label;
-        
+
         JRadioButton button;
-        Border cellBorder = BorderFactory.createCompoundBorder(
+        final Border cellBorder = BorderFactory.createCompoundBorder(
         BorderFactory.createMatteBorder(0,0,1,0,Color.gray),
         BorderFactory.createEmptyBorder(0,4,0,4)
         );
-        
+
         section = new JPanel(new BorderLayout());
         section.add(makeTitle("BibTeX Fields"), BorderLayout.NORTH);
-        
+
         c = new JPanel(new SpringLayout());
         c.add(new JPanel());
         label = new JLabel("Required", JLabel.CENTER);
@@ -168,7 +167,7 @@ public class SchemaSelection{
         label = new JLabel("User-Defined", JLabel.CENTER);
         label.setBorder(cellBorder);
         c.add(label);
-        
+
         button = new JRadioButton("Core");
         button.setActionCommand(Fields.core.name());
         fields.add(button);
@@ -182,7 +181,7 @@ public class SchemaSelection{
         label = new JLabel("-", JLabel.CENTER);
         label.setFont(SANS_BOLD_12);
         c.add(label);
-        
+
         button = new JRadioButton("User");
         button.setActionCommand(Fields.user.name());
         fields.add(button);
@@ -196,7 +195,7 @@ public class SchemaSelection{
         label = new JLabel("?", JLabel.CENTER);
         label.setFont(SANS_BOLD_12);
         c.add(label);
-        
+
         button = new JRadioButton("Arbitrary");
         button.setActionCommand(Fields.arbitrary.name());
         fields.add(button);
@@ -210,12 +209,12 @@ public class SchemaSelection{
         label = new JLabel("?", JLabel.CENTER);
         label.setFont(SANS_BOLD_12);
         c.add(label);
-        
+
         SpringUtilities.makeCompactGrid(c,
         4, 4, //rows, cols
         0, 0,        //initX, initY
         0, 0);       //xPad, yPad
-        
+
         Box b = Box.createHorizontalBox();
         b.add(c);
         b.add(Box.createHorizontalGlue());
@@ -223,7 +222,7 @@ public class SchemaSelection{
         b.setOpaque(true);
         section.add(b, BorderLayout.CENTER);
         cp.add(section);
-        
+
         c = Box.createHorizontalBox();
         label = new JLabel("<html>"+
             "<b>!</b> : must be present<br>"+
@@ -236,17 +235,17 @@ public class SchemaSelection{
         c.add(label);
         c.add(Box.createHorizontalGlue());
         cp.add(c);
-        
+
         cp.add(Box.createVerticalStrut(5));
-        
+
         section = new JPanel(new BorderLayout());
         section.add(makeTitle("Type checking"), BorderLayout.NORTH);
-        
+
         c = Box.createHorizontalBox();
         ((JComponent) c).setOpaque(false);
         ((JComponent) c).setBorder(BorderFactory.createEtchedBorder());
         for(DataTypes dt : DataTypes.values()){
-            String name = dt.name();
+            final String name = dt.name();
             button = new JRadioButton(upperFirst(name));
             button.setActionCommand(name);
             c.add(button);
@@ -256,16 +255,16 @@ public class SchemaSelection{
         c.add(Box.createHorizontalGlue());
         section.add(c, BorderLayout.CENTER);
         cp.add(section);
-        
+
         cp.add(Box.createVerticalStrut(5));
-        
+
         section = new JPanel(new BorderLayout());
         c = Box.createVerticalBox();
         ((JComponent) c).setOpaque(false);
         section.add(makeTitle("Author and editor lists"), BorderLayout.NORTH);
-        
+
         for(Structure struct : Structure.values()){
-            String name = struct.name();
+            final String name = struct.name();
             button = new JRadioButton(upperFirst(struct.toString()));
             button.setToolTipText(struct.example());
             button.setActionCommand(name);
@@ -278,19 +277,19 @@ public class SchemaSelection{
         b.setBorder(BorderFactory.createEtchedBorder());
         section.add(b, BorderLayout.CENTER);
         cp.add(section);
-        
+
         cp.add(Box.createVerticalStrut(5));
-        
+
         c  = new JPanel();
         ((JComponent) c).setOpaque(false);
-        JButton buttonOK     = new JButton();
-        JButton buttonCancel = new JButton();
+        final JButton buttonOK     = new JButton();
+        final JButton buttonCancel = new JButton();
         buttonOK.setText(UIManager.getString("OptionPane.okButtonText"));
         buttonCancel.setText(UIManager.getString("OptionPane.cancelButtonText"));
         buttonOK.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(final ActionEvent e){
                 ok = true;
-                Window w = SwingUtilities.getWindowAncestor((Component) e.getSource());
+                final Window w = SwingUtilities.getWindowAncestor((Component) e.getSource());
                 w.setVisible(false);
                 w.dispose();
             }
@@ -298,7 +297,7 @@ public class SchemaSelection{
         buttonCancel.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 ok = false;
-                Window w = SwingUtilities.getWindowAncestor((Component) e.getSource());
+                final Window w = SwingUtilities.getWindowAncestor((Component) e.getSource());
                 w.setVisible(false);
                 w.dispose();
             }
@@ -309,13 +308,13 @@ public class SchemaSelection{
         }
         return cp;
     }
-    
-    private static String upperFirst(String str){
+
+    private static String upperFirst(final String str){
         return (new StringBuilder()).append(Character.toUpperCase(str.charAt(0))).append(str.substring(1)).toString();
     }
-    
-    public boolean showDialog(Component parent){
-        Preferences pref = Preferences.userNodeForPackage(getClass()).node("schema");
+
+    public boolean showDialog(final Component parent){
+        final Preferences pref = Preferences.userNodeForPackage(getClass()).node("schema");
         JDialog dialog;
         Window w = null;
         if(parent instanceof Window){
@@ -335,11 +334,11 @@ public class SchemaSelection{
         dialog.setContentPane(contentPane());
         dialog.pack();
         dialog.setResizable(false);
-        
+
         select(datatypes, settings.get(DATATYPES));
         select(fields, settings.get(FIELDS));
         select(structure, settings.get(STRUCTURE));
-        
+
         ok = false;
         dialog.setVisible(true);
         if(ok){
@@ -366,40 +365,40 @@ public class SchemaSelection{
         }
         return ok;
     }
-    
+
     public Map<String, String> getSelection(){
-        Map<String, String> result = new HashMap<String, String>();
+        final Map<String, String> result = new HashMap<String, String>();
         result.putAll(settings);
         return result;
     }
-    
-    private void select(ButtonGroup group, String actionCommand){
-        Enumeration<AbstractButton> e = group.getElements();
+
+    private void select(final ButtonGroup group, final String actionCommand){
+        final Enumeration<AbstractButton> e = group.getElements();
         for(AbstractButton b; e.hasMoreElements(); ){
-            b = e.nextElement();                    
+            b = e.nextElement();
             if(b.getActionCommand().equals(actionCommand)){
                 b.setSelected(true);
                 return;
             }
         }
     }
-    
-    public boolean isSchemaLanguageSupported(String schemaLanguage){
+
+    public boolean isSchemaLanguageSupported(final String schemaLanguage){
         return schemaLanguage.equals(XMLConstants.RELAXNG_NS_URI);
     }
-    
+
     /** Uses the current selection to generate a Source that can be
-     * compiled to a schema by a SchemaFactory. Currently only RELAX NG 
+     * compiled to a schema by a SchemaFactory. Currently only RELAX NG
      * is supported.
-     * @param schemaLanguage the schema language URI for the new schema, 
+     * @param schemaLanguage the schema language URI for the new schema,
      * currently only XMLConstants.RELAXNG_NS_URI is accepted
      * @return a source that can be compiled to a schema
      * @throws IllegalArgumentException if the schemaLanguage is not supported
      * @throws TransformerException if an error occurs during schema generation
      * @throws IOException if an IOError occurs
      */
-    public synchronized Source getSchemaSource(String schemaLanguage, 
-                                               XMLConverter conv) 
+    public synchronized Source getSchemaSource(final String schemaLanguage,
+                                               final XMLConverter conv)
             throws TransformerException, IOException{
         if(!isSchemaLanguageSupported(schemaLanguage)){
             throw new IllegalArgumentException("Currently only RELAX NG is supported.");
@@ -407,15 +406,15 @@ public class SchemaSelection{
         if(t == null){
             t = conv.loadStyleSheet(null, "schema/schema.xsl");
         }
-        /* transform generic parent schema to specific child schema */ 
-        URL parentSchema = getClass().getResource("schema/bibtexml-generic.rng");
+        /* transform generic parent schema to specific child schema */
+        final URL parentSchema = getClass().getResource("schema/bibtexml-generic.rng");
         if(parentSchema == null){
             throw new FileNotFoundException("schema/bibtexml-generic.rng");
         }
         String systemID = parentSchema.toString();
-        InputStream is = parentSchema.openStream();
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        Map<String, Object> params = new HashMap<String, Object>();
+        final InputStream is = parentSchema.openStream();
+        final ByteArrayOutputStream os = new ByteArrayOutputStream();
+        final Map<String, Object> params = new HashMap<String, Object>();
         params.putAll(settings);
         try{
             XMLConverter.transform(t, is, systemID, os, params,  null, false);
@@ -425,9 +424,9 @@ public class SchemaSelection{
             }
             //bytearrayoutputstream doesn't need to be closed
         }
-        
+
         /* build a systemID for the new schema */
-        StringBuilder sb = new StringBuilder(
+        final StringBuilder sb = new StringBuilder(
             systemID.substring(0, systemID.lastIndexOf('/') + 1));
         sb.append("bibtexml");
         for(String key : settings.keySet()){
@@ -435,18 +434,17 @@ public class SchemaSelection{
         }
         sb.append(".rng");
         systemID = sb.toString();
-        
+
         /* wrap the new schema as a source object */
-        ByteArrayInputStream schema = new ByteArrayInputStream(os.toByteArray());
-        StreamSource source = new StreamSource(schema, systemID);
-        return source;
+        final ByteArrayInputStream schema = new ByteArrayInputStream(os.toByteArray());
+        return new StreamSource(schema, systemID);
     }
-    
-    public static void main(String[] argv) throws Exception{
-        SchemaSelection s = new SchemaSelection();
+
+    public static void main(final String[] argv) throws Exception{
+        final SchemaSelection s = new SchemaSelection();
         if(s.showDialog(null)){
             System.out.println(s.getSelection());
         }
     }
-    
+
 }
