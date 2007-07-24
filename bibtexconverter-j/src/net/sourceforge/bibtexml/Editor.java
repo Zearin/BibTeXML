@@ -21,15 +21,12 @@ package net.sourceforge.bibtexml;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.URI;
 import java.util.*;
 import javax.swing.*;
-import org.xml.sax.*;
-import java.nio.charset.Charset;
-import de.mospace.xml.ResettableErrorHandler;
-import net.sourceforge.jeditsyntax.*;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
+import org.xml.sax.*;
+import net.sourceforge.jeditsyntax.*;
 
 /** This minimal editor allows to correct errors in BibTeX or XML input files. */
 public class Editor{
@@ -41,27 +38,27 @@ public class Editor{
     private final Container toolbar = Box.createHorizontalBox();
     protected boolean dirty = false;
     private long lastModified = 0l;
-    
-    private DocumentListener dirtyMarker = new DocumentListener(){
-        public void insertUpdate(DocumentEvent e){
+
+    private final DocumentListener dirtyMarker = new DocumentListener(){
+        public void insertUpdate(final DocumentEvent e){
             markDirty(true);
         }
-        
-        public void removeUpdate(DocumentEvent e){
+
+        public void removeUpdate(final DocumentEvent e){
             markDirty(true);
         }
-        
-        public void changedUpdate(DocumentEvent e){
+
+        public void changedUpdate(final DocumentEvent e){
             markDirty(true);
         }
     };
-    
+
     private final Action saveAction = new AbstractAction("Save"){
-        public void actionPerformed(ActionEvent e){
+        public void actionPerformed(final ActionEvent e){
             save();
         }
     };
-    
+
     public Editor(Window parent){
         if(parent instanceof Frame){
             dialog = new JDialog((Frame) parent);
@@ -74,7 +71,7 @@ public class Editor{
         area.getDocument().addDocumentListener(dirtyMarker);
         toolbar.add(Box.createHorizontalStrut(3));
         toolbar.add(new JButton(saveAction));
-        JPanel cp = new JPanel(new BorderLayout());
+        final JPanel cp = new JPanel(new BorderLayout());
         cp.add(toolbar, BorderLayout.NORTH);
         cp.add(area, BorderLayout.CENTER);
         dialog.setContentPane(cp);
@@ -82,7 +79,7 @@ public class Editor{
         dialog.pack();
         markDirty(false);
     }
-    
+
     private String activeFilePath(){
         String result = null;
         if(activeFile == null){
@@ -96,13 +93,13 @@ public class Editor{
         }
         return result;
     }
-    
+
     private boolean isModified(){
-        return (activeFile != null) && 
+        return (activeFile != null) &&
             (lastModified != activeFile.lastModified());
     }
-    
-    private void markDirty(boolean b){
+
+    private void markDirty(final boolean b){
         if(dirty == b){
             return;
         }
@@ -114,8 +111,8 @@ public class Editor{
         }
         saveAction.setEnabled(dirty);
     }
-    
-    public boolean showFile(XFile file){
+
+    public boolean showFile(final XFile file){
         boolean load = false;
         boolean success = true;
         if(file == null){
@@ -145,25 +142,27 @@ public class Editor{
                 case BIBTEX:
                     area.setTokenMarker(bibTokenMarker);
                     break;
+                default:
+                    throw new Error("Unknown input type " + file.getType());
             }
             success = loadFile(file);
         }
         return success;
     }
-    
+
     private boolean askReloadModifiedFile(){
-        int result = JOptionPane.showConfirmDialog(dialog,
+        final int result = JOptionPane.showConfirmDialog(dialog,
             "<html>The file that you are editing has been modified outside the editor.<br>" +
-            "Do you want to reload the file from disk" + 
+            "Do you want to reload the file from disk" +
             ((dirty)?" and discard your changes?" : "?") + "</html>",
             "Reload modified file?",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE);
-        return (result == JOptionPane.YES_OPTION); 
+        return (result == JOptionPane.YES_OPTION);
     }
-    
+
     private boolean askSaveDirtyBuffer(){
-        int result = JOptionPane.showConfirmDialog(dialog,
+        final int result = JOptionPane.showConfirmDialog(dialog,
             "<html>You have not saved your changes to " + activeFile.getName() +
             ".<br> Do you want to do so now before closing it?",
             "Save changes?",
@@ -180,10 +179,10 @@ public class Editor{
             default:
                 returnVal = false;
         }
-        return returnVal; 
+        return returnVal;
     }
-    
-    private synchronized boolean loadFile(XFile f){
+
+    private synchronized boolean loadFile(final XFile f){
         InputStreamReader reader = null;
         boolean success = true;
         try{
@@ -191,7 +190,7 @@ public class Editor{
             reader = new InputStreamReader(
                     new BufferedInputStream(new FileInputStream(f)),
                     f.getCharset());
-            char[] c = new char[1024];
+            final char[] c = new char[1024];
             int read = 0;
             while((read = reader.read(c, 0, 1024)) != -1){
                 sb.append(c, 0, read);
@@ -216,7 +215,9 @@ public class Editor{
             if(reader != null){
                 try{
                     reader.close();
-                } catch (Exception ignore){
+                } catch (Exception ex){
+                    System.err.println(ex);
+                    System.err.flush();
                 }
             }
         }
@@ -229,8 +230,8 @@ public class Editor{
         }
         return success;
     }
-    
-    private synchronized boolean save(){
+
+    protected synchronized boolean save(){
         if(activeFile == null){
             return true;
         }
@@ -240,7 +241,7 @@ public class Editor{
             writer = new OutputStreamWriter(
                     new BufferedOutputStream(new FileOutputStream(activeFile)),
                     activeFile.getCharset());
-            String text = area.getText();
+            final String text = area.getText();
             writer.write(text, 0, text.length());
             writer.flush();
             markDirty(false);
@@ -259,20 +260,22 @@ public class Editor{
             if(writer != null){
                 try{
                     writer.close();
-                } catch (Exception ignore){
+                } catch (Exception ex){
+                    System.err.println(ex);
+                    System.err.flush();
                 }
             }
         }
         return success;
     }
-    
-    public void goTo(int line, int column){
+
+    public void goTo(final int line, final int column){
         int offset = area.getLineStartOffset(line - 1);
         offset += column;
         area.setCaretPosition(offset - 1);
         area.scrollToCaret();
     }
-    
+
     public Window window(){
         return dialog;
     }

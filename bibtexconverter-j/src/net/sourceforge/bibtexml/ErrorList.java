@@ -21,14 +21,11 @@ package net.sourceforge.bibtexml;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.URI;
 import java.util.*;
 import javax.swing.*;
-import de.mospace.xml.ResettableErrorHandler;
+import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
 import de.mospace.swing.SortedSetListModel;
 
@@ -41,21 +38,21 @@ public class ErrorList{
     private XFile file = null;
     private Editor editor; //lazily initialized, see getEditor()
     private boolean allowDoubleClick = true;
-    
+
     private ErrorAdder errorhandler;
     private final MouseListener editorUpdater = new MouseAdapter() {
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void mouseClicked(final MouseEvent e) {
             if (e.getClickCount() == 2 && allowDoubleClick) {
-                int index = list.locationToIndex(e.getPoint());
-                Object o = model.getElementAt(index);
+                final int index = list.locationToIndex(e.getPoint());
+                final Object o = model.getElementAt(index);
                 if(o instanceof ErrorItem){
                     edit((ErrorItem) o);
                 }
             }
         }
     };
-    
+
     public ErrorList(ActionListener close){
         list.setCellRenderer(new CellRenderer());
         list.addMouseListener(editorUpdater);
@@ -68,8 +65,8 @@ public class ErrorList{
             title.setBorder(BorderFactory.createEtchedBorder());
             ui.setColumnHeaderView(title);
         } else {
-            JPanel box = new JPanel(new BorderLayout());
-            JButton b = new JButton(new ImageIcon(BibTeXConverterController.class.getResource("icon/fileclose.png")));
+            final JPanel box = new JPanel(new BorderLayout());
+            final JButton b = new JButton(new ImageIcon(BibTeXConverterController.class.getResource("icon/fileclose.png")));
             b.setBorderPainted(false);
             b.setContentAreaFilled(false);
             b.setMargin(new Insets(0,0,0,0));
@@ -80,15 +77,15 @@ public class ErrorList{
             ui.setColumnHeaderView(box);
         }
     }
-    
+
     public synchronized UniversalErrorHandler getErrorHandler(){
         if(errorhandler == null){
             errorhandler = new ErrorAdder();
         }
         return errorhandler;
     }
-    
-    private void edit(ErrorItem item){
+
+    private void edit(final ErrorItem item){
         editor = getEditor(); //assure editor is initialized
         if(editor.showFile(file)){
             editor.window().setVisible(true);
@@ -97,33 +94,61 @@ public class ErrorList{
             }
         }
     }
-    
-    public void setAllowDoubleClick(boolean b){
+
+    public void setAllowDoubleClick(final boolean b){
         allowDoubleClick = b;
     }
-    
+
     private synchronized Editor getEditor(){
         if(editor == null){
-            Window parent = SwingUtilities.getWindowAncestor(ui);
-            editor = new Editor(parent);
+            final Window parent = SwingUtilities.getWindowAncestor(ui);
+            editor = new Editor(parent){
+                protected boolean save(){
+                    final boolean result = super.save();
+                    if(result &&
+                        parent instanceof BibTeXConverterController &&
+                       file != null)
+                    {
+                        final BibTeXConverterController btcc =
+                            (BibTeXConverterController) parent;
+                        if(
+                            btcc.getInputFile() == null ||
+                            (
+                               (!btcc.getInputFile().equals(file)) &&
+                               askSwitchInput(btcc)
+                            )
+                        ){
+                            btcc.setInputFile(file);
+                        }
+                    }
+                    return result;
+                }
+            };
             StyleSheetController.placeWindow(editor.window(), parent);
         }
         return editor;
     }
-    
+
+    private boolean askSwitchInput(final JFrame f){
+        final int result = JOptionPane.showConfirmDialog(f,
+            "Do you want to make this file the input file for BibTeXConverter?",
+            "Switch input file?",
+            JOptionPane.YES_NO_OPTION);
+        return result == JOptionPane.YES_OPTION;
+    }
+
     private static class CellRenderer extends Box implements ListCellRenderer{
-        private final Dimension lacDimension = new Dimension(50, 0);
-        private JLabel line = new JLabel();
-        private JLabel column = new JLabel();
-        private JLabel message = new JLabel();
-        
+        private final JLabel line = new JLabel();
+        private final JLabel column = new JLabel();
+        private final JLabel message = new JLabel();
+
         public CellRenderer(){
             super(BoxLayout.X_AXIS);
             //setOpaque(true);
             line.setOpaque(true);
             column.setOpaque(true);
             message.setOpaque(true);
-            javax.swing.border.Border b = BorderFactory.createEmptyBorder(0, 5, 0, 3);
+            final javax.swing.border.Border b = BorderFactory.createEmptyBorder(0, 5, 0, 3);
             line.setBorder(b);
             column.setBorder(b);
             message.setBorder(b);
@@ -133,17 +158,16 @@ public class ErrorList{
             add(Box.createHorizontalStrut(1));
             add(message);
         }
-        
-        public Component getListCellRendererComponent(JList list,
-                                              Object value,
-                                              int index,
-                                              boolean isSelected,
-                                              boolean cellHasFocus){
+
+        public Component getListCellRendererComponent(final JList list,
+                                              final Object value,
+                                              final int index,
+                                              final boolean isSelected,
+                                              final boolean cellHasFocus){
             Color fg, bg;
-            
+
             if(value instanceof ErrorItem){
-                ErrorItem error = (ErrorItem) value;
-                StringBuilder sb = new StringBuilder();
+                final ErrorItem error = (ErrorItem) value;
                 line.setText("l. " + ((error.line == -1)? "?" : String.valueOf(error.line)));
                 column.setText("c. " + ((error.column == -1)? "?" : String.valueOf(error.column)));
                 message.setText(error.message);
@@ -152,7 +176,7 @@ public class ErrorList{
                 column.setText("");
                 message.setText((value == null)? "" : value.toString());
             }
-            
+
             bg = ((isSelected)? Color.RED : Color.WHITE);
             fg = ((isSelected)? Color.WHITE : Color.RED);
             column.setForeground(fg);
@@ -164,76 +188,78 @@ public class ErrorList{
             return this;
         }
     }
-    
+
     private final static class ErrorItem implements Comparable{
         /** first line is 1 **/
         public final int line;
         /** first column is 1 **/
         public final int column;
         public final String message;
-        
+
         public ErrorItem(
             String message, int line, int column){
             this.column = column;
             this.line = line;
             this.message = (message == null)? "" : message; //assure message is non-null
         }
-        
-        public static ErrorItem fromSaxParseException( SAXParseException e ){
+
+        public static ErrorItem fromSaxParseException(final SAXParseException e){
             return new ErrorItem(
                 e.getLocalizedMessage(),
                 e.getLineNumber(),
                 e.getColumnNumber());
         }
-        
-        public static ErrorItem fromParseErrorMessage( ParseErrorMessage e){
+
+        public static ErrorItem fromParseErrorMessage(final ParseErrorMessage e){
             return new ErrorItem(
                 e.getMsg(),
                 e.getLine(),
                 e.getPos() + 1);
         }
-        
-        public static ErrorItem fromTransformerException( TransformerException e){
-            if(e.getLocator() != null){
+
+        public static ErrorItem fromTransformerException(final TransformerException e){
+            if(e.getLocator() == null){
+                if(e.getCause() != null){
+                    final Throwable cause = e.getCause();
+                    if(cause instanceof SAXParseException){
+                        return fromSaxParseException((SAXParseException) cause);
+                    } else if(cause instanceof TransformerException){
+                        return fromTransformerException((TransformerException) cause);
+                    }
+                }
+            } else {
                 return new ErrorItem(
                     e.getLocalizedMessage(),
                     e.getLocator().getLineNumber(),
                     e.getLocator().getColumnNumber());
-            } else if(e.getCause() != null){
-                Throwable cause = e.getCause();
-                if(cause instanceof SAXParseException){
-                    return fromSaxParseException((SAXParseException) cause);
-                } else if(cause instanceof TransformerException){
-                    return fromTransformerException((TransformerException) cause);
-                }
             }
             return new ErrorItem(e.getLocalizedMessage(), -1, -1);
         }
-        
+
         @Override
         public String toString(){
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             sb.append(String.valueOf(line)).append(':');
             sb.append(String.valueOf(column)).append(" ");
             sb.append(message);
             return sb.toString();
         }
-        
+
         @Override
-        public boolean equals(Object o){
+        public boolean equals(final Object o){
             if(this == o){
                 return true;
             }
             boolean result = false;
             if(o instanceof ErrorItem){
-                ErrorItem other = (ErrorItem) o;
-                result = message.equals(other.message) && 
+                final ErrorItem other = (ErrorItem) o;
+                result = message.equals(other.message) &&
                     line == other.line &&
                     column == other.column;
             }
             return result;
         }
-        
+
         @Override
         public int hashCode(){
             int result = 59;
@@ -242,10 +268,10 @@ public class ErrorList{
             result = 37 * result + column;
             return result;
         }
-        
-        /** Error items are compared by line, column, message in this order. */ 
-        public int compareTo(Object o){
-            ErrorItem other = (ErrorItem) o;
+
+        /** Error items are compared by line, column, message in this order. */
+        public int compareTo(final Object o){
+            final ErrorItem other = (ErrorItem) o;
             if(line != other.line){
                 return line - other.line;
             } else if (column != other.column){
@@ -255,75 +281,76 @@ public class ErrorList{
             }
         }
     }
-    
+
     public Component component(){
         return ui;
     }
-    
+
     private class ErrorAdder implements UniversalErrorHandler{
         public ErrorAdder(){
+            //sole constructor
         }
-        
-        public void fatalError( SAXParseException e ) throws SAXException {
+
+        public void fatalError(final SAXParseException e ) throws SAXException {
             addError(e);
         }
-        
-        public void error( SAXParseException e ) throws SAXException {
+
+        public void error(final SAXParseException e ) throws SAXException {
             addError(e);
         }
-        
-        public void warning( SAXParseException e ) throws SAXException {
+
+        public void warning(final SAXParseException e ) throws SAXException {
             addError(e);
         }
-        
-        public void error(ParseErrorMessage e) throws IOException {
+
+        public void error(final ParseErrorMessage e) throws IOException {
             addError(e);
         }
-        
-        public void fatalError( TransformerException e ) throws TransformerException {
+
+        public void fatalError(final TransformerException e ) throws TransformerException {
             addError(e);
         }
-        
-        public void error( TransformerException e ) throws TransformerException {
+
+        public void error(final TransformerException e ) throws TransformerException {
             addError(e);
         }
-        
-        public void warning( TransformerException e ) throws TransformerException {
+
+        public void warning(final TransformerException e ) throws TransformerException {
             addError(e);
         }
-        
+
         public void reset(){
             clear();
         }
     }
-    
-    private void addError(TransformerException e){
+
+    private void addError(final TransformerException e){
         addError(ErrorItem.fromTransformerException(e));
     }
-    
-    private void addError(ParseErrorMessage e){
+
+    private void addError(final ParseErrorMessage e){
         addError(ErrorItem.fromParseErrorMessage(e));
     }
-    
-    private void addError(SAXParseException e){
+
+    private void addError(final SAXParseException e){
         addError(ErrorItem.fromSaxParseException(e));
     }
-    
-    private void addError(ErrorItem item){
+
+    private void addError(final ErrorItem item){
         model.add(item);
     }
-    
-    public void setFile(XFile f){
+
+    public void setFile(final XFile f){
         file = f;
         setTitle((f == null)? "Errors" : "Errors in " + f.getName());
     }
-    
+
     public void clear(){
         setFile(null);
         model.clear();
     }
-    
-    public void setTitle(String title){
+
+    public void setTitle(final String title){
         this.title.setText(title);
     }
 }
