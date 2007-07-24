@@ -1,4 +1,4 @@
-/* $Id: VariableRangeSlider.java,v 1.7 2006/03/14 11:49:18 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -47,7 +47,7 @@ import javax.swing.event.ChangeListener;
 /** A JSlider whose range and
  *  central value can be modified by the user.
  *
- *  @version $Revision: 1.7 $ ($Date: 2006/03/14 11:49:18 $)
+ *  @version $Revision$ ($Date$)
  *  @author Moritz Ringler
  **/
 public class VariableRangeSlider extends JPanel {

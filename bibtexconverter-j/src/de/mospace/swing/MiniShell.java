@@ -1,4 +1,4 @@
-/* $Id: MiniShell.java,v 1.11 2006/10/12 11:41:03 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -42,7 +42,7 @@ import javax.swing.JToolBar;
  * 'dock' buttons. Additionally buttons are provided for the control actions of
  * the ProcessIOPane.
  *
- *  @version $Revision: 1.11 $ ($Date: 2006/10/12 11:41:03 $)
+ *  @version $Revision$ ($Date$)
  *  @author Moritz Ringler
  **/
 public class MiniShell extends JPanel {

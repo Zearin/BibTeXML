@@ -2,7 +2,7 @@ package de.mospace.swing.event;
 
 /* Mp3dings - manage mp3 meta-information
  * Copyright (C) 2003 Moritz Ringler
- * $Id: DataChangeListener.java,v 1.2 2007/02/18 14:20:23 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@ import java.util.EventListener;
 
 /** A listener for {@link DataChangeEvent DataChangeEvents}. 
  * @author Moritz Ringler
- * @version $Revision: 1.2 $ ($Date: 2007/02/18 14:20:23 $)
+ * @version $Revision$ ($Date$)
  */
 public interface DataChangeListener extends EventListener{
     

@@ -1,4 +1,4 @@
-/* $Id: LabeledColorButton.java,v 1.8 2006/04/05 12:10:22 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -22,7 +22,7 @@ import java.awt.Color;
 
 /** A {@link JColorButton} with a title.
  *
- *  @version $Revision: 1.8 $ ($Date: 2006/04/05 12:10:22 $)
+ *  @version $Revision$ ($Date$)
  *  @author Moritz Ringler
  */
 public class LabeledColorButton extends JColorButton{

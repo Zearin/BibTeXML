@@ -1,4 +1,4 @@
-/* $Id: JSliderDouble.java,v 1.8 2006/03/14 11:49:18 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -25,7 +25,7 @@ import javax.swing.JSlider;
 /** A JSlider that accepts and returns double values.
 *
 * @author Moritz Ringler
-* @version $Revision: 1.8 $ ($Date: 2006/03/14 11:49:18 $)
+* @version $Revision$ ($Date$)
 * @see javax.swing.JSlider
 **/
 public class JSliderDouble extends JSlider{

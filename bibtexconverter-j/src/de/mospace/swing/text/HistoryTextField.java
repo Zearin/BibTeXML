@@ -2,7 +2,7 @@ package de.mospace.swing.text;
 
 /* de.mospace.swing library
 * Copyright (C) 2005 Moritz Ringler
-* $Id: HistoryTextField.java,v 1.8 2007/02/18 14:19:15 ringler Exp $
+* $Id$
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@ import javax.swing.JComboBox;
 * is actually a JComboBox that can be retrieved with the {@link #getComboBox
 * getJComboBox} method.
 * @author Moritz Ringler
-* @version $Revision: 1.8 $ ($Date: 2007/02/18 14:19:15 $)
+* @version $Revision$ ($Date$)
 **/
 public class HistoryTextField {
     private final static int MINIMUM_LENGTH = 5;

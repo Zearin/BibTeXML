@@ -2,7 +2,7 @@ package de.mospace.swing.text;
 
 /* Mp3dings - manage mp3 meta-information
  * Copyright (C) 2003 Moritz Ringler
- * $Id: FullTextStringCellRenderer.java,v 1.4 2007/02/18 14:19:15 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * appended, if necessary. The resulting string is displayed by the
  * DefaultTableCellRenderer.
  *
- * @version $Revision: 1.4 $ ($Date: 2007/02/18 14:19:15 $)
+ * @version $Revision$ ($Date$)
  * @author Moritz Ringler
  * @see de.mospace.lang.FullTextString
  */

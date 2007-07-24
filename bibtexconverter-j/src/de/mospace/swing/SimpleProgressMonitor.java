@@ -1,4 +1,4 @@
-/* $Id: SimpleProgressMonitor.java,v 1.10 2006/07/11 17:00:03 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -39,7 +39,7 @@ import javax.swing.UIManager;
  * terminated. By overriding the close() method you can thus handle any form of
  * termination (e.g. for re-enabling another window).
  * @author Moritz Ringler
- * @version $Revision: 1.10 $ ($Date: 2006/07/11 17:00:03 $)
+ * @version $Revision$ ($Date$)
  */
  public class SimpleProgressMonitor{
      private JDialog dialog;

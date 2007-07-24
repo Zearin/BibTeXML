@@ -2,7 +2,7 @@ package de.mospace.swing.text;
 
 /* Mp3dings - manage mp3 meta-information
  * Copyright (C) 2003 Moritz Ringler
- * $Id: FullTextStringInputDialog.java,v 1.6 2007/02/18 14:19:15 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,7 +39,7 @@ import de.mospace.lang.FullTextString;
 /**
  * An input dialog for multiline strings.
  * @author Moritz Ringler
- * @version $Revision: 1.6 $ ($Date: 2007/02/18 14:19:15 $)
+ * @version $Revision$ ($Date$)
  * @see de.mospace.lang.FullTextString
  **/
 public class FullTextStringInputDialog extends JDialog{

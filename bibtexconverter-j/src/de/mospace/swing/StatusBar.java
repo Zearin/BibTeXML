@@ -1,4 +1,4 @@
-/* $Id: StatusBar.java,v 1.6 2006/03/14 11:49:18 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -27,7 +27,7 @@ import javax.swing.Timer;
 
 /** A status bar that is automatically cleared after some time.
  * @author Moritz Ringler
- * @version $Revision: 1.6 $ ($Date: 2006/03/14 11:49:18 $)
+ * @version $Revision$ ($Date$)
  */
 public class StatusBar extends JLabel{
       private final Timer clearTimer;

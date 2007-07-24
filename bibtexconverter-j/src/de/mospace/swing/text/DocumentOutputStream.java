@@ -1,4 +1,4 @@
-/* $Id: DocumentOutputStream.java,v 1.7 2007/02/18 14:19:15 ringler Exp $
+/* $Id$
 * This class is part of the de.mospace.swing library.
 * Copyright (C) 2005-2006 Moritz Ringler
 *
@@ -34,7 +34,7 @@ import javax.swing.text.StyleConstants;
 /**
 * An OutputStream that writes to the Document of a Swing text component.
 *
-* @version $Revision: 1.7 $ ($Date: 2007/02/18 14:19:15 $)
+* @version $Revision$ ($Date$)
 * @author Moritz Ringler
 */
 public class DocumentOutputStream extends OutputStream {

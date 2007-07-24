@@ -1,4 +1,4 @@
-/* $Id: ProcessIOPane.java,v 1.13 2007/01/22 17:27:36 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -47,7 +47,7 @@ import de.mospace.swing.text.DocumentOutputStream;
  * operating system shell (e.g. bash) inside the ProcessIOPane if you need a
  * fully-featured shell.
  *
- *  @version $Revision: 1.13 $ ($Date: 2007/01/22 17:27:36 $)
+ *  @version $Revision$ ($Date$)
  *  @author Moritz Ringler
  **/
 public class ProcessIOPane extends IOPane{

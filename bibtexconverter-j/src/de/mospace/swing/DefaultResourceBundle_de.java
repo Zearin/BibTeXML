@@ -1,6 +1,6 @@
 /* Mp3dings - manage mp3 meta-information
  * Copyright (C) 2006 Moritz Ringler
- * $Id: DefaultResourceBundle_de.java,v 1.3 2007/01/17 21:05:59 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@ import java.util.ListResourceBundle;
 /**
  * Contains definitions of language-dependent GUI features. Locale: de
  *
- * @version $Revision: 1.3 $ ($Date: 2007/01/17 21:05:59 $)
+ * @version $Revision$ ($Date$)
  * @author Moritz Ringler
  */
 public final class DefaultResourceBundle_de extends ListResourceBundle {

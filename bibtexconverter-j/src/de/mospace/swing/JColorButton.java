@@ -1,4 +1,4 @@
-/* $Id: JColorButton.java,v 1.9 2006/04/05 10:48:57 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -27,7 +27,7 @@ import javax.swing.JColorChooser;
 /** A button for picking colors with a JColorChooser.
  *
  * @author Moritz Ringler
- * @version $Revision: 1.9 $ ($Date: 2006/04/05 10:48:57 $)
+ * @version $Revision$ ($Date$)
  */
 public class JColorButton extends JButton{
     private boolean fg = false;

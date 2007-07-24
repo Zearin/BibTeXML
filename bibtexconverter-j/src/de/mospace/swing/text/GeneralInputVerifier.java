@@ -2,7 +2,7 @@ package de.mospace.swing.text;
 
 /* de.mospace.swing library
 * Copyright (C) 2005 Moritz Ringler
-* $Id: GeneralInputVerifier.java,v 1.2 2007/04/02 13:06:15 ringler Exp $
+* $Id$
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -78,7 +78,7 @@ Date, yyyy-MM-dd, > 2007-02-15
 2005-08-15, false, null
 </pre>
 *
-* @version $Revision: 1.2 $ ($Date: 2007/04/02 13:06:15 $)
+* @version $Revision$ ($Date$)
 * @author Moritz Ringler
 */
 public class GeneralInputVerifier extends InputVerifier implements java.io.Serializable{

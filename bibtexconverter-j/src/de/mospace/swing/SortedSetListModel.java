@@ -1,4 +1,4 @@
-/* $Id: FileField.java,v 1.4 2006/04/05 10:49:15 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -24,7 +24,7 @@ import java.util.*;
 
 /** Wraps a sorted set as a ListModel.
 *
-* @version $Revision: 1.4 $ ($Date: 2006/04/05 10:49:15 $)
+* @version $Revision$ ($Date$)
 * @author Moritz Ringler
 **/
 public class SortedSetListModel extends AbstractListModel {

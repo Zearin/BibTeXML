@@ -1,4 +1,4 @@
-/* $Id: JDoubleList.java,v 1.18 2007/01/17 17:47:58 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -44,7 +44,7 @@ import de.mospace.swing.icon.DoubleArrowIcon;
  * A two-column list where items can be moved from one side to the other.
  * The order of the items can also be adjusted.
  *
- * @version $Revision: 1.18 $ ($Date: 2007/01/17 17:47:58 $)
+ * @version $Revision$ ($Date$)
  * @author Moritz Ringler
  */
 public class JDoubleList extends JPanel{

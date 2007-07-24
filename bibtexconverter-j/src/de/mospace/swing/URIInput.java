@@ -2,7 +2,7 @@ package de.mospace.swing;
 
 /* Mp3dings - manage mp3 meta-information
 * Copyright (C) 2006 Moritz Ringler
-* $Id: URIInput.java,v 1.1 2006/09/11 17:14:29 ringler Exp $
+* $Id$
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@ import java.util.prefs.Preferences;
 
 /**
 * @author Moritz Ringler
-* @version $Revision: 1.1 $ ($Date: 2006/09/11 17:14:29 $)
+* @version $Revision$ ($Date$)
 */
 public class URIInput extends PathInput{
 

@@ -2,7 +2,7 @@ package de.mospace.swing.text;
 
 /* de.mospace.swing library
  * Copyright (C) 2005 Moritz Ringler
- * $Id: LabeledJTextField.java,v 1.4 2007/02/18 14:19:15 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@ import javax.swing.JTextField;
 
 /** A JTextField with a label on the left.
  *
- * @version $Revision: 1.4 $ ($Date: 2007/02/18 14:19:15 $)
+ * @version $Revision$ ($Date$)
  * @author Moritz Ringler
 **/
 public class LabeledJTextField extends JPanel{

@@ -1,4 +1,4 @@
-/* $Id: JBook.java,v 1.11 2006/07/11 17:00:03 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -26,7 +26,7 @@ import javax.swing.JTabbedPane;
  * can be added conveniently.
  *
  * @author Moritz Ringler
- * @version $Revision: 1.11 $ ($Date: 2006/07/11 17:00:03 $)
+ * @version $Revision$ ($Date$)
  * TODO: Fix Ctrl-T
  */
 public class JBook extends JTabbedPane{

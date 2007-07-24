@@ -1,6 +1,6 @@
 package de.mospace.swing;
 /*
- *  $Id: LaFInstaller.java,v 1.11 2007/01/17 21:05:59 ringler Exp $
+ *  $Id$
  *  This class is part of the de.mospace.swing library.
  *  Copyright (C) 2006 Moritz Ringler
  *

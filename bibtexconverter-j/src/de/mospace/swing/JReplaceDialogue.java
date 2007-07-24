@@ -1,4 +1,4 @@
-/* $Id: JReplaceDialogue.java,v 1.21 2007/02/18 14:20:22 ringler Exp $
+/* $Id$
  * This class is part of the de.mospace.swing library.
  * Copyright (C) 2005-2006 Moritz Ringler
  *
@@ -49,7 +49,7 @@ import de.mospace.swing.text.HistoryTextField;
 /** A customizable Replace Dialogue.
  *
  * @author Moritz Ringler
- * @version $Revision: 1.21 $ ($Date: 2007/02/18 14:20:22 $)
+ * @version $Revision$ ($Date$)
  */
 abstract public class JReplaceDialogue extends JDialog implements ActionListener{
     /** A common interface for JComboBoxes and JTextFields. **/

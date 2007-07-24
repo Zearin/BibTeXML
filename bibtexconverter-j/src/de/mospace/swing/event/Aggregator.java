@@ -2,7 +2,7 @@ package de.mospace.swing.event;
 
 /* This class is part of the de.mospace.swing library.
  * Copyright (C) 2006 Moritz Ringler
- * $Id: Aggregator.java,v 1.2 2007/02/18 14:20:23 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@ import javax.swing.SwingUtilities;
  * displayed data.
  *
  * @author Moritz Ringler
- * @version $Revision: 1.2 $ ($Date: 2007/02/18 14:20:23 $)
+ * @version $Revision$ ($Date$)
  */
 public class Aggregator {
     private final Timer timer = new Timer(true); //run as daemon

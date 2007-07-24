@@ -1,7 +1,7 @@
 package de.mospace.swing;
 
 /*
- *  $Id: ExtensionInstaller.java,v 1.15 2007/02/18 14:20:22 ringler Exp $
+ *  $Id$
  *  This class is part of the de.mospace.swing library.
  *  Copyright (C) 2006 Moritz Ringler
  *

@@ -2,7 +2,7 @@ package de.mospace.swing.text;
 
 /* Mp3dings - manage mp3 meta-information
 * Copyright (C) 2003 Moritz Ringler
-* $Id: FullTextStringCellEditor.java,v 1.5 2007/02/18 14:19:15 ringler Exp $
+* $Id$
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -45,7 +45,7 @@ import de.mospace.lang.FullTextString;
 * right bounds. The text area is displayed in the modal layer above the cell
 * that is edited.
 *
-* @version $Revision: 1.5 $ ($Date: 2007/02/18 14:19:15 $)
+* @version $Revision$ ($Date$)
 * @author Moritz Ringler
 * @see de.mospace.lang.FullTextString
 * @see FullTextStringCellRenderer

@@ -2,7 +2,7 @@ package de.mospace.swing;
 
 /* Mp3dings - manage mp3 meta-information
 * Copyright (C) 2006 Moritz Ringler
-* $Id: PathInput.java,v 1.9 2007/03/10 17:25:49 ringler Exp $
+* $Id$
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -40,7 +40,7 @@ import javax.swing.filechooser.FileFilter;
 
 /**
 * @author Moritz Ringler
-* @version $Revision: 1.9 $ ($Date: 2007/03/10 17:25:49 $)
+* @version $Revision$ ($Date$)
 */
 public class PathInput extends Box{
     protected JTextField textfield = new JTextField(40);

@@ -2,7 +2,7 @@ package de.mospace.swing.event;
 
 /* de.mospace.swing library
  * Copyright (C) 2005 Moritz Ringler
- * $Id: MessageEvent.java,v 1.4 2007/02/18 14:20:23 ringler Exp $
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@ import java.util.EventObject;
 /**
  * A simple event consisting of a String message and a timeout
  * for the duration of the message display.
- * @version $Revision: 1.4 $ ($Date: 2007/02/18 14:20:23 $)
+ * @version $Revision$ ($Date$)
  * @author Moritz Ringler
  */
 public class MessageEvent extends EventObject{
