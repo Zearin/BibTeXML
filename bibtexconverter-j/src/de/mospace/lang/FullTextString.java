@@ -55,7 +55,7 @@ public final class FullTextString implements Serializable{
     public String toString(){
         return me;
     }
-    
+
     public boolean equals(Object o){
         if(this == o){
             return true;
@@ -64,5 +64,9 @@ public final class FullTextString implements Serializable{
         } else {
             return false;
         }
+    }
+
+    public int hashCode(){
+        return me.hashCode();
     }
 }

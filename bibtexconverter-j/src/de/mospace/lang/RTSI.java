@@ -73,22 +73,23 @@ public class RTSI {
                         try{
                             jars.add(libs[i].toURI().toURL());
                         } catch (MalformedURLException ignore){
+                            System.err.println(ignore);
                         }
                     }
                 }
-            } else if(lib.isFile()){
-                if(lib.getName().endsWith(".jar")){
-                    try{
-                        jars.add(lib.toURI().toURL());
-                    } catch (MalformedURLException ignore){
-                    }
+            } else if(lib.isFile() && lib.getName().endsWith(".jar")){
+                try{
+                    jars.add(lib.toURI().toURL());
+                } catch (MalformedURLException ignore){
+                    System.err.println(ignore);
                 }
             }
         }
-        libClassLoader = (jars.size() >0)
-            ? new URLClassLoader((URL[]) jars.toArray(new URL[jars.size()]),
-                    ClassLoader.getSystemClassLoader())
-            : ClassLoader.getSystemClassLoader();
+        libClassLoader = jars.isEmpty()
+            ? ClassLoader.getSystemClassLoader()
+            : new URLClassLoader((URL[]) jars.toArray(new URL[jars.size()]),
+                    ClassLoader.getSystemClassLoader());
+
         return libClassLoader;
     }
 
@@ -281,9 +282,9 @@ public class RTSI {
         // ======
         // Translate the package name into an absolute path
         String name = new String(pckgname);
-        if (!name.startsWith("/")) {
+        //if (!name.startsWith("/")) {
             //name = "/" + name;
-        }
+        //}
         name = name.replace('.','/');
 
         // Get a File object for the package
@@ -306,7 +307,9 @@ public class RTSI {
         //          commands/LightOn.class
         //          RTSI.class
         //
-        if (url==null) return new String[]{};
+        if (url==null){
+            return new String[0];
+        }
 
 
         File directory = null;
@@ -408,13 +411,7 @@ public class RTSI {
         try {
             // Test if this class is public.
             Class cl = Class.forName(classname, true, classloader);
-            if(!Modifier.isPublic(cl.getModifiers())){
-                logger.logp(Level.FINE,
-                RTSI.class.getName(),
-                "testClass",
-                "Candidate class: " + classname +
-                "; Class is not public!");
-            } else {
+            if(Modifier.isPublic(cl.getModifiers())){
                 // Try to create an instance of the object
                 Object o = Class.forName(classname, true, classloader).newInstance();
                 if (tosubclass.isInstance(o)) {
@@ -431,6 +428,13 @@ public class RTSI {
                     "Candidate class " + classname +
                     " is not an instance of " + tosubclass.getName() +".");
                 }
+            } else {
+
+                logger.logp(Level.FINE,
+                RTSI.class.getName(),
+                "testClass",
+                "Candidate class: " + classname +
+                "; Class is not public!");
             }
         } catch (NoClassDefFoundError ncdfe){
             logger.logp(Level.FINE,

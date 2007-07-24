@@ -16,7 +16,7 @@ import java.util.Vector;
 /** A fully functional implementation of the {@link ClassLoaderProvider}
 * interface. Libraries can be registered with a DefaultClassLoaderProvider
 * and class loaders that look for class files in these libraries
-* can be obtained with the {@link #getClassLoader} method. **/ 
+* can be obtained with the {@link #getClassLoader} method. **/
 public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider implements Serializable{
     /** serialization version id */
     public static final long serialVersionUID = -7115012927531022705L;
@@ -24,11 +24,11 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
     * calls to {@link #getClassLoader}.
     */
     private transient ClassLoader classloader; //we don't want to store the class loader itself
-    
+
     /** A set of URLs containing the jar files and directories in the class
     * path of the last class loader. */
     private final Set jars = new HashSet();
-    
+
     /** A set of URLs containing newly registered jar files and directories. */
     private final Set newJars = new HashSet(); //can't make this transient because it's final
 
@@ -50,18 +50,18 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
     public DefaultClassLoaderProvider(ClassLoader parent){
         classloader = parent;
     }
-    
-    /** Tries to determine the directory that is or that contains the 
+
+    /** Tries to determine the directory that is or that contains the
     * class path element from which the specified class has been loaded.
     * @param klass a class loaded from the local file system
-    * @throws IllegalArgumentException if the repository root of the 
+    * @throws IllegalArgumentException if the repository root of the
     * specified class is not a file.
     */
     public static File getRepositoryRootDir(Class klass){
         File f = new File(getRepositoryRoot(klass));
         return (f == null || f.isDirectory())? f : f.getAbsoluteFile().getParentFile();
     }
-    
+
     /** Tries to determine the class path
     * element from which the specified class has been loaded.
     * @param klass a non-null class object
@@ -91,6 +91,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
             * class repository url */
             result = new URI(s_resource);
         } catch (URISyntaxException ignore){
+            throw new Error(ignore);
         }
         return result;
     }
@@ -111,7 +112,9 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
                 tempdir = (new File(tempdir)).getCanonicalPath();
                 result = file.getCanonicalPath().startsWith(tempdir);
             }
-        } catch (IOException ignore){}
+        } catch (IOException ignore){
+            result = false;
+        }
         return result;
     }
 
@@ -158,8 +161,8 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
     /** Requests that the specified jar file be registered, so that it is
      * in the class path of all class loaders returned by future calls to
      * {@link #getClassLoader}.
-     * @param jarFile a jar archive with Java class files 
-     * @return true if the library had not been registered before and 
+     * @param jarFile a jar archive with Java class files
+     * @return true if the library had not been registered before and
      *         was successfully registered with this ClassLaoderProvider.
      * @throws IllegalArgumentException if jarFile does not exist
      *         or is not a jar file
@@ -172,7 +175,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
     /**  Requests that the specified jar files be registered, so that they are
      * in the class path of all class loaders returned by future calls to
      * {@link #getClassLoader}.
-     * @param jarFiles an array of jar archives with Java class files 
+     * @param jarFiles an array of jar archives with Java class files
      * @return true if at least one jarFile was newly registered
      **/
     public final synchronized boolean registerLibraries(File[] jarFiles){
@@ -232,7 +235,9 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
                     result = newJars.add(newURL);
                 }
             } catch (MalformedURLException ex){
-                throw new IllegalArgumentException(ex.getMessage());
+                IllegalArgumentException ex2 = new IllegalArgumentException(ex.getMessage());
+                ex2.initCause(ex);
+                throw ex2;
             }
         }
         return result;
@@ -241,8 +246,8 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
     /** Requests that the specified jar file be registered, so that it is
      * in the class path of all class loaders returned by future calls to
      * {@link #getClassLoader}.
-     * @param jarFile a jar archive with Java class files 
-     * @return true if the library had not been registered before and 
+     * @param jarFile a jar archive with Java class files
+     * @return true if the library had not been registered before and
      *         was successfully registered with this ClassLaoderProvider.
      **/
     private final boolean addLib(File jar){
@@ -255,7 +260,9 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
                     result = newJars.add(newURL);
                 }
             } catch (MalformedURLException ex){
-                throw new IllegalArgumentException(ex.getMessage());
+                IllegalArgumentException ex2 = new IllegalArgumentException(ex.getMessage());
+                ex2.initCause(ex);
+                throw ex2;
             }
         }
         return result;
@@ -285,7 +292,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
      * registered.
      */
     private final ClassLoader updateClassLoader(){
-        if (newJars.size() != 0){
+        if (!newJars.isEmpty()){
             classloader = new URLClassLoader(
                     (URL[]) newJars.toArray(new URL[newJars.size()]), classloader );
             jars.addAll(newJars);
@@ -294,19 +301,19 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
         }
         return classloader;
     }
-    
+
     /** Serialization. */
     private void writeObject(java.io.ObjectOutputStream out)
     throws IOException{
         updateClassLoader();
         out.defaultWriteObject();
     }
-    
+
     /** De-serialization. */
     private void readObject(java.io.ObjectInputStream in)
     throws IOException, ClassNotFoundException{
         in.defaultReadObject();
-        if(jars.size() != 0){
+        if(jars.isEmpty()){
             classloader = new URLClassLoader(
                     (URL[]) newJars.toArray(new URL[newJars.size()]), classloader );
         }

@@ -36,7 +36,7 @@ import javax.swing.event.EventListenerList;
 
 /** A queue for Runnables that adhere to the {@link Job} interface,
 * enqueued jobs are run one after the other in the order in which they have
-* been enqueued. 
+* been enqueued.
 * @see java.lang.Runnable
 **/
 public class RunnableQueue implements Runnable{
@@ -47,28 +47,28 @@ public class RunnableQueue implements Runnable{
         * @return the exit status of this job
         */
         public int getExitStatus();
-        
+
         /** Requests that this job stops executing if it is currently running.
-        * This method will usually be called on another thread than 
+        * This method will usually be called on another thread than
         * <code>run()</code>. Implementations may choose to ignore this.
         */
         public void stop();
-        
+
         /** Returns whether this job currently has a non-null input.
-        *  Jobs that don't require any input should always return 
+        *  Jobs that don't require any input should always return
         * <code>true</code>.
         * @return whether this job has a non-null input
         * @see #readInputFrom(InputStream)
         */
         public boolean hasInput();
-        
+
         /** Requests that this job reads any input it needs
         * from the specified stream. Jobs that don't require any input may
         * ignore this.
         * @param stream the stream to read input from
-        */   
+        */
         public void readInputFrom(InputStream stream);
-        
+
         /** Registers an exception handler to deal with exceptions
         * thrown within the <code>run()</code> method. By default any exceptions
         * thrown within run should be re-thrown as RuntimeExceptions.
@@ -76,9 +76,10 @@ public class RunnableQueue implements Runnable{
         */
         public void registerExceptionHandler(ExceptionHandler eh);
     }
-    
+
     private ExceptionHandler eh = new ExceptionHandler(){
         public void handleException(Throwable e){
+            //does nothing.
         }
     };
     private List jobs;
@@ -86,12 +87,12 @@ public class RunnableQueue implements Runnable{
     private OutputStream inputSink;
     private boolean goon = true;
     private int lastExitStatus;
-    private Runnable fireStateChange = new Runnable(){
+    private final Runnable fireStateChange = new Runnable(){
         public void run(){
             fireStateChanged();
         }
     };
-    private ThreadGroup tg = new ThreadGroup(
+    private final ThreadGroup tg = new ThreadGroup(
     "RunnableQueueThreadGroup"+
     this.toString()
     ){
@@ -99,16 +100,16 @@ public class RunnableQueue implements Runnable{
             eh.handleException(e);
         }
     };
-    
+
     /** Executes this queue. Jobs will be run one after the other in the
     * order in which they have been enqueued.
     * @throws IllegalStateException when this queue is already running
-    */ 
+    */
     public void run(){
         if(isRunning()){
             throw new
                 IllegalStateException("Runnable queue is already running");
-        }        
+        }
         goon = true;
         job = getNextRunnable();
         /* fire events on the event dispatching thread */
@@ -127,7 +128,10 @@ public class RunnableQueue implements Runnable{
         }
         while(goon && job != null){
             jobs.remove(0);
-            if(!job.hasInput()){
+            if(job.hasInput()){
+                inputSink = null;
+                job.run();
+            } else {
                 PipedOutputStream pipeo =  null;
                 PipedInputStream pipei = null;
                 try{
@@ -155,9 +159,6 @@ public class RunnableQueue implements Runnable{
                         ex.printStackTrace();
                     }
                 }
-            } else {
-                inputSink = null;
-                job.run();
             }
             lastExitStatus = job.getExitStatus();
             job = getNextRunnable();
@@ -180,7 +181,7 @@ public class RunnableQueue implements Runnable{
             }
         }
     }
-    
+
     private Thread createThread(){
         return new Thread(
         tg,
@@ -191,23 +192,23 @@ public class RunnableQueue implements Runnable{
             }
         };
     }
-    
+
     /** Creates a new RunnableQueue with the specified jobs.
-    * @param commands an array of non-null jobs to initialize the queue with 
+    * @param commands an array of non-null jobs to initialize the queue with
     */
     public RunnableQueue(Job[] commands){
         if (commands != null){
             for(int i=0; i<commands.length; i++){
-                enqueue(commands[i]);
+                enqueueImpl(commands[i]);
             }
         }
     }
-    
+
     /** Creates a new RunnableQueue with no jobs. */
     public RunnableQueue(){
         this(null);
     }
-    
+
     /** Registers an exception handler for all jobs in this queue
     * and for all threads started with this queue's {@link #start}
     * method.
@@ -225,26 +226,26 @@ public class RunnableQueue implements Runnable{
             }
         }
     }
-    
+
     /** Returns the job that will next start executing.
     * @return the job that will next start executing
     * or <code>null</code> if no job is awaiting execution in the queue
     */
     public Job getNextRunnable(){
-        if(jobs != null && jobs.size() > 0){
-            return (Job) jobs.get(0);
-        } else {
+        if(jobs == null || jobs.isEmpty()){
             return null;
+        } else {
+            return (Job) jobs.get(0);
         }
     }
-    
+
     /** Returns the currently running job.
     * @return the currently running job from this queue or <code>null</code>
     * if no job is running. **/
     public Job getRunningRunnable(){
         return job;
     }
-    
+
     /** Adds a new job to the end of this queue. If this queue is currently
     * running then this job will be executed once the currently running job
     * and the jobs enqueued before it have terminated. If this queue is not
@@ -253,13 +254,17 @@ public class RunnableQueue implements Runnable{
     * @param p the job to add to the queue
     */
     public void enqueue(Job p){
+        enqueueImpl(p);
+    }
+
+    private void enqueueImpl(Job p){
         if(jobs == null){
             jobs = Collections.synchronizedList(new Vector());
         }
         p.registerExceptionHandler(eh);
         jobs.add(p);
     }
-    
+
     /** Removes the first occurrence in this queue of the
     * specified job. If this queue does not contain the element,
     * it is unchanged.
@@ -270,21 +275,21 @@ public class RunnableQueue implements Runnable{
     public boolean dequeue(Job p){
         return jobs.remove(p);
     }
-    
+
     /** Returns whether this queue is currently running.
     * @return whether this queue is currently running
-    */ 
+    */
     public boolean isRunning(){
         return (job != null);
     }
-    
-    /** Starts to execute this queue in a new thread. 
+
+    /** Starts to execute this queue in a new thread.
     * @throws IllegalStateException when this queue is already running
     */
     public void start(){
         createThread().start();
     }
-    
+
     /** Stops the currently running job in this queue. If there are further
     * jobs in the queue then these will be executed.
     * @see Job#stop
@@ -294,7 +299,7 @@ public class RunnableQueue implements Runnable{
             job.stop();
         }
     }
-    
+
     /** Stops execution of this queue. The currently running job will be
     * stopped and further jobs in the queue will not be executed and
     * remain queued.
@@ -306,13 +311,13 @@ public class RunnableQueue implements Runnable{
             goon = false;
         }
     }
-    
+
     /** Removes all jobs from the queue. Does not stop a currently running job.
     */
     public void clear(){
         jobs.clear();
     }
-    
+
     /** Forwards text input to the currently running job if it does not have
     * another source of input.
     * @param input text input for the currently running job
@@ -324,11 +329,11 @@ public class RunnableQueue implements Runnable{
             inputSink.flush();
         }
     }
-    
+
     /* Event generation and listener management */
     EventListenerList listenerList = new EventListenerList();
     ChangeEvent changeEvent = null;
-    
+
     /** Registers a listener that will be notified whenever this runnable
     * queue starts or stops executing. A listener can differentiate the two cases
     * by calling <code>event.getSource().isRunning()</code>, this will return
@@ -339,7 +344,7 @@ public class RunnableQueue implements Runnable{
     public void addChangeListener(ChangeListener l) {
         listenerList.add(ChangeListener.class, l);
     }
-    
+
     /** Requests that the specified listener no longer be notified when this
     * runnable queue starts or stops executing.
     * @param l the change listener to remove
@@ -347,7 +352,7 @@ public class RunnableQueue implements Runnable{
     public void removeChangeListener(ChangeListener l) {
         listenerList.remove(ChangeListener.class, l);
     }
-    
+
     /** Notifies all registered  listeners that this runnable
     * queue has started or stopped executing.
     * A listener can differentiate the two cases
@@ -362,8 +367,9 @@ public class RunnableQueue implements Runnable{
         for (int i = listeners.length-2; i>=0; i-=2) {
             if (listeners[i] == ChangeListener.class) {
                 // Lazily create the event:
-                if (changeEvent == null)
+                if (changeEvent == null){
                     changeEvent = new ChangeEvent(this);
+                }
                 ((ChangeListener)listeners[i+1]).stateChanged(changeEvent);
             }
         }

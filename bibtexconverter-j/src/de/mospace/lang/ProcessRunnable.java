@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-/** A runnable whose {@link #run run} method executes a system command. 
+/** A runnable whose {@link #run run} method executes a system command.
 * The system command is either specified as a single string or as an
 * array of string tokens.
 * @see java.lang.Runtime#exec
@@ -37,21 +37,21 @@ public class ProcessRunnable implements RunnableQueue.Job{
     private String cmdarray[];
     private File dir = null;
     private String[] envp;
-    
+
     /** Where the error stream of this Runnable's system command
     * will be redirected.
-    * By default this is a {@link NullStream}. */ 
+    * By default this is a {@link NullStream}. */
     protected Output errp = new StreamOutput(NullStream.getInstance());
-    
+
     /** Where the output stream of this Runnable's system command
     * will be redirected.
-    * By default this is a {@link NullStream}. */ 
+    * By default this is a {@link NullStream}. */
     protected Output outp = errp;
-    
+
     /** Where this Runnable's system command will read its standard input from.
-    * By default this is <code>null</code>. */ 
+    * By default this is <code>null</code>. */
     protected Input inpt;
-    
+
     private transient Process process = null;
     private transient int exitValue = 0;
     private ExceptionHandler exceptionHandler;
@@ -59,7 +59,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
 
     /** Constructs a new ProcessRunnable whose {@link #run} method will execute
     * the specified command.
-    * @param command the system command to execute 
+    * @param command the system command to execute
     */
     public ProcessRunnable(String command){
         this.command = command;
@@ -70,7 +70,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     * @param cmdarray the tokens that together form the command line to execute
     */
     public ProcessRunnable(String[] cmdarray){
-        setCommand(cmdarray);
+        setCommandImpl(cmdarray);
     }
 
     /** Throws an IllegalStateException when this process runnable is
@@ -78,7 +78,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     * @throws IllegalStateException when this process runnable is
     * currently running.
     */
-    private void checkRunning()
+    private final void checkRunning()
     throws IllegalStateException{
         if(isRunning()){
             throw new IllegalStateException("Process is running.");
@@ -86,7 +86,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     }
 
     /** Sets the command that will be executed when {@link #run} is called.
-    * @param cmd the system command to execute 
+    * @param cmd the system command to execute
     * @throws IllegalStateException when this process runnable is
     * currently running.
     */
@@ -106,6 +106,14 @@ public class ProcessRunnable implements RunnableQueue.Job{
         return command;
     }
 
+    private void setCommandImpl(String[] cmdarray)
+            throws IllegalStateException{
+        checkRunning();
+        command = null;
+        this.cmdarray = new String[cmdarray.length];
+        System.arraycopy(cmdarray, 0, this.cmdarray, 0, cmdarray.length);
+    }
+
     /** Sets the command line that will be executed
     * when {@link #run} is called.
     * @param cmdarray the tokens that together form the command line to
@@ -114,11 +122,8 @@ public class ProcessRunnable implements RunnableQueue.Job{
     * currently running.
     */
     public void setCommand(String[] cmdarray)
-            throws IllegalStateException{
-        checkRunning();
-        command = null;
-        this.cmdarray = new String[cmdarray.length];
-        System.arraycopy(cmdarray, 0, this.cmdarray, 0, cmdarray.length);
+        throws IllegalStateException{
+            setCommandImpl(cmdarray);
     }
 
     /** Returns a copy of the command line that will be executed
@@ -167,7 +172,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     }
 
     /** Redirects output of this process runnable's system command to
-    * the specified file. The file will be opened for writing and 
+    * the specified file. The file will be opened for writing and
     * closed when the system commands starts and stops
     * executing, respectively.
     * @param f the file the program should write its output to
@@ -197,7 +202,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     }
 
     /** Redirects error output of this process runnable's system command to
-    * the specified file. The file will be opened for writing and 
+    * the specified file. The file will be opened for writing and
     * closed when the system commands starts and stops
     * executing, respectively.
     * @param f the file the program should write its output to
@@ -242,7 +247,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     }
 
     /** Sets the working directory for this process runnable's system command.
-    * @param dir the working directory for this process runnable's system 
+    * @param dir the working directory for this process runnable's system
     * command
     * @throws IllegalStateException when this process runnable is
     * currently running.
@@ -256,7 +261,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     }
 
     /** Returns the working directory for this process runnable's system command.
-    * @return the working directory for this process runnable's system 
+    * @return the working directory for this process runnable's system
     * command
     * @see #getWorkingDirectory
     */
@@ -322,7 +327,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
 
     /** Returns the exception handler that deals with exceptions
     * thrown within the {@link #run} method.
-    * @return the exception handler registered with this ProcessRunnable if any 
+    * @return the exception handler registered with this ProcessRunnable if any
     * @see #registerExceptionHandler
     */
     protected ExceptionHandler getExceptionHandler(){
@@ -330,7 +335,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     }
 
     /** Kills the system process spawned by the {@link #run} method if
-    * this process runnable is currently running. */    
+    * this process runnable is currently running. */
     public void stop(){
         if (isRunning()){
             process.destroy();
@@ -344,7 +349,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     * this method has the same effect as {@link #getExitStatus}.
     * @return the exit value of the currently running process
     * @throws InterruptedException if the system process is interrupted
-    */    
+    */
     public int waitFor() throws InterruptedException{
         if (isRunning()){
             return process.waitFor();
@@ -356,7 +361,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     /** Returns the exit status of the system process that returned last.
     * @return the exit status of the system process that returned last or zero
     * if this runnable has never run.
-    */   
+    */
     public int getExitStatus(){
         return exitValue;
     }
@@ -369,11 +374,11 @@ public class ProcessRunnable implements RunnableQueue.Job{
     }
 
     /** Makes this process runnable's system command read input from the
-    * specified file. The file will be opened for reading and 
+    * specified file. The file will be opened for reading and
     * closed when the system commands starts and stops
     * executing, respectively.
     * @param f the file to read input from
-    */    
+    */
     public void readInputFrom(File f){
         inpt = new FileInput(f);
     }
@@ -381,7 +386,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     /** Makes this process runnable's system command read input from the
     * specified stream.
     * @param i the stream to read input from
-    */   
+    */
     public void readInputFrom(InputStream i){
         inpt = new StreamInput(i);
     }
@@ -405,17 +410,17 @@ public class ProcessRunnable implements RunnableQueue.Job{
     * bytes from its input to its output as long as
     * the associated ProcessRunnable is running. All pipe threads belong to the
     * same thread group named ProcessRunableIO.
-    */ 
+    */
     protected static class PipeThread extends Thread{
         /** The input that this PipeThread reads from. */
         protected Input inp;
-        
+
         /** The output that this PipeThread writes to. */
         protected Output outp;
-        
+
         byte[] myBuff = new byte[1024];
         private final ProcessRunnable owner;
-        
+
         /** The common ThreadGroup of all PipeThreads. */
         private static ThreadGroup iothreads = new ThreadGroup("ProcessRunableIO");
 
@@ -430,15 +435,15 @@ public class ProcessRunnable implements RunnableQueue.Job{
         Output writep){
             this(owner, read, writep, null);
         }
-        
-        /** Creates a new PipeThread with the specified owner, input, 
+
+        /** Creates a new PipeThread with the specified owner, input,
         * output, and thread name.
         * @param the ProcessRunnable whose input and output the new PipeThread
         * will handle
         * @param read the input that the new PipeThread reads from
         * @param writep the output that the new PipeThread writes to
         * @param id the thread name for the new PipeThread. If it is <code>
-        * null</code> or empty than a thread name is auto-generated. 
+        * null</code> or empty than a thread name is auto-generated.
         **/
         PipeThread(ProcessRunnable owner, Input read,
         Output writep, String id){
@@ -452,9 +457,9 @@ public class ProcessRunnable implements RunnableQueue.Job{
             inp = read;
             this.owner = owner;
         };
-        
+
         /** Opens this pipe thread's input and output and writes any
-        * bytes that become available on the input to the output. 
+        * bytes that become available on the input to the output.
         * When it encounters an End Of File on the input or when the
         * process runnable associated with this PipeThread stops running
         * the close methods of input and output will be called.
@@ -468,7 +473,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
                     return;
                 }
                 output = outp.openOutputStream();
-                
+
                 for (int i = 0; i > -1; i = input.read(myBuff)) {
                     synchronized (output){
                         output.write(myBuff,0,i);
@@ -503,12 +508,12 @@ public class ProcessRunnable implements RunnableQueue.Job{
 
     /** A common interface for various kinds of byte sources. */
     protected static interface Input{
-        
+
         /** Opens and/or returns this byte source as an input stream.
         * @return the input stream for this byte source
         */
         public InputStream openInputStream() throws IOException;
-        
+
         /** Signals that no more bytes will be read from the specified
         * input stream. Depending on the kind of input the input stream
         * may or may not be closed by this method.
@@ -522,12 +527,12 @@ public class ProcessRunnable implements RunnableQueue.Job{
     protected final static class FileInput implements Input{
         private final File f;
 
-        /** Creates a new {@link Input} object from the specified file. **/  
+        /** Creates a new {@link Input} object from the specified file. **/
         public FileInput(File f){
             this.f = f;
         }
 
-        /** Opens the file specified in the constructor for reading. 
+        /** Opens the file specified in the constructor for reading.
         * @return a new {@link java.io.FileInputStream} object
         */
         public InputStream openInputStream() throws IOException{
@@ -542,7 +547,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
             stream.close();
         }
 
-        /** Returns a string representation of this object. 
+        /** Returns a string representation of this object.
          * @return  a string representation of this object. */
         public String toString(){
             return (f==null)? "null" : "<"+f.getPath();
@@ -551,9 +556,9 @@ public class ProcessRunnable implements RunnableQueue.Job{
 
     /** Wraps an input stream as a {@link Input}. */
     protected final static class StreamInput implements Input{
-        private InputStream inp;
+        private final InputStream inp;
 
-        /** Creates a new {@link Input} object from the specified stream. 
+        /** Creates a new {@link Input} object from the specified stream.
         * @param stream an InputStream or <code>null</code> for empty input. **/
         public StreamInput(InputStream stream){
             inp = stream;
@@ -570,9 +575,10 @@ public class ProcessRunnable implements RunnableQueue.Job{
 
         /** Does nothing. **/
         public void closeInputStream(InputStream stream){
+            //does nothing
         }
 
-        /** Returns a string representation of this object. 
+        /** Returns a string representation of this object.
          * @return  a string representation of this object. */
         public String toString(){
             return "<"+String.valueOf(inp);
@@ -581,12 +587,12 @@ public class ProcessRunnable implements RunnableQueue.Job{
 
     /** A common interface for various kinds of byte sinks. */
     protected static interface Output{
-        
+
         /** Opens and/or returns this byte sink as an output stream.
         * @return the output stream for this byte sink
         */
         public OutputStream openOutputStream() throws IOException;
-        
+
         /** Signals that no more bytes will be written to the specified
         * output stream. Depending on the kind of output the output stream
         * may or may not be closed by this method.
@@ -598,14 +604,14 @@ public class ProcessRunnable implements RunnableQueue.Job{
 
     /** Wraps a file as a {@link Output}. */
     protected static class FileOutput implements Output{
-        private File f;
+        private final File f;
 
-        /** Creates a new {@link Output} object from the specified file. **/ 
+        /** Creates a new {@link Output} object from the specified file. **/
         public FileOutput(File f){
             this.f = f;
         }
 
-        /** Opens the file specified in the constructor for writing. 
+        /** Opens the file specified in the constructor for writing.
         * @return a new {@link java.io.FileOutputStream} object
         */
         public OutputStream openOutputStream() throws IOException{
@@ -620,7 +626,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
             out.close();
         }
 
-        /** Returns a string representation of this object. 
+        /** Returns a string representation of this object.
          * @return  a string representation of this object. */
         public String toString(){
             return (f==null)? "null" : ">"+f.getPath();
@@ -629,9 +635,9 @@ public class ProcessRunnable implements RunnableQueue.Job{
 
     /** Wraps an input stream as a {@link Input}. */
     protected static class StreamOutput implements Output{
-        private OutputStream s;
+        private final OutputStream s;
 
-        /** Creates a new {@link Output} object from the specified stream. 
+        /** Creates a new {@link Output} object from the specified stream.
         * @param o an OutputStream or <code>null</code> for a
         * {@link NullStream}. **/
         public StreamOutput(OutputStream o){
@@ -647,9 +653,10 @@ public class ProcessRunnable implements RunnableQueue.Job{
 
         /** Does nothing */
         public void closeOutputStream(OutputStream out){
+            //does nothing
         }
 
-        /** Returns a string representation of this object. 
+        /** Returns a string representation of this object.
          * @return  a string representation of this object. */
         public String toString(){
             return ">"+String.valueOf(s);

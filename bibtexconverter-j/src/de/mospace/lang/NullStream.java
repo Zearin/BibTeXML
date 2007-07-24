@@ -54,17 +54,20 @@ public final class NullStream extends OutputStream{
     *@throws IOException This method will not throw an Exception.
     */
     public void write(int b) throws IOException{
+        //Does nothing.
     }
 
-    /** Does nothing. 
+    /** Does nothing.
     *@throws IOException This method will not throw an Exception.
     */
     public void write(byte[] b) throws IOException{
+        //Does nothing.
     }
 
     /** Does nothing.
     *@throws IOException This method will not throw an Exception.
     */
     public void write(byte[] b, int off, int len) throws IOException{
+        //Does nothing.
     }
 }
