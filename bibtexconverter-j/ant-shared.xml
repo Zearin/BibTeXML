@@ -38,6 +38,34 @@
     </copy>
   </target>
 
+  <target name="pmd" description="needs pmd on the classpath">
+      <property name="app.pmd.patternset" value="default.pmd.patternset"/>
+      <patternset id="default.pmd.patternset" includes="**/*.java" />
+      <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"/>
+      <pmd shortFilenames="false"  targetjdk="${app.javaVersion}">
+          <ruleset>unusedcode</ruleset>
+          <ruleset>basic</ruleset>
+          <ruleset>braces</ruleset>
+          <!--<ruleset>codesize</ruleset>-->
+          <ruleset>clone</ruleset>
+          <ruleset>coupling</ruleset>
+          <ruleset>design</ruleset>
+          <ruleset>imports</ruleset>
+          <!--<ruleset>naming</ruleset>-->
+          <ruleset>strings</ruleset>
+          <ruleset>strictexception</ruleset>
+          <ruleset>sunsecure</ruleset>
+          <!--<ruleset>optimizations</ruleset>-->
+          <formatter type="text" toFile="pmd_report.txt"/>
+          <fileset dir="${src}">
+              <patternset refid="${app.pmd.patternset}"/>
+          </fileset>
+      </pmd>
+      <concat>
+        <fileset file="pmd_report.txt"/>
+      </concat>
+  </target>
+
   <target name="removebackups">
     <echo>Removing backup files</echo>
     <delete includeemptydirs="true" verbose="false">

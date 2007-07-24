@@ -9,11 +9,11 @@
 <project name="bibtexconverter" default="test" basedir=".">
   <description>
     Buildfile for bibtexconverter application. As of 2007-03-21,
-    this buildfile works correctly only in nightly builds of 
-    apache ant due to ant bug 41879 
+    this buildfile works correctly only in nightly builds of
+    apache ant due to ant bug 41879
     (http://issues.apache.org/bugzilla/show_bug.cgi?id=41879).
     It is expected that this bug will be fixed in ant 1.7.1.
-    
+
     bibtexconverter by default uses jing for xml validation, to use
     Sun msv instead,
     get the msv binary zip file from http://msv.dev.java.net/
@@ -26,16 +26,16 @@
   <property
       name="src"
       value="src"/>
-  <property 
+  <property
       name="build"
       value="classes"/>
   <property
       name="javadoc"
       value="doc/api"/>
   <property
-      name="app.package" 
+      name="app.package"
       value="net.sourceforge.bibtexml" />
-  <property 
+  <property
       name="app.mac.signature"
       value="btcj"/>
   <property
@@ -71,6 +71,9 @@
   <!-- Do not change order! -->
   <property name="app.lib"
       value=" lib/jing.jar lib/jaxp-isorelax.jar lib/relaxngDatatype.jar lib/xsdlib.jar lib/msv.jar" />
+  <property name="app.pmd.patternset"
+      value="my.pmd.patternset" />
+  <patternset id="my.pmd.patternset" includes="net/sourceforge/bibtexml/**/*.java" excludes="**/SaxonGUI.java"/>
   <property name="app.includeLibs"
       value="true" />
   <!--
@@ -85,7 +88,7 @@
     <taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc"></taskdef>
     <sablecc src="${src}/net/sourceforge/texlipse" includes="*.sablecc" outputdirectory="${src}"/>
   </target>
-  
+
   <!-- overwrites ant-shared.xml's target of the same name
        in order to register file types -->
   <target name="packaging.macosx.jarbundler.jb">
@@ -103,7 +106,7 @@
       <javaproperty
           name="apple.laf.useScreenMenuBar"
           value="true"/>
-      <javaproperty 
+      <javaproperty
           name="apple.awt.brushMetal"
           value="true"/>
       <javaproperty
@@ -116,7 +119,7 @@
        role="Editor"/>
     </jarbundler>
   </target>
-  
+
 <target name="devel.ftp.upload"
     depends="init"><!--
     description="[developers only] Copies distribution files to SF.net upload server" -->
@@ -139,14 +142,14 @@
      -->
     </ftp>
   </target>
-  
+
   <target name="copy" depends="shared.copy">
     <!-- if you change the following section you must run the clean target once -->
     <replaceregexp file="${build}/net/sourceforge/bibtexml/version.properties"
      byline="true" match="build=.*" replace="build=${DSTAMP}${TSTAMP}"/>
   </target>
-  
-   
+
+
  <target name="dist.bin" depends="addlibs,devel.sign.bin,packaging.win.jsmooth,packaging.macosx.jarbundler"
       description="Makes a binary-only jarfile and a JSmooth project file that can be used to generate a Windows executable wrapper (http://jsmooth.sf.net).">
     <copy file="${binary}" tofile="${ant.project.name}.jar"/>
