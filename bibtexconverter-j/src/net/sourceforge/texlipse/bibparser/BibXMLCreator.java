@@ -48,9 +48,9 @@ public final class BibXMLCreator extends DepthFirstAdapter {
             this.value = value;
         }
     }
-    protected final static Pattern AUTHOR_REX = Pattern.compile("\\s+and\\s+");
-    protected final static Pattern KEYWORDS_REX = Pattern.compile("\\s*[,;]\\s*");
-    protected final static Pattern WHITESPACE_REX = Pattern.compile("\\s+");
+    final static Pattern AUTHOR_REX = Pattern.compile("\\s+and\\s+");
+    final static Pattern KEYWORDS_REX = Pattern.compile("\\s*[,;]\\s*");
+    final static Pattern WHITESPACE_REX = Pattern.compile("\\s+");
     private String key = "";
     private String entryType;
 
@@ -139,15 +139,19 @@ public final class BibXMLCreator extends DepthFirstAdapter {
     }
 
     public void inAStrbraceStringEntry(AStrbraceStringEntry node) {
+        //do nothing
     }
 
     public void outAStrbraceStringEntry(AStrbraceStringEntry node) {
+        //do nothing
     }
 
     public void inAStrparenStringEntry(AStrparenStringEntry node) {
+        //do nothing
     }
 
     public void outAStrparenStringEntry(AStrparenStringEntry node) {
+        //do nothing
     }
 
     /**
@@ -207,18 +211,21 @@ public final class BibXMLCreator extends DepthFirstAdapter {
     }
 
     public void inAConcat(AConcat node) {
+        //do nothing
     }
 
     public void outAConcat(AConcat node) {
+        //do nothing
     }
 
     public void inAValueValOrSid(AValueValOrSid node) {
+        //do nothing
     }
 
     public void outAValueValOrSid(AValueValOrSid node) {
         String value = node.getStringLiteral().getText();
         String[] values;
-        if(key.equals("author")){
+        if("author".equals(key)){
             values = AUTHOR_REX.split(value);
             String[] authorparts;
             StringBuilder builder;
@@ -238,9 +245,9 @@ public final class BibXMLCreator extends DepthFirstAdapter {
                     }
                 }
             }
-        } else if (key.equals("keywords") || key.equals("refgroup")){
+        } else if ("keywords".equals(key) || "refgroup".equals(key)){
             values = KEYWORDS_REX.split(value);
-        } else if (key.equals("pages")){
+        } else if ("pages".equals(key)){
             values = new String[]{WHITESPACE_REX.matcher(value).replaceAll("")};
         } else {
             values = new String[]{value};
@@ -254,6 +261,7 @@ public final class BibXMLCreator extends DepthFirstAdapter {
     }
 
     public void inANumValOrSid(ANumValOrSid node) {
+        //do nothing
     }
 
     public void outANumValOrSid(ANumValOrSid node) {
@@ -261,6 +269,7 @@ public final class BibXMLCreator extends DepthFirstAdapter {
     }
 
     public void inAIdValOrSid(AIdValOrSid node) {
+        //do nothing
     }
 
     public void outAIdValOrSid(AIdValOrSid node) {

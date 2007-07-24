@@ -42,9 +42,9 @@ import org.xml.sax.SAXException;
 public final class BibXMLWriter extends DepthFirstAdapter {
     private final SaxXMLWriter xw;
 
-    protected final static Pattern AUTHOR_REX = Pattern.compile("\\s+and\\s+");
-    protected final static Pattern KEYWORDS_REX = Pattern.compile("\\s*[,;]\\s*");
-    protected final static Pattern WHITESPACE_REX = Pattern.compile("\\s+");
+    final static Pattern AUTHOR_REX = Pattern.compile("\\s+and\\s+");
+    final static Pattern KEYWORDS_REX = Pattern.compile("\\s*[,;]\\s*");
+    final static Pattern WHITESPACE_REX = Pattern.compile("\\s+");
     private transient String key = "";
     private transient String entryType;
     private transient int entryCount = 0;
@@ -152,15 +152,19 @@ public final class BibXMLWriter extends DepthFirstAdapter {
     }
 
     public void inAStrbraceStringEntry(AStrbraceStringEntry node) {
+        //do nothing
     }
 
     public void outAStrbraceStringEntry(AStrbraceStringEntry node) {
+        //do nothing
     }
 
     public void inAStrparenStringEntry(AStrparenStringEntry node) {
+        //do nothing
     }
 
     public void outAStrparenStringEntry(AStrparenStringEntry node) {
+        //do nothing
     }
 
     /**
@@ -197,6 +201,7 @@ public final class BibXMLWriter extends DepthFirstAdapter {
     }
 
     public void inAEntryDef(AEntryDef node) {
+        //do nothing
     }
 
     /**
@@ -219,12 +224,15 @@ public final class BibXMLWriter extends DepthFirstAdapter {
     }
 
     public void inAConcat(AConcat node) {
+        //do nothing
     }
 
     public void outAConcat(AConcat node) {
+        //do nothing
     }
 
     public void inAValueValOrSid(AValueValOrSid node) {
+        //do nothing
     }
 
     public void outAValueValOrSid(AValueValOrSid node) {
@@ -236,6 +244,9 @@ public final class BibXMLWriter extends DepthFirstAdapter {
                 try{
                     values[i] = new Author(values[i]).toString();
                 } catch (java.text.ParseException ignore){
+                    System.err.println("Cannot parse author "+values[i]);
+                    System.err.println(ignore);
+                    System.err.flush();
                 }
             }
         } else if (key.equals("keywords") || key.equals("refgroup")){
@@ -254,6 +265,7 @@ public final class BibXMLWriter extends DepthFirstAdapter {
     }
 
     public void inANumValOrSid(ANumValOrSid node) {
+        //do nothing
     }
 
     public void outANumValOrSid(ANumValOrSid node) {
@@ -261,6 +273,7 @@ public final class BibXMLWriter extends DepthFirstAdapter {
     }
 
     public void inAIdValOrSid(AIdValOrSid node) {
+        //do nothing
     }
 
     public void outAIdValOrSid(AIdValOrSid node) {

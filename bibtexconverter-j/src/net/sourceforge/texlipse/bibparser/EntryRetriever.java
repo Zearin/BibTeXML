@@ -59,21 +59,27 @@ public final class EntryRetriever extends DepthFirstAdapter {
     }
 
     public void inABibtex(ABibtex node) {
+        //do nothing
     }
 
     public void outABibtex(ABibtex node) {
+        //do nothing
     }
 
     public void inAStrbraceStringEntry(AStrbraceStringEntry node) {
+        //do nothing
     }
 
     public void outAStrbraceStringEntry(AStrbraceStringEntry node) {
+        //do nothing
     }
 
     public void inAStrparenStringEntry(AStrparenStringEntry node) {
+        //do nothing
     }
 
     public void outAStrparenStringEntry(AStrparenStringEntry node) {
+        //do nothing
     }
 
     /**
@@ -111,6 +117,7 @@ public final class EntryRetriever extends DepthFirstAdapter {
     }
 
     public void inAEntryDef(AEntryDef node) {
+        //do nothing
     }
 
     /**
@@ -134,12 +141,15 @@ public final class EntryRetriever extends DepthFirstAdapter {
     }
 
     public void inAConcat(AConcat node) {
+        //do nothing
     }
 
     public void outAConcat(AConcat node) {
+        //do nothing
     }
 
     public void inAValueValOrSid(AValueValOrSid node) {
+        //do nothing
     }
 
     public void outAValueValOrSid(AValueValOrSid node) {
@@ -147,6 +157,7 @@ public final class EntryRetriever extends DepthFirstAdapter {
     }
 
     public void inANumValOrSid(ANumValOrSid node) {
+        //do nothing
     }
 
     public void outANumValOrSid(ANumValOrSid node) {
@@ -154,6 +165,7 @@ public final class EntryRetriever extends DepthFirstAdapter {
     }
 
     public void inAIdValOrSid(AIdValOrSid node) {
+        //do nothing
     }
 
     public void outAIdValOrSid(AIdValOrSid node) {

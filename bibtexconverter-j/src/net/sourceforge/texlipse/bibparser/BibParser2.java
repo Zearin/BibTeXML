@@ -51,9 +51,9 @@ import de.mospace.xml.SaxXMLWriter;
  * @author Oskar Ojala, Moritz Ringler
  */
 public class BibParser2 {
-    private Reader reader;
+    private final Reader reader;
 
-    private ArrayList errors;
+    private final ArrayList errors;
     private Start ast;
     public static final int SEVERITY_ERROR = 2;
 
