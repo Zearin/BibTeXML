@@ -27,7 +27,7 @@ import javax.swing.JComboBox;
 
 /** A text field that remembers the last values entered. The GUI representation
 * is actually a JComboBox that can be retrieved with the {@link #getComboBox
-* getJComboBox} method.  
+* getJComboBox} method.
 * @author Moritz Ringler
 * @version $Revision: 1.8 $ ($Date: 2007/02/18 14:19:15 $)
 **/
@@ -39,8 +39,8 @@ public class HistoryTextField {
     private final int loadId;
     private ActionListener autoSaver = null;
     private boolean autosave = false;
-    
-    /** Constructs a HistoryTextField with the specified id 
+
+    /** Constructs a HistoryTextField with the specified id
     * and initializes it with at most <code>len</code>
     * previously saved values.
     * @param prefNode the preference node that values will be loaded from
@@ -55,8 +55,8 @@ public class HistoryTextField {
         load(prefNode, id, len);
         jcb.setEditable(true);
     }
-    
-    /** Constructs a HistoryTextField with the specified id 
+
+    /** Constructs a HistoryTextField with the specified id
     * and initializes it with all previously saved values.
     * @param prefNode the preference node that values will be loaded from
     * @param id an integer identifying this history text field whose values
@@ -66,15 +66,17 @@ public class HistoryTextField {
     {
         this(prefNode, id, 0);
     }
-    
-    
-    private void load(Preferences prefNode, int id, int len){
+
+
+    private void load(Preferences prefNode, int id, int llen){
         String hist = prefNode.get("HistoryTextField"+id,"\n\n\n\n");
         String[] loadedItems = hist.split("\n",-1);
+        int len = llen;
         int hlen = loadedItems.length;
         if (len == 0){
             len = hlen;
-        } if (len < MINIMUM_LENGTH) {
+        }
+        if (len < MINIMUM_LENGTH) {
             len = MINIMUM_LENGTH;
         }
         DefaultComboBoxModel mod = new DefaultComboBoxModel(new String[len]);
@@ -90,7 +92,7 @@ public class HistoryTextField {
         jcb.setEditable(true);
         jcb.setSelectedItem(loadedItems[0]);
     }
-    
+
     /** Saves this text fields history to the specified preference node
     * and id.
     * @param prefNode the preference node that values will be written to
@@ -106,25 +108,25 @@ public class HistoryTextField {
         }
         prefNode.put("HistoryTextField"+id,hist.toString());
     }
-    
+
     /** Adds a new string to this text field's history.
     * @param str the string to add
     */
     public void addToHistory(String str){
         ((DefaultComboBoxModel) jcb.getModel()).insertElementAt(str,0);
     }
-    
+
     /** Adds the item that is currently edited to this text field's history.
     */
     public void addCurrentItem(){
         addToHistory(jcb.getSelectedItem().toString());
     }
-    
+
     /** Clears this text field's history. */
     public void clearHistory(){
         ((DefaultComboBoxModel) jcb.getModel()).removeAllElements();
     }
-    
+
     /** Gets the single JComboBox object that serves as a GUI representation of
     * this history text field.
     * @return the combo box for this history text field
@@ -133,7 +135,7 @@ public class HistoryTextField {
     public JComboBox getComboBox(){
         return jcb;
     }
-    
+
     /** Sets whether items newly added to this text field's combo box will
     * automatically be added to the history and saved under the preference node
     * and id that this text field has been loaded from.
@@ -146,7 +148,7 @@ public class HistoryTextField {
                 autoSaver = new ActionListener(){
                     public void actionPerformed(ActionEvent e){
                         JComboBox cb = (JComboBox) e.getSource();
-                        
+
                         /* only add new items to the history */
                         if (cb.getSelectedIndex() != -1){
                             return;
@@ -168,7 +170,7 @@ public class HistoryTextField {
             autosave = false;
         }
     }
-    
+
     /** Returns whether items newly added to this text field's combo box will
     * automatically be added to the history and saved under the preference node
     * and id that this text field has been loaded from.
@@ -178,7 +180,7 @@ public class HistoryTextField {
     public synchronized boolean isAutoSave(){
         return autosave;
     }
-    
+
     /** Returns the items in this text field's history as a newly allocated
     * String array.
     * @return this text field's history

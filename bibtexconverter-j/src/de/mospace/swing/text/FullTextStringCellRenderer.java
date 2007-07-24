@@ -58,7 +58,7 @@ public class FullTextStringCellRenderer extends DefaultTableCellRenderer {
             i = ibreak;
         }
         shortstr = shortstr.substring(0,i);
-        if(i<iend && !shortstr.equals("")){
+        if(i<iend && shortstr.length() != 0){
             shortstr = shortstr.concat("...");
         }
         return super.getTableCellRendererComponent(table, shortstr, isSelected,

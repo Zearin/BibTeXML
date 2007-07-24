@@ -38,11 +38,11 @@ import javax.swing.text.StyleConstants;
 * @author Moritz Ringler
 */
 public class DocumentOutputStream extends OutputStream {
-    
+
     private Charset charset;
     private Document doc;
     private MutableAttributeSet currentStyle;
-    
+
     /** Sets the foreground color for new output.
     * @param c the new text color
     */
@@ -52,7 +52,7 @@ public class DocumentOutputStream extends OutputStream {
         }
         StyleConstants.setForeground (currentStyle, c);
     }
-    
+
     /**
     * Constructs a new DocumentOutputStream that uses the default system
     * charset for decoding bytes passed to its write methods.
@@ -66,7 +66,7 @@ public class DocumentOutputStream extends OutputStream {
         charset = Charset.forName(new OutputStreamWriter(this).getEncoding());
         doc = d;
     }
-    
+
     /**
     * Creates a new DocumentOutputStream that uses the specified
     * charset for decoding bytes passed to its write methods.
@@ -82,7 +82,7 @@ public class DocumentOutputStream extends OutputStream {
         charset = c;
         doc = d;
     }
-    
+
     /**
     * Creates a new DocumentOutputStream that uses the
     * charset with the specified name for decoding bytes
@@ -93,7 +93,7 @@ public class DocumentOutputStream extends OutputStream {
     *
     * @throws NullPointerException if one of the parameters is <code>null</code>
     * @throws java.nio.charset.UnsupportedCharsetException if the JVM does
-    * not support the charset with the specified name 
+    * not support the charset with the specified name
     */
     public DocumentOutputStream(Document d, String charsetName) {
         d.getClass(); //throws a null pointer exception if d is null
@@ -101,7 +101,7 @@ public class DocumentOutputStream extends OutputStream {
         charset = Charset.forName(charsetName);
         doc = d;
     }
-    
+
     /**
     * Sets the character set used for decoding bytes passed to the write
     * methods of this DocumentOutputStream. Has no effect when this
@@ -119,7 +119,7 @@ public class DocumentOutputStream extends OutputStream {
             charset = Charset.forName(name);
         }
     }
-    
+
     /**
     * Sets the character set used for decoding bytes passed to the write
     * methods of this DocumentOutputStream. Has no effect when this
@@ -135,7 +135,7 @@ public class DocumentOutputStream extends OutputStream {
             charset = c;
         }
     }
-    
+
     /**
     * Returns the character set that this DocumentOutputStream uses to write
     * bytes to its document.
@@ -146,7 +146,7 @@ public class DocumentOutputStream extends OutputStream {
     public Charset getCharset() {
         return charset;
     }
-    
+
     /**
     * Returns the character set that this DocumentOutputStream uses to write
     * bytes to its document.
@@ -157,7 +157,7 @@ public class DocumentOutputStream extends OutputStream {
     public String getCharsetName() {
         return (charset == null) ? null : charset.name();
     }
-    
+
     /**
     * Sets the document that this OutputStream writes to. Has no effect when
     * this OutputStream has been closed.
@@ -172,7 +172,7 @@ public class DocumentOutputStream extends OutputStream {
             doc = d;
         }
     }
-    
+
     /**
     * Returns the document that this OutputStream writes to.
     *
@@ -182,7 +182,7 @@ public class DocumentOutputStream extends OutputStream {
     public Document getDocument() {
         return doc;
     }
-    
+
     /**
     * Closes the output stream. A closed stream cannot perform output
     * operations and cannot be reopened.
@@ -191,7 +191,7 @@ public class DocumentOutputStream extends OutputStream {
         doc = null;
         charset = null;
     }
-    
+
     /**
     * Inserts the specified byte at the end of the current document of this
     * DocumentOutputStream. <code>b</code> is converted to a unicode
@@ -204,7 +204,7 @@ public class DocumentOutputStream extends OutputStream {
     public void write(int b) throws IOException {
         write(new byte[]{new Integer(b).byteValue()}, 0, 1);
     }
-    
+
     /**
     * Inserts the specified bytes at the end of the current document of this
     * DocumentOutputStream. <code>b</code> is converted to a unicode string
@@ -221,7 +221,7 @@ public class DocumentOutputStream extends OutputStream {
     public void write(byte[] b) throws IOException {
         write(b, 0, b.length);
     }
-    
+
     /**
     * Inserts the specified bytes at the end of the current document of this
     * DocumentOutputStream. <code>b</code> is converted to a unicode string
@@ -237,14 +237,14 @@ public class DocumentOutputStream extends OutputStream {
     *         and <code>len</code> parameters do not hold
     */
     public void write(byte[] b, int off, int len) throws IOException {
-        int i = b.length; //provoke NullPointerException if b is null
-        if (doc != null) {
-            append((charset.decode(ByteBuffer.wrap(b, off, len))).toString());
-        } else {
+        b.getClass(); //provoke NullPointerException if b is null
+        if (doc == null) {
             throw new IOException("Trying to write to a closed output stream.");
+        } else {
+            append((charset.decode(ByteBuffer.wrap(b, off, len))).toString());
         }
     }
-    
+
     /**
     * Inserts the specified String at the end of the current document. The
     * document mutation is always done in the

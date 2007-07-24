@@ -54,10 +54,10 @@ public class FullTextStringCellEditor extends AbstractCellEditor
 implements TableCellEditor {
     /**The button is used as the primary cell editor. However, ist is nothing
      * but a trigger for dialg which does the actual editing. */
-    private ShortButton button = new ShortButton();
+    private final ShortButton button = new ShortButton();
     /** A JScrollPane containing a TextArea where the FullTextString
      * is edited. */
-    private MyDialog dialg = new MyDialog();
+    private final MyDialog dialg = new MyDialog();
 
     /** The table one of whose cells is currently edited. **/
     private JTable t;
@@ -174,7 +174,7 @@ implements TableCellEditor {
     private class MyDialog extends JScrollPane {
         private boolean added = false;
         private boolean isEditing = false;
-        private JTextArea myText = new JTextArea("");
+        private final JTextArea myText = new JTextArea("");
         private int height = 100;
 
         /**
@@ -312,7 +312,7 @@ implements TableCellEditor {
             if (str == null) {
                 return "";
             }
-            if (str.equals("")) {
+            if (str.length() == 0) {
                 return "";
             }
 

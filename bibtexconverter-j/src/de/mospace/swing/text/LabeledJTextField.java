@@ -33,10 +33,7 @@ import javax.swing.JTextField;
  * @author Moritz Ringler
 **/
 public class LabeledJTextField extends JPanel{
-    private FlowLayout flowLayout;
-    private JTextField jTextField;
-    private JLabel jLabel;
-    private ActionListener actionListener;
+    private final JTextField jTextField;
 
     /** Constructs a new text field with the specified label
     * and initial text.
@@ -44,13 +41,13 @@ public class LabeledJTextField extends JPanel{
     * @param text the initial text
     */
     public LabeledJTextField(String lbel,String text){
-      flowLayout = new FlowLayout();
+      FlowLayout flowLayout = new FlowLayout();
       flowLayout.setAlignment(FlowLayout.LEFT);
       jTextField=new JTextField();
       jTextField.setMinimumSize(new Dimension(21, 20));
       jTextField.setPreferredSize(new Dimension(35, 20));
       jTextField.setText(text);
-      jLabel = new JLabel();
+      JLabel jLabel = new JLabel();
       jLabel.setText(lbel);
       this.setMinimumSize(new Dimension(112, 15));
       this.setLayout(flowLayout);
