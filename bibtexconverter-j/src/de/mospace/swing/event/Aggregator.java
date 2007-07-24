@@ -30,7 +30,7 @@ import javax.swing.SwingUtilities;
 /**
  * When the same runnable is invoked several times through an Aggregator's
  * {@link #aggregatedInvokeLater aggregatedInvokeLater} method during a predefined delay
- * it is executed only once. This facility can be used for example to 
+ * it is executed only once. This facility can be used for example to
  * reduce the frequency of costly GUI updates after changes to the
  * displayed data.
  *
@@ -41,7 +41,7 @@ public class Aggregator {
     private final Timer timer = new Timer(true); //run as daemon
     private final long aggDelay;
     private final boolean reset;
-    private Set currentTasks = Collections.synchronizedSet(new HashSet());
+    private final Set currentTasks = Collections.synchronizedSet(new HashSet());
 
     private static class AggregatorTask extends TimerTask{
         private final Runnable job;
@@ -80,17 +80,17 @@ public class Aggregator {
     * delay. When the same runnable is invoked another time during the
     * aggregation delay it is executed only once.
     * @param r the runnable to schedule
-    */    
+    */
     public void aggregatedInvokeLater(Runnable r){
         /* Checks whether this runnable is already scheduled. */
         AggregatorTask task = getTask(r);
-        /* If it is not then we schedule it now and we wait whether it is 
+        /* If it is not then we schedule it now and we wait whether it is
         * invoked a second time */
         if (task == null){
             startAggregating(r);
         } else if (reset && task.cancel()){
             /* it it is already scheduled and reset is true
-             * then we try to stop the previously scheduled 
+             * then we try to stop the previously scheduled
              * task and schedule a new task executing r */
              stopAggregating(task);
              startAggregating(r);
