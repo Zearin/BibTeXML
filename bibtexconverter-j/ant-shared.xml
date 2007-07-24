@@ -17,6 +17,8 @@
       value="Windowed Wrapper"/>
   <property name="app.default.args"
       value=""/>
+  <property name="dist"
+      value="."/>
 
   <!-- INITIALIZE PROJECT -->
   <target name="init">
@@ -372,7 +374,7 @@ org.xml.sax.helpers
         jars="${binary}"
         version="${buildID}"
         jvmversion="${app.javaVersionPlus}"
-        stubfile="JavaApplicationStub"
+        stubfile="${dist}/JavaApplicationStub"
         signature="${app.mac.signature}">
       <javaproperty
           name="apple.laf.useScreenMenuBar"
