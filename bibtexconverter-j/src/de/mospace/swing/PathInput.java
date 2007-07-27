@@ -24,6 +24,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.event.EventListenerList;
 
 /**
 * @author Moritz Ringler
@@ -48,6 +50,13 @@ public class PathInput extends Box{
     int selectionMode = JFileChooser.FILES_ONLY;
     private String extension;
 
+    /*
+     *  Event generation and listener management
+     */
+    private EventListenerList listenerList = new EventListenerList();
+    private transient ActionEvent event = null;
+    private String actionCommand = null;
+
     public PathInput(String path, String extension){
         this(path);
         this.extension = extension;
@@ -57,6 +66,12 @@ public class PathInput extends Box{
         super(BoxLayout.X_AXIS);
         textfield.setText(path);
         textfield.setTransferHandler(new FileTransferHandler(textfield.getTransferHandler()));
+        textfield.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    event = e;
+                    PathInput.this.fireActionPerformed();
+                }
+        });
         add(textfield);
         add(Box.createHorizontalStrut(2));
         button = new JButton(new AbstractAction(GLOBALS.getString("...")){
@@ -106,6 +121,7 @@ public class PathInput extends Box{
         if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION
                 && jfc.getSelectedFile() != null){
             textfield.setText(jfc.getSelectedFile().getAbsolutePath());
+            fireActionPerformed();
         }
     }
 
@@ -125,6 +141,44 @@ public class PathInput extends Box{
         super.setEnabled(on);
         textfield.setEnabled(on);
         button.setEnabled(on);
+    }
+
+    public void addActionListener(ActionListener a){
+        listenerList.add(ActionListener.class, a);
+    }
+
+    public void removeActionListener(ActionListener a){
+        listenerList.remove(ActionListener.class, a);
+    }
+
+    private String getActionCommand(){
+        return (actionCommand == null)? textfield.getText() : actionCommand;
+    }
+
+    public void setActionCommand(String s){
+        actionCommand = s;
+        textfield.setActionCommand(s);
+    }
+
+    /**  Informs listeners that something has changed. */
+    protected void fireActionPerformed() {
+        Object[] listeners = listenerList.getListenerList();
+
+        /*
+        *  Process the listeners last to first, notifying
+        *  those that are interested in this event
+        */
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == ActionListener.class) {
+                if(event == null){
+                    event = new ActionEvent(this,
+                        ActionEvent.ACTION_PERFORMED,
+                        getActionCommand());
+                }
+                ((ActionListener) listeners[i + 1]).actionPerformed(event);
+            }
+        }
+        event = null;
     }
 
     private static class FileTransferHandler extends TransferHandler{
