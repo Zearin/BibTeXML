@@ -267,8 +267,18 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     }
 
     protected File getInputFile(){
-      final String path = inputFile.getPath();
-      return path.length() == 0? null : new File(path);
+        final String path = inputFile.getPath();
+        if(path.length() == 0){
+            System.err.println("No input file specified.");
+            return null;
+        }
+
+        File inp = new File(path);
+        if(!inp.exists()){
+            convert.handleException("No input", new FileNotFoundException("Input file "+path+" does not exist."));
+            inp = null;
+        }
+        return inp;
     }
 
     protected void setInputType(final InputType t){
@@ -320,11 +330,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         input.add(bibTeXInput, gbc);
 
         String prefval = PREF.get(INPUT_PREFIX, InputType.BIBTEX.name());
-        if(prefval.equals(InputType.BIBXML.name())){
-            xmlInput.doClick();
-        } else {
-            bibTeXInput.doClick();
-        }
+        JRadioButton doClick = prefval.equals(InputType.BIBXML.name())
+            ? xmlInput
+            : bibTeXInput;
 
         gbc.gridy = 1;
         gbc.gridx = 0;
@@ -334,6 +342,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         /* Input file */
         prefval = PREF.get("InputFile", "");
         inputFile = new PathInput(prefval, JFileChooser.FILES_AND_DIRECTORIES);
+        inputFile.setActionCommand("INPUT");
+        inputFile.addActionListener(this);
         input.add(inputFile, gbc);
 
         /* BibTeX input encodings */
@@ -373,6 +383,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         gbc.weightx = 0;
         input.add(jb, gbc);
 
+        doClick.doClick();
         return input;
     }
 
@@ -729,19 +740,12 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     }
 
     private void jabrefEncoding(){
-        final String path = inputFile.getPath();
-        if(path.length() == 0){
-            System.err.println("No input file specified.");
+        File inp = getInputFile();
+        if(inp == null){
             return;
         }
-
-        final File inp = new File(path);
         if(inp.isDirectory()){
-            convert.handleException("No input", new FileNotFoundException("Input path "+path+" denotes a directory."));
-            return;
-        }
-        if(!inp.exists()){
-            convert.handleException("No input", new FileNotFoundException("Input file "+path+" does not exist."));
+            convert.handleException("Cannot auto-determine encoding.", new FileNotFoundException("Input path "+inp.getPath()+" denotes a directory."));
             return;
         }
 
@@ -799,7 +803,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                     doConversion();
                 }
             }).start();
-
         } else if ("exit".equals(cmd)){
             System.exit(0);
 
@@ -824,6 +827,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         }
         if(c instanceof JToggleButton){
             updateDependentComponents();
+            if(input == InputType.BIBTEX){
+                jabrefEncoding();
+            }
         }
     }
 
@@ -855,6 +861,11 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 } else {
                     jcb.setSelectedIndex(0);
                 }
+            }
+
+        } else if ("INPUT".equals(e.getActionCommand())){
+            if (bibTeXInput.isSelected()){
+                jabrefEncoding();
             }
         }
     }
