@@ -87,8 +87,8 @@ disable-output-escaping="yes"><![CDATA[",
 %%%    --  review according to the citation style recommendation
 %%%    --  edit the above metadata
 %%%
-%%%    Generated using tools from http://bibtexml.sf.net/
-%%%    License: http://creativecommons.org/licenses/GPL/2.0/
+%%%    Generated with bibtexconverter
+%%%    http://bibtexml.sourceforge.net/bibtexconverter-j.html
 ]]></xsl:text></xsl:template>
 
 
