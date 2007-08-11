@@ -51,8 +51,10 @@ class StyleSheetManager {
         String[] builtInNames = new String[builtins.size()];
         int i = 0;
         for(StyleSheetController style : builtins){
-            builtInNames[i++] = style.getName();
-            addStyle(style);
+            if(style != null){
+                builtInNames[i++] = style.getName();
+                addStyle(style);
+            }
         }
         this.builtins = builtins;
 
