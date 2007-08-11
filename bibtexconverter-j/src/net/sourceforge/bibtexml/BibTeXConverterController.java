@@ -141,7 +141,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         builtins.add(
             StyleSheetController.newInstance(convert, "BibTeX", "-new.bib",
                     getClass().getResource("xslt/bibxml2bib.xsl"),
-                    false, true, true));
+                    true, true, true));
         builtins.add(
             StyleSheetController.newInstance(convert, "RIS (Reference Manager & Endnote)", ".ris",
                     getClass().getResource("xslt/bibxml2ris.xsl"),

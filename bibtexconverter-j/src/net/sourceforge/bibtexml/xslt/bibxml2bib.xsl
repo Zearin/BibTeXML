@@ -3,8 +3,10 @@
 <xsl:stylesheet version="2.0"
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 		xmlns:bibtex="http://bibtexml.sf.net/"
-		xmlns:my="foo:bar">
+		xmlns:my="foo:bar"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xsl:param name="bibtexml.sf.net.encoding" select="'ISO-8859-1'" />
+  <xsl:param name="protectTitleCapitalization" select="false" as="xs:boolean" />
   <xsl:output method="text"
 	      media-type="application/x-bibtex"
         encoding="ISO-8859-1" />
@@ -36,6 +38,15 @@
     <xsl:apply-templates/>
     <xsl:text>}</xsl:text>
     <xsl:text>&#xA;</xsl:text>
+  </xsl:template>
+  
+  <xsl:template match="bibtex:entry/*/bibtex:title" priority="0.6">
+    <xsl:variable name="text" select="normalize-space(text())"/>
+    <xsl:text>   </xsl:text>
+    <xsl:value-of select="local-name()"/>
+    <xsl:text> = {</xsl:text>
+    <xsl:value-of select="if ($protectTitleCapitalization) then replace($text,'(\p{Lu})','{$1}') else $text" />
+    <xsl:text>},&#xA;</xsl:text>
   </xsl:template>
     
   <xsl:template match="bibtex:entry/*/bibtex:*" priority="0.5">
