@@ -10,6 +10,9 @@
   <xsl:output method="text"
 	      media-type="application/x-bibtex"
         encoding="ISO-8859-1" />
+        
+  <!-- uses only bibtexml-latex-warning from extended.xsl
+       when processing bibtexconverter-generated input -->
   <xsl:include href="include/extended.xsl"/>
 
   <!--
