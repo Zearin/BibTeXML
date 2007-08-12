@@ -33,7 +33,7 @@
   
 -->
 <!-- Namespace and namespace prefix -->
-<grammar xmlns:bibtex="http://bibtexml.sf.net/" xmlns:m="http://bibtexml.sourceforge.net/version-annotations" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" ns="http://bibtexml.sf.net/" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<grammar xmlns:dc="http://purl.org/dc/elements/1.1/" ns="http://bibtexml.sf.net/" xmlns:bibtex="http://bibtexml.sf.net/" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:m="http://bibtexml.sourceforge.net/version-annotations" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!-- Document top element -->
   <start>
     <ref name="file"/>
@@ -41,6 +41,9 @@
   <define name="file">
     <element name="file">
       <ref name="file.attlist"/>
+      <optional>
+        <ref name="metadata"/>
+      </optional>
       <zeroOrMore>
         <ref name="entry"/>
       </zeroOrMore>
@@ -93,6 +96,19 @@
         </choice>
       </attribute>
     </optional>
+  </define>
+  <define name="metadata">
+    <element name="metadata">
+      <ref name="metadata.dc"/>
+    </element>
+  </define>
+  <define name="metadata.dc">
+    <zeroOrMore>
+      <element>
+        <nsName ns="http://purl.org/dc/elements/1.1/"/>
+        <text/>
+      </element>
+    </zeroOrMore>
   </define>
   <!--
     .....................................................................

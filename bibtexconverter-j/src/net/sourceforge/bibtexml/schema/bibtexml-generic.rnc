@@ -33,10 +33,11 @@
 # Namespace and namespace prefix
 default namespace bibtex = "http://bibtexml.sf.net/"
 namespace m = "http://bibtexml.sourceforge.net/version-annotations"
+namespace dc = "http://purl.org/dc/elements/1.1/"
 
 # Document top element
 start = file
-file = element file { file.attlist, entry* }
+file = element file { file.attlist, metadata?, entry* }
 
 file.attlist  &= attribute structure {
     [ m:structure="flat" ] ( "flat" ) |
@@ -55,8 +56,12 @@ file.attlist &= attribute datatypes {
     [ m:datatypes="loose" ] ( "loose" )
 }?
 
+metadata = element metadata { metadata.dc }
+metadata.dc = (element (dc:*){ text })*
+
 # .....................................................................
 # Main structure
+
 
 ## Each entry may contain one of the bibliographic types.
 standard.entries.class =
