@@ -50,7 +50,7 @@ import de.mospace.xml.SaxXMLWriter;
  *
  * @author Oskar Ojala, Moritz Ringler
  */
-public class BibParser2 {
+public class Bib2JDomParser {
     private final Reader reader;
 
     private final ArrayList errors;
@@ -107,8 +107,8 @@ public class BibParser2 {
         return er.getEntries();
     }
 
-    public void printXML(SaxXMLWriter writer) throws IOException{
-        BibXMLWriter xmlmaker = new BibXMLWriter(writer);
+    public void getResultDocument(){
+        BibXMLCreator xmlmaker = new BibXMLCreator();
         ast.apply(xmlmaker);
         if(xmlmaker.checkError()){
             IOException ex = new IOException("Error writing xml file.");
