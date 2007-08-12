@@ -24,10 +24,9 @@ package net.sourceforge.texlipse.bibparser;
 
 import net.sourceforge.texlipse.bibparser.analysis.DepthFirstAdapter;
 import net.sourceforge.texlipse.bibparser.node.*;
-import java.io.PrintWriter;
-import java.util.regex.*;
-import de.mospace.xml.SaxXMLWriter;
+import java.util.regex.Pattern;
 import org.xml.sax.SAXException;
+import org.jdom.*;
 
 
 /**
@@ -39,15 +38,18 @@ import org.xml.sax.SAXException;
  *
  * @author Moritz Ringler
  */
-public final class BibXMLWriter extends DepthFirstAdapter {
-    private final SaxXMLWriter xw;
-
+public final class BibXMLCreator extends DepthFirstAdapter {
+    private Document doc;
+    private transient Element root;
+    private transient Element entry;
+    private transient Element entrysub;
+    public static final String BIB_NAMESPACE = "http://bibtexml.sf.net/";
     final static Pattern AUTHOR_REX = Pattern.compile("\\s+and\\s+");
     final static Pattern KEYWORDS_REX = Pattern.compile("\\s*[,;]\\s*");
     final static Pattern WHITESPACE_REX = Pattern.compile("\\s+");
     private transient String key = "";
     private transient String entryType;
-    private transient int entryCount = 0;
+    private int entryCount = 0;
 
     private static String replacements(String txt){
         String text = txt.replaceAll("\\s+", " ");
@@ -74,81 +76,21 @@ public final class BibXMLWriter extends DepthFirstAdapter {
         return error;
     }
 
-    private void textNode(String text){
-        if(error == null){
-            final int MAXLINE = 80;
-            int offset = MAXLINE;
-            StringBuffer wrappedText = new StringBuffer(replacements(text));
-            while(wrappedText.length() > offset){
-                int k = wrappedText.lastIndexOf(" ", offset);
-                if(k < offset - MAXLINE){
-                    k = wrappedText.indexOf(" ", offset);
-                }
-                if(k == -1){
-                    break;
-                } else {
-                    wrappedText.setCharAt(k, '\n');
-                    offset += 80;
-                }
-            }
-            try{
-                xw.text(wrappedText.toString());
-            } catch (SAXException ex){
-                setError(ex);
-            }
-        }
+    public BibXMLCreator(){
+        //sole constructor
     }
-
-    private void shortTextNode(String text){
-        if(error == null){
-            try{
-                xw.text(replacements(text));
-            } catch (SAXException ex){
-                setError(ex);
-            }
-        }
-    }
-
-    private void startElement(String element){
-        if(error == null){
-             try{
-                xw.startElement(element);
-            } catch (SAXException ex){
-                setError(ex);
-            }
-        }
-    }
-
-    private void endElement(String element){
-        if(error == null){
-             try{
-                xw.endElement(element);
-            } catch (SAXException ex){
-                setError(ex);
-            }
-        }
-    }
-
-    private void attribute(String name, String value){
-        if(error == null){
-             try{
-                xw.attribute(name, value);
-            } catch (SAXException ex){
-                setError(ex);
-            }
-        }
-    }
-
-    BibXMLWriter(SaxXMLWriter writer){
-        xw = writer;
+    
+    public Document getResultDocument(){
+        return doc;
     }
 
     public void inABibtex(ABibtex node) {
-        startElement("file");
+        root = new Element("file", BIB_NAMESPACE);
+        doc = new Document(root);
     }
 
     public void outABibtex(ABibtex node) {
-        endElement("file");
+        root = null;
     }
 
     public void inAStrbraceStringEntry(AStrbraceStringEntry node) {
@@ -174,8 +116,9 @@ public final class BibXMLWriter extends DepthFirstAdapter {
      * @param node an <code>AEntry</code> value
      */
     public void inAEntrybraceEntry(AEntrybraceEntry node) {
-        attribute("id", node.getIdentifier().getText());
-        startElement("entry");
+        entry = new Element("entry", BIB_NAMESPACE);
+        entry.setAttribute("id", node.getIdentifier().getText());
+        root.addContent(entry);
         entryCount++;
     }
 
@@ -186,18 +129,18 @@ public final class BibXMLWriter extends DepthFirstAdapter {
      * @param node an <code>AEntry</code> value
      */
     public void outAEntrybraceEntry(AEntrybraceEntry node) {
-        endElement(entryType);
-        endElement("entry");
+        entry = null;
     }
 
     public void inAEntryparenEntry(AEntryparenEntry node) {
-        attribute("id", node.getIdentifier().getText());
-        startElement("entry");
+        entry = new Element("entry", BIB_NAMESPACE);
+        entry.setAttribute("id", node.getIdentifier().getText());
+        root.addContent(entry);
+        entryCount++;
     }
 
     public void outAEntryparenEntry(AEntryparenEntry node) {
-        endElement(entryType);
-        endElement("entry");
+        entry = null;
     }
 
     public void inAEntryDef(AEntryDef node) {
@@ -211,16 +154,16 @@ public final class BibXMLWriter extends DepthFirstAdapter {
      */
     public void outAEntryDef(AEntryDef node) {
         entryType = node.getEntryName().getText().substring(1).toLowerCase();
-        startElement(entryType);
+        entrysub = new Element(entryType, BIB_NAMESPACE);
+        entry.addContent(entrysub);
     }
 
     public void inAKeyvalDecl(AKeyvalDecl node) {
         key = node.getIdentifier().getText().toLowerCase();
-        startElement(key);
     }
 
     public void outAKeyvalDecl(AKeyvalDecl node) {
-        endElement(node.getIdentifier().getText().toLowerCase());
+        key = null;
     }
 
     public void inAConcat(AConcat node) {
@@ -256,11 +199,10 @@ public final class BibXMLWriter extends DepthFirstAdapter {
         }  else {
             values = new String[]{value};
         }
-        textNode(values[0]);
-        for(int i=1, stop = values.length; i< stop; i++){
-            endElement(key);
-            startElement(key);
-            textNode(values[i]);
+        for(int i=0, stop = values.length; i< stop; i++){
+            Element bibnode = new Element(key, BIB_NAMESPACE);
+            bibnode.setText(replacements(values[i]));
+            entrysub.addContent(bibnode);
         }
     }
 
@@ -269,7 +211,9 @@ public final class BibXMLWriter extends DepthFirstAdapter {
     }
 
     public void outANumValOrSid(ANumValOrSid node) {
-        shortTextNode(node.getNumber().getText());
+        Element bibnode = new Element(key, BIB_NAMESPACE);
+        bibnode.setText(replacements(node.getNumber().getText()));
+        entrysub.addContent(bibnode);
     }
 
     public void inAIdValOrSid(AIdValOrSid node) {
@@ -277,7 +221,9 @@ public final class BibXMLWriter extends DepthFirstAdapter {
     }
 
     public void outAIdValOrSid(AIdValOrSid node) {
-        shortTextNode(node.getIdentifier().getText());
+        Element bibnode = new Element(key, BIB_NAMESPACE);
+        bibnode.setText(replacements(node.getIdentifier().getText()));
+        entrysub.addContent(bibnode);
     }
 
     public int getEntryCount(){

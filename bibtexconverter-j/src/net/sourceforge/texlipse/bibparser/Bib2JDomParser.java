@@ -24,21 +24,17 @@
  */
 package net.sourceforge.texlipse.bibparser;
 
-import java.io.PrintWriter;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PushbackReader;
-import java.io.*;
+import java.io.Reader;
 import java.util.ArrayList;
-import net.sourceforge.texlipse.bibparser.*;
 import net.sourceforge.texlipse.bibparser.lexer.LexerException;
 import net.sourceforge.texlipse.bibparser.node.Start;
 import net.sourceforge.texlipse.bibparser.parser.Parser;
 import net.sourceforge.texlipse.bibparser.parser.ParserException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
-import net.sourceforge.texlipse.model.ParseErrorMessage;
-import de.mospace.xml.SaxXMLWriter;
+import org.jdom.Document;
 
 //import org.eclipse.core.resources.IMarker;
 
@@ -62,7 +58,7 @@ public class Bib2JDomParser {
      *
      * @param r A reader to the BibTeX-data to parse
      */
-    public BibParser2(Reader r) throws IOException{
+    public Bib2JDomParser(Reader r) throws IOException{
         this.reader = r;
         this.errors = new ArrayList();
         try {
@@ -107,7 +103,7 @@ public class Bib2JDomParser {
         return er.getEntries();
     }
 
-    public void getResultDocument(){
+    public Document getResultDocument() throws IOException{
         BibXMLCreator xmlmaker = new BibXMLCreator();
         ast.apply(xmlmaker);
         if(xmlmaker.checkError()){
@@ -119,6 +115,7 @@ public class Bib2JDomParser {
                 throw new IOException("No BibTeX entries found.");
             }
         }
+        return xmlmaker.getResultDocument();
     }
 
     /*
