@@ -1,7 +1,25 @@
 package net.sourceforge.bibtexml.metadata;
-
-/** A simple java bean representation of the Dublin Core Metadata
-   Element Set (DCMES). **/
+/*
+ * $Id$
+ *
+ * Copyright (c) 2006 Moritz Ringler
+ * This class is derived from EntryRetriever by Oskar Ojala
+ * (also in this package)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -22,6 +40,9 @@ import org.jdom.Element;
 import org.jdom.Document;
 import org.jdom.Namespace;
 
+
+/** A simple java bean representation of the Dublin Core Metadata
+   Element Set (DCMES). **/
 public class DCMetadata implements Serializable{
     static final String ISO_DATE = "yyyy-MM-dd'T'HH:mm:ssZ";
     public static final String BIB_NAMESPACE = "http://bibtexml.sf.net/";
