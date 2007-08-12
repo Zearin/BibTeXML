@@ -17,16 +17,29 @@ package net.sourceforge.bibtexml;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.prefs.Preferences;
 import javax.swing.SwingUtilities;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.validation.*;
 import de.mospace.swing.LookAndFeelMenu;
+import net.sourceforge.bibtexml.metadata.*;
+import org.jdom.Document;
+import org.jdom.output.XMLOutputter;
+import org.jdom.output.Format;
 
 public class BibTeXConverter extends XMLConverter{
     private final static boolean CLEAN_INPUT = true;
+    private DCMetadata metadata;
     protected final static Parser DEFAULT_PARSER = Parser.TEXLIPSE;
     private Charset inputenc = XMLConverter.DEFAULT_ENC;
     private Parser parser = DEFAULT_PARSER;
@@ -34,7 +47,27 @@ public class BibTeXConverter extends XMLConverter{
 
     public BibTeXConverter(){
         super();
+        metadata = new DCMetadata();
     }
+    
+    /**
+	 * Returns the value of metadata.
+	 */
+	public DCMetadata getMetadata()
+	{
+		return metadata;
+	}
+
+	/**
+	 * Sets the value of metadata.
+	 * @param metadata The value to assign metadata.
+	 */
+	public void setMetadata(DCMetadata metadata)
+	{
+		this.metadata = metadata;
+	}
+
+    
 
     /** Converts bibTex from in to BibXML using the current Parser, inputenc, and
      * xmlenc and  writes the result to out.
@@ -42,20 +75,26 @@ public class BibTeXConverter extends XMLConverter{
      **/
     @SuppressWarnings("deprecation")
     public void bibTexToXml(final File in, final File out) throws IOException{
+        if(in.equals(out)){
+            throw new IOException("Trying to overwrite input file.");
+        }
         AbstractBibTeXParser p = null;
         switch(parser){
-            case BIB2BIBXML :
-                p = new Bib2BibXML(inputenc.name(), getXMLEncoding().name(), CLEAN_INPUT);
-                break;
             case TEXLIPSE:
-                p = new TeXLipseParser(inputenc.name(), getXMLEncoding().name(), CLEAN_INPUT);
+                p = new TeXLipseParser(inputenc.name(), CLEAN_INPUT);
                 break;
             default:
                 throw new IOException("No such parser: "+ parser.toString());
         }
         p.setErrorHandler(bibErrorHandler);
         if(p != null){
-            p.processFile(in, out);
+            Document bibtexml = p.parse(in);
+            metadata.setDate(new java.util.Date());
+            metadata.setFormat("application/xml");
+            bibtexml.getRootElement().addContent(0, metadata.toXML().detachRootElement());
+            Format format = Format.getPrettyFormat().setEncoding(getXMLEncoding().name());
+            OutputStream outs = new BufferedOutputStream(new FileOutputStream(out));
+            (new XMLOutputter(format)).output(bibtexml, outs);
         }
     }
 
@@ -98,8 +137,7 @@ public class BibTeXConverter extends XMLConverter{
 
     /** The available BibTeX parsers. **/
     public enum Parser {
-        TEXLIPSE("texlipse.sf.net"),
-        BIB2BIBXML("bibtexml.sf.net");
+        TEXLIPSE("texlipse.sf.net");
         private final String longname;
 
         Parser(String longname){

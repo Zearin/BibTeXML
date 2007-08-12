@@ -27,12 +27,13 @@ import java.util.ArrayList;
 import java.util.Properties;
 import javax.xml.transform.OutputKeys;
 import de.mospace.xml.SaxXMLWriter;
-import net.sourceforge.texlipse.bibparser.BibParser2;
+import net.sourceforge.texlipse.bibparser.Bib2JDomParser;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
 import org.xml.sax.SAXException;
+import org.jdom.*;
 
 public class TeXLipseParser extends AbstractBibTeXParser{
-    private BibParser2 parser;
+    private Bib2JDomParser parser;
     private boolean hasErrors = false;
 
     public TeXLipseParser(String charset)
@@ -40,20 +41,15 @@ public class TeXLipseParser extends AbstractBibTeXParser{
         super(charset);
     }
 
-    public TeXLipseParser(String inputChars, String outputChars)
+    public TeXLipseParser(String inputChars, boolean cleanInput)
             throws IllegalCharsetNameException, UnsupportedCharsetException {
-        super(inputChars, outputChars);
-    }
-
-    public TeXLipseParser(String inputChars, String outputChars, boolean cleanInput)
-            throws IllegalCharsetNameException, UnsupportedCharsetException {
-        super(inputChars, outputChars, cleanInput);
+        super(inputChars, cleanInput);
     }
 
     /** does not close stream */
-    protected String[] translateBibTeXStream(BufferedReader reader) throws IOException{
+    public Document parse(BufferedReader reader) throws IOException{
         hasErrors = false;
-        parser = new BibParser2(reader);
+        parser = new Bib2JDomParser(reader);
         ArrayList errors = parser.getErrors();
         if(errors != null && !errors.isEmpty()){
             hasErrors = true;
@@ -65,25 +61,6 @@ public class TeXLipseParser extends AbstractBibTeXParser{
                 }
             }
         }
-        return new String[0];
-    }
-
-
-    protected void writeBibXML(String[] data, OutputStream out ) throws IOException{
-        if(!hasErrors){
-            try{
-                Properties props = new Properties();
-                props.put(OutputKeys.ENCODING, getOutputCharset());
-                //props.put(OutputKeys.DOCTYPE_PUBLIC, "-//BibTeXML//DTD XML for BibTeX v1.0//EN");
-                //props.put(OutputKeys.DOCTYPE_SYSTEM, "bibtexml-strict.dtd");
-                SaxXMLWriter xw = new SaxXMLWriter(out, "http://bibtexml.sf.net/", props);
-                parser.printXML(xw);
-                xw.close();
-            } catch (SAXException ex){
-                IOException ioex = new IOException(ex.getMessage());
-                ioex.initCause(ex);
-                throw ioex;
-            }
-        }
+        return parser.getResultDocument();
     }
 }
