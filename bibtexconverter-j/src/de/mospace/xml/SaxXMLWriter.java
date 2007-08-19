@@ -20,7 +20,9 @@ namespaces is true and namespace-prefixes is false
 see http://www.saxproject.org/namespaces.html
 */
 public class SaxXMLWriter{
+    /** @deprecated use {@link #getWriter} instead */
     protected final OutputStream out;
+    private OutputStreamWriter writer;
     private TransformerHandler hd;
     private AttributesImpl atts;
     private String namesp = "";
@@ -37,6 +39,10 @@ public class SaxXMLWriter{
         } catch (UnsupportedEncodingException wonthappen){
             throw new Error(wonthappen);
         }
+    }
+    
+    protected OutputStreamWriter getWriter(){
+        return writer; 
     }
 
     public SaxXMLWriter(OutputStream out, String encoding, String namespace) throws SAXException, UnsupportedEncodingException{
