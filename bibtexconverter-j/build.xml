@@ -67,10 +67,10 @@
       value="${src}\net\sourceforge\bibtexml\icon\ledgreen2.png"/>
   <!-- Do not change order! -->
   <property name="app.libraries"
-      value="lib/msv.jar;lib/xsdlib.jar;lib/relaxngDatatype.jar;lib/jaxp-isorelax.jar;lib/jing.jar;" />
+      value="lib/jdom.jar;lib/msv.jar;lib/xsdlib.jar;lib/relaxngDatatype.jar;lib/jaxp-isorelax.jar;lib/jing.jar;" />
   <!-- Do not change order! -->
   <property name="app.lib"
-      value=" lib/jing.jar lib/jaxp-isorelax.jar lib/relaxngDatatype.jar lib/xsdlib.jar lib/msv.jar" />
+      value="lib/jdom.jar lib/jing.jar lib/jaxp-isorelax.jar lib/relaxngDatatype.jar lib/xsdlib.jar lib/msv.jar" />
   <property name="app.pmd.patternset"
       value="my.pmd.patternset" />
   <patternset id="my.pmd.patternset" includes="net/sourceforge/bibtexml/**/*.java" excludes="**/SaxonGUI.java"/>
