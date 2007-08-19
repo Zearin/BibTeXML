@@ -18,24 +18,20 @@ package net.sourceforge.bibtexml;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.UUID;
 import java.util.prefs.Preferences;
 import javax.swing.SwingUtilities;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.validation.*;
 import de.mospace.swing.LookAndFeelMenu;
 import net.sourceforge.bibtexml.metadata.*;
 import org.jdom.Document;
-import org.jdom.output.XMLOutputter;
 import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 public class BibTeXConverter extends XMLConverter{
     private final static boolean CLEAN_INPUT = true;
@@ -89,12 +85,19 @@ public class BibTeXConverter extends XMLConverter{
         p.setErrorHandler(bibErrorHandler);
         if(p != null){
             Document bibtexml = p.parse(in);
-            metadata.setDate(new java.util.Date());
-            metadata.setFormat("application/xml");
+            fillInMetadata();
             bibtexml.getRootElement().addContent(0, metadata.toXML().detachRootElement());
             Format format = Format.getPrettyFormat().setEncoding(getXMLEncoding().name());
             OutputStream outs = new BufferedOutputStream(new FileOutputStream(out));
             (new XMLOutputter(format)).output(bibtexml, outs);
+        }
+    }
+    
+    private void fillInMetadata(){
+        metadata.setDate(new java.util.Date());
+        metadata.setFormat("application/xml");
+        if(metadata.getIdentifier() == null){
+            metadata.setIdentifier("urn:uuid:" + UUID.randomUUID());
         }
     }
 

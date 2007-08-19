@@ -403,9 +403,11 @@ public class DCMetadata implements Serializable{
     }
     
     public static void main(String[] args) throws Exception{
-        DCMetadata meta = DCMetadata.fromXML(new InputSource(
-            new FileInputStream(args[0])), null);
-        meta.toXML(System.out);
+        DCMetadataDialog d = new DCMetadataDialog(new DCMetadata(), null, "Test");
+        d.pack();
+        d.setModal(true);
+        d.setVisible(true);
+        d.getMetadata().toXML(System.out);
     }
     
 }
