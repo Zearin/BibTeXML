@@ -31,6 +31,8 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.lang.reflect.Method;
+import java.util.prefs.Preferences;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -42,7 +44,9 @@ import org.jdom.Namespace;
 
 
 /** A simple java bean representation of the Dublin Core Metadata
-   Element Set (DCMES). **/
+   Element Set (DCMES).
+   @see http://dublincore.org/documents/2006/12/18/dces/
+ **/
 public class DCMetadata implements Serializable{
     static final String ISO_DATE = "yyyy-MM-dd'T'HH:mm:ssZ";
     public static final String BIB_NAMESPACE = "http://bibtexml.sf.net/";
@@ -65,261 +69,355 @@ public class DCMetadata implements Serializable{
     private String coverage;
     private String rights;
 
+    public DCMetadata(){
+    }
+
+    /** Copy constructor. Identifier is not copied. **/
+    public DCMetadata(DCMetadata meta){
+        try{
+            BeanInfo info = Introspector.getBeanInfo(DCMetadata.class);
+            PropertyDescriptor[] desc = info.getPropertyDescriptors();
+            for(PropertyDescriptor pd : desc){
+                Object value = pd.getReadMethod().invoke(meta);
+                if(value == null){
+                    continue;
+                }
+                Method setter = pd.getWriteMethod();
+                if(setter != null){
+                    setter.invoke(this, value);
+                }
+            }
+        } catch (Exception ex){
+            throw new Error(ex);
+        }
+    }
+
+    public static DCMetadata load(Preferences node){
+        DCMetadata result = new DCMetadata();
+        try{
+            BeanInfo info = Introspector.getBeanInfo(DCMetadata.class);
+            PropertyDescriptor[] desc = info.getPropertyDescriptors();
+            for(PropertyDescriptor pd : desc){
+                String key = pd.getName();
+                Method setter = pd.getWriteMethod();
+                if(setter != null){
+                    Class c = pd.getPropertyType();
+                    Object value = null;
+                    if(String.class.equals(c)){
+                        value = node.get(key, null);
+                    } else if (Date.class.equals(c)){
+                        Long ldate = node.getLong(key, Long.MAX_VALUE);
+                        if(ldate != Long.MAX_VALUE){
+                            value = new Date(ldate);
+                        }
+                    } else if (Locale.class.equals(c)){
+                        value = localeFromString(node.get(key, null));
+                    }
+                    if(value != null){
+                        setter.invoke(result, value);
+                    }
+                }
+            }
+        } catch (Exception ex){
+            throw new Error(ex);
+        }
+        return result;
+    }
+
+    public void save(Preferences node){
+        try{
+            BeanInfo info = Introspector.getBeanInfo(DCMetadata.class);
+            PropertyDescriptor[] desc = info.getPropertyDescriptors();
+            for(PropertyDescriptor pd : desc){
+                String key = pd.getName();
+                Method getter = pd.getReadMethod();
+                if(getter != null){
+                    Object value = getter.invoke(this);
+                    if(value != null){
+                        Class c = pd.getPropertyType();
+                        if(String.class.equals(c)){
+                            node.put(key, value.toString());
+                        } else if (Date.class.equals(c)){
+                            node.putLong(key, ((Date) value).getTime());
+                        } else if (Locale.class.equals(c)){
+                            node.put(key, value.toString());
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex){
+            throw new Error(ex);
+        }
+    }
+
     /**
-	 * Returns the value of creator.
-	 */
-	public String getCreator()
-	{
-		return creator;
-	}
+     * Returns the value of creator.
+     */
+    public String getCreator()
+    {
+        return creator;
+    }
 
-	/**
-	 * Sets the value of creator.
-	 * @param creator The value to assign creator.
-	 */
-	public void setCreator(String creator)
-	{
-		this.creator = creator;
-	}
+    /**
+     * Sets the value of creator.
+     * @param creator The value to assign creator.
+     */
+    public void setCreator(String creator)
+    {
+        this.creator = normalizeString(creator);
+    }
 
-	/**
-	 * Returns the value of format.
-	 */
-	public String getFormat()
-	{
-		return format;
-	}
+    private static String normalizeString(String s){
+        String result = null;
+        if(s != null){
+            result = s.trim();
+            if(result.length() == 0){
+                result = null;
+            } else {
+                result = result.replaceAll("\\s+", " ");
+            }
+        }
+        return result;
+    }
 
-	/**
-	 * Sets the value of format.
-	 * @param format The value to assign format.
-	 */
-	public void setFormat(String format)
-	{
-		this.format = format;
-	}
+    /**
+     * Returns the value of format.
+     */
+    public String getFormat()
+    {
+        return format;
+    }
 
-	/**
-	 * Returns the value of title.
-	 */
-	public String getTitle()
-	{
-		return title;
-	}
+    /**
+     * Sets the value of format.
+     * @param format The value to assign format.
+     */
+    public void setFormat(String format)
+    {
+        this.format = normalizeString(format);
+    }
 
-	/**
-	 * Sets the value of title.
-	 * @param title The value to assign title.
-	 */
-	public void setTitle(String title)
-	{
-		this.title = title;
-	}
+    /**
+     * Returns the value of title.
+     */
+    public String getTitle()
+    {
+        return title;
+    }
 
-	/**
-	 * Returns the value of subject.
-	 */
-	public String getSubject()
-	{
-		return subject;
-	}
+    /**
+     * Sets the value of title.
+     * @param title The value to assign title.
+     */
+    public void setTitle(String title)
+    {
+        this.title = normalizeString(title);
+    }
 
-	/**
-	 * Sets the value of subject.
-	 * @param subject The value to assign subject.
-	 */
-	public void setSubject(String subject)
-	{
-		this.subject = subject;
-	}
+    /**
+     * Returns the value of subject.
+     */
+    public String getSubject()
+    {
+        return subject;
+    }
 
-	/**
-	 * Returns the value of description.
-	 */
-	public String getDescription()
-	{
-		return description;
-	}
+    /**
+     * Sets the value of subject.
+     * @param subject The value to assign subject.
+     */
+    public void setSubject(String subject)
+    {
+        this.subject = normalizeString(subject);
+    }
 
-	/**
-	 * Sets the value of description.
-	 * @param description The value to assign description.
-	 */
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
+    /**
+     * Returns the value of description.
+     */
+    public String getDescription()
+    {
+        return description;
+    }
 
-	/**
-	 * Returns the value of publisher.
-	 */
-	public String getPublisher()
-	{
-		return publisher;
-	}
+    /**
+     * Sets the value of description.
+     * @param description The value to assign description.
+     */
+    public void setDescription(String description)
+    {
+        this.description = normalizeString(description);
+    }
 
-	/**
-	 * Sets the value of publisher.
-	 * @param publisher The value to assign publisher.
-	 */
-	public void setPublisher(String publisher)
-	{
-		this.publisher = publisher;
-	}
+    /**
+     * Returns the value of publisher.
+     */
+    public String getPublisher()
+    {
+        return publisher;
+    }
 
-	/**
-	 * Returns the value of contributor.
-	 */
-	public String getContributor()
-	{
-		return contributor;
-	}
+    /**
+     * Sets the value of publisher.
+     * @param publisher The value to assign publisher.
+     */
+    public void setPublisher(String publisher)
+    {
+        this.publisher = normalizeString(publisher);
+    }
 
-	/**
-	 * Sets the value of contributor.
-	 * @param contributor The value to assign contributor.
-	 */
-	public void setContributor(String contributor)
-	{
-		this.contributor = contributor;
-	}
+    /**
+     * Returns the value of contributor.
+     */
+    public String getContributor()
+    {
+        return contributor;
+    }
 
-	/**
-	 * Returns the value of date.
-	 */
-	public Date getDate()
-	{
-		return date;
-	}
+    /**
+     * Sets the value of contributor.
+     * @param contributor The value to assign contributor.
+     */
+    public void setContributor(String contributor)
+    {
+        this.contributor = normalizeString(contributor);
+    }
 
-	/**
-	 * Sets the value of date.
-	 * @param date The value to assign date.
-	 */
-	public void setDate(Date date)
-	{
-		this.date = date;
-	}
+    /**
+     * Returns the value of date.
+     */
+    public Date getDate()
+    {
+        return (date == null)? date : (Date) date.clone();
+    }
 
-	/**
-	 * Returns the value of type.
-	 */
-	public String getType()
-	{
-		return type;
-	}
+    /**
+     * Sets the value of date.
+     * @param date The value to assign date.
+     */
+    public void setDate(Date date)
+    {
+        this.date = date;
+    }
 
-	/**
-	 * Sets the value of type.
-	 * @param type The value to assign type.
-	 */
-	public void setType(String type)
-	{
-		this.type = type;
-	}
+    /**
+     * Returns the value of type.
+     */
+    public String getType()
+    {
+        return type;
+    }
 
-	/**
-	 * Returns the value of identifier.
-	 */
-	public String getIdentifier()
-	{
-		return identifier;
-	}
+    /**
+     * Sets the value of type.
+     * @param type The value to assign type.
+     */
+    public void setType(String type)
+    {
+        this.type = normalizeString(type);
+    }
 
-	/**
-	 * Sets the value of identifier.
-	 * @param identifier The value to assign identifier.
-	 */
-	public void setIdentifier(String identifier)
-	{
-		this.identifier = identifier;
-	}
+    /**
+     * Returns the value of identifier.
+     */
+    public String getIdentifier()
+    {
+        return identifier;
+    }
 
-	/**
-	 * Returns the value of source.
-	 */
-	public String getSource()
-	{
-		return source;
-	}
+    /**
+     * Sets the value of identifier.
+     * @param identifier The value to assign identifier.
+     */
+    public void setIdentifier(String identifier)
+    {
+        this.identifier = normalizeString(identifier);
+    }
 
-	/**
-	 * Sets the value of source.
-	 * @param source The value to assign source.
-	 */
-	public void setSource(String source)
-	{
-		this.source = source;
-	}
+    /**
+     * Returns the value of source.
+     */
+    public String getSource()
+    {
+        return source;
+    }
 
-	/**
-	 * Returns the value of language.
-	 */
-	public Locale getLanguage()
-	{
-		return language;
-	}
+    /**
+     * Sets the value of source.
+     * @param source The value to assign source.
+     */
+    public void setSource(String source)
+    {
+        this.source = normalizeString(source);
+    }
 
-	/**
-	 * Sets the value of language.
-	 * @param language The value to assign language.
-	 */
-	public void setLanguage(Locale language)
-	{
-		this.language = language;
-	}
+    /**
+     * Returns the value of language.
+     */
+    public Locale getLanguage()
+    {
+        return language;
+    }
 
-	/**
-	 * Returns the value of relation.
-	 */
-	public String getRelation()
-	{
-		return relation;
-	}
+    /**
+     * Sets the value of language.
+     * @param language The value to assign language.
+     */
+    public void setLanguage(Locale language)
+    {
+        this.language = language;
+    }
 
-	/**
-	 * Sets the value of relation.
-	 * @param relation The value to assign relation.
-	 */
-	public void setRelation(String relation)
-	{
-		this.relation = relation;
-	}
+    /**
+     * Returns the value of relation.
+     */
+    public String getRelation()
+    {
+        return relation;
+    }
 
-	/**
-	 * Returns the value of coverage.
-	 */
-	public String getCoverage()
-	{
-		return coverage;
-	}
+    /**
+     * Sets the value of relation.
+     * @param relation The value to assign relation.
+     */
+    public void setRelation(String relation)
+    {
+        this.relation = normalizeString(relation);
+    }
 
-	/**
-	 * Sets the value of coverage.
-	 * @param coverage The value to assign coverage.
-	 */
-	public void setCoverage(String coverage)
-	{
-		this.coverage = coverage;
-	}
+    /**
+     * Returns the value of coverage.
+     */
+    public String getCoverage()
+    {
+        return coverage;
+    }
 
-	/**
-	 * Returns the value of rights.
-	 */
-	public String getRights()
-	{
-		return rights;
-	}
+    /**
+     * Sets the value of coverage.
+     * @param coverage The value to assign coverage.
+     */
+    public void setCoverage(String coverage)
+    {
+        this.coverage = normalizeString(coverage);
+    }
 
-	/**
-	 * Sets the value of rights.
-	 * @param rights The value to assign rights.
-	 */
-	public void setRights(String rights)
-	{
-		this.rights = rights;
-	}
-    
+    /**
+     * Returns the value of rights.
+     */
+    public String getRights()
+    {
+        return rights;
+    }
+
+    /**
+     * Sets the value of rights.
+     * @param rights The value to assign rights.
+     */
+    public void setRights(String rights)
+    {
+        this.rights = normalizeString(rights);
+    }
+
     public Document toXML(){
         Document result = null;
         try{
@@ -388,7 +486,7 @@ public class DCMetadata implements Serializable{
             throw new Error(ex);
         }
     }
-    
+
     public static DCMetadata fromXML(InputSource in, EntityResolver resolver) throws IOException, SAXException{
         XMLReader reader = XMLReaderFactory.createXMLReader();
         reader.setFeature("http://xml.org/sax/features/namespaces", true);
@@ -401,7 +499,21 @@ public class DCMetadata implements Serializable{
         reader.parse(in);
         return metahandler.getParseResult();
     }
-    
+
+    static Locale localeFromString(String value){
+        if(value == null || value.length() == 0){
+            return null;
+        }
+        String[] parts = value.split("[-_]");
+        Locale loc = null;
+        switch(parts.length){
+            case 1: loc = new Locale(value); break;
+            case 2: loc = new Locale(parts[0], parts[1]); break;
+            default: loc = new Locale(parts[0], parts[1], parts[2]);
+        }
+        return loc;
+    }
+
     public static void main(String[] args) throws Exception{
         DCMetadataDialog d = new DCMetadataDialog(new DCMetadata(), null, "Test");
         d.pack();
@@ -409,5 +521,5 @@ public class DCMetadata implements Serializable{
         d.setVisible(true);
         d.getMetadata().toXML(System.out);
     }
-    
+
 }

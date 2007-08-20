@@ -49,19 +49,19 @@ public class DCMetadataController implements ActionListener {
             throw new Error(ex);
         }
     }
-    
+
     public DCMetadataController(){
     }
-    
+
     public void setModel(DCMetadata model){
         this.model = model;
         updateView();
     }
-    
+
     public DCMetadata getModel(){
         return model;
     }
-    
+
     public void setView(DCMetadataUI view){
         if(this.view != null){
             this.view.removeActionListener(this);
@@ -70,13 +70,13 @@ public class DCMetadataController implements ActionListener {
         view.addActionListener(this);
         updateView();
     }
-    
+
     public void updateView(){
         for(String prop : simplePDs.keySet()){
             updateView(prop);
         }
     }
-    
+
     private void updateView(String property){
         try{
         if(model != null && view != null && property != null){
@@ -89,15 +89,16 @@ public class DCMetadataController implements ActionListener {
         }
         } catch (Exception ex){
             System.err.println(ex);
+            System.err.flush();
         }
     }
-    
+
     public void updateModel(){
         for(String prop : simplePDs.keySet()){
             updateModel(prop);
         }
     }
-    
+
     private void updateModel(String property){
         try{
         if(model != null && view != null && property != null){
@@ -112,14 +113,16 @@ public class DCMetadataController implements ActionListener {
         }
         } catch (Exception ex){
             System.err.println(ex);
+            System.err.flush();
         }
     }
-    
+
     public void actionPerformed(ActionEvent e){
         try{
             updateModel(e.getActionCommand());
         } catch (Exception ex){
             System.err.println(ex);
+            System.err.flush();
         }
     }
 }

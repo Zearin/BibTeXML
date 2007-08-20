@@ -55,15 +55,15 @@ public class DCMetadataHandler extends DefaultHandler{
      }
      private transient String element;
      private transient StringBuilder contents;
-     
+
      public DCMetadataHandler(){
          //sole constructor
      }
-     
+
      public void startDocument(){
          result = new DCMetadata();
      }
-     
+
      private void setResultProperty(String name, String val) throws ParseException{
          if(val == null || !props.containsKey(name)){
              //silently ignore null values and unknown metadata
@@ -91,13 +91,7 @@ public class DCMetadataHandler extends DefaultHandler{
                  }
                  result.setDate(date);
              } else if ("language".equals(name)){
-                 String[] parts = value.split("[-_]");
-                 Locale loc = null;
-                 switch(parts.length){
-                     case 1: loc = new Locale(val); break;
-                     case 2: loc = new Locale(parts[0], parts[1]); break;
-                     default: loc = new Locale(parts[0], parts[1], parts[2]);
-                 }
+                 Locale loc = DCMetadata.localeFromString(value);
                  if(loc != null){
                      result.setLanguage(loc);
                  }
@@ -111,14 +105,14 @@ public class DCMetadataHandler extends DefaultHandler{
              }
          }
      }
-     
+
      public void startElement(String uri, String localname, String rawname,
      Attributes atts){
          if(DCMetadata.DC_NAMESPACE.equals(uri)){
              element = localname;
          }
      }
-     
+
      public void characters(char[] ch, int start, int length){
          if(element != null){
              if(contents == null){
@@ -127,7 +121,7 @@ public class DCMetadataHandler extends DefaultHandler{
              contents.append(ch, start, length);
          }
      }
-     
+
      public void endElement(String uri, String localname, String rawname) throws SAXException{
          if(DCMetadata.DC_NAMESPACE.equals(uri) && localname.equals(element)){
              try{
@@ -139,7 +133,7 @@ public class DCMetadataHandler extends DefaultHandler{
              element = null;
          }
      }
-     
+
      public DCMetadata getParseResult(){
          return result;
      }

@@ -36,6 +36,7 @@ import org.jdom.output.XMLOutputter;
 public class BibTeXConverter extends XMLConverter{
     private final static boolean CLEAN_INPUT = true;
     private DCMetadata metadata;
+
     protected final static Parser DEFAULT_PARSER = Parser.TEXLIPSE;
     private Charset inputenc = XMLConverter.DEFAULT_ENC;
     private Parser parser = DEFAULT_PARSER;
@@ -45,25 +46,23 @@ public class BibTeXConverter extends XMLConverter{
         super();
         metadata = new DCMetadata();
     }
-    
+
     /**
-	 * Returns the value of metadata.
-	 */
-	public DCMetadata getMetadata()
-	{
-		return metadata;
-	}
+     * Returns the value of metadata.
+     */
+    public DCMetadata getMetadata()
+    {
+        return new DCMetadata(metadata);
+    }
 
-	/**
-	 * Sets the value of metadata.
-	 * @param metadata The value to assign metadata.
-	 */
-	public void setMetadata(DCMetadata metadata)
-	{
-		this.metadata = metadata;
-	}
-
-    
+    /**
+     * Sets the value of metadata.
+     * @param metadata The value to assign metadata.
+     */
+    public void setMetadata(DCMetadata metadata)
+    {
+        this.metadata = metadata;
+    }
 
     /** Converts bibTex from in to BibXML using the current Parser, inputenc, and
      * xmlenc and  writes the result to out.
@@ -92,13 +91,13 @@ public class BibTeXConverter extends XMLConverter{
             (new XMLOutputter(format)).output(bibtexml, outs);
         }
     }
-    
+
     private void fillInMetadata(){
         metadata.setDate(new java.util.Date());
         metadata.setFormat("application/xml");
-        if(metadata.getIdentifier() == null){
+        //if(metadata.getIdentifier() == null){
             metadata.setIdentifier("urn:uuid:" + UUID.randomUUID());
-        }
+        //}
     }
 
     public void setBibTeXEncoding(final Charset chars){

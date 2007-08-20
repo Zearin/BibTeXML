@@ -31,18 +31,24 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 
-/** **/
+/** This class is not synchronized. **/
 public class DCMetadataDialog extends JDialog {
+    private transient boolean okPressed = false;
     private final DCMetadataController controller;
     private final ActionListener buttonListener = new ActionListener(){
         public void actionPerformed(ActionEvent e){
             if("OK".equals(e.getActionCommand())){
+                okPressed = true;
                 controller.updateModel();
             }
             setVisible(false);
         }
     };
-    
+
+    public boolean getOkPressed(){
+        return okPressed;
+    }
+
     public DCMetadataDialog(DCMetadata meta, Frame owner, String title){
         super(owner, title);
         controller = new DCMetadataController();
@@ -63,24 +69,25 @@ public class DCMetadataDialog extends JDialog {
         cp.add(buttons, BorderLayout.SOUTH);
         setContentPane(cp);
     }
-    
+
     public void setMetadata(DCMetadata model){
         controller.setModel(model);
         if(isVisible()){
             controller.updateView();
         }
     }
-    
+
     public DCMetadata getMetadata(){
         return controller.getModel();
     }
-    
+
     @Override
     public void setVisible(boolean b){
         if(b){
+            okPressed = false;
             controller.updateView();
         }
         super.setVisible(b);
     }
-    
+
 }

@@ -45,10 +45,10 @@ import javax.swing.text.JTextComponent;
 behaviour by adding themselves as ActionListeners to the editor components. **/
 public class DCMetadataUI extends JPanel implements ActionListener {
     private final static int TEXTFIELD_SIZE = 20;
-    private static final List<Locale> locales = Arrays.asList(Locale.getAvailableLocales()); 
+    private static final List<Locale> locales = Arrays.asList(Locale.getAvailableLocales());
     private List<ActionListener> listenerList;
     private Map<String, JComponent> editors = new HashMap<String, JComponent>();
-    
+
     /** @throws NullPointerException if field is <code>null</code>.
         @throws ClassCastException if value is of incorrect type.
     **/
@@ -65,7 +65,7 @@ public class DCMetadataUI extends JPanel implements ActionListener {
             }
         }
     }
-    
+
     /** @return null if there is no editor for the specified field
     * the current value of the editor otherwise **/
     public Object getValue(String field){
@@ -87,16 +87,16 @@ public class DCMetadataUI extends JPanel implements ActionListener {
         }
         return null;
     }
-    
+
     protected JComponent getComponent(String field){
         return editors.get(field);
     }
-    
+
     public DCMetadataUI(){
         initUI();
         //default constructor
     }
-    
+
     private void initUI(){
         setLayout(new SpringLayout());
         int rowcount = 0;
@@ -126,7 +126,7 @@ public class DCMetadataUI extends JPanel implements ActionListener {
         rowcount ++;
         de.mospace.swing.SpringUtilities.makeCompactGrid(this, rowcount, 2, 0, 0, 3, 3);
     }
-    
+
     private void initComponent(String label, JComponent comp){
         JLabel jlabel = new JLabel(label);
         editors.put(label.toLowerCase(), comp);
@@ -134,7 +134,7 @@ public class DCMetadataUI extends JPanel implements ActionListener {
         add(jlabel);
         add(comp);
     }
-    
+
     private void initTextArea(String label, int rows){
         JTextArea textfield = new JTextArea(rows, TEXTFIELD_SIZE);
         textfield.setLineWrap(true);
@@ -142,7 +142,7 @@ public class DCMetadataUI extends JPanel implements ActionListener {
         initComponent(label, jsp);
         editors.put(label.toLowerCase(), textfield);
     }
-    
+
     private void initLocaleSelector(String label){
         final int n = locales.size() + 1;
         final String[] combolist = new String[n];
@@ -153,16 +153,16 @@ public class DCMetadataUI extends JPanel implements ActionListener {
         }
         Arrays.sort(combolist);
         JComboBox selector = new JComboBox(combolist);
-        selector.setActionCommand(label);
+        selector.setActionCommand(label.toLowerCase());
         initComponent(label, selector);
     }
-    
+
     private void initTextField(String label){
         JTextField textfield = new JTextField(TEXTFIELD_SIZE);
         textfield.setActionCommand(label);
         initComponent(label, textfield);
     }
-    
+
     protected synchronized void fireActionEvent(ActionEvent e){
         if(listenerList != null){
             for(ActionListener listener : listenerList){
@@ -170,20 +170,20 @@ public class DCMetadataUI extends JPanel implements ActionListener {
             }
         }
     }
-    
+
     public synchronized void addActionListener(ActionListener listener){
         if(listenerList == null){
              listenerList = new ArrayList<ActionListener>();
         }
         listenerList.add(listener);
     }
-    
+
     public synchronized void removeActionListener(ActionListener listener){
         if(listenerList != null){
             listenerList.remove(listener);
         }
     }
-    
+
     public void actionPerformed(ActionEvent e){
         fireActionEvent(e);
     }

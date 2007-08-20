@@ -61,7 +61,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.*;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -73,6 +73,7 @@ import javax.xml.transform.TransformerException;
 import de.mospace.swing.LookAndFeelMenu;
 import de.mospace.swing.PathInput;
 import de.mospace.xml.XMLUtils;
+import net.sourceforge.bibtexml.metadata.*;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -85,6 +86,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private final static String ENCODING_XML = ENCODING_PREFIX + "XML";
     private final static String JABREF_ENC = "Look for JabRef encoding";
     private final static String START_CONVERSION = "Start conversion";
+    private final static String PREF_DEFAULT_META = "defaultMetadata";
 
     private final Container styleContainer = Box.createVerticalBox();
     private final StyleSheetManager styleManager;
@@ -100,6 +102,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private JRadioButton bibTeXInput;
     private JRadioButton xmlInput;
     private JComboBox encodings;
+    private transient JDialog xmlconfig;
 
     protected MessagePanel msgPane = new MessagePanel();
     private final ErrorCounter ecount = new ErrorCounter();
@@ -124,6 +127,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
 
         convert.setValidationErrorHandler(errorHandler);
         convert.setBibTeXErrorHandler(errorHandler);
+        convert.setMetadata(DCMetadata.load(PREF.node(PREF_DEFAULT_META)));
         try{
             convert.setXMLEncoding(Charset.forName(
                 PREF.get(ENCODING_XML, BibTeXConverter.DEFAULT_ENC.name())));
@@ -222,6 +226,24 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         mb.add(fm);
         fm.add(new LookAndFeelMenu(PREF,this));
         fm.add(new ValidationMenu(convert));
+
+        JMenuItem defaultMeta = new JMenuItem("Default Metadata...");
+        defaultMeta.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    Preferences node = PREF.node(PREF_DEFAULT_META);
+                    DCMetadataDialog d = new DCMetadataDialog(
+                        DCMetadata.load(node),
+                        BibTeXConverterController.this,
+                        "Default Metadata");
+                    d.pack();
+                    d.setModal(true);
+                    d.setVisible(true);
+                    if(d.getOkPressed()){
+                        d.getMetadata().save(node);
+                    }
+                }
+        });
+        fm.add(defaultMeta);
 
         final JMenu menu = new JMenu("Help");
         final JMenuItem about = new JMenuItem("About");
@@ -456,28 +478,64 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         return result;
     }
 
-    private void configureBibXML(){
-        /* - BibXML encoding */
-        final String prefVal = PREF.get(ENCODING_XML,
+    private synchronized void configureBibXML(){
+        if(xmlconfig == null){
+            /* - BibXML encoding */
+            final JComboBox xmlEnc = new JComboBox(allEncodings);
+            final String prefVal = PREF.get(ENCODING_XML,
                 BibTeXConverter.DEFAULT_ENC.name());
-        final String result = (String) JOptionPane.showInputDialog(this,
-                                     "Please select the encoding for generated BibXML.",
-                                     "BibXML encoding",
-                                     JOptionPane.QUESTION_MESSAGE,
-                                     StyleSheetController.config,
-                                     allEncodings,
-                                     prefVal);
-         if(result != null){
-             try{
-                 final Charset cs = Charset.forName(result);
-                 convert.setXMLEncoding(cs);
-                 PREF.put(ENCODING_XML, cs.name());
-             } catch (Exception ex){
-                 System.err.println("Error setting BibXML encoding");
-                 System.err.println(ex);
-                 System.err.flush();
-             }
-         }
+            xmlEnc.setSelectedItem(prefVal);
+            final JPanel panel = new JPanel(new SpringLayout());
+            JLabel label = new JLabel("Encoding");
+            label.setLabelFor(xmlEnc);
+            panel.add(label);
+            panel.add(xmlEnc);
+            label = new JLabel("Metadata");
+            JButton button = new JButton("Edit...");
+            label.setLabelFor(button);
+            panel.add(label);
+            panel.add(button);
+            de.mospace.swing.SpringUtilities.makeCompactGrid(panel, 2, 2, 0, 0, 3, 3);
+
+            button.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent e){
+                        DCMetadataDialog d = new DCMetadataDialog(
+                            convert.getMetadata(),
+                            BibTeXConverterController.this,
+                            "Dublin Core Metadata");
+                        d.pack();
+                        d.setModal(true);
+                        StyleSheetController.placeWindow(d, BibTeXConverterController.this);
+                        d.setVisible(true);
+                        if(d.getOkPressed()){
+                            convert.setMetadata(d.getMetadata());
+                        }
+                    }
+            });
+            xmlEnc.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent e){
+                        final String result = (String) xmlEnc.getSelectedItem();
+                        if(result != null){
+                            try{
+                                final Charset cs = Charset.forName(result);
+                                convert.setXMLEncoding(cs);
+                                PREF.put(ENCODING_XML, cs.name());
+                            } catch (Exception ex){
+                                System.err.println("Error setting BibXML encoding");
+                                System.err.println(ex);
+                                System.err.flush();
+                            }
+                        }
+                    }
+            });
+            xmlconfig = new JDialog(this, "BibXML");
+            xmlconfig.setContentPane(panel);
+            xmlconfig.pack();
+            StyleSheetController.placeWindow(xmlconfig, this);
+            xmlconfig.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+            dependencies.get(bibTeXInput).add(xmlconfig);
+        }
+        xmlconfig.setVisible(true);
     }
 
     private void doConversion(){
@@ -828,6 +886,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         if(c instanceof JToggleButton){
             updateDependentComponents();
             if(input == InputType.BIBTEX){
+                convert.setMetadata(DCMetadata.load(PREF.node(PREF_DEFAULT_META)));
                 jabrefEncoding();
             }
         }
@@ -865,6 +924,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
 
         } else if ("INPUT".equals(e.getActionCommand())){
             if (bibTeXInput.isSelected()){
+                convert.setMetadata(DCMetadata.load(PREF.node(PREF_DEFAULT_META)));
                 jabrefEncoding();
             }
         }
