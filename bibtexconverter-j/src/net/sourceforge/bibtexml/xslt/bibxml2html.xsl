@@ -20,7 +20,7 @@
 
   <xsl:template match="/">
     <xsl:variable name="title"
-    select="if(exists(bibtex:file/bibtex:metadata/dc:title)) then bibtex:file/bibtex:metadata/dc:title else 'References'"/>
+        select="if(exists(bibtex:file/bibtex:metadata/dc:title)) then bibtex:file/bibtex:metadata/dc:title else 'References'"/>
     <html>
       <head>
         <title>
@@ -32,13 +32,15 @@
         <meta name="DC.format"
             content="application/xhtml+xml" />
         <meta name="DC.date">
-        <xsl:attribute name="content" select="format-dateTime(current-dateTime(),'[Y0001]-[M01]-[D01] [H01]:[m01]:[s01][Z]')"/>
+          <xsl:attribute name="content" select="format-dateTime(current-dateTime(),'[Y0001]-[M01]-[D01] [H01]:[m01]:[s01][Z]')"/>
         </meta>
         <xsl:apply-templates select="bibtex:file/bibtex:metadata" />
         <script type="text/javascript" src="toggle.js"/>
       </head>
       <body>
-        <h1><xsl:value-of select="$title"/></h1>
+        <h1>
+          <xsl:value-of select="$title"/>
+        </h1>
         <p style="font-family:Arial,Helvetica,sans-serif; font-size:8pt; color:#aaaaaa">Generated on <xsl:value-of select="current-dateTime()"/>
         </p>
         <xsl:apply-templates select="bibtex:file" />
