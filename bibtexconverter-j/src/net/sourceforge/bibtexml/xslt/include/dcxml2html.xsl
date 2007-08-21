@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
+<!-- (c) 2007 Moritz Ringler -->
 <xsl:transform version="2.0"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
         xmlns:dc="http://purl.org/dc/elements/1.1/"

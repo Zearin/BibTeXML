@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
-<!-- (c) Moritz Ringler, 2004                            -->
+<!-- (c) Moritz Ringler, 2004-2007                       -->
 <!-- XSLT stylesheet that converts bibliographic data    -->
 <!-- from BibXML to RIS format.                          -->
 <xsl:stylesheet version="2.0"
