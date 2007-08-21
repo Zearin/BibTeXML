@@ -4,7 +4,7 @@
 <!-- XSLT stylesheet that converts bibliographic data    -->
 <!-- from BibXML to DocBook 4.5 bibliography format.         -->
 <xsl:stylesheet version="2.0"
-        
+
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:bibtex="http://bibtexml.sf.net/"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -18,6 +18,8 @@
     <xsl:param name="title" select="'BibTeXML bibliography'" as="xs:string" />
 
     <xsl:strip-space elements="*"/>
+
+    <xsl:include href="include/fn-parse-author.xsl"/>
 
     <xsl:template match="/">
         <xsl:apply-templates select="bibtex:file"/>
@@ -42,7 +44,7 @@
             <xsl:apply-templates select="*/*"/>
         </biblioentry>
     </xsl:template>
-    
+
 <!-- authors -->
     <xsl:template name="authors">
         <authorgroup>
@@ -50,7 +52,7 @@
             <xsl:apply-templates select="descendant::element(bibtex:editor)" mode="author-group" />
         </authorgroup>
     </xsl:template>
-    
+
 <!-- author -->
     <xsl:template match="bibtex:author" mode="author-group">
         <xsl:choose>
@@ -68,7 +70,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    
+
 <!-- editor -->
     <xsl:template match="bibtex:editor" mode="author-group">
         <xsl:choose>
@@ -126,7 +128,7 @@
             <xsl:value-of select="text()"/>
         </address>
     </xsl:template>
-    
+
 <!-- date/pubdate -->
     <xsl:template
             name="date">
@@ -214,7 +216,7 @@
         </citetitle>
     </xsl:template>
 
-        
+
 <!-- chapter  -->
     <xsl:template match="*/bibtex:chapter">
         <citetitle pubwork="chapter">
@@ -304,78 +306,7 @@
             <xsl:value-of select="bibtex:title"/>
         </citetitle>
     </xsl:template>
-    
+
     <xsl:template match="text()" priority="0.5" />
-    
-   <!-- returns a foo:author node with the 
-        children
-        bibtex:surname
-        bibtex:givennames
-        bibtex:jr
-        where all elements except last may or may not be present
-   -->
-    <xsl:function name="foo:parse-author">
-        <xsl:param name="author-raw" as="xs:string"/>
-       <!-- asterisk is not allowed in author, keywords or periodical name
-                 see http://www.refman.com/support/risformat_fields_02.asp -->
-        <xsl:variable name="author" select="normalize-space(replace($author-raw, '\*', ''))"/>
-        <xsl:variable name="parts" select="tokenize($author, ',')" />
-        <xsl:variable name="numparts" select="count($parts)" />
-        <xsl:variable name="result">
-            <foo:person>
-                <xsl:choose>
-                    <xsl:when test="$numparts ge 3">
-                    <!-- von last, junior, first -->
-                        <bibtex:givennames>
-                            <xsl:value-of select="normalize-space($parts[3])" />
-                        </bibtex:givennames>
-                        <bibtex:jr>
-                            <xsl:value-of select="normalize-space($parts[2])" />
-                        </bibtex:jr>
-                        <bibtex:surname>
-                            <xsl:value-of select="normalize-space($parts[1])" />
-                        </bibtex:surname>
-                    </xsl:when>
-                    <xsl:when test="$numparts eq 2">
-                    <!-- von last, first -->
-                        <bibtex:givennames>
-                            <xsl:value-of select="normalize-space($parts[2])" />
-                        </bibtex:givennames>
-                        <bibtex:surname>
-                            <xsl:value-of select="normalize-space($parts[1])" />
-                        </bibtex:surname>
-                    </xsl:when>
-                    <xsl:otherwise>
-                    <!-- first von last -->
-                        <xsl:choose>
-                            <xsl:when test="matches(normalize-space($author), ' \p{Ll}')">
-                                <!-- we have a word starting with a lowercase char, must be a von particle -->
-                                <bibtex:givennames>
-                                    <xsl:value-of select="normalize-space(replace($author, '^(.*?) (\p{Ll}.*)$', '$1'))"/>
-                                </bibtex:givennames>
-                                <bibtex:surname>
-                                    <xsl:value-of select="normalize-space(replace($author, '^(.*?) (\p{Ll}.*)$', '$2'))"/>
-                                </bibtex:surname>
-                            </xsl:when>
-                            <xsl:when test="matches(normalize-space($author), ' \p{Lu}')">
-                                <bibtex:givennames>
-                                    <xsl:value-of select="normalize-space(replace($author, '^(.*) (\p{Lu}.*)$', '$1'))"/>
-                                </bibtex:givennames>
-                                <bibtex:surname>
-                                    <xsl:value-of select="normalize-space(replace($author, '^(.*) (\p{Lu}.*)$', '$2'))"/>
-                                </bibtex:surname>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <bibtex:surname>
-                                    <xsl:value-of select="normalize-space($author)"/>
-                                </bibtex:surname>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </foo:person>
-        </xsl:variable>
-        <xsl:sequence select="$result"/>
-    </xsl:function>
 
 </xsl:stylesheet>
