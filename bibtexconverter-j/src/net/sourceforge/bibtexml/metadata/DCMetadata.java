@@ -41,10 +41,14 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import org.jdom.Element;
 import org.jdom.Document;
 import org.jdom.Namespace;
+import org.jdom.output.XMLOutputter;
+import org.jdom.output.Format;
 
 
 /** A simple java bean representation of the Dublin Core Metadata
-   Element Set (DCMES).
+   Element Set (DCMES). The semiclolon ';' character is interpreted
+   as a record separator on XML output for all String fields
+   except description.
    @see http://dublincore.org/documents/2006/12/18/dces/
  **/
 public class DCMetadata implements Serializable{
@@ -427,64 +431,37 @@ public class DCMetadata implements Serializable{
             root.addNamespaceDeclaration(DC_NAMESPACE);
             for(PropertyDescriptor pd : desc){
                 Object value = pd.getReadMethod().invoke(this);
-                if(value == null){
+                String name = pd.getName();
+                if(value == null || "class".equals(name)){
                     continue;
                 }
                 Class type = pd.getPropertyType();
-                String name = pd.getName();
-                if("class".equals(name)){
-                    continue;
+                if (String.class.equals(type) && !"description".equals(name)){
+                    String[] entries = value.toString().split("\\s*;\\s*");
+                    for(String entry : entries){
+                        if(entry.length() != 0){
+                            Element metanode = new Element(name, DC_NAMESPACE);
+                            metanode.setText(entry);
+                            root.addContent(metanode);
+                        }
+                    }
+                } else {
+                    Element metanode = new Element(name, DC_NAMESPACE);
+                    if (Date.class.equals(type)){
+                        metanode.setText((new SimpleDateFormat(ISO_DATE)).format((Date) value));
+                    } else if(Locale.class.equals(type)){
+                        metanode.setText(value.toString().replaceAll("_","-"));
+                    } else {
+                        metanode.setText(value.toString());
+                    }
+                    root.addContent(metanode);
                 }
-                Element metanode = new Element(name, DC_NAMESPACE);
-                if (Date.class.equals(type)){
-                    metanode.setText((new SimpleDateFormat(ISO_DATE)).format((Date) value));
-                } else if(Locale.class.equals(type)){
-                    metanode.setText(value.toString().replaceAll("_","-"));
-                } else if (String.class.equals(type)){
-                    metanode.setText(value.toString());
-                }
-                root.addContent(metanode);
             }
             result = new Document(root);
         } catch (Exception ex){
             throw new Error(ex);
         }
         return result;
-    }
-
-    public void toXML(Appendable app) throws IOException{
-        try{
-        BeanInfo info = Introspector.getBeanInfo(DCMetadata.class);
-        PropertyDescriptor[] desc = info.getPropertyDescriptors();
-        app.append("<metadata xmlns=\"").append(BIB_NAMESPACE).append("\"");
-        app.append(" xmlns:dc=\"").append(DC_NAMESPACE_URI).append("\">\n");
-        for(PropertyDescriptor pd : desc){
-            Object value = pd.getReadMethod().invoke(this);
-            if(value == null){
-                continue;
-            }
-            Class type = pd.getPropertyType();
-            String name = pd.getName();
-            if("class".equals(name)){
-                continue;
-            }
-            app.append("<dc:").append(name).append('>');
-            if (Date.class.equals(type)){
-                app.append((new SimpleDateFormat(ISO_DATE)).format((Date) value));
-            } else if(Locale.class.equals(type)){
-                app.append(value.toString().replaceAll("_","-"));
-            } else if (String.class.equals(type)){
-                app.append(value.toString());
-            }
-            app.append("</dc:").append(name).append('>');
-            app.append('\n');
-        }
-        app.append("</metadata>\n");
-        } catch (IOException ex){
-            throw ex;
-        } catch (Exception ex){
-            throw new Error(ex);
-        }
     }
 
     public static DCMetadata fromXML(InputSource in, EntityResolver resolver) throws IOException, SAXException{
@@ -519,7 +496,8 @@ public class DCMetadata implements Serializable{
         d.pack();
         d.setModal(true);
         d.setVisible(true);
-        d.getMetadata().toXML(System.out);
+        (new XMLOutputter(Format.getPrettyFormat())).
+                output(d.getMetadata().toXML(), System.out);
     }
 
 }

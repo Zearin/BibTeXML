@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
@@ -56,6 +57,7 @@ public class DCMetadataDialog extends JDialog {
         final DCMetadataUI view = new DCMetadataUI();
         controller.setView(view);
         JPanel cp = new JPanel(new BorderLayout());
+        cp.add(new JLabel("Separate multiple entries by semicolon ;"));
         cp.add(view, BorderLayout.CENTER);
         JPanel buttons = new JPanel();
         JButton b = new JButton(UIManager.getString("OptionPane.cancelButtonText"));

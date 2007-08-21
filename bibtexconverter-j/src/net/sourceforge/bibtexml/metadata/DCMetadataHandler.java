@@ -97,6 +97,13 @@ public class DCMetadataHandler extends DefaultHandler{
                  }
              } else {
                  try{
+                     if(!"description".equals(name)){
+                         Method getter = props.get(name).getReadMethod();
+                         Object oldValue = getter.invoke(result);
+                         if(oldValue != null){
+                             value = oldValue.toString() + "; " + value.toString();
+                         }
+                     }
                      Method setter = props.get(name).getWriteMethod();
                      setter.invoke(result, value);
                  } catch (Exception ex){
