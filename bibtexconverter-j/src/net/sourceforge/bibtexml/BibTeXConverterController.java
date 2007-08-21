@@ -151,11 +151,15 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                     getClass().getResource("xslt/bibxml2ris.xsl"),
                     false, false, true));
         builtins.add(
-            StyleSheetController.newInstance(convert, "HTML (flat)", ".html",
-                    getClass().getResource("xslt/bibxml2html.xsl"),
+            StyleSheetController.newInstance(convert, "Endnote Export", ".enw",
+                    getClass().getResource("xslt/bibxml2enw.xsl"),
+                    false, false, true));
+        builtins.add(
+            StyleSheetController.newInstance(convert, "HTML (flat)", "-flat.html",
+                    getClass().getResource("xslt/bibxml2htmlf.xsl"),
                     true, true, false));
         builtins.add(
-            StyleSheetController.newInstance(convert, "HTML (grouped)", "g.html",
+            StyleSheetController.newInstance(convert, "HTML (grouped)", "-grouped.html",
                         getClass().getResource("xslt/bibxml2htmlg.xsl"),
                         true, true, false));
         builtins.add(
