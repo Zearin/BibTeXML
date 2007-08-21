@@ -160,6 +160,7 @@ public class DCMetadataUI extends JPanel implements ActionListener {
     private void initTextField(String label){
         JTextField textfield = new JTextField(TEXTFIELD_SIZE);
         textfield.setActionCommand(label);
+        textfield.setToolTipText("Separate multiple entries by semicolon ;");
         initComponent(label, textfield);
     }
 

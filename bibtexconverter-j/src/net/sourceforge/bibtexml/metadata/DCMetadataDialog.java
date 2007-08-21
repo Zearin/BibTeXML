@@ -57,7 +57,7 @@ public class DCMetadataDialog extends JDialog {
         final DCMetadataUI view = new DCMetadataUI();
         controller.setView(view);
         JPanel cp = new JPanel(new BorderLayout());
-        cp.add(new JLabel("Separate multiple entries by semicolon ;"));
+        //cp.add(new JLabel("Separate multiple entries by semicolon ;"), BorderLayout.NORTH);
         cp.add(view, BorderLayout.CENTER);
         JPanel buttons = new JPanel();
         JButton b = new JButton(UIManager.getString("OptionPane.cancelButtonText"));
