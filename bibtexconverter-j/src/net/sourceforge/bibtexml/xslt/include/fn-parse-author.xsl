@@ -2,9 +2,10 @@
 <!-- $Id: bibxml2html.xsl 133 2007-03-19 17:38:30Z ringler $ -->
 <xsl:transform version="2.0"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-        xmlns:foo="http://foo/bar/baz">
+        xmlns:foo="http://foo/bar/baz"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-       <!-- returns a foo:author node with the
+       <!-- returns a foo:person node with the
         children
         foo:last
         foo:first

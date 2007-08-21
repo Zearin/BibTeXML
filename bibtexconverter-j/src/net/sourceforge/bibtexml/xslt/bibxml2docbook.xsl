@@ -89,7 +89,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="bibtex:givennames">
+    <xsl:template match="bibtex:givennames|foo:first">
         <xsl:variable name="tokens" select="tokenize(., '\s+')"/>
         <firstname>
             <xsl:value-of select="$tokens[1]"/>
@@ -101,13 +101,13 @@
         </xsl:for-each>
     </xsl:template>
 
-    <xsl:template match="bibtex:surname">
+    <xsl:template match="bibtex:surname|foo:last">
         <surname>
             <xsl:value-of select="text()"/>
         </surname>
     </xsl:template>
 
-    <xsl:template match="bibtex:jr">
+    <xsl:template match="bibtex:jr|foo:junior">
         <lineage>
             <xsl:value-of select="text()"/>
         </lineage>
