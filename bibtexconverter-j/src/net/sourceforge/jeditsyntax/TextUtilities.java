@@ -13,7 +13,7 @@ import javax.swing.text.*;
 /**
  * Class with several utility functions used by the text area component.
  * @author Slava Pestov
- * @version $Id: TextUtilities.java,v 1.4 1999/12/13 03:40:30 sp Exp $
+ * @version $Id$
  */
 public class TextUtilities
 {

@@ -1,6 +1,6 @@
 package net.sourceforge.bibtexml.metadata;
 /*
- * $Id: DCMetadata.java 293 2007-08-12 23:41:32Z ringler $
+ * $Id$
  *
  * Copyright (c) 2006 Moritz Ringler
  * This class is derived from EntryRetriever by Oskar Ojala

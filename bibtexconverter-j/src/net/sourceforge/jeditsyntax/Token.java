@@ -16,7 +16,7 @@ package net.sourceforge.jeditsyntax;
  * token in the text, and a pointer to the next token in the list.
  *
  * @author Slava Pestov
- * @version $Id: Token.java,v 1.12 1999/12/13 03:40:30 sp Exp $
+ * @version $Id$
  */
 public class Token
 {

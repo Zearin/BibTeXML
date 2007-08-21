@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- $Id: bibxml2html.xsl 133 2007-03-19 17:38:30Z ringler $ -->
+<!-- $Id$ -->
 <xsl:transform version="2.0"
         xmlns:bibtex="http://bibtexml.sf.net/"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"

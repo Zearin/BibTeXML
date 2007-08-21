@@ -16,7 +16,7 @@ import java.awt.*;
  * subsystem.
  *
  * @author Slava Pestov
- * @version $Id: SyntaxUtilities.java,v 1.9 1999/12/13 03:40:30 sp Exp $
+ * @version $Id$
  */
 public class SyntaxUtilities
 {

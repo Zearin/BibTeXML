@@ -15,7 +15,7 @@ import javax.swing.text.Segment;
  * XML Token Marker Rewrite
  *
  * @author Tom Bradford
- * @version $Id: XMLTokenMarker.java,v 1.5 2001/07/29 20:45:43 tom Exp $
+ * @version $Id$
  */
 public class XMLTokenMarker extends TokenMarker {
    public XMLTokenMarker() {

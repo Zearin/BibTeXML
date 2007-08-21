@@ -1,4 +1,4 @@
-# $Id: bibtexml-groups.rnc 180 2007-03-26 21:35:16Z vidarg $
+# $Id$
 #
 #  This schema expresses XML markup similar to the BibTeX language
 #  specified for LaTeX, or actually its content model.

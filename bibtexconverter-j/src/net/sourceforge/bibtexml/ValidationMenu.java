@@ -1,6 +1,6 @@
 package net.sourceforge.bibtexml;
 /*
-* $Id: BibTeXConverterController.java 201 2007-03-31 21:39:53Z ringler $
+* $Id$
 * (c) Moritz Ringler, 2006
 *
 * This program is free software; you can redistribute it and/or

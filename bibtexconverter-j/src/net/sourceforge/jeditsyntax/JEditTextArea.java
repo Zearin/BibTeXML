@@ -46,7 +46,7 @@ import java.io.*;
  *     + "}");</pre>
  *
  * @author Slava Pestov
- * @version $Id: JEditTextArea.java,v 1.36 1999/12/13 03:40:30 sp Exp $
+ * @version $Id$
  */
 public class JEditTextArea extends JComponent
 {
