@@ -94,7 +94,7 @@ public class BibTeXConverter extends XMLConverter{
 
     private void fillInMetadata(){
         metadata.setDate(new java.util.Date());
-        metadata.setFormat("application/xml");
+        metadata.setFormat("text/xml");
         //if(metadata.getIdentifier() == null){
             metadata.setIdentifier("urn:uuid:" + UUID.randomUUID());
         //}
