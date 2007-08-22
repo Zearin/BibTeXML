@@ -67,7 +67,7 @@ public class BeanUtils{
         T result = null;
         try{
         result = clazz.newInstance();
-        BeanInfo info = Introspector.getBeanInfo(bean.getClass());
+        BeanInfo info = Introspector.getBeanInfo(clazz);
         PropertyDescriptor[] desc = info.getPropertyDescriptors();
         for(PropertyDescriptor pd : desc){
             Method getter = pd.getReadMethod();
