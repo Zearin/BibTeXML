@@ -1,20 +1,20 @@
 #! /bin/bash
-java -jar trang.jar bibtexml-generic.rnc bibtexml-generic.rng
+java -jar "$TRANG" bibtexml-generic.rnc bibtexml-generic.rng
 for fields in arbitrary user core
-do 
+do
     for datatypes in strict loose
     do
         for structure in nested inline flat
         do
             name=bibtexml-$fields-$datatypes-$structure
             echo $name
-            java net.sf.saxon.Transform \
+            java -jar "$SAXON" \
                 bibtexml-generic.rng schema.xsl \
                 structure=${structure} \
                 datatypes=$datatypes \
                 fields=$fields \
                 > $name.rng
-            java -jar trang.jar $name.rng $name.rnc
+            java -jar "$TRANG" $name.rng $name.rnc
         done
      done
 done
