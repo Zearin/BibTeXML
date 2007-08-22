@@ -1,6 +1,6 @@
 package net.sourceforge.bibtexml.util;
 /*
- * $Id: DCMetadata.java 310 2007-08-21 12:49:09Z ringler $
+ * $Id$
  *
  * Copyright (c) 2007 Moritz Ringler
  * This program is free software; you can redistribute it and/or
