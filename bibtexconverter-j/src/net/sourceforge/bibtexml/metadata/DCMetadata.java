@@ -1,22 +1,22 @@
 package net.sourceforge.bibtexml.metadata;
 /*
- * $Id$
- *
- * Copyright (c) 2007 Moritz Ringler
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
+* $Id$
+*
+* Copyright (c) 2007 Moritz Ringler
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -40,14 +40,15 @@ import org.jdom.Document;
 import org.jdom.Namespace;
 import org.jdom.output.XMLOutputter;
 import org.jdom.output.Format;
+import net.sourceforge.bibtexml.util.BeanUtils;
 
 
 /** A simple java bean representation of the Dublin Core Metadata
-   Element Set (DCMES). The semiclolon ';' character is interpreted
-   as a record separator on XML output for all String fields
-   except description.
-   @see http://dublincore.org/documents/2006/12/18/dces/
- **/
+Element Set (DCMES). The semiclolon ';' character is interpreted
+as a record separator on XML output for all String fields
+except description.
+@see http://dublincore.org/documents/2006/12/18/dces/
+**/
 public class DCMetadata implements Serializable{
     static final String ISO_DATE = "yyyy-MM-dd'T'HH:mm:ssZ";
     public static final String BIB_NAMESPACE = "http://bibtexml.sf.net/";
@@ -73,96 +74,43 @@ public class DCMetadata implements Serializable{
     public DCMetadata(){
     }
 
-    /** Copy constructor. Identifier is not copied. **/
-    public DCMetadata(DCMetadata meta){
+    /** Copy constructor. **/
+    public DCMetadata createCopy(){
         try{
-            BeanInfo info = Introspector.getBeanInfo(DCMetadata.class);
-            PropertyDescriptor[] desc = info.getPropertyDescriptors();
-            for(PropertyDescriptor pd : desc){
-                Object value = pd.getReadMethod().invoke(meta);
-                if(value == null){
-                    continue;
-                }
-                Method setter = pd.getWriteMethod();
-                if(setter != null){
-                    setter.invoke(this, value);
-                }
-            }
+            return BeanUtils.getInstance().copyBean(this, getClass());
         } catch (Exception ex){
             throw new Error(ex);
         }
     }
 
     public static DCMetadata load(Preferences node){
-        DCMetadata result = new DCMetadata();
         try{
-            BeanInfo info = Introspector.getBeanInfo(DCMetadata.class);
-            PropertyDescriptor[] desc = info.getPropertyDescriptors();
-            for(PropertyDescriptor pd : desc){
-                String key = pd.getName();
-                Method setter = pd.getWriteMethod();
-                if(setter != null){
-                    Class c = pd.getPropertyType();
-                    Object value = null;
-                    if(String.class.equals(c)){
-                        value = node.get(key, null);
-                    } else if (Date.class.equals(c)){
-                        Long ldate = node.getLong(key, Long.MAX_VALUE);
-                        if(ldate != Long.MAX_VALUE){
-                            value = new Date(ldate);
-                        }
-                    } else if (Locale.class.equals(c)){
-                        value = localeFromString(node.get(key, null));
-                    }
-                    if(value != null){
-                        setter.invoke(result, value);
-                    }
-                }
-            }
+            return BeanUtils.getInstance().load(node, DCMetadata.class);
         } catch (Exception ex){
             throw new Error(ex);
         }
-        return result;
     }
 
     public void save(Preferences node){
         try{
-            BeanInfo info = Introspector.getBeanInfo(DCMetadata.class);
-            PropertyDescriptor[] desc = info.getPropertyDescriptors();
-            for(PropertyDescriptor pd : desc){
-                String key = pd.getName();
-                Method getter = pd.getReadMethod();
-                if(getter != null){
-                    Object value = getter.invoke(this);
-                    if(value != null){
-                        Class c = pd.getPropertyType();
-                        if(String.class.equals(c)){
-                            node.put(key, value.toString());
-                        } else if (Date.class.equals(c)){
-                            node.putLong(key, ((Date) value).getTime());
-                        } else if (Locale.class.equals(c)){
-                            node.put(key, value.toString());
-                        }
-                    }
-                }
-            }
+            BeanUtils.getInstance().save(node, this);
         } catch (Exception ex){
             throw new Error(ex);
         }
     }
 
     /**
-     * Returns the value of creator.
-     */
+    * Returns the value of creator.
+    */
     public String getCreator()
     {
         return creator;
     }
 
     /**
-     * Sets the value of creator.
-     * @param creator The value to assign creator.
-     */
+    * Sets the value of creator.
+    * @param creator The value to assign creator.
+    */
     public void setCreator(String creator)
     {
         this.creator = normalizeString(creator);
@@ -182,238 +130,238 @@ public class DCMetadata implements Serializable{
     }
 
     /**
-     * Returns the value of format.
-     */
+    * Returns the value of format.
+    */
     public String getFormat()
     {
         return format;
     }
 
     /**
-     * Sets the value of format.
-     * @param format The value to assign format.
-     */
+    * Sets the value of format.
+    * @param format The value to assign format.
+    */
     public void setFormat(String format)
     {
         this.format = normalizeString(format);
     }
 
     /**
-     * Returns the value of title.
-     */
+    * Returns the value of title.
+    */
     public String getTitle()
     {
         return title;
     }
 
     /**
-     * Sets the value of title.
-     * @param title The value to assign title.
-     */
+    * Sets the value of title.
+    * @param title The value to assign title.
+    */
     public void setTitle(String title)
     {
         this.title = normalizeString(title);
     }
 
     /**
-     * Returns the value of subject.
-     */
+    * Returns the value of subject.
+    */
     public String getSubject()
     {
         return subject;
     }
 
     /**
-     * Sets the value of subject.
-     * @param subject The value to assign subject.
-     */
+    * Sets the value of subject.
+    * @param subject The value to assign subject.
+    */
     public void setSubject(String subject)
     {
         this.subject = normalizeString(subject);
     }
 
     /**
-     * Returns the value of description.
-     */
+    * Returns the value of description.
+    */
     public String getDescription()
     {
         return description;
     }
 
     /**
-     * Sets the value of description.
-     * @param description The value to assign description.
-     */
+    * Sets the value of description.
+    * @param description The value to assign description.
+    */
     public void setDescription(String description)
     {
         this.description = normalizeString(description);
     }
 
     /**
-     * Returns the value of publisher.
-     */
+    * Returns the value of publisher.
+    */
     public String getPublisher()
     {
         return publisher;
     }
 
     /**
-     * Sets the value of publisher.
-     * @param publisher The value to assign publisher.
-     */
+    * Sets the value of publisher.
+    * @param publisher The value to assign publisher.
+    */
     public void setPublisher(String publisher)
     {
         this.publisher = normalizeString(publisher);
     }
 
     /**
-     * Returns the value of contributor.
-     */
+    * Returns the value of contributor.
+    */
     public String getContributor()
     {
         return contributor;
     }
 
     /**
-     * Sets the value of contributor.
-     * @param contributor The value to assign contributor.
-     */
+    * Sets the value of contributor.
+    * @param contributor The value to assign contributor.
+    */
     public void setContributor(String contributor)
     {
         this.contributor = normalizeString(contributor);
     }
 
     /**
-     * Returns the value of date.
-     */
+    * Returns the value of date.
+    */
     public Date getDate()
     {
         return (date == null)? date : (Date) date.clone();
     }
 
     /**
-     * Sets the value of date.
-     * @param date The value to assign date.
-     */
+    * Sets the value of date.
+    * @param date The value to assign date.
+    */
     public void setDate(Date date)
     {
         this.date = date;
     }
 
     /**
-     * Returns the value of type.
-     */
+    * Returns the value of type.
+    */
     public String getType()
     {
         return type;
     }
 
     /**
-     * Sets the value of type.
-     * @param type The value to assign type.
-     */
+    * Sets the value of type.
+    * @param type The value to assign type.
+    */
     public void setType(String type)
     {
         this.type = normalizeString(type);
     }
 
     /**
-     * Returns the value of identifier.
-     */
+    * Returns the value of identifier.
+    */
     public String getIdentifier()
     {
         return identifier;
     }
 
     /**
-     * Sets the value of identifier.
-     * @param identifier The value to assign identifier.
-     */
+    * Sets the value of identifier.
+    * @param identifier The value to assign identifier.
+    */
     public void setIdentifier(String identifier)
     {
         this.identifier = normalizeString(identifier);
     }
 
     /**
-     * Returns the value of source.
-     */
+    * Returns the value of source.
+    */
     public String getSource()
     {
         return source;
     }
 
     /**
-     * Sets the value of source.
-     * @param source The value to assign source.
-     */
+    * Sets the value of source.
+    * @param source The value to assign source.
+    */
     public void setSource(String source)
     {
         this.source = normalizeString(source);
     }
 
     /**
-     * Returns the value of language.
-     */
+    * Returns the value of language.
+    */
     public Locale getLanguage()
     {
         return language;
     }
 
     /**
-     * Sets the value of language.
-     * @param language The value to assign language.
-     */
+    * Sets the value of language.
+    * @param language The value to assign language.
+    */
     public void setLanguage(Locale language)
     {
         this.language = language;
     }
 
     /**
-     * Returns the value of relation.
-     */
+    * Returns the value of relation.
+    */
     public String getRelation()
     {
         return relation;
     }
 
     /**
-     * Sets the value of relation.
-     * @param relation The value to assign relation.
-     */
+    * Sets the value of relation.
+    * @param relation The value to assign relation.
+    */
     public void setRelation(String relation)
     {
         this.relation = normalizeString(relation);
     }
 
     /**
-     * Returns the value of coverage.
-     */
+    * Returns the value of coverage.
+    */
     public String getCoverage()
     {
         return coverage;
     }
 
     /**
-     * Sets the value of coverage.
-     * @param coverage The value to assign coverage.
-     */
+    * Sets the value of coverage.
+    * @param coverage The value to assign coverage.
+    */
     public void setCoverage(String coverage)
     {
         this.coverage = normalizeString(coverage);
     }
 
     /**
-     * Returns the value of rights.
-     */
+    * Returns the value of rights.
+    */
     public String getRights()
     {
         return rights;
     }
 
     /**
-     * Sets the value of rights.
-     * @param rights The value to assign rights.
-     */
+    * Sets the value of rights.
+    * @param rights The value to assign rights.
+    */
     public void setRights(String rights)
     {
         this.rights = normalizeString(rights);
@@ -481,8 +429,8 @@ public class DCMetadata implements Serializable{
         String[] parts = value.split("[-_]");
         Locale loc = null;
         switch(parts.length){
-            case 1: loc = new Locale(value); break;
-            case 2: loc = new Locale(parts[0], parts[1]); break;
+        case 1: loc = new Locale(value); break;
+        case 2: loc = new Locale(parts[0], parts[1]); break;
             default: loc = new Locale(parts[0], parts[1], parts[2]);
         }
         return loc;
@@ -494,7 +442,7 @@ public class DCMetadata implements Serializable{
         d.setModal(true);
         d.setVisible(true);
         (new XMLOutputter(Format.getPrettyFormat())).
-                output(d.getMetadata().toXML(), System.out);
+        output(d.getMetadata().toXML(), System.out);
     }
 
 }

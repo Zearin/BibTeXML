@@ -52,7 +52,7 @@ public class BibTeXConverter extends XMLConverter{
      */
     public DCMetadata getMetadata()
     {
-        return new DCMetadata(metadata);
+        return metadata.createCopy();
     }
 
     /**
