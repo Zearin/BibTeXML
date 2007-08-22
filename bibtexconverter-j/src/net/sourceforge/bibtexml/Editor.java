@@ -68,7 +68,7 @@ public class Editor{
             dialog = null;
             throw new IllegalArgumentException("Unknown window type, must be adialog or frame.");
         }
-        area.getDocument().addDocumentListener(dirtyMarker);
+        setupTextArea();
         toolbar.add(Box.createHorizontalStrut(3));
         toolbar.add(new JButton(saveAction));
         final JPanel cp = new JPanel(new BorderLayout());
@@ -78,6 +78,36 @@ public class Editor{
         dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         dialog.pack();
         markDirty(false);
+    }
+
+    private void setupTextArea(){
+        area.getDocument().addDocumentListener(dirtyMarker);
+        InputHandler inputHandler = area.getInputHandler();
+        System.out.println(inputHandler.getClass());
+        final ActionListener copy = new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    area.copy();
+                }
+        };
+        final ActionListener paste = new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    area.paste();
+                }
+        };
+        final ActionListener cut = new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    area.cut();
+                }
+        };
+        inputHandler.addKeyBinding("COPY", copy);
+        inputHandler.addKeyBinding("C+C", copy);
+        inputHandler.addKeyBinding("C+INSERT", copy);
+        inputHandler.addKeyBinding("PASTE", paste);
+        inputHandler.addKeyBinding("C+V", paste);
+        inputHandler.addKeyBinding("S+INSERT", paste);
+        inputHandler.addKeyBinding("CUT", cut);
+        inputHandler.addKeyBinding("C+X", cut);
+        inputHandler.addKeyBinding("S+DELETE", cut);
     }
 
     private String activeFilePath(){
