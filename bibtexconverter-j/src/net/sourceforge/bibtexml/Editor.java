@@ -83,7 +83,6 @@ public class Editor{
     private void setupTextArea(){
         area.getDocument().addDocumentListener(dirtyMarker);
         InputHandler inputHandler = area.getInputHandler();
-        System.out.println(inputHandler.getClass());
         final ActionListener copy = new ActionListener(){
                 public void actionPerformed(ActionEvent e){
                     area.copy();
