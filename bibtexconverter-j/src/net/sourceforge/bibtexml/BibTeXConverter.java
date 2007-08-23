@@ -102,6 +102,7 @@ public class BibTeXConverter extends XMLConverter{
     * Source src = null;
     * if (supportsJDOM){
     *   src = new org.jdom.transform.JDOMSource(jdom);
+    *   src.setSystemID(sysID);
     * } else {
     *   org.w3c.dom.Document w3cdom = (new org.jdom.output.DOMOutputter()).output(jdom);
     *   src = new javax.xml.transform.dom.DOMSource(w3cdom, sysID);
