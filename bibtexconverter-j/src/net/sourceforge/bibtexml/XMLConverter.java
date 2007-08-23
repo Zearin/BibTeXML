@@ -54,7 +54,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class XMLConverter extends DefaultClassLoaderProvider{
+public class XMLConverter{
     private TransformerFactory tf;
     private Validator xmlValidator;
     protected final static Charset DEFAULT_ENC = Charset.defaultCharset();
@@ -64,50 +64,10 @@ public class XMLConverter extends DefaultClassLoaderProvider{
     public final static String JARV_RELAXNG_SF
         = "org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl";
     private Charset xmlenc = DEFAULT_ENC;
-    public final static String TRANSFORMER_FACTORY_IMPLEMENTATION =
-            "net.sf.saxon.TransformerFactoryImpl";
     protected ErrorHandler saxErrorHandler = new ErrorCounter();
     private String xmlSchemaID = null;
 
     public XMLConverter(){
-        /* add default library directories to class path if they exist */
-        String fs = File.separator;
-        List<String> candidates = new ArrayList<String>();
-        candidates.add(System.getProperty("user.dir") + fs + "lib");
-        try{
-            candidates.add(new File(
-                DefaultClassLoaderProvider
-                .getRepositoryRootDir(BibTeXConverter.class),
-                "lib").getAbsolutePath());
-        } catch(Exception ignore){
-            System.err.println(ignore);
-            System.err.flush();
-        }
-        String appdata = System.getenv("APPDATA");
-        if(appdata != null){
-            candidates.add(appdata + fs + "bibtexconverter");
-        }
-        candidates.add(
-            System.getProperty("user.home")+fs+".bibtexconverter"+fs+"lib");
-        candidates.add(
-            Preferences.userNodeForPackage(BibTeXConverter.class)
-                    .get("saxon", null));
-        for (String cf : candidates){
-            if(cf != null){
-                File f = new File(cf);
-                if(f.isDirectory() && !DefaultClassLoaderProvider.isTemporary(f)){
-                    registerLibraryDirectory(f);
-                } else if(f.isFile() && f.getName().endsWith(".jar")){
-                    registerLibrary(f);
-                }
-            }
-        }
-
-
-        /* Try to obtain a Saxon transformer factory */
-        System.setProperty("javax.xml.transform.TransformerFactory",
-                            TRANSFORMER_FACTORY_IMPLEMENTATION);
-        tf = tryToGetTransformerFactory();
 
         /* Restore preferred validation engine */
         for (String schemaLanguage :
@@ -190,47 +150,35 @@ public class XMLConverter extends DefaultClassLoaderProvider{
     }
 
     /**  */
-    public synchronized void validate(File xml) throws SAXException, IOException{
-        if(xmlValidator != null){
-            InputStream in = null;
-            try{
-                in = new BufferedInputStream(new FileInputStream(xml));
-                Source src = new SAXSource(new InputSource(in));
-                src.setSystemId(xml.toURI().toURL().toString());
-                xmlValidator.setErrorHandler(saxErrorHandler);
-                xmlValidator.validate(src);
-            } finally {
-                if (in != null){
-                    in.close();
-                }
+    public void validate(File xml) throws SAXException, IOException{
+        InputStream in = null;
+        try{
+            in = new BufferedInputStream(new FileInputStream(xml));
+            Source src = new SAXSource(new InputSource(in));
+            src.setSystemId(xml.toURI().toURL().toString());
+            validate(src);
+        } finally {
+            if (in != null){
+                in.close();
             }
         }
     }
 
-    public String getSaxonVersion(){
-        return getSaxonVersion("ProductTitle");
-    }
-
-    public String getSaxonVersion(String what){
-        String result = null;
-        try{
-            Class c = Class.forName("net.sf.saxon.Version", true, getClassLoader());
-            java.lang.reflect.Method m = c.getMethod("get" + what);
-            result = (String) m.invoke(null);
-        } catch (Exception ignore){
-            System.err.println(ignore);
-            System.err.flush();
+    /**  */
+    public synchronized void validate(Source src) throws SAXException, IOException{
+        if(xmlValidator != null){
+            xmlValidator.setErrorHandler(saxErrorHandler);
+            xmlValidator.validate(src);
         }
-        return result;
     }
 
     /* XSLT transformations */
-    /** Converts BibXML using the specified transformer and configuration.
-     * The result is optionally converted
-     *  to CRLF format. **/
-    public static void transform(Transformer t, InputStream in, String systemID, OutputStream out,
-            Map<String,Object> parameters, String encoding, boolean crlf)
-            throws TransformerException, IOException{
+    /** Converts BibXML from src to res using the specified transformer and
+     * configuration.
+     **/
+    public static void transform(Transformer t, Source src, Result res,
+            Map<String,Object> parameters, String encoding)
+            throws TransformerException{
 
         // configure the Transformer
         t.clearParameters();
@@ -245,6 +193,15 @@ public class XMLConverter extends DefaultClassLoaderProvider{
             t.setOutputProperty(OutputKeys.ENCODING, encoding);
         }
 
+        t.transform(src, res);
+    }
+
+    /** Converts BibXML using the specified transformer and configuration.
+     * The result is optionally converted
+     *  to CRLF format. **/
+    public static void transform(Transformer t, InputStream in, String systemID, OutputStream out,
+            Map<String,Object> parameters, String encoding, boolean crlf)
+            throws TransformerException, IOException{
 
         //open the source xml document
         InputStream bin = new BufferedInputStream(in);
@@ -257,7 +214,7 @@ public class XMLConverter extends DefaultClassLoaderProvider{
         }
         Result res = new StreamResult(bout);
 
-        t.transform(src, res);
+        transform(t, src, res, parameters, encoding);
     }
 
     /** Converts BibXML using the specified transformer and configuration.
@@ -327,84 +284,6 @@ public class XMLConverter extends DefaultClassLoaderProvider{
 
     /* Helper methods */
 
-    /** Tries to obtain an instance of a Saxon TransformerFactory.
-    * If Saxon is on the application class path or in one of BibTeXConverter's
-    * installation-dependent library directories a Saxon transformer factory
-    * will be created and returned by calls to this method.<p>
-    * If Saxon has not been found in one of the above locations. This method
-    * asks the user to install Saxon. If the installation completes
-    * successfully, a Saxon transformer factory is created and returned
-    * by this and all future calls to this method.
-    * @return a Saxon TransformerFactory or null as detailed above
-    */
-    protected synchronized TransformerFactory loadTransformerFactory(final JFrame trig){
-        if(tf == null){
-            /* We first try to load from the existing class path and library
-             * directories.
-             */
-            tf = tryToGetTransformerFactory();
-        }
-
-        if(tf == null){
-            /* We've been unsuccessfull so far. We ask the user to install
-            * saxon.
-            */
-            if(About.installSaxon(trig, this)){
-                /* if the user has indeed installed saxon
-                * we update our custom class loader and
-                * try to create a TransformerFactory */
-                tf = tryToGetTransformerFactory();
-            }
-        }
-        return tf;
-    }
-
-    /** Tries to obtain an instance of a Saxon TransformerFactory. If saxon
-     * is not found, null is returned.
-     **/
-    public final synchronized TransformerFactory tryToGetTransformerFactory(){
-        if(tf == null){
-            Thread.currentThread().setContextClassLoader(getClassLoader());
-            try{
-                tf = TransformerFactory.newInstance();
-                System.out.println("Saxon found in " +
-                        DefaultClassLoaderProvider.getRepositoryRoot(
-                        tf.getClass()));
-                double saxonversion = 0;
-                try{
-                    String sv = getSaxonVersion("ProductVersion");
-                    //use only part up to second dot
-                    int dot = sv.indexOf('.');
-                    dot = sv.indexOf('.', dot + 1);
-                    if(dot > 0){
-                        sv = sv.substring(0, dot);
-                    }
-                    saxonversion = Double.parseDouble(sv);
-                } catch (Exception ignore){
-                    System.err.println("Cannot parse saxon version.");
-                    System.err.println(ignore);
-                    System.err.flush();
-                }
-                System.out.println("Saxon version: " + saxonversion);
-                if(saxonversion >= 8.9){
-                    System.out.println();
-                } else if (saxonversion >= 8.8){
-                    //We need to switch the URI resolver to something that
-                    //knows how to handle jar files
-                    tf.setURIResolver(new JarAwareURIResolver());
-                } else {
-                    System.out.println();
-                    System.err.println("WARNING: This program has been developed" +
-                        " and tested with saxon version 8.8 and later.");
-                }
-                System.out.flush();
-                System.err.flush();
-            } catch (TransformerFactoryConfigurationError ignore){
-            }
-        }
-        return tf;
-    }
-
     /** Copies a resource to the specified destination file. */
     protected void copyResourceToFile(String resourcename, File dest)
          throws IOException{
@@ -466,37 +345,4 @@ public class XMLConverter extends DefaultClassLoaderProvider{
         }
     }
 
-    private static class JarAwareURIResolver implements URIResolver{
-        public JarAwareURIResolver(){
-            //sole constructor
-        }
-
-        public Source resolve(String href,
-                      String base)
-                throws TransformerException{
-           try{
-               URI uri = new URI(href);
-               if(uri.isAbsolute()){
-                   //leave it as it is
-               } else if (base.startsWith("jar:")){
-                   int lastslash = base.lastIndexOf('/');
-                   if(lastslash >= 0){
-                       uri = new URI(base.substring(0, lastslash + 1) + href);
-                   } else {
-                       uri = new URI(base + "/" + href);
-                   }
-               } else {
-                   URI baseuri = new URI(base);
-                   uri = baseuri.resolve(uri);
-               }
-               URL url = uri.toURL();
-               InputStream in = url.openStream();
-               Source src = new StreamSource(new BufferedInputStream(in));
-               src.setSystemId(url.toString());
-               return src;
-           } catch (Exception ex){
-               throw new TransformerException(ex);
-           }
-        }
-    }
 }

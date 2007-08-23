@@ -43,7 +43,6 @@ import java.text.ParseException;
  **/
 public class GUIUtils{
     private static GUIUtils instance;
-    private InputVerifier verifier;
 
     private GUIUtils(){
     }
@@ -145,14 +144,13 @@ public class GUIUtils{
         return placed;
     }
 
-    public synchronized void installInputVerifier(JFormattedTextField ftf){
-        if(verifier == null){
-            verifier = new FormattedTextFieldVerifier();
-        }
-        ftf.setInputVerifier(verifier);
+    public void installInputVerifier(JFormattedTextField ftf){
+        ftf.setInputVerifier(FormattedTextFieldVerifier.INSTANCE);
     }
 
-    private static class FormattedTextFieldVerifier extends InputVerifier {
+    private final static class FormattedTextFieldVerifier extends InputVerifier {
+        static InputVerifier INSTANCE = new FormattedTextFieldVerifier();
+
         public FormattedTextFieldVerifier(){
             //sole constructor
         }

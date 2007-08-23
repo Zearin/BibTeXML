@@ -63,6 +63,7 @@ import de.mospace.swing.LookAndFeelMenu;
 import de.mospace.swing.PathInput;
 import de.mospace.swing.text.DocumentOutputStream;
 import net.sourceforge.bibtexml.BibTeXConverter.*;
+import net.sourceforge.bibtexml.util.XSLTUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -99,9 +100,9 @@ public class SaxonGUI extends JFrame implements ActionListener{
 
     private SaxonGUI() throws SAXException, IOException{
         super("Saxon GUI");
-        Object tf = convert.tryToGetTransformerFactory();
+        Object tf = XSLTUtils.getInstance().tryToGetTransformerFactory();
         if(tf == null){
-            tf = convert.loadTransformerFactory(this);
+            tf = XSLTUtils.getInstance().loadTransformerFactory(this);
         }
         init(tf != null);
         String styledirpath = PREF.get("styledir", null);

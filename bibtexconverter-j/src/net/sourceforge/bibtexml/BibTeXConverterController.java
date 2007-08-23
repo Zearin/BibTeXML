@@ -77,6 +77,7 @@ import de.mospace.swing.PathInput;
 import de.mospace.xml.XMLUtils;
 import net.sourceforge.bibtexml.metadata.*;
 import net.sourceforge.bibtexml.util.GUIUtils;
+import net.sourceforge.bibtexml.util.XSLTUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -113,9 +114,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
 
     public BibTeXConverterController(){
         super("BibTeXConverter");
-        Object tf = convert.tryToGetTransformerFactory();
+        Object tf = XSLTUtils.getInstance().tryToGetTransformerFactory();
         if(tf == null){
-            tf = convert.loadTransformerFactory(this);
+            tf = XSLTUtils.getInstance().loadTransformerFactory(this);
         }
         init(tf != null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -258,7 +259,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             public void actionPerformed(ActionEvent e){
                 (new About(BibTeXConverterController.this,
                     new ImageIcon((URL) BibTeXConverterController.class.getResource("icon/ledgreen.png")),
-                    convert.getSaxonVersion())).setVisible(true);
+                    XSLTUtils.getInstance().getSaxonVersion())).setVisible(true);
             }
         });
         menu.add(about);

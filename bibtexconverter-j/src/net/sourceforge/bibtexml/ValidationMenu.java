@@ -44,6 +44,7 @@ import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import net.sourceforge.bibtexml.util.XSLTUtils;
 
 public final class ValidationMenu extends JMenu implements ActionListener{
     private static final Preferences PREF =
@@ -202,7 +203,7 @@ public final class ValidationMenu extends JMenu implements ActionListener{
         v = new Vector<String>();
         providerMap.put(schemaLanguage, v);
 
-        ClassLoader cl = xmlconv.getClassLoader();
+        ClassLoader cl = XSLTUtils.getInstance().getClassLoader();
         Enumeration<URL> e;
         try {
             e = cl.getResources(serviceFile);
