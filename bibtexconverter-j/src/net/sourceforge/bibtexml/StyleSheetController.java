@@ -235,6 +235,9 @@ public class StyleSheetController {
         try{
             in = new BufferedInputStream(style.openStream());
             t = conv.loadStyleSheet(in, style);
+            if(t == null){
+                throw new IOException("Cannot compile style sheet.");
+            }
             if(customParams){
                 in.close();
                 in = new BufferedInputStream(style.openStream());

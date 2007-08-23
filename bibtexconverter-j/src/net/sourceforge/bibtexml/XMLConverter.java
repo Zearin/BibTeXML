@@ -25,15 +25,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.prefs.Preferences;
-import javax.swing.JFrame;
 import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -42,17 +38,15 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-import de.mospace.lang.DefaultClassLoaderProvider;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import net.sourceforge.bibtexml.util.XSLTUtils;
 
 public class XMLConverter{
     private TransformerFactory tf;
@@ -68,6 +62,7 @@ public class XMLConverter{
     private String xmlSchemaID = null;
 
     public XMLConverter(){
+        tf = XSLTUtils.getInstance().tryToGetTransformerFactory();
 
         /* Restore preferred validation engine */
         for (String schemaLanguage :
@@ -272,13 +267,18 @@ public class XMLConverter{
         return result;
     }
 
-    protected Transformer loadStyleSheet(InputStream in, URL systemId) throws TransformerConfigurationException{
+    protected synchronized Transformer loadStyleSheet(InputStream in, URL systemId) throws TransformerConfigurationException{
         Transformer t = null;
-        Source styleSrc = new StreamSource(in);
-        if(systemId != null){
-            styleSrc.setSystemId(systemId.toString());
+        if(tf == null){
+            tf = XSLTUtils.getInstance().tryToGetTransformerFactory();
         }
-        t = tf.newTransformer(styleSrc);
+        if(tf != null){
+            Source styleSrc = new StreamSource(in);
+            if(systemId != null){
+                styleSrc.setSystemId(systemId.toString());
+            }
+            t = tf.newTransformer(styleSrc);
+        }
         return t;
     }
 

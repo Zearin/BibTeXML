@@ -20,41 +20,21 @@ package net.sourceforge.bibtexml;
  */
 
 import java.awt.AWTEvent;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
-import de.mospace.lang.BrowserLauncher;
-import de.mospace.lang.ClassLoaderProvider;
-import de.mospace.lang.DefaultClassLoaderProvider;
-import de.mospace.swing.ExtensionInstaller;
-import de.mospace.swing.PathInput;
 
 /**
  * A Dialog that shows author and license information, opened
