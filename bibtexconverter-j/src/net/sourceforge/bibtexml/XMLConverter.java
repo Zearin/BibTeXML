@@ -189,7 +189,7 @@ public class XMLConverter extends DefaultClassLoaderProvider{
         return xmlValidator != null;
     }
 
-    /** @return the number of errors that occured */
+    /**  */
     public synchronized void validate(File xml) throws SAXException, IOException{
         if(xmlValidator != null){
             InputStream in = null;
@@ -362,7 +362,7 @@ public class XMLConverter extends DefaultClassLoaderProvider{
     /** Tries to obtain an instance of a Saxon TransformerFactory. If saxon
      * is not found, null is returned.
      **/
-    public synchronized TransformerFactory tryToGetTransformerFactory(){
+    public final synchronized TransformerFactory tryToGetTransformerFactory(){
         if(tf == null){
             Thread.currentThread().setContextClassLoader(getClassLoader());
             try{
@@ -468,6 +468,7 @@ public class XMLConverter extends DefaultClassLoaderProvider{
 
     private static class JarAwareURIResolver implements URIResolver{
         public JarAwareURIResolver(){
+            //sole constructor
         }
 
         public Source resolve(String href,

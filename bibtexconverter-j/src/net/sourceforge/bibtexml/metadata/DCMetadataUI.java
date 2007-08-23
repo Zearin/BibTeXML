@@ -44,7 +44,7 @@ public class DCMetadataUI extends JPanel implements ActionListener {
     private final static int TEXTFIELD_SIZE = 20;
     private static final List<Locale> locales = Arrays.asList(Locale.getAvailableLocales());
     private List<ActionListener> listenerList;
-    private Map<String, JComponent> editors = new HashMap<String, JComponent>();
+    final private Map<String, JComponent> editors = new HashMap<String, JComponent>();
 
     /** @throws NullPointerException if field is <code>null</code>.
         @throws ClassCastException if value is of incorrect type.
@@ -55,10 +55,8 @@ public class DCMetadataUI extends JPanel implements ActionListener {
         if(comp instanceof JTextComponent){
             ((JTextComponent) comp).setText((String) value);
         } else if (comp instanceof JComboBox){
-            if("language".equals(fieldlc)){
-                if(locales.indexOf(value) >= 0){
-                    ((JComboBox) comp).setSelectedItem(((Locale) value).getDisplayName());
-                }
+            if("language".equals(fieldlc) && locales.indexOf(value) >= 0){
+                ((JComboBox) comp).setSelectedItem(((Locale) value).getDisplayName());
             }
         }
     }

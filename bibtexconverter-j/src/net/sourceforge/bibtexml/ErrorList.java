@@ -18,16 +18,35 @@ package net.sourceforge.bibtexml;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
+import javax.swing.JOptionPane;
+import javax.swing.BorderFactory;
+import javax.swing.JScrollPane;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.BoxLayout;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.JLabel;
+import javax.swing.JFrame;
 import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
 import de.mospace.swing.SortedSetListModel;
+import net.sourceforge.bibtexml.util.GUIUtils;
 
 /** Provides the component for displaying errors in a structured manner. */
 public class ErrorList{
@@ -124,7 +143,7 @@ public class ErrorList{
                     return result;
                 }
             };
-            StyleSheetController.placeWindow(editor.window(), parent);
+            GUIUtils.getInstance().placeWindow(editor.window(), parent);
         }
         return editor;
     }

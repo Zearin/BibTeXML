@@ -20,44 +20,56 @@ package net.sourceforge.bibtexml;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
-import java.util.Properties;
-import javax.xml.transform.OutputKeys;
-import de.mospace.xml.SaxXMLWriter;
 import net.sourceforge.texlipse.bibparser.Bib2JDomParser;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
-import org.xml.sax.SAXException;
-import org.jdom.*;
+import org.jdom.Document;
 
+/** A BibTeXParser based on Oscar Ojala's SableCC-generated
+* TeXLipse parser that returns the parse result as a JDOM BibTeXML tree.
+* @see net.sourceforge.texlipse.bibparser.Bib2JDomParser
+**/
 public class TeXLipseParser extends AbstractBibTeXParser{
     private Bib2JDomParser parser;
-    private boolean hasErrors = false;
+    private boolean hasErrors;
 
+    /** Constructs a new parser that will use the specified charset to read
+    * BibTeX input from a byte source such as a file or input stream.
+    */
     public TeXLipseParser(String charset)
             throws IllegalCharsetNameException, UnsupportedCharsetException {
         super(charset);
     }
 
+    /** Constructs a new parser that will use the specified charset to read
+    * BibTeX input from a byte source such as a file or input stream and that
+    * will optionally remove bytes that are not in this charset
+    * from the input before trying to decode it.
+    * @param cleanInput whether to remove illegal byte sequences from the input
+    */
     public TeXLipseParser(String inputChars, boolean cleanInput)
             throws IllegalCharsetNameException, UnsupportedCharsetException {
         super(inputChars, cleanInput);
     }
 
-    /** does not close stream */
+    /** Reads BibTeX from the specified reader and converts it to BibTeXML.
+    * If an error handler has been specified this method will use it to
+    * handle parse errors. Otherwise an IOException is thrown for the first
+    * parse error.
+    */
     public Document parse(BufferedReader reader) throws IOException{
         hasErrors = false;
         parser = new Bib2JDomParser(reader);
-        ArrayList errors = parser.getErrors();
+        ArrayList<ParseErrorMessage> errors = parser.getErrors();
         if(errors != null && !errors.isEmpty()){
             hasErrors = true;
-            for(Object error : errors){
+            for(ParseErrorMessage error : errors){
                 if(errorhandler == null){
                     throw new IOException(error.toString());
                 } else {
-                    errorhandler.error((ParseErrorMessage) error);
+                    errorhandler.error(error);
                 }
             }
         }

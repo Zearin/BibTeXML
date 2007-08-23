@@ -20,21 +20,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package net.sourceforge.texlipse.bibparser;
-
+/** A class describing a single BibTeX author name. */
 public class Author{
-      
       private final String familyName;
       private final String[] givenNames;
       private final String junior;
-      private final static java.util.regex.Pattern containsLowerCaseWord = 
+      private final static java.util.regex.Pattern containsLowerCaseWord =
         java.util.regex.Pattern.compile("(.*?)\\b([\\p{L}&&[^\\p{Lu}]].*)");
-      
+
+      /** Constructs a new Author from the specified name parts. */
       public Author(String familyName, String[] givenNames, String junior){
           this.familyName = familyName.trim();
           this.givenNames = givenNames;
           this.junior = junior;
       }
-      
+
+      /** Constructs a new Author by parsing the specified string according
+         to the BibTeX rules for author names.
+         @throws ParseException if bibTeXAuthor does not conform to the
+         BibTeX rules for author names.
+      */
       public Author(String bibTeXAuthor) throws java.text.ParseException{
           bibTeXAuthor = bibTeXAuthor.trim();
           String[] parts = bibTeXAuthor.split(" *, *",-1);
@@ -49,7 +54,7 @@ public class Author{
               givenNames = parts[1].split("[ ~]", -1);
               junior = null;
               break;
-          case 1: //First von Last 
+          case 1: //First von Last
               int lastBlank = bibTeXAuthor.lastIndexOf(' ');
               java.util.regex.Matcher m = containsLowerCaseWord.matcher(bibTeXAuthor);
               junior = null;
@@ -61,7 +66,7 @@ public class Author{
                   givenNames = (gN.length() == 0)? new String[0] : gN.split("[ ~]");
               } else if(lastBlank != -1){
                   //we have no von part and use the last blank as the beginning
-                  //of the family name 
+                  //of the family name
                   familyName = bibTeXAuthor.substring(lastBlank + 1).trim();
                   givenNames = bibTeXAuthor.substring(0, lastBlank).split("[ ~]");
               } else {
@@ -74,8 +79,8 @@ public class Author{
               throw new java.text.ParseException("Cannot parse " + bibTeXAuthor + " as an author name.", 0);
           }
       }
-      
-      /** returns this author in "von Last, Jr, First" form */
+
+      /** Returns this Author in "von Last, Jr, First" form, */
       public String toString(){
           StringBuilder sb = new StringBuilder();
           sb.append(familyName);
@@ -90,7 +95,7 @@ public class Author{
           }
           return sb.toString();
       }
-      
+
       private boolean hasTwoWordFamilyName(){
           return (familyName.indexOf(' ') > 0) || (familyName.indexOf('~') > 0);
       }

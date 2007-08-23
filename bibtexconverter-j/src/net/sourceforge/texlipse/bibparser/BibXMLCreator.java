@@ -30,8 +30,12 @@ import org.jdom.*;
 
 
 /**
- * Retrieves the BibTeX entries from the AST and prints them as BibXML.
- *
+ * Builds a BibTeXML tree from the AST of BibTeX entries. Instances
+ * of this class are re-usable and can be
+ * applied to several ASTs sequentially. A new Document will be started
+ * whenever a new AST root node is encountered.<br>
+ * This class is not thread-safe and each thread must create its own instance.
+ * <p>
  * This class is a visitor, that is applied on the AST that is a result of parsing a
  * BibTeX-file. See <a href="http://www.sablecc.org">http://www.sablecc.org</a> for
  * more information on the structure of the AST and the visitors.
@@ -43,14 +47,23 @@ public final class BibXMLCreator extends DepthFirstAdapter {
     private transient Element root;
     private transient Element entry;
     private transient Element entrysub;
+    /** The BibTeXML namespace. **/
     public static final String BIB_NAMESPACE = "http://bibtexml.sf.net/";
+    /** A regular expression describing the separator in author lists.**/
     final static Pattern AUTHOR_REX = Pattern.compile("\\s+and\\s+");
+    /** A regular expression describing the separator in keyword lists.**/
     final static Pattern KEYWORDS_REX = Pattern.compile("\\s*[,;]\\s*");
+    /** A regular expression describing one or more whitespace characters.**/
     final static Pattern WHITESPACE_REX = Pattern.compile("\\s+");
     private transient String key = "";
     private transient String entryType;
     private int entryCount = 0;
 
+    /** Normalizes whitespace in the string argument; encodes the XML
+        special characters &, >, and <; decodes LaTeX ~, and --, and removes
+        all braces.
+        @Return the processed string
+    **/
     private static String replacements(String txt){
         String text = txt.replaceAll("\\s+", " ");
         text = text.replaceAll("&", "&amp;");
@@ -68,18 +81,30 @@ public final class BibXMLCreator extends DepthFirstAdapter {
         error = ex;
     }
 
+    /** Checks whether an exception occurred when building the
+        XML tree. **/
     public boolean checkError(){
         return error != null;
     }
 
+    /** Returns the last exception that occurred when building the XML tree.
+    * @return an exception or <code>null</code> if the XML tree was built without
+    * errors.
+    **/
     public Throwable getError(){
         return error;
     }
 
+    /** Constructs a new isntance of this class. */
     public BibXMLCreator(){
         //sole constructor
     }
-    
+
+    /** Returns the BibTeXML document that resulted from the last
+    * application of this visitor to a BibTeX AST.
+    * @return the BibTeXML document or <code>null</code> if this visitor
+    * has not been applied to an AST yet
+    */
     public Document getResultDocument(){
         return doc;
     }
@@ -109,12 +134,6 @@ public final class BibXMLCreator extends DepthFirstAdapter {
         //do nothing
     }
 
-    /**
-     * Called when entering a bibliography entry, starts
-     * forming an entry for the entry list
-     *
-     * @param node an <code>AEntry</code> value
-     */
     public void inAEntrybraceEntry(AEntrybraceEntry node) {
         entry = new Element("entry", BIB_NAMESPACE);
         entry.setAttribute("id", node.getIdentifier().getText());
@@ -122,12 +141,6 @@ public final class BibXMLCreator extends DepthFirstAdapter {
         entryCount++;
     }
 
-    /**
-     * Called when exiting a bibliography entry, adds the formed
-     * entry into the entry list
-     *
-     * @param node an <code>AEntry</code> value
-     */
     public void outAEntrybraceEntry(AEntrybraceEntry node) {
         entry = null;
     }
@@ -226,6 +239,11 @@ public final class BibXMLCreator extends DepthFirstAdapter {
         entrysub.addContent(bibnode);
     }
 
+    /** Returns the number of entries that have been converted to BibTeXML
+    * when this visitor was last applied to a BibTeX AST.
+    * @return the entry count or 0 if this visitor has not been applied to an
+    * AST yet
+    **/
     public int getEntryCount(){
         return entryCount;
     }

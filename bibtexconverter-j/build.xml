@@ -32,9 +32,11 @@
   <property
       name="javadoc"
       value="doc/api"/>
+  <property name="nsb"
+      value="net.sourceforge.bibtexml"/>
   <property
       name="app.package"
-      value="net.sourceforge.bibtexml" />
+      value="${nsb}" />
   <property
       name="app.mac.signature"
       value="btcj"/>
@@ -52,7 +54,7 @@
       value="de.mospace.swing"/>
   <property
       name="app.packageList"
-      value="de.mospace.xml, net.sourceforge.bibtexml, net.sourceforge.jeditsyntax, de.mospace.lang, ${dms}, ${dms}.text, ${dms}.event, ${dms}.table, ${dms}.icon, ${bp}, ${bp}.analysis, ${bp}.lexer, ${bp}.node ${bp}.parser, ${texclipse}.model"/>
+      value="de.mospace.xml, ${nsb}, ${nsb}.metadata, ${nsb}.util, net.sourceforge.jeditsyntax, de.mospace.lang, ${dms}, ${dms}.text, ${dms}.event, ${dms}.table, ${dms}.icon, ${bp}, ${bp}.analysis, ${bp}.lexer, ${bp}.node ${bp}.parser, ${texlipse}.model"/>
   <property
       name="app.mainClass"
       value="net.sourceforge.bibtexml.BibTeXConverter"/>

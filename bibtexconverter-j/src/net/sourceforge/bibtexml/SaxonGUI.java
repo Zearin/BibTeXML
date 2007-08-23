@@ -65,18 +65,21 @@ import de.mospace.swing.text.DocumentOutputStream;
 import net.sourceforge.bibtexml.BibTeXConverter.*;
 import org.xml.sax.SAXException;
 
-/** When I wrote BibTeXConverterController I realized it can be used as
-a rather general saxon GUI. This is BibTeXConverterController minus the
-BibTeX to BibXML functionality with slightly
+/**
+THIS CLASS IS NOT ACTIVELY MAINTAINED and may break at any time (if it not
+already is broken).<p>
+When I wrote BibTeXConverterController I realized it can be used as
+a rather general saxon GUI. This is (an older version of)
+BibTeXConverterController minus the BibTeX to BibXML functionality with slightly
 different GUI labels plus some hacks to avoid that SaxonGUI and
 BibTeXConverterController use the same preference nodes. For
-this reason you should not instantiate this class cannot be instantiated
+this reason this class cannot be instantiated
 other than by invoking its main method.
 **/
 public class SaxonGUI extends JFrame implements ActionListener{
     private static final Preferences PREF =
             Preferences.userNodeForPackage(BibTeXConverterController.class).node("saxongui");
-    private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("bibconvert.png"));
+    private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("icon/configure.png"));
 
     BibTeXConverter convert = new BibTeXConverter();
 
@@ -597,7 +600,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
         }
     }
 
-    /** The method that starts up the BibTeXConverter Application. **/
+    /** The method that starts up the SaxonGUI Application. **/
     public static void main(String[] argv) throws Exception{
         StyleSheetController.PREF = PREF.node("styles");
         LookAndFeelMenu.setLookAndFeel(PREF, null);

@@ -43,9 +43,18 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import de.mospace.swing.SpringUtilities;
 
+/** This class provides dynamic schema generation and schema selection for
+ * BibTeXML validation.
+*/
 public class SchemaSelection{
+    /** The name of the parameter for datatype validation. Admissible values
+     are strict and loose. */
     public final static String DATATYPES = "datatypes";
+    /** The name of the parameter for allowed BibTeX fields. Admissible values
+    are core, user, and arbitrary. */
     public final static String FIELDS = "fields";
+    /** The name of the parameter for multiple element layout. Admissible values
+    are flat, nested, and inline. */
     public final static String STRUCTURE = "structure";
 
     private final static Font SANS_BOLD_12 = new Font("SansSerif", Font.BOLD, 12);
@@ -97,6 +106,8 @@ public class SchemaSelection{
 
     private Transformer t;
 
+    /** Creates a new instance of this class and tries to initialize it
+        from user preferences. */
     public SchemaSelection(){
         final Preferences pref = Preferences.userNodeForPackage(getClass()).node("schema");
         settings.put(DATATYPES, valueOf(
@@ -313,6 +324,8 @@ public class SchemaSelection{
         return (new StringBuilder()).append(Character.toUpperCase(str.charAt(0))).append(str.substring(1)).toString();
     }
 
+    /** Creates and shows a modal dialog that allows to choose a BibTeXML schema. This method
+      should be called from the AWT event thread. */
     public boolean showDialog(final Component parent){
         final Preferences pref = Preferences.userNodeForPackage(getClass()).node("schema");
         JDialog dialog;
@@ -366,10 +379,33 @@ public class SchemaSelection{
         return ok;
     }
 
+    /** Returns a copy of the current schema configuration. */
     public Map<String, String> getSelection(){
         final Map<String, String> result = new HashMap<String, String>();
         result.putAll(settings);
         return result;
+    }
+
+    /** Allows to programmatically set the schema configuration.
+    * @throws IllegalArgumentException if parameter is not one of
+    * DATATYPES, FIELDS, or STRUCTURE or choice is an illegal value*/
+    public void select(String parameter, String choice){
+        if(FIELDS.equals(parameter)){
+            Fields field = Enum.valueOf(Fields.class, choice);
+            settings.put(FIELDS, choice);
+            select(fields, choice);
+        } else if (DATATYPES.equals(parameter)){
+            DataTypes type = Enum.valueOf(DataTypes.class, choice);
+            settings.put(DATATYPES, choice);
+            select(datatypes, choice);
+        } else if (STRUCTURE.equals(parameter)){
+            Structure struc = Enum.valueOf(Structure.class, choice);
+            settings.put(STRUCTURE, choice);
+            select(structure, choice);
+        } else {
+            throw new IllegalArgumentException("No such parameter " + parameter);
+        }
+        Preferences.userNodeForPackage(getClass()).node("schema").put(parameter, choice);
     }
 
     private void select(final ButtonGroup group, final String actionCommand){
@@ -383,6 +419,8 @@ public class SchemaSelection{
         }
     }
 
+    /** Returns whether the specified schema language is supported by
+     *  {@link #getSchemaSource}. */
     public boolean isSchemaLanguageSupported(final String schemaLanguage){
         return schemaLanguage.equals(XMLConstants.RELAXNG_NS_URI);
     }
@@ -438,13 +476,6 @@ public class SchemaSelection{
         /* wrap the new schema as a source object */
         final ByteArrayInputStream schema = new ByteArrayInputStream(os.toByteArray());
         return new StreamSource(schema, systemID);
-    }
-
-    public static void main(final String[] argv) throws Exception{
-        final SchemaSelection s = new SchemaSelection();
-        if(s.showDialog(null)){
-            System.out.println(s.getSelection());
-        }
     }
 
 }

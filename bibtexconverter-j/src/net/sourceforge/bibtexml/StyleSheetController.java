@@ -18,18 +18,11 @@ package net.sourceforge.bibtexml;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import static javax.swing.SwingConstants.BOTTOM;
-import static javax.swing.SwingConstants.LEFT;
-import static javax.swing.SwingConstants.RIGHT;
-import static javax.swing.SwingConstants.TOP;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Frame;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
@@ -42,18 +35,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.ArrayList;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import javax.swing.InputVerifier;
 import javax.swing.JFormattedTextField;
 import javax.swing.SpringLayout;
 import javax.swing.JCheckBox;
@@ -66,7 +53,6 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.JLabel;
-import javax.swing.JComponent;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -74,6 +60,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import de.mospace.swing.SpringUtilities;
 import de.mospace.xml.XSLParamHandler;
 import org.xml.sax.SAXException;
+import net.sourceforge.bibtexml.util.GUIUtils;
 
 public class StyleSheetController {
     static Preferences PREF =
@@ -224,96 +211,12 @@ public class StyleSheetController {
                 dialog.setContentPane(custom);
                 dialog.pack();
             }
-            placeWindow(dialog, w);
+            GUIUtils.getInstance().placeWindow(dialog, w);
             dialog.setVisible(true);
         }
     }
 
-    private static boolean snapTo(final Rectangle screen,
-            final Rectangle w,
-            final Rectangle target,
-            final Collection<Rectangle> others,
-            final int where)
-    {
-        Point p = target.getLocation();
-        switch(where){
-            case RIGHT: p.x += target.width; //right
-            break;
-            case LEFT: p.x -= w.width; //left
-            break;
-            case BOTTOM: p.y += target.height; //bottom
-            break;
-            case TOP: p.y -= w.height; //top
-            break;
-            default: throw new IllegalArgumentException("Only LEFT, RIGHT, TOP, BOTTOM allowed");
-        }
-        w.setLocation(p);
-        if(screen.contains(w) && !intersects(w, others)){
-            return true;
-        }
-        return false;
-    }
 
-    private static boolean intersects(Rectangle w, Collection<Rectangle> others){
-        for(Rectangle r : others){
-            if(w.intersects(r)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    static boolean placeWindow(final Window w, final Window owner){
-        if(owner == null){
-            return false;
-        }
-        final Set<Window> others = new HashSet<Window>();
-        others.addAll(Arrays.asList(owner.getOwnedWindows()));
-        others.remove(w);
-        others.add(owner);
-        final Rectangle sb = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-        final Rectangle wb = w.getBounds();
-        final Collection<Rectangle> other = new TreeSet<Rectangle>(
-        new Comparator<Rectangle>(){
-            public int compare(Rectangle a, Rectangle b){
-                int result = b.x - a.x;
-                if(result == 0){
-                    result = - b.y + a.y;
-                }
-                return result;
-            }
-        });
-        for(Window ww : others){
-            if(ww.isVisible()){
-                other.add(ww.getBounds());
-            }
-        }
-        final Rectangle ob = owner.getBounds();
-        boolean placed = snapTo(sb, wb, ob, other, RIGHT);
-        if(!placed){
-            for(Rectangle target : other){
-                if(
-                    !target.equals(ob) &&
-                    snapTo(sb, wb, target, other, BOTTOM)
-                ){
-                    placed = true;
-                    break;
-                }
-            }
-        }
-        if(!placed){
-            for(Rectangle target : other){
-                if(snapTo(sb, wb, target, other, RIGHT)){
-                    placed = true;
-                    break;
-                }
-            }
-        }
-        if(placed){
-            w.setLocation(wb.getLocation());
-        }
-        return placed;
-    }
 
     public String toString(){
         return getName();
@@ -415,7 +318,6 @@ public class StyleSheetController {
             rowcount ++;
         }
         if(customParams){
-            final InputVerifier iv = new FormattedTextFieldVerifier();
             final Preferences pref2 = pref.node(P_NODE_PARAM);
             String[] keys = null;
             try{
@@ -452,7 +354,7 @@ public class StyleSheetController {
                     custom.add(jcb);
                 } else {
                     final JFormattedTextField ftf = new JFormattedTextField(o);
-                    ftf.setInputVerifier(iv);
+                    GUIUtils.getInstance().installInputVerifier(ftf);
                     tf = ftf;
                 }
                 if(tf != null){
@@ -532,33 +434,6 @@ public class StyleSheetController {
         pref.removeNode();
     }
 
-    private static class FormattedTextFieldVerifier extends InputVerifier {
-        public FormattedTextFieldVerifier(){
-            //sole constructor
-        }
-
-        public boolean verify(final JComponent input) {
-            if (input instanceof JFormattedTextField) {
-                final JFormattedTextField ftf = (JFormattedTextField)input;
-                final JFormattedTextField.AbstractFormatter formatter =
-                ftf.getFormatter();
-                if (formatter != null) {
-                    final String text = ftf.getText();
-                    try {
-                        formatter.stringToValue(text);
-                        return true;
-                    } catch (ParseException pe) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-        public boolean shouldYieldFocus(final JComponent input) {
-            return verify(input);
-        }
-    }
-
     public boolean isActive(){
         return active;
     }
@@ -582,26 +457,6 @@ public class StyleSheetController {
 
     public void setErrorHandler(final ErrorListener handler){
         t.setErrorListener(handler);
-    }
-
-    public static void main(final String[] argv){
-        SwingUtilities.invokeLater(new Runnable(){
-            public void run(){
-                try{
-                    final BibTeXConverterController btcc =
-                        new BibTeXConverterController();
-                    btcc.setVisible(true);
-                    btcc.addStyle(new StyleSheetController(btcc.convert,
-                    "test", ".test", new File(argv[0]).toURI().toURL(), true, true, true));
-                    btcc.addStyle(new StyleSheetController(btcc.convert,
-                    "RIS (Reference Manager/Endnote)", ".ris",
-                    XMLConverter.class.getResource("bibxml2ris.xsl"),
-                    false, false, true));
-                } catch (Exception ex){
-                    throw new RuntimeException(ex);
-                }
-            }
-        });
     }
 
     public synchronized void dispose(){

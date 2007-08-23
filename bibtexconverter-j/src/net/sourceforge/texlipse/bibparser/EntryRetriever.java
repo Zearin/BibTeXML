@@ -47,14 +47,14 @@ import net.sourceforge.texlipse.model.ReferenceEntry;
  */
 public final class EntryRetriever extends DepthFirstAdapter {
 
-    private ArrayList entries = new ArrayList(); //type: ReferenceEntry
+    private ArrayList<ReferenceEntry> entries = new ArrayList<ReferenceEntry>(); //type: ReferenceEntry
     private ReferenceEntry currEntry;
     private StringBuffer currEntryInfo;
 
     /**
      * @return The entries as a list of <code>ReferenceEntry</code>s
      */
-    public ArrayList getEntries() {
+    public ArrayList<ReferenceEntry> getEntries() {
         return entries;
     }
 

@@ -18,29 +18,7 @@ package net.sourceforge.bibtexml.util;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
-import java.lang.reflect.Method;
-import java.util.prefs.Preferences;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-import org.jdom.Element;
-import org.jdom.Document;
-import org.jdom.Namespace;
-import org.jdom.output.XMLOutputter;
-import org.jdom.output.Format;
-
 
 /**
 

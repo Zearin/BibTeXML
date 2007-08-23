@@ -68,7 +68,6 @@ public class BibTeXConverter extends XMLConverter{
 
     /** Converts bibTex from in to BibXML using the current Parser, inputenc, and
      * xmlenc and  writes the result to out.
-     * @return the number of parse errors that occurred
      **/
     @SuppressWarnings("deprecation")
     public void bibTexToXml(final File in, final File out) throws IOException{

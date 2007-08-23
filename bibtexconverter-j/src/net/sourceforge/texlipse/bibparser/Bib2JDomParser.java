@@ -34,33 +34,32 @@ import net.sourceforge.texlipse.bibparser.node.Start;
 import net.sourceforge.texlipse.bibparser.parser.Parser;
 import net.sourceforge.texlipse.bibparser.parser.ParserException;
 import net.sourceforge.texlipse.model.ParseErrorMessage;
+import net.sourceforge.texlipse.model.ReferenceEntry;
 import org.jdom.Document;
 
 //import org.eclipse.core.resources.IMarker;
 
 
 /**
- * BibTeX parser front-end. After creation, the parsing is done by calling
- * the getEntries() -method, after which getAbbrevs() and getErrors() should
- * be called (otherwise the data returned by these two is essentially meaningless.)
+ * A BibTeX parser whose parse result can be retrieved as a BibTeXML tree.
  *
  * @author Oskar Ojala, Moritz Ringler
  */
 public class Bib2JDomParser {
     private final Reader reader;
 
-    private final ArrayList errors;
+    private final ArrayList<ParseErrorMessage> errors = new ArrayList<ParseErrorMessage>();
     private Start ast;
     public static final int SEVERITY_ERROR = 2;
 
     /**
-     * Constructs a new BibTeX parser.
+     * Constructs a new Bib2JDomParser and immediately starts parsing the
+     * BibTeX from the supplied reader.
      *
      * @param r A reader to the BibTeX-data to parse
      */
     public Bib2JDomParser(Reader r) throws IOException{
         this.reader = r;
-        this.errors = new ArrayList();
         try {
             BibLexer l;
             l = new BibLexer(new PushbackReader(reader, 1024));
@@ -92,22 +91,27 @@ public class Bib2JDomParser {
 
 
     /**
-     * Parses the document, constructs a list of the entries and returns
+     * Constructs a list of the entries in the parsed bibtex file and returns
      * them.
      *
-     * @return BibTeX entries (<code>ReferenceEntry</code>)
+     * @return a list of BibTeX entries
      */
-    public ArrayList getEntries() throws IOException, FileNotFoundException {
+    public ArrayList<ReferenceEntry> getEntries() throws IOException, FileNotFoundException {
         EntryRetriever er = new EntryRetriever();
         ast.apply(er);
         return er.getEntries();
     }
 
+    /** Constructs a BibTeXML tree from the parsed bibtex file.
+    * The BibTeXML is laid out according to BibTeXConverter's builtin
+    * bibtexml-*-*-flat Relax NG schema.
+    * @see BibXMLCreator#getResultDocument
+    */
     public Document getResultDocument() throws IOException{
         BibXMLCreator xmlmaker = new BibXMLCreator();
         ast.apply(xmlmaker);
         if(xmlmaker.checkError()){
-            IOException ex = new IOException("Error writing xml file.");
+            IOException ex = new IOException("Error creating XML tree.");
             ex.initCause(xmlmaker.getError());
             throw ex;
         } else {
@@ -118,19 +122,10 @@ public class Bib2JDomParser {
         return xmlmaker.getResultDocument();
     }
 
-    /*
-    public void printXML(PrintWriter writer){
-        BibXMLCreator xmlmaker = new BibXMLCreator(writer);
-        ast.apply(xmlmaker);
-        if(writer.checkError()){
-            System.err.println("Error writing to file");
-        }
-    }*/
-
     /**
-     * @return Returns the abbreviations (<code>ReferenceEntry</code>)
+     * @return Returns the abbreviations.
      */
-    public ArrayList getAbbrevs() {
+    public ArrayList<ReferenceEntry> getAbbrevs() {
         if (ast != null) {
             AbbrevRetriever ar = new AbbrevRetriever();
             ast.apply(ar);
@@ -142,7 +137,7 @@ public class Bib2JDomParser {
     /**
      * @return Returns the errors.
      */
-    public ArrayList getErrors() {
+    public ArrayList<ParseErrorMessage> getErrors() {
         return errors;
     }
 }

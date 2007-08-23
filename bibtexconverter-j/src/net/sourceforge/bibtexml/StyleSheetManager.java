@@ -53,7 +53,7 @@ class StyleSheetManager {
         for(StyleSheetController style : builtins){
             if(style != null){
                 builtInNames[i++] = style.getName();
-                addStyle(style);
+                addStyleImpl(style);
             }
         }
         this.builtins = builtins;
@@ -64,7 +64,7 @@ class StyleSheetManager {
 
         try{
         for(StyleSheetController style : StyleSheetController.load(convert, builtInNames)){
-            addStyle(style);
+            addStyleImpl(style);
         }
         } catch (Exception ex){
             ex.printStackTrace();
@@ -91,6 +91,10 @@ class StyleSheetManager {
         return (hasStyles())?
             styles.toArray(new StyleSheetController[styles.size()]):
             null;
+    }
+
+    public boolean addStyle(StyleSheetController style){
+        return addStyleImpl(style);
     }
 
     public boolean addStyle(){
@@ -201,7 +205,7 @@ class StyleSheetManager {
         return result;
     }
 
-    synchronized public boolean addStyle(StyleSheetController cssc){
+    synchronized private boolean addStyleImpl(StyleSheetController cssc){
         if(cssc == null){
             return false;
         }

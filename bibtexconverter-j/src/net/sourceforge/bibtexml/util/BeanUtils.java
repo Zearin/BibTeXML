@@ -22,24 +22,11 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.lang.reflect.Method;
 import java.util.prefs.Preferences;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 import org.jdom.Element;
-import org.jdom.Document;
-import org.jdom.Namespace;
-import org.jdom.output.XMLOutputter;
-import org.jdom.output.Format;
 
 /**
 
@@ -93,7 +80,7 @@ public class BeanUtils{
         return result;
     }
 
-    /** Loads a bean saved using {@link save}. **/
+    /** Loads a bean saved using {@link #save}. **/
     public <T> T load(Preferences node, Class<T> clazz) throws java.beans.IntrospectionException{
         T result = null;
         try{
