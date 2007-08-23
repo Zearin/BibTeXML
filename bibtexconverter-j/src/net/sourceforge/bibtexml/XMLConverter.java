@@ -45,6 +45,8 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXException;
 import net.sourceforge.bibtexml.util.XSLTUtils;
 
@@ -142,6 +144,11 @@ public class XMLConverter{
 
     public boolean hasSchema(){
         return xmlValidator != null;
+    }
+
+    public boolean getValidatorFeature(String name) throws SAXNotRecognizedException,
+                          SAXNotSupportedException{
+        return hasSchema() && xmlValidator.getFeature(name);
     }
 
     /**  */

@@ -66,14 +66,51 @@ public class BibTeXConverter extends XMLConverter{
         this.metadata = metadata;
     }
 
-    /** Converts bibTex from in to BibXML using the current Parser, inputenc, and
-     * xmlenc and  writes the result to out.
+    /** Converts bibTex from in to BibXML using the current settings and
+    * writes the result to out.
      **/
-    @SuppressWarnings("deprecation")
     public void bibTexToXml(final File in, final File out) throws IOException{
         if(in.equals(out)){
             throw new IOException("Trying to overwrite input file.");
         }
+        OutputStream outs = new BufferedOutputStream(new FileOutputStream(out));
+        Format format = Format.getPrettyFormat().setEncoding(getXMLEncoding().name());
+        (new XMLOutputter(format)).output(bibTexToXml(in), outs);
+    }
+
+    /** Converts bibTex from in to BibXML. This method can be used if
+    * you want to validate or apply an XSLT transformation to the newly
+    * built XML document without writing it to a file and reading it back
+    * into memory. The drawback is that validation or transformation errors
+    * cannot be located and fixed.<p>
+    * Note that the Validator and the Transformer might not
+    * support JDOMSource objects; in this case you must convert the
+    * JDOM Document to W3C DOM using an org.jdom.output.DOMOutputter
+    * and create a DOMSource from the resulting W3C DOM document, e. g.
+    * <pre>
+    * File input = (new File("bibtex.bib")).getAbsoluteFile();
+    * File pseudoXML = new File(input.getParentFile(), "inMemory.xml");
+    * String sysID = pseudoXML.toURI().toURL().toString();
+    * org.jdom.Document jdom = bibTexToXml(input);
+    *
+    * bibtexconverter.setXMLSchema(mySchemaURL);
+    * boolean supportsJDOM = false;
+    * try{
+    *   supportsJDOM = bibtexconverter.getValidatorFeature(org.jdom.transform.JDOMSource.JDOM_FEATURE);
+    * } catch (Exception ex){
+    * }
+    * Source src = null;
+    * if (supportsJDOM){
+    *   src = new org.jdom.transform.JDOMSource(jdom);
+    * } else {
+    *   org.w3c.dom.Document w3cdom = (new org.jdom.output.DOMOutputter()).output(jdom);
+    *   src = new javax.xml.transform.dom.DOMSource(w3cdom, sysID);
+    * }
+    * bibtexconverter.validate(src);
+    * </pre>
+    **/
+    @SuppressWarnings("deprecation")
+    public Document bibTexToXml(final File in) throws IOException{
         AbstractBibTeXParser p = null;
         switch(parser){
             case TEXLIPSE:
@@ -83,21 +120,14 @@ public class BibTeXConverter extends XMLConverter{
                 throw new IOException("No such parser: "+ parser.toString());
         }
         p.setErrorHandler(bibErrorHandler);
+        Document bibtexml = null;
         if(p != null){
-            Document bibtexml = p.parse(in);
+            bibtexml = p.parse(in);
             fillInMetadata();
-            try{
             Element metanode = new Element("metadata", BIB_NAMESPACE);
             bibtexml.getRootElement().addContent(0, metadata.toXML(metanode));
-            Format format = Format.getPrettyFormat().setEncoding(getXMLEncoding().name());
-            OutputStream outs = new BufferedOutputStream(new FileOutputStream(out));
-            (new XMLOutputter(format)).output(bibtexml, outs);
-            } catch (Error ex){
-                ex.printStackTrace();
-                System.err.flush();
-                throw ex;
-            }
         }
+        return bibtexml;
     }
 
     private void fillInMetadata(){
