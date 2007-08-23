@@ -28,6 +28,8 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.List;
+import java.util.ArrayList;
 import java.lang.reflect.Method;
 import java.util.prefs.Preferences;
 import org.xml.sax.EntityResolver;
@@ -41,17 +43,17 @@ import org.jdom.Namespace;
 import org.jdom.output.XMLOutputter;
 import org.jdom.output.Format;
 import net.sourceforge.bibtexml.util.BeanUtils;
+import net.sourceforge.bibtexml.util.BeanUtils.JDOMPropertyHandler;
 
 
 /** A simple java bean representation of the Dublin Core Metadata
 Element Set (DCMES). The semiclolon ';' character is interpreted
 as a record separator on XML output for all String fields
 except description.
-@see http://dublincore.org/documents/2006/12/18/dces/
+@see <a href="http://dublincore.org/documents/2006/12/18/dces/">Dublin Core Dublin Core Metadata Element Set, Version 1.1</a>
 **/
 public class DCMetadata implements Serializable{
     static final String ISO_DATE = "yyyy-MM-dd'T'HH:mm:ssZ";
-    public static final String BIB_NAMESPACE = "http://bibtexml.sf.net/";
     public static final String DC_NAMESPACE_URI = "http://purl.org/dc/elements/1.1/";
     public static final Namespace DC_NAMESPACE = Namespace.getNamespace("dc", DC_NAMESPACE_URI);
 
@@ -74,7 +76,8 @@ public class DCMetadata implements Serializable{
     public DCMetadata(){
     }
 
-    /** Copy constructor. **/
+    /** Returns a new DCMetadata instance with the same public properties
+        as this object. **/
     public DCMetadata createCopy(){
         try{
             return BeanUtils.getInstance().copyBean(this, getClass());
@@ -83,6 +86,10 @@ public class DCMetadata implements Serializable{
         }
     }
 
+    /** Creates a new DCMetada object and initializes its state from the
+        specified preferences node.
+        @see #save
+        **/
     public static DCMetadata load(Preferences node){
         try{
             return BeanUtils.getInstance().load(node, DCMetadata.class);
@@ -91,6 +98,10 @@ public class DCMetadata implements Serializable{
         }
     }
 
+    /** Saves the state of this DCMetada object to the
+        specified preferences node.
+        @see #load
+        **/
     public void save(Preferences node){
         try{
             BeanUtils.getInstance().save(node, this);
@@ -101,6 +112,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of creator.
+    * URI  http://purl.org/dc/elements/1.1/creator
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#creator">Dublin Core Dublin Core Metadata Element Set, Version 1.1: creator</a>
     */
     public String getCreator()
     {
@@ -109,6 +122,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of creator.
+    * URI  http://purl.org/dc/elements/1.1/creator
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#creator">Dublin Core Dublin Core Metadata Element Set, Version 1.1: creator</a>
     * @param creator The value to assign creator.
     */
     public void setCreator(String creator)
@@ -131,6 +146,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of format.
+    * URI  http://purl.org/dc/elements/1.1/format
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#format">Dublin Core Dublin Core Metadata Element Set, Version 1.1: format</a>
     */
     public String getFormat()
     {
@@ -139,6 +156,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of format.
+    * URI  http://purl.org/dc/elements/1.1/format
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#format">Dublin Core Dublin Core Metadata Element Set, Version 1.1: format</a>
     * @param format The value to assign format.
     */
     public void setFormat(String format)
@@ -148,6 +167,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of title.
+    * URI  http://purl.org/dc/elements/1.1/title
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#title">Dublin Core Dublin Core Metadata Element Set, Version 1.1: title</a>
     */
     public String getTitle()
     {
@@ -156,6 +177,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of title.
+    * URI  http://purl.org/dc/elements/1.1/title
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#title">Dublin Core Dublin Core Metadata Element Set, Version 1.1: title</a>
     * @param title The value to assign title.
     */
     public void setTitle(String title)
@@ -165,6 +188,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of subject.
+    * URI  http://purl.org/dc/elements/1.1/subject
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#subject">Dublin Core Dublin Core Metadata Element Set, Version 1.1: subject</a>
     */
     public String getSubject()
     {
@@ -173,6 +198,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of subject.
+    * URI  http://purl.org/dc/elements/1.1/subject
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#subject">Dublin Core Dublin Core Metadata Element Set, Version 1.1: subject</a>
     * @param subject The value to assign subject.
     */
     public void setSubject(String subject)
@@ -182,6 +209,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of description.
+    * URI  http://purl.org/dc/elements/1.1/description
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#description">Dublin Core Dublin Core Metadata Element Set, Version 1.1: description</a>
     */
     public String getDescription()
     {
@@ -190,6 +219,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of description.
+    * URI  http://purl.org/dc/elements/1.1/description
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#description">Dublin Core Dublin Core Metadata Element Set, Version 1.1: description</a>
     * @param description The value to assign description.
     */
     public void setDescription(String description)
@@ -199,6 +230,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of publisher.
+    * URI  http://purl.org/dc/elements/1.1/publisher
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#publisher">Dublin Core Dublin Core Metadata Element Set, Version 1.1: publisher</a>
     */
     public String getPublisher()
     {
@@ -207,6 +240,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of publisher.
+    * URI  http://purl.org/dc/elements/1.1/publisher
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#publisher">Dublin Core Dublin Core Metadata Element Set, Version 1.1: publisher</a>
     * @param publisher The value to assign publisher.
     */
     public void setPublisher(String publisher)
@@ -216,6 +251,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of contributor.
+    * URI  http://purl.org/dc/elements/1.1/contributor
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#contributor">Dublin Core Dublin Core Metadata Element Set, Version 1.1: contributor</a>
     */
     public String getContributor()
     {
@@ -224,6 +261,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of contributor.
+    * URI  http://purl.org/dc/elements/1.1/contributor
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#contributor">Dublin Core Dublin Core Metadata Element Set, Version 1.1: contributor</a>
     * @param contributor The value to assign contributor.
     */
     public void setContributor(String contributor)
@@ -233,6 +272,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of date.
+    * URI  http://purl.org/dc/elements/1.1/date
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#date">Dublin Core Dublin Core Metadata Element Set, Version 1.1: date</a>
     */
     public Date getDate()
     {
@@ -241,6 +282,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of date.
+    * URI  http://purl.org/dc/elements/1.1/date
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#date">Dublin Core Dublin Core Metadata Element Set, Version 1.1: date</a>
     * @param date The value to assign date.
     */
     public void setDate(Date date)
@@ -250,6 +293,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of type.
+    * URI  http://purl.org/dc/elements/1.1/type
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#type">Dublin Core Dublin Core Metadata Element Set, Version 1.1: type</a>
     */
     public String getType()
     {
@@ -258,6 +303,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of type.
+    * URI  http://purl.org/dc/elements/1.1/type
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#type">Dublin Core Dublin Core Metadata Element Set, Version 1.1: type</a>
     * @param type The value to assign type.
     */
     public void setType(String type)
@@ -267,6 +314,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of identifier.
+    * URI  http://purl.org/dc/elements/1.1/identifier
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#identifier">Dublin Core Dublin Core Metadata Element Set, Version 1.1: identifier</a>
     */
     public String getIdentifier()
     {
@@ -275,6 +324,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of identifier.
+    * URI  http://purl.org/dc/elements/1.1/identifier
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#identifier">Dublin Core Dublin Core Metadata Element Set, Version 1.1: identifier</a>
     * @param identifier The value to assign identifier.
     */
     public void setIdentifier(String identifier)
@@ -284,6 +335,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of source.
+    * URI  http://purl.org/dc/elements/1.1/source
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#source">Dublin Core Dublin Core Metadata Element Set, Version 1.1: source</a>
     */
     public String getSource()
     {
@@ -292,6 +345,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of source.
+    * URI  http://purl.org/dc/elements/1.1/source
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#source">Dublin Core Dublin Core Metadata Element Set, Version 1.1: source</a>
     * @param source The value to assign source.
     */
     public void setSource(String source)
@@ -301,6 +356,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of language.
+    * URI  http://purl.org/dc/elements/1.1/language
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#language">Dublin Core Dublin Core Metadata Element Set, Version 1.1: language</a>
     */
     public Locale getLanguage()
     {
@@ -309,6 +366,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of language.
+    * URI  http://purl.org/dc/elements/1.1/language
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#language">Dublin Core Dublin Core Metadata Element Set, Version 1.1: language</a>
     * @param language The value to assign language.
     */
     public void setLanguage(Locale language)
@@ -318,6 +377,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of relation.
+    * URI  http://purl.org/dc/elements/1.1/relation
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#relation">Dublin Core Dublin Core Metadata Element Set, Version 1.1: relation</a>
     */
     public String getRelation()
     {
@@ -326,6 +387,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of relation.
+    * URI  http://purl.org/dc/elements/1.1/relation
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#relation">Dublin Core Dublin Core Metadata Element Set, Version 1.1: relation</a>
     * @param relation The value to assign relation.
     */
     public void setRelation(String relation)
@@ -335,6 +398,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of coverage.
+    * URI  http://purl.org/dc/elements/1.1/coverage
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#coverage">Dublin Core Dublin Core Metadata Element Set, Version 1.1: coverage</a>
     */
     public String getCoverage()
     {
@@ -343,6 +408,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Sets the value of coverage.
+    * URI  http://purl.org/dc/elements/1.1/coverage
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#coverage">Dublin Core Dublin Core Metadata Element Set, Version 1.1: coverage</a>
     * @param coverage The value to assign coverage.
     */
     public void setCoverage(String coverage)
@@ -352,6 +419,8 @@ public class DCMetadata implements Serializable{
 
     /**
     * Returns the value of rights.
+    * URI  http://purl.org/dc/elements/1.1/rights
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#rights">Dublin Core Dublin Core Metadata Element Set, Version 1.1: rights</a>
     */
     public String getRights()
     {
@@ -359,7 +428,9 @@ public class DCMetadata implements Serializable{
     }
 
     /**
-    * Sets the value of rights.
+    * Returns the value of rights.
+    * URI  http://purl.org/dc/elements/1.1/rights
+    * @see <a href="http://dublincore.org/documents/2006/12/18/dces/#rights">Dublin Core Dublin Core Metadata Element Set, Version 1.1: rights</a>
     * @param rights The value to assign rights.
     */
     public void setRights(String rights)
@@ -367,46 +438,52 @@ public class DCMetadata implements Serializable{
         this.rights = normalizeString(rights);
     }
 
-    public Document toXML(){
-        Document result = null;
-        try{
-            BeanInfo info = Introspector.getBeanInfo(DCMetadata.class);
-            PropertyDescriptor[] desc = info.getPropertyDescriptors();
-            Element root = new Element("metadata", BIB_NAMESPACE);
-            root.addNamespaceDeclaration(DC_NAMESPACE);
-            for(PropertyDescriptor pd : desc){
-                Object value = pd.getReadMethod().invoke(this);
-                String name = pd.getName();
-                if(value == null || "class".equals(name)){
-                    continue;
+    /** Adds an XML representation of this metadata object to the
+        specified JDOM Element.
+        @see <a href="http://dublincore.org/documents/2003/04/02/dc-xml-guidelines/">Guidelines for implementing Dublin Core in XML</a>
+    **/
+    public Element toXML(Element container){
+        container.addNamespaceDeclaration(DC_NAMESPACE);
+        return BeanUtils.getInstance().toXML(jdomPropertyHandler(), container, this);
+    }
+
+    private static JDOMPropertyHandler myPropertyHandler;
+    protected synchronized JDOMPropertyHandler jdomPropertyHandler(){
+        if(myPropertyHandler == null){
+            myPropertyHandler = new JDOMPropertyHandler(){
+                public Element[] toElements(Class type, String name, Object value){
+                    Element[] result = null;
+                    if (String.class.equals(type) && !"description".equals(name)){
+                        result = toElements(name, value.toString());
+                    } else {
+                        Element metanode = new Element(name, DC_NAMESPACE);
+                        if (Date.class.equals(type)){
+                            metanode.setText((new SimpleDateFormat(ISO_DATE)).format((Date) value));
+                        } else if(Locale.class.equals(type)){
+                            metanode.setText(value.toString().replaceAll("_","-"));
+                        } else if(String.class.equals(type)){
+                            metanode.setText(value.toString());
+                        }
+                        result = new Element[]{metanode};
+                    }
+                    return result;
                 }
-                Class type = pd.getPropertyType();
-                if (String.class.equals(type) && !"description".equals(name)){
-                    String[] entries = value.toString().split("\\s*;\\s*");
+
+                private Element[] toElements(String name, String value){
+                    List<Element> result = new ArrayList<Element>();
+                    String[] entries = value.split("\\s*;\\s*");
                     for(String entry : entries){
                         if(entry.length() != 0){
                             Element metanode = new Element(name, DC_NAMESPACE);
                             metanode.setText(entry);
-                            root.addContent(metanode);
+                            result.add(metanode);
                         }
                     }
-                } else {
-                    Element metanode = new Element(name, DC_NAMESPACE);
-                    if (Date.class.equals(type)){
-                        metanode.setText((new SimpleDateFormat(ISO_DATE)).format((Date) value));
-                    } else if(Locale.class.equals(type)){
-                        metanode.setText(value.toString().replaceAll("_","-"));
-                    } else {
-                        metanode.setText(value.toString());
-                    }
-                    root.addContent(metanode);
+                    return result.toArray(new Element[result.size()]);
                 }
-            }
-            result = new Document(root);
-        } catch (Exception ex){
-            throw new Error(ex);
+            };
         }
-        return result;
+        return myPropertyHandler;
     }
 
     public static DCMetadata fromXML(InputSource in, EntityResolver resolver) throws IOException, SAXException{
@@ -442,7 +519,7 @@ public class DCMetadata implements Serializable{
         d.setModal(true);
         d.setVisible(true);
         (new XMLOutputter(Format.getPrettyFormat())).
-        output(d.getMetadata().toXML(), System.out);
+        output(d.getMetadata().toXML(new Element("metadata")), System.out);
     }
 
 }

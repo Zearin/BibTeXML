@@ -158,4 +158,33 @@ public class BeanUtils{
         }
     }
 
+    public static interface JDOMPropertyHandler{
+        public Element[] toElements(Class type, String name, Object value);
+    }
+
+    public Element toXML(JDOMPropertyHandler handler, Element container, Object bean){
+        try{
+            BeanInfo info = Introspector.getBeanInfo(bean.getClass());
+            PropertyDescriptor[] desc = info.getPropertyDescriptors();
+            for(PropertyDescriptor pd : desc){
+                Method getter = pd.getReadMethod();
+                if(getter == null){
+                    continue;
+                }
+                Object value = getter.invoke(bean);
+                String name = pd.getName();
+                if(value == null || "class".equals(name)){
+                    continue;
+                }
+                Class type = pd.getPropertyType();
+                for(Element e : handler.toElements(type, name, value)){
+                    container.addContent(e);
+                }
+            }
+        } catch (Exception ex){
+            throw new Error(ex);
+        }
+        return container;
+    }
+
 }
