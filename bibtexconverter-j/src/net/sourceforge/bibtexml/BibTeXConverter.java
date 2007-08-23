@@ -30,11 +30,13 @@ import javax.xml.validation.*;
 import de.mospace.swing.LookAndFeelMenu;
 import net.sourceforge.bibtexml.metadata.*;
 import org.jdom.Document;
+import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 public class BibTeXConverter extends XMLConverter{
     private final static boolean CLEAN_INPUT = true;
+    public static final String BIB_NAMESPACE = "http://bibtexml.sf.net/";
     private DCMetadata metadata;
 
     protected final static Parser DEFAULT_PARSER = Parser.TEXLIPSE;
@@ -85,10 +87,17 @@ public class BibTeXConverter extends XMLConverter{
         if(p != null){
             Document bibtexml = p.parse(in);
             fillInMetadata();
-            bibtexml.getRootElement().addContent(0, metadata.toXML().detachRootElement());
+            try{
+            Element metanode = new Element("metadata", BIB_NAMESPACE);
+            bibtexml.getRootElement().addContent(0, metadata.toXML(metanode));
             Format format = Format.getPrettyFormat().setEncoding(getXMLEncoding().name());
             OutputStream outs = new BufferedOutputStream(new FileOutputStream(out));
             (new XMLOutputter(format)).output(bibtexml, outs);
+            } catch (Error ex){
+                ex.printStackTrace();
+                System.err.flush();
+                throw ex;
+            }
         }
     }
 
