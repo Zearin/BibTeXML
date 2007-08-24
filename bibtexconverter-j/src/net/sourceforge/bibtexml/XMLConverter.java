@@ -49,6 +49,7 @@ import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXException;
 import net.sourceforge.bibtexml.util.XSLTUtils;
+import de.mospace.xml.DraconianErrorHandler;
 
 public class XMLConverter{
     private TransformerFactory tf;
@@ -60,7 +61,7 @@ public class XMLConverter{
     public final static String JARV_RELAXNG_SF
         = "org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl";
     private Charset xmlenc = DEFAULT_ENC;
-    protected ErrorHandler saxErrorHandler = new ErrorCounter();
+    protected ErrorHandler saxErrorHandler = DraconianErrorHandler.getInstance();
     private String xmlSchemaID = null;
 
     public XMLConverter(){
@@ -88,7 +89,13 @@ public class XMLConverter{
         return xmlenc;
     }
 
+    /** Passing null will re-install the initial
+    * {@link de.mospace.xml.DraconianErrorHandler DraconianErrorHandler}
+    **/
     public void setValidationErrorHandler(ErrorHandler handler){
+        if(handler == null){
+            saxErrorHandler = DraconianErrorHandler.getInstance();
+        }
         saxErrorHandler = handler;
     }
 
@@ -149,6 +156,11 @@ public class XMLConverter{
     public boolean getValidatorFeature(String name) throws SAXNotRecognizedException,
                           SAXNotSupportedException{
         return hasSchema() && xmlValidator.getFeature(name);
+    }
+
+    public boolean getTransformerFeature(String name) throws SAXNotRecognizedException,
+                          SAXNotSupportedException{
+       return tf != null && tf.getFeature(name);
     }
 
     /**  */
