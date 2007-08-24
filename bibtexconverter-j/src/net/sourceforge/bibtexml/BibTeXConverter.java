@@ -91,7 +91,7 @@ public class BibTeXConverter extends XMLConverter{
     * File input = (new File("bibtex.bib")).getAbsoluteFile();
     * File pseudoXML = new File(input.getParentFile(), "inMemory.xml");
     * String sysID = pseudoXML.toURI().toURL().toString();
-    * org.jdom.Document jdom = bibTexToXml(input);
+    * org.jdom.Document jdom = bibtexconverter.bibTexToXml(input);
     *
     * bibtexconverter.setXMLSchema(mySchemaURL);
     * boolean supportsJDOM = false;
@@ -99,7 +99,7 @@ public class BibTeXConverter extends XMLConverter{
     *   supportsJDOM = bibtexconverter.getValidatorFeature(org.jdom.transform.JDOMSource.JDOM_FEATURE);
     * } catch (Exception ex){
     * }
-    * Source src = null;
+    * javax.xml.transform.Source src = null;
     * if (supportsJDOM){
     *   src = new org.jdom.transform.JDOMSource(jdom);
     *   src.setSystemID(sysID);
