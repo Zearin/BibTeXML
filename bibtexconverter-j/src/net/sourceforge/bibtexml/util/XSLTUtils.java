@@ -86,8 +86,16 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
         }
         candidates.add(
             System.getProperty("user.home")+fs+".bibtexconverter"+fs+"lib");
-        candidates.add(
-            Preferences.userNodeForPackage(net.sourceforge.bibtexml.BibTeXConverter.class).get("saxon", null));
+        Preferences node = Preferences.userNodeForPackage(net.sourceforge.bibtexml.BibTeXConverter.class);
+        String path = node.get("saxon", null);
+        if(path != null){
+            File f = new File(path);
+            if(f.isFile()){
+                f = f.getAbsoluteFile().getParentFile();
+                path = f.getPath();
+            }
+        }
+        candidates.add(path);
         for (String cf : candidates){
             if(cf != null){
                 File f = new File(cf);
@@ -261,7 +269,9 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
         }
 
         public boolean installSaxon(final JFrame trigger, final ClassLoaderProvider clp){
-            final String jhjars = "saxon8.jar";
+            final String saxon8jar = "saxon8.jar";
+            final String saxon8domjar = "saxon8-jdom.jar";
+            final String saxon8jdomjar = "saxon8-dom.jar";
             final String saxonURI =
             "http://sf.net/project/showfiles.php?group_id=29872&package_id=21888";
             final ExtensionInstaller extInst = new ExtensionInstaller(trigger);
@@ -329,7 +339,7 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
                 dialogPane.add(dl);//2
             }
 
-            final String filename = (freshInstall? "downloaded Saxon zip" : jhjars);
+            final String filename = (freshInstall? "downloaded Saxon zip" : saxon8jar);
             text = new JLabel(
                 "<html><br>Please enter the location of the "+
                 filename +
@@ -438,14 +448,18 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
                     File ftarget = new File(starget);
                     ftarget.mkdirs();
                     extInst.setTargetDirectory(ftarget);
-                    final String saxon_jar = (new File(jhjars)).getName();
-                    ftarget = new File(ftarget, saxon_jar);
+                    final String saxon_jar = (new File(saxon8jar)).getName();
+                    //ftarget = new File(ftarget, saxon_jar);
                     Preferences.userNodeForPackage(net.sourceforge.bibtexml.BibTeXConverter.class)
                     .put("saxon", ftarget.getAbsolutePath());
-                    if(extInst.installExtension(new File(pinz.getPath()), jhjars)){
+                    //try to install saxon8-dom.jar and saxon8-jdom.jar
+                    extInst.installExtension((new File(pinz.getPath(), saxon8domjar)));
+                    extInst.installExtension((new File(pinz.getPath(), saxon8jdomjar)));
+                    //install saxon.jar
+                    if(extInst.installExtension(new File(pinz.getPath()), saxon8jar)){
                         JOptionPane.showMessageDialog(trigger,
                             "Saxon has been installed successfully.");
-                        clp.registerLibrary(ftarget);
+                        clp.registerLibraryDirectory(ftarget);
                     } else {
                         JOptionPane.showMessageDialog(trigger,
                             "<html>Saxon installation failed. " +
@@ -457,7 +471,10 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
                     }
                 }
             } else if (success){
-                final File ftarget = new File(pinz.getPath());
+                File ftarget = new File(pinz.getPath());
+                if(!ftarget.isDirectory()){
+                    ftarget = ftarget.getAbsoluteFile().getParentFile();
+                }
                 Preferences.userNodeForPackage(net.sourceforge.bibtexml.BibTeXConverter.class)
                 .put("saxon", ftarget.getAbsolutePath());
                 success  = clp.registerLibrary(ftarget);
