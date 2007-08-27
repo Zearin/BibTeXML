@@ -213,7 +213,7 @@ class StyleSheetManager {
             styles = new HashSet<StyleSheetController>();
         }
         boolean result = styles.add(cssc);
-        if(result){
+        if(result && styleContainer != null){
             styleContainer.add(cssc.getUI());
         }
         return result;
@@ -261,7 +261,7 @@ class StyleSheetManager {
         boolean result = styles.remove(cssc);
         if(result){
             styleContainer.remove(cssc.getUI());
-            cssc.dispose();
+            cssc.disposeUI();
         }
         return result;
     }
