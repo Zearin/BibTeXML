@@ -57,11 +57,14 @@ import de.mospace.swing.ExtensionInstaller;
 import de.mospace.swing.PathInput;
 
 /**
-    XSLT utilities
+    This class configures JAXP to use an XSLT 2.0
+    transformation engine (currently saxon).
  **/
 public class XSLTUtils extends DefaultClassLoaderProvider{
     public final static String TRANSFORMER_FACTORY_IMPLEMENTATION =
             "net.sf.saxon.TransformerFactoryImpl";
+    public final static String DOCUMENT_BUILDER_FACTORY_IMPLEMENTATION =
+            "net.sf.saxon.dom.DocumentBuilderFactoryImpl";
 
     private static XSLTUtils instance;
     private TransformerFactory tf;
@@ -186,6 +189,9 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
                 System.out.println("Saxon found in " +
                         DefaultClassLoaderProvider.getRepositoryRoot(
                         tf.getClass()));
+                //we make saxon our default document builder
+                System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+                    DOCUMENT_BUILDER_FACTORY_IMPLEMENTATION);
                 double saxonversion = 0;
                 try{
                     String sv = getSaxonVersion("ProductVersion");
