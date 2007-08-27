@@ -158,22 +158,26 @@ public class BibTeXConverter extends XMLConverter{
     /** The method that starts up the BibTeXConverter Application. **/
     public static void main(final String[] argv) throws Exception{
         System.setSecurityManager(null);
-        LookAndFeelMenu.setLookAndFeel(
-            Preferences.userNodeForPackage(BibTeXConverterController.class),
-            null);
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        SwingUtilities.invokeLater(new Runnable(){
-            public void run(){
-                final java.io.PrintStream syserr = System.err;
-                try{
-                    (new BibTeXConverterController()).setVisible(true);
-                } catch (Exception ex){
-                    System.setErr(syserr);
-                    ex.printStackTrace();
-                    System.exit(1);
-                }
-            }
-        });
+        if(argv.length > 0 && "--nogui".equals(argv[0])){
+            BibTeXConverterController.noGUI();
+        } else {
+            LookAndFeelMenu.setLookAndFeel(
+                Preferences.userNodeForPackage(BibTeXConverterController.class),
+                null);
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            SwingUtilities.invokeLater(new Runnable(){
+                    public void run(){
+                        final java.io.PrintStream syserr = System.err;
+                        try{
+                            (new BibTeXConverterController()).setVisible(true);
+                        } catch (Exception ex){
+                            System.setErr(syserr);
+                            ex.printStackTrace();
+                            System.exit(1);
+                        }
+                    }
+            });
+        }
     }
 
     /** The available BibTeX parsers. **/

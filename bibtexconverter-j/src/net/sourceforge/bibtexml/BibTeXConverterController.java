@@ -125,7 +125,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             System.err.println("Only XML output is possible.");
             styleManager = null;
         } else {
-            styleManager = new StyleSheetManager(convert, styleContainer, builtInStyles(), errorHandler);
+            styleManager = new StyleSheetManager(convert, styleContainer, builtInStyles(convert), errorHandler);
         }
         pack();
 
@@ -144,31 +144,94 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         System.out.flush();
     }
 
-    private Collection<StyleSheetController> builtInStyles(){
+    public static void noGUI() throws IOException, TransformerException{
+        final BibTeXConverter btc = new BibTeXConverter();
+        final InputType inputType = Enum.valueOf(InputType.class,
+                PREF.get(INPUT_PREFIX, InputType.BIBTEX.name()));
+        final boolean isBibTeX =  (InputType.BIBTEX == inputType);
+        final File inp = new File(PREF.get("InputFile", ""));
+        if(isBibTeX){
+            btc.setBibTeXEncoding(
+            Charset.forName(PREF.get(ENCODING_PREFIX + InputType.class.getName(),
+                BibTeXConverter.DEFAULT_ENC.name())));
+            btc.setXMLEncoding(Charset.forName(
+                PREF.get(ENCODING_XML, BibTeXConverter.DEFAULT_ENC.name())));
+            btc.setMetadata(DCMetadata.load(PREF.node(PREF_DEFAULT_META)));
+        }
+        final File outdir = new File(PREF.get("OutputDir", ""));
+        final StyleSheetManager styleManager = new StyleSheetManager(btc, null,
+            builtInStyles(btc), null);
+        final File[] inf = inp.isDirectory()?
+            inp.listFiles(
+                new FileFilter(){
+                    public boolean accept(File file){
+                        return file.isFile() && file.getName().endsWith(inputType.extension());
+                    }
+                }
+                )
+            : new File[]{inp};
+        FILELOOP: for(File inputf : inf){
+            System.out.println("CONVERTING " + inputf.getPath());
+                System.out.flush();
+            File xml = inputf;
+            final String basename = getBasename(inputf);
+            if(isBibTeX){
+                xml = new File(outdir, basename + ".xml");
+                System.out.println("Creating XML in " + xml.getPath());
+                btc.bibTexToXml(inputf, xml);
+            }
+            //no validation
+            boolean html = false;
+            if(styleManager.hasStyles()){
+                for(StyleSheetController cssc : styleManager.getStyles()){
+                    if(cssc.isActive()){
+                        cssc.transform(xml, outdir, basename);
+                        if( cssc.getName().equals("HTML (flat)") ||
+                            cssc.getName().equals("HTML (grouped)") )
+                        {
+                            html = true;
+                        }
+                    }
+                }
+            }
+            if(html){
+                /* Creates CSS and JavaScript used by the HTML output. */
+                btc.copyResourceToFile("xslt/default.css", outdir);
+                btc.copyResourceToFile("xslt/toggle.js", outdir);
+            }
+            System.out.flush();
+            System.err.flush();
+        }
+        System.out.println("FINISHED.");
+        System.out.flush();
+    }
+
+    private static Collection<StyleSheetController> builtInStyles(BibTeXConverter konvert){
+        Class clazz = BibTeXConverterController.class;
         final List<StyleSheetController> builtins = new ArrayList<StyleSheetController>();
         builtins.add(
-            StyleSheetController.newInstance(convert, "BibTeX", "-new.bib",
-                    getClass().getResource("xslt/bibxml2bib.xsl"),
+            StyleSheetController.newInstance(konvert, "BibTeX", "-new.bib",
+                    clazz.getResource("xslt/bibxml2bib.xsl"),
                     true, true, true));
         builtins.add(
-            StyleSheetController.newInstance(convert, "RIS (Reference Manager & Endnote)", ".ris",
-                    getClass().getResource("xslt/bibxml2ris.xsl"),
+            StyleSheetController.newInstance(konvert, "RIS (Reference Manager & Endnote)", ".ris",
+                    clazz.getResource("xslt/bibxml2ris.xsl"),
                     false, false, true));
         builtins.add(
-            StyleSheetController.newInstance(convert, "Endnote Export", ".enw",
-                    getClass().getResource("xslt/bibxml2enw.xsl"),
+            StyleSheetController.newInstance(konvert, "Endnote Export", ".enw",
+                    clazz.getResource("xslt/bibxml2enw.xsl"),
                     false, false, true));
         builtins.add(
-            StyleSheetController.newInstance(convert, "HTML (flat)", "-flat.html",
-                    getClass().getResource("xslt/bibxml2htmlf.xsl"),
+            StyleSheetController.newInstance(konvert, "HTML (flat)", "-flat.html",
+                    clazz.getResource("xslt/bibxml2htmlf.xsl"),
                     true, true, false));
         builtins.add(
-            StyleSheetController.newInstance(convert, "HTML (grouped)", "-grouped.html",
-                        getClass().getResource("xslt/bibxml2htmlg.xsl"),
+            StyleSheetController.newInstance(konvert, "HTML (grouped)", "-grouped.html",
+                        clazz.getResource("xslt/bibxml2htmlg.xsl"),
                         true, true, false));
         builtins.add(
-            StyleSheetController.newInstance(convert, "DocBook 4.5 bibliography", "-docbook.xml",
-                        getClass().getResource("xslt/bibxml2docbook.xsl"),
+            StyleSheetController.newInstance(konvert, "DocBook 4.5 bibliography", "-docbook.xml",
+                        clazz.getResource("xslt/bibxml2docbook.xsl"),
                         true, true, false));
         return builtins;
     }
@@ -546,6 +609,32 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         xmlconfig.setVisible(true);
     }
 
+    private static String getBasename(File inputf){
+        String basename = inputf.getName();
+        final int lastdot = basename.lastIndexOf('.');
+        if(lastdot >= 0){
+            basename = basename.substring(0, lastdot);
+        }
+        return basename;
+    }
+
+    private static Charset readXMLEncoding(final File xml) throws IOException{
+        InputStream is = null;
+        try{
+            is = new FileInputStream(xml);
+            is = new BufferedInputStream(is);
+            final String enc = XMLUtils.getXMLDeclarationEncoding(new InputStreamReader(is, "utf-8"), "utf-8");
+            return Charset.forName(enc);
+        } finally {
+            try{
+                is.close();
+            } catch (Exception ex){
+                System.err.println(ex);
+                System.err.flush();
+            }
+        }
+    }
+
     private void doConversion(){
         msgPane.showConsole();
 
@@ -593,8 +682,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             }
             PREF.put("OutputDir", dir.getPath());
 
-            File[] inf = null;
-            inf = inp.isDirectory()?
+            final File[] inf = inp.isDirectory()?
             inp.listFiles(
                 new FileFilter(){
                     public boolean accept(File file){
@@ -614,11 +702,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 }
                 System.out.println("CONVERTING " + inputf.getPath());
                 System.out.flush();
-                String basename = inputf.getName();
-                final int lastdot = basename.lastIndexOf('.');
-                if(lastdot >= 0){
-                    basename = basename.substring(0, lastdot);
-                }
+                final String basename = getBasename(inputf);
 
                 File xml = inputf;
 
@@ -651,26 +735,13 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                     }
                 } else {
                     /* read xml encoding */
-                    InputStream is = null;
                     try{
-                        is = new FileInputStream(xml);
-                        is = new BufferedInputStream(is);
-                        final String enc = XMLUtils.getXMLDeclarationEncoding(new InputStreamReader(is, "utf-8"), "utf-8");
-                        xmlencoding = Charset.forName(enc);
+                        xmlencoding = readXMLEncoding(xml);
                         System.out.println("XML Encoding: " + xmlencoding.name());
                     } catch (IOException ex){
                         convert.handleException("*** ERROR READING XML ***", ex);
                         parseErrors = 0;
                         break FILELOOP;
-                    } finally {
-                        if(is != null){
-                            try{
-                                is.close();
-                            } catch (Exception ex){
-                                System.err.println(ex);
-                                System.err.flush();
-                            }
-                        }
                     }
                 }
                 System.err.flush();
