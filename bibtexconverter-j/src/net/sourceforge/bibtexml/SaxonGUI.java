@@ -527,7 +527,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
         boolean result = styles.remove(cssc);
         if(result){
             styleContainer.remove(cssc.getUI());
-            cssc.dispose();
+            cssc.disposeUI();
         }
         return result;
     }
