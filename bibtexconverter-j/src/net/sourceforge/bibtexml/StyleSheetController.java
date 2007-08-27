@@ -32,6 +32,9 @@ import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -53,6 +56,8 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.JLabel;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -277,6 +282,23 @@ public class StyleSheetController {
 
     public boolean isActive(){
         return active;
+    }
+
+    public void transform(final Source src, final File dir, final String basename)
+    throws TransformerException, IOException
+    {
+        final File xslout = new File(dir, basename + ext);
+        OutputStream outstream = new BufferedOutputStream(new FileOutputStream(xslout));
+        if(crlf){
+            outstream = new CRLFOutputStream(outstream);
+        }
+        System.out.printf("Creating %s in %s\n", name, xslout.toString());
+        System.out.flush();
+        try{
+            conv.transform(t, src, new StreamResult(outstream), params, enc);
+        } finally {
+            outstream.close();
+        }
     }
 
     public void transform(final File xml,

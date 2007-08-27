@@ -72,14 +72,19 @@ import javax.swing.JLabel;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.Source;
+import javax.xml.parsers.DocumentBuilderFactory;
 import de.mospace.swing.LookAndFeelMenu;
 import de.mospace.swing.PathInput;
 import de.mospace.xml.XMLUtils;
 import net.sourceforge.bibtexml.metadata.*;
 import net.sourceforge.bibtexml.util.GUIUtils;
 import net.sourceforge.bibtexml.util.XSLTUtils;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.w3c.dom.Document;
 
 public class BibTeXConverterController extends JFrame implements ActionListener{
     private static final Preferences PREF =
@@ -144,7 +149,14 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         System.out.flush();
     }
 
-    public static void noGUI() throws IOException, TransformerException{
+    /** Loads the settings last used and runs the
+        corresponding transformations without showing a GUI. This method is used
+        internally when BibTeXConverter is started with the --nogui flag.
+        Here we try to be as fast as possible, do no xml validation
+        and no error handling. If problems arise the GUI should be used.
+    **/
+    public static void noGUI() throws IOException, TransformerException,
+            javax.xml.parsers.ParserConfigurationException, SAXException{
         final BibTeXConverter btc = new BibTeXConverter();
         final InputType inputType = Enum.valueOf(InputType.class,
                 PREF.get(INPUT_PREFIX, InputType.BIBTEX.name()));
@@ -180,6 +192,16 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 System.out.println("Creating XML in " + xml.getPath());
                 btc.bibTexToXml(inputf, xml);
             }
+            //build the source tree only once
+            //XSLTUtils sets the javax.xml.parsers.DocumentBuilderFactory
+            //system property to the DocumentBuilderFactoryImpl that produces
+            //the native tree format of the TransformerFactoryImpl that it
+            //instantiates
+            InputStream xmlstream = new BufferedInputStream(new FileInputStream(xml));
+            InputSource xmlin = new InputSource(xmlstream);
+            xmlin.setSystemId(xml.toURI().toURL().toString());
+            Document srctree = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlin);
+            Source src = new DOMSource(srctree);
             //no validation
             boolean html = false;
             if(styleManager.hasStyles()){
