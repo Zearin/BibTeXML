@@ -94,7 +94,7 @@
 <!-- author / editor -->
   <xsl:template
       match="bibtex:author|bibtex:editor">
-    <xsl:variable name="risid" select="if (local-name() eq 'author') then 'AU - ' else 'ED - '" />
+    <xsl:variable name="risid" select="if (local-name() eq 'author') then 'AU  - ' else 'ED  - '" />
     <xsl:for-each select="tokenize(normalize-space(text()), ' and ', 'i')">
       <xsl:value-of select="$risid" />
       <xsl:apply-templates select="foo:parse-author(.)/foo:person"/>
