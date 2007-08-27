@@ -440,43 +440,8 @@ public class DCMetadata implements Serializable{
         return BeanUtils.getInstance().toXML(jdomPropertyHandler(), container, this);
     }
 
-    private static JDOMPropertyHandler myPropertyHandler;
-    protected synchronized JDOMPropertyHandler jdomPropertyHandler(){
-        if(myPropertyHandler == null){
-            myPropertyHandler = new JDOMPropertyHandler(){
-                public Element[] toElements(Class type, String name, Object value){
-                    Element[] result = null;
-                    if (String.class.equals(type) && !"description".equals(name)){
-                        result = toElements(name, value.toString());
-                    } else {
-                        Element metanode = new Element(name, DC_NAMESPACE);
-                        if (Date.class.equals(type)){
-                            metanode.setText((new SimpleDateFormat(ISO_DATE)).format((Date) value));
-                        } else if(Locale.class.equals(type)){
-                            metanode.setText(value.toString().replaceAll("_","-"));
-                        } else if(String.class.equals(type)){
-                            metanode.setText(value.toString());
-                        }
-                        result = new Element[]{metanode};
-                    }
-                    return result;
-                }
-
-                private Element[] toElements(String name, String value){
-                    List<Element> result = new ArrayList<Element>();
-                    String[] entries = value.split("\\s*;\\s*");
-                    for(String entry : entries){
-                        if(entry.length() != 0){
-                            Element metanode = new Element(name, DC_NAMESPACE);
-                            metanode.setText(entry);
-                            result.add(metanode);
-                        }
-                    }
-                    return result.toArray(new Element[result.size()]);
-                }
-            };
-        }
-        return myPropertyHandler;
+    protected JDOMPropertyHandler jdomPropertyHandler(){
+        return MyJDOMPropertyHandler.INSTANCE;
     }
 
     public static DCMetadata fromXML(InputSource in, EntityResolver resolver) throws IOException, SAXException{
@@ -515,4 +480,41 @@ public class DCMetadata implements Serializable{
         output(d.getMetadata().toXML(new Element("metadata")), System.out);
     }
 
+    private static class MyJDOMPropertyHandler implements JDOMPropertyHandler{
+        public static JDOMPropertyHandler INSTANCE = new MyJDOMPropertyHandler();
+
+        private MyJDOMPropertyHandler(){
+        }
+
+        public Element[] toElements(Class type, String name, Object value){
+            Element[] result = null;
+            if (String.class.equals(type) && !"description".equals(name)){
+                result = toElements(name, value.toString());
+            } else {
+                Element metanode = new Element(name, DC_NAMESPACE);
+                if (Date.class.equals(type)){
+                    metanode.setText((new SimpleDateFormat(ISO_DATE)).format((Date) value));
+                } else if(Locale.class.equals(type)){
+                    metanode.setText(value.toString().replaceAll("_","-"));
+                } else if(String.class.equals(type)){
+                    metanode.setText(value.toString());
+                }
+                result = new Element[]{metanode};
+            }
+            return result;
+        }
+
+        private Element[] toElements(String name, String value){
+            List<Element> result = new ArrayList<Element>();
+            String[] entries = value.split("\\s*;\\s*");
+            for(String entry : entries){
+                if(entry.length() != 0){
+                    Element metanode = new Element(name, DC_NAMESPACE);
+                    metanode.setText(entry);
+                    result.add(metanode);
+                }
+            }
+            return result.toArray(new Element[result.size()]);
+        }
+    };
 }
