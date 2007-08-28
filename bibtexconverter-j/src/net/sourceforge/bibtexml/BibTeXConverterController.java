@@ -189,9 +189,11 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             File xml = inputf;
             final String basename = getBasename(inputf);
             if(isBibTeX){
+                long nanoTime = System.nanoTime();
                 xml = new File(outdir, basename + ".xml");
                 System.out.println("Creating XML in " + xml.getPath());
                 btc.bibTexToXml(inputf, xml);
+                System.out.println("Time (s): " + (System.nanoTime() - nanoTime)/1e9);
             }
             long nanoTime = System.nanoTime();
             // It turned out that storing the source in memory
@@ -219,7 +221,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 }
             }
             /* reusable source *///src.dispose();
-            System.out.println((System.nanoTime() - nanoTime)/1e9);
+            System.out.println("Time (s): " + (System.nanoTime() - nanoTime)/1e9);
             if(html){
                 /* Creates CSS and JavaScript used by the HTML output. */
                 btc.copyResourceToFile("xslt/default.css", outdir);
@@ -662,6 +664,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     }
 
     private void doConversion(){
+        long nanoTime = System.nanoTime();
         msgPane.showConsole();
 
         final File inp = getInputFile();
@@ -887,7 +890,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 }
             }
             System.err.flush();
-            System.out.println("FINISHED\n");
+            System.out.println("FINISHED after " + (System.nanoTime() - nanoTime)/1e9 + " s\n");
             System.out.flush();
             if(parseErrors  > 0){
                 msgPane.showErrors();
