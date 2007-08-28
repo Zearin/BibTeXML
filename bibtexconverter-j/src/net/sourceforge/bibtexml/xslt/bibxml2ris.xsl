@@ -209,26 +209,19 @@
 
 <!-- starting page/end page -->
   <xsl:template match="bibtex:pages">
-    <xsl:variable
-        name="tokens"
-        select="tokenize(bibtex:pages,'(-)|(--)')" />
-    <xsl:choose>
-      <xsl:when test="contains(bibtex:pages,'-')">
-        <xsl:call-template name="field">
-          <xsl:with-param name="risid" select="'SP'" />
-          <xsl:with-param name="value" select="$tokens[1]" />
-        </xsl:call-template>
-        <xsl:call-template name="field">
-          <xsl:with-param name="risid" select="'EP'" />
-          <xsl:with-param name="value" select="$tokens[2]" />
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:call-template name="field">
-          <xsl:with-param name="risid" select="'SP'" />
-        </xsl:call-template>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:apply-templates select="foo:parse-pages(text())/foo:pages/*"/>
+  </xsl:template>
+
+  <xsl:template match="foo:start-page">
+    <xsl:call-template name="field">
+      <xsl:with-param name="risid" select="'SP'" />
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="foo:end-page">
+    <xsl:call-template name="field">
+      <xsl:with-param name="risid" select="'EP'" />
+    </xsl:call-template>
   </xsl:template>
 
 <!-- titel -->
