@@ -81,6 +81,7 @@ import de.mospace.xml.XMLUtils;
 import net.sourceforge.bibtexml.metadata.*;
 import net.sourceforge.bibtexml.util.GUIUtils;
 import net.sourceforge.bibtexml.util.XSLTUtils;
+import net.sourceforge.bibtexml.util.ReusableSource;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -192,30 +193,33 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 System.out.println("Creating XML in " + xml.getPath());
                 btc.bibTexToXml(inputf, xml);
             }
-            //build the source tree only once
-            //XSLTUtils sets the javax.xml.parsers.DocumentBuilderFactory
-            //system property to the DocumentBuilderFactoryImpl that produces
-            //the native tree format of the TransformerFactoryImpl that it
-            //instantiates
-            InputStream xmlstream = new BufferedInputStream(new FileInputStream(xml));
-            InputSource xmlin = new InputSource(xmlstream);
-            xmlin.setSystemId(xml.toURI().toURL().toString());
-            Document srctree = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlin);
-            Source src = new DOMSource(srctree);
+            long nanoTime = System.nanoTime();
+            // It turned out that storing the source in memory
+            // as either a Saxon tree or a ByteArray gives no
+            // substantial speed advantage  compared
+            // to reading it from file each time. It seems that both I/O
+            // and parsing time are much less than the time that it takes to
+            // do the transformation and write the result.
+            //ReusableSource src = XSLTUtils.getInstance().makeReusableSource(xml);
+
             //no validation
             boolean html = false;
             if(styleManager.hasStyles()){
                 for(StyleSheetController cssc : styleManager.getStyles()){
                     if(cssc.isActive()){
+                        /* reusable source *///cssc.transform(src, outdir, basename);
                         cssc.transform(xml, outdir, basename);
                         if( cssc.getName().equals("HTML (flat)") ||
                             cssc.getName().equals("HTML (grouped)") )
                         {
                             html = true;
                         }
+                        /* reusable source *///src.rewind();
                     }
                 }
             }
+            /* reusable source *///src.dispose();
+            System.out.println((System.nanoTime() - nanoTime)/1e9);
             if(html){
                 /* Creates CSS and JavaScript used by the HTML output. */
                 btc.copyResourceToFile("xslt/default.css", outdir);

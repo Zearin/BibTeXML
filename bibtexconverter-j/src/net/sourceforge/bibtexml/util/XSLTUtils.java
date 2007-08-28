@@ -1,22 +1,22 @@
 package net.sourceforge.bibtexml.util;
 /*
- * $Id: XSLTUtils.java 326 2007-08-23 15:19:05Z ringler $
- *
- * Copyright (c) 2007 Moritz Ringler
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
+* $Id: XSLTUtils.java 326 2007-08-23 15:19:05Z ringler $
+*
+* Copyright (c) 2007 Moritz Ringler
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,24 +47,26 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.parsers.ParserConfigurationException;
 import de.mospace.lang.DefaultClassLoaderProvider;
 import de.mospace.lang.BrowserLauncher;
 import de.mospace.lang.ClassLoaderProvider;
 import de.mospace.swing.ExtensionInstaller;
 import de.mospace.swing.PathInput;
+import org.xml.sax.SAXException;
 
 /**
-    This class configures JAXP to use an XSLT 2.0
-    transformation engine (currently saxon).
- **/
+This class configures JAXP to use an XSLT 2.0
+transformation engine (currently saxon).
+**/
 public class XSLTUtils extends DefaultClassLoaderProvider{
     public final static String TRANSFORMER_FACTORY_IMPLEMENTATION =
-            "net.sf.saxon.TransformerFactoryImpl";
-    public final static String DOCUMENT_BUILDER_FACTORY_IMPLEMENTATION =
-            "net.sf.saxon.dom.DocumentBuilderFactoryImpl";
+    "net.sf.saxon.TransformerFactoryImpl";
+    private final static int MAX_IN_MEMORY_SIZE = 0x200000; //2097152
 
     private static XSLTUtils instance;
     private TransformerFactory tf;
@@ -112,7 +114,7 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
 
         /* Try to obtain a Saxon transformer factory */
         System.setProperty("javax.xml.transform.TransformerFactory",
-                            TRANSFORMER_FACTORY_IMPLEMENTATION);
+            TRANSFORMER_FACTORY_IMPLEMENTATION);
         tf = tryToGetTransformerFactory();
     }
 
@@ -159,8 +161,8 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
     public synchronized TransformerFactory loadTransformerFactory(final JFrame trig){
         if(tf == null){
             /* We first try to load from the existing class path and library
-             * directories.
-             */
+            * directories.
+            */
             tf = tryToGetTransformerFactory();
         }
 
@@ -179,19 +181,16 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
     }
 
     /** Tries to obtain an instance of a Saxon TransformerFactory. If saxon
-     * is not found, null is returned.
-     **/
+    * is not found, null is returned.
+    **/
     public final synchronized TransformerFactory tryToGetTransformerFactory(){
         if(tf == null){
             Thread.currentThread().setContextClassLoader(getClassLoader());
             try{
                 tf = TransformerFactory.newInstance();
                 System.out.println("Saxon found in " +
-                        DefaultClassLoaderProvider.getRepositoryRoot(
+                    DefaultClassLoaderProvider.getRepositoryRoot(
                         tf.getClass()));
-                //we make saxon our default document builder
-                System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
-                    DOCUMENT_BUILDER_FACTORY_IMPLEMENTATION);
                 double saxonversion = 0;
                 try{
                     String sv = getSaxonVersion("ProductVersion");
@@ -489,38 +488,72 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
         }
     }
 
-   private static class JarAwareURIResolver implements URIResolver{
+    private static class JarAwareURIResolver implements URIResolver{
         public JarAwareURIResolver(){
             //sole constructor
         }
 
         public Source resolve(String href,
-                      String base)
-                throws TransformerException{
-           try{
-               URI uri = new URI(href);
-               if(uri.isAbsolute()){
-                   //leave it as it is
-               } else if (base.startsWith("jar:")){
-                   int lastslash = base.lastIndexOf('/');
-                   if(lastslash >= 0){
-                       uri = new URI(base.substring(0, lastslash + 1) + href);
-                   } else {
-                       uri = new URI(base + "/" + href);
-                   }
-               } else {
-                   URI baseuri = new URI(base);
-                   uri = baseuri.resolve(uri);
-               }
-               URL url = uri.toURL();
-               InputStream in = url.openStream();
-               Source src = new StreamSource(new BufferedInputStream(in));
-               src.setSystemId(url.toString());
-               return src;
-           } catch (Exception ex){
-               throw new TransformerException(ex);
-           }
+            String base)
+        throws TransformerException{
+            try{
+                URI uri = new URI(href);
+                if(uri.isAbsolute()){
+                    //leave it as it is
+                } else if (base.startsWith("jar:")){
+                    int lastslash = base.lastIndexOf('/');
+                    if(lastslash >= 0){
+                        uri = new URI(base.substring(0, lastslash + 1) + href);
+                    } else {
+                        uri = new URI(base + "/" + href);
+                    }
+                } else {
+                    URI baseuri = new URI(base);
+                    uri = baseuri.resolve(uri);
+                }
+                URL url = uri.toURL();
+                InputStream in = url.openStream();
+                Source src = new StreamSource(new BufferedInputStream(in));
+                src.setSystemId(url.toString());
+                return src;
+            } catch (Exception ex){
+                throw new TransformerException(ex);
+            }
         }
+    }
+
+    /** This method returns a Source that can be used by several transformers.
+        When Saxon DOM support is installed the returned Source will be a
+        DOMSource wrapping a Saxon
+        <code>net.sf.saxon.dom.DocumentOverNodeInfo</code>. Otherwise the
+        Source will be a StreamSource wrapping a ByteArrayInputStream
+        or a FileInputStream depending on the file size. In the latter two
+        cases rewind() will close the input stream and open a new
+        input stream on the underlying byte source, and dispose() will
+        close the input stream.<p>
+        The speed advantage that could be achieved with
+        in-memory sources compared to re-reading the source from file
+        for each transformation was not significant when I tested this.
+    **/
+    public ReusableSource makeReusableSource(File f) throws IOException{
+        ReusableSource result = null;
+        TransformerFactory tf = tryToGetTransformerFactory();
+        if(tf != null && tf.getFeature(DOMSource.FEATURE)){
+            try{
+                result = SaxonDOMSource.newInstance(f, getClassLoader());
+            } catch (SAXException ex){
+            } catch (ParserConfigurationException ex){
+            }
+        }
+        if(result == null){
+            if (f.length() < MAX_IN_MEMORY_SIZE){
+                result = new ByteArraySource(f);
+            } else {
+                result = new FileSource(f);
+            }
+        }
+        System.out.println(result.getClass());
+        return result;
     }
 
 }
