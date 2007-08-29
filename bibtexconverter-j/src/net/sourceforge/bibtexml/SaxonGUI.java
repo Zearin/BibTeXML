@@ -79,7 +79,7 @@ other than by invoking its main method.
 **/
 public class SaxonGUI extends JFrame implements ActionListener{
     private static final Preferences PREF =
-            Preferences.userNodeForPackage(BibTeXConverterController.class).node("saxongui");
+            Preferences.userNodeForPackage(SaxonGUI.class).node("saxongui");
     private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("icon/configure.png"));
 
     BibTeXConverter convert = new BibTeXConverter();
@@ -115,7 +115,7 @@ public class SaxonGUI extends JFrame implements ActionListener{
             /* load styles */
                 try{
                     for(StyleSheetController style :
-                            StyleSheetController.load(convert)){
+                            StyleSheetController.load(convert, PREF.node("styles"))){
                         addStyle(style);
                     }
                 } catch (Exception ex){
@@ -439,7 +439,8 @@ public class SaxonGUI extends JFrame implements ActionListener{
                         style,
                         params.isSelected(),
                         enc.isSelected(),
-                        crlf.isSelected());
+                        crlf.isSelected(),
+                        PREF.node("styles"));
                 addStyle(ssc);
             } catch (Exception ex){
                 convert.handleException(null, ex);
@@ -603,7 +604,6 @@ public class SaxonGUI extends JFrame implements ActionListener{
 
     /** The method that starts up the SaxonGUI Application. **/
     public static void main(String[] argv) throws Exception{
-        StyleSheetController.PREF = PREF.node("styles");
         LookAndFeelMenu.setLookAndFeel(PREF, null);
         SwingUtilities.invokeLater(new Runnable(){
             public void run(){
