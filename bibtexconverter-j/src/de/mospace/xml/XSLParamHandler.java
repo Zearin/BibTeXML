@@ -57,12 +57,13 @@ import org.xml.sax.helpers.XMLReaderFactory;
 *
 */
 public class XSLParamHandler extends DefaultHandler{
-    private final transient List<XSLParam> xslParam
+    private final List<XSLParam> xslParam
             = new Vector<XSLParam>();
     transient int level = 0;
     transient XSLParam p;
     transient StringBuilder contents;
     transient String xsPrefix = "";
+    private String outputType = null;
     public final static String XS_NAMESPACE =
             "http://www.w3.org/2001/XMLSchema";
     public final static String XSL_NAMESPACE =
@@ -110,8 +111,22 @@ public class XSLParamHandler extends DefaultHandler{
 
     }
 
+    public static XSLParamHandler analyze(InputStream in, EntityResolver resolver) throws SAXException, IOException{
+        XMLReader reader = XMLReaderFactory.createXMLReader();
+        reader.setFeature("http://xml.org/sax/features/namespaces", true);
+        reader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
+        XSLParamHandler params = new XSLParamHandler();
+        reader.setContentHandler(params);
+        if(resolver != null){
+            reader.setEntityResolver(resolver);
+        }
+        reader.parse(new InputSource(in));
+        return params;
+    }
+
     public void startDocument() throws SAXException{
         xslParam.clear();
+        outputType = null;
         level++;
     }
 
@@ -121,14 +136,15 @@ public class XSLParamHandler extends DefaultHandler{
 
     public void startElement(String uri, String localname, String rawname,
             Attributes atts) throws SAXException{
-                if(
-                    (level == 2) &&
-                    uri.equals(XSL_NAMESPACE) &&
-                    "param".equals(localname)
-                ){
-                    startParam(atts.getValue("name"), atts);
+                if((level == 2) && uri.equals(XSL_NAMESPACE)){
+                    if("param".equals(localname)){
+                        startParam(atts.getValue("name"), atts);
+                    } else if ("output".equals(localname)){
+                        outputType = atts.getValue("method");
+                    }
                 }
                 level ++;
+
     }
 
     private void startParam(String name, Attributes atts) throws SAXException{
@@ -252,6 +268,10 @@ public class XSLParamHandler extends DefaultHandler{
         }
     }
 
+    public String getOutputMethod(){
+        return outputType;
+    }
+
     public static void main(String[] argv) throws Exception{
         System.out.println(getStyleSheetParameters(XSLParamHandler.class.getResourceAsStream("bibxml2htmlg.xsl"), null));
     }
@@ -266,16 +286,7 @@ public class XSLParamHandler extends DefaultHandler{
     public static Map<String, Object> getStyleSheetParameters(InputStream in, EntityResolver resolver)
     throws SAXException, IOException
     {
-        XMLReader reader = XMLReaderFactory.createXMLReader();
-        reader.setFeature("http://xml.org/sax/features/namespaces", true);
-        reader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
-        XSLParamHandler params = new XSLParamHandler();
-        reader.setContentHandler(params);
-        if(resolver != null){
-            reader.setEntityResolver(resolver);
-        }
-        reader.parse(new InputSource(in));
-        return params.getStyleSheetParameters();
+        return analyze(in, resolver).getStyleSheetParameters();
     }
 
     public void startPrefixMapping(String prefix,String uri) throws SAXException{
