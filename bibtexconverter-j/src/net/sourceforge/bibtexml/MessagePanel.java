@@ -42,11 +42,6 @@ class MessagePanel extends JPanel{
     public MessagePanel(){
         super();
         setLayout(layout);
-        DocumentOutputStream output = new DocumentOutputStream(console.getDocument());
-        System.setOut(new PrintStream(new BufferedOutputStream(output), false));
-        output = new DocumentOutputStream(console.getDocument());
-        output.setColor(Color.red);
-        System.setErr(new PrintStream(new BufferedOutputStream(output), false));
         final ActionListener close = new ActionListener(){
             public void actionPerformed(final ActionEvent e){
                 showConsole();
@@ -57,6 +52,22 @@ class MessagePanel extends JPanel{
         add(errorlist.component(), ERRORS);
         layout.show(this, CONSOLE);
         setPreferredSize(new Dimension(200,200));
+    }
+
+    public void makeSystemOut(){
+        DocumentOutputStream output = new DocumentOutputStream(console.getDocument());
+        System.setOut(new PrintStream(new BufferedOutputStream(output), false));
+    }
+
+    public void makeSystemErr(){
+        DocumentOutputStream output = new DocumentOutputStream(console.getDocument());
+        output.setColor(Color.red);
+        System.setErr(new PrintStream(new BufferedOutputStream(output), false));
+        final ActionListener close = new ActionListener(){
+            public void actionPerformed(final ActionEvent e){
+                showConsole();
+            }
+        };
     }
 
     public synchronized UniversalErrorHandler getErrorHandler(){
