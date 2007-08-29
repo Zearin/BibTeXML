@@ -482,7 +482,7 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
                 }
                 Preferences.userNodeForPackage(net.sourceforge.bibtexml.BibTeXConverter.class)
                 .put("saxon", ftarget.getAbsolutePath());
-                success  = clp.registerLibrary(ftarget);
+                success  = clp.registerLibraryDirectory(ftarget);
             }
             return success;
         }
