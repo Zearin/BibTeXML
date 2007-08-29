@@ -127,9 +127,10 @@ public class BeanUtils{
             if(getter != null){
                 Object value = null;
                 try{
-                    value = getter.invoke(this);
+                    value = getter.invoke(bean);
                 } catch (Exception ex) {
-                    //ignore silently
+                    System.err.println(ex);
+                    System.err.flush();
                 }
                 if(value != null){
                     Class c = pd.getPropertyType();
@@ -139,6 +140,8 @@ public class BeanUtils{
                         node.putLong(key, ((Date) value).getTime());
                     } else if (Locale.class.equals(c)){
                         node.put(key, value.toString());
+                    } else  {
+                        //do nothing
                     }
                 }
             }
