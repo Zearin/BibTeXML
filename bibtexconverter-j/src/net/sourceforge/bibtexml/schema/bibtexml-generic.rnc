@@ -42,7 +42,7 @@ file = element file { file.attlist, metadata?, entry* }
 file.attlist  &= attribute structure {
     [ m:structure="flat" ] ( "flat" ) |
     [ m:structure="nested" ] ( "nested" ) |
-    [ m:structure="inline" ] ( "inline" ) 
+    [ m:structure="inline" ] ( "inline" )
 }?
 
 file.attlist &= attribute fields {
@@ -89,7 +89,7 @@ attlist.entry &=
 # .....................................................................
 # Parameter entities
 
-person = 
+person =
 [m:structure="nested"] (givennames? & surname & jr?) | text
 
 givennames = element givennames { text }
@@ -102,7 +102,7 @@ authors = element authors { author+ }
 editor = element editor { person }
 editors = element editors { editor+ }
 
-author.required = 
+author.required =
     [m:structure="inline"] (author) |
     [m:structure="flat"] (author+) |
     [m:structure="nested"] (authors)
@@ -111,12 +111,12 @@ author.optional =
     [m:structure="inline"] (author?) |
     [m:structure="flat"] (author*) |
     [m:structure="nested"] (authors?)
-    
-editor.required = 
+
+editor.required =
     [m:structure="inline"] (editor) |
     [m:structure="flat"] (editor+) |
     [m:structure="nested"] (editors)
-    
+
 editor.optional =
     [m:structure="inline"] (editor?) |
     [m:structure="flat"] (editor*) |
@@ -132,7 +132,7 @@ volumeOrNumber =
 # .....................................................................
 # Entries in the BibTeX database
 
-article = 
+article =
 ## [article] An article from a journal or magazine.
 ##   Required fields: author, title, journal, year.
 ##   Optional fields: volume, number, pages, month, note.
@@ -146,24 +146,24 @@ article.required =
     [ m:fields="core user" ] ( author.required & title  & journal  & year ) |
     [ m:fields="arbitrary" ] ( author.optional & title? & journal? & year?)
 
-article.optional = volume? & number? & pages? & month? & note?
+article.optional = volume? & number? & pages? & month? & note? & key?
 
 article.user =
-    user.elements & 
-    (element ( * - ( 
+    user.elements &
+    (element ( * - (
     (
         author | authors | title | journal | year |
-        volume | number | pages | month | note
-    ) | ( 
-        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
-        keywords |  language |  lccn |  location |  mrnumber |  price |  
-        size |  url |  category 
+        volume | number | pages | month | note | key
+    ) | (
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |
+        keywords |  language |  lccn |  location |  mrnumber |  price |
+        size |  url |  category
      )
      )){ text })*
 
 
 
-book = 
+book =
 ## [book] A book with an explicit publisher.
 ##   Required fields: author or editor, title, publisher, year.
 ##   Optional fields: volume or number, series, address,
@@ -179,24 +179,24 @@ book.required =
     [ m:fields="arbitrary" ] ( authorOrEditor.arbitrary & title? & publisher? & year?)
 
 book.optional =
-    volumeOrNumber & series? & address? & edition? & month? & note?
+    volumeOrNumber & series? & address? & edition? & month? & note? & key?
 
 book.user =
     user.elements &
-    (element ( * - ( 
+    (element ( * - (
     (
         author | authors | editor | editors | title | publisher | year |
-        volume | number | series | address | edition | month | note
-    ) | ( 
-        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
-        keywords |  language |  lccn |  location |  mrnumber |  price |  
-        size |  url |  category 
+        volume | number | series | address | edition | month | note | key
+    ) | (
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |
+        keywords |  language |  lccn |  location |  mrnumber |  price |
+        size |  url |  category
      )
      )){ text })*
 
 
 
-booklet = 
+booklet =
 ## [booklet] A work that is printed and bound, but without a named
 ##   publisher or sponsoring institution
 ##   Required field: title.
@@ -212,24 +212,24 @@ booklet.required =
     [ m:fields="arbitrary" ] ( title? )
 
 booklet.optional =
-    author.optional & howpublished? & address? & month? & year? & note?
+    author.optional & howpublished? & address? & month? & year? & note? & key?
 
 booklet.user =
     user.elements &
-    (element ( * - ( 
+    (element ( * - (
     (
         title |
-        author | authors | howpublished | address | month | year | note
-    ) | ( 
-        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
-        keywords |  language |  lccn |  location |  mrnumber |  price |  
-        size |  url |  category 
+        author | authors | howpublished | address | month | year | note | key
+    ) | (
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |
+        keywords |  language |  lccn |  location |  mrnumber |  price |
+        size |  url |  category
      )
      )){ text })*
 
 
 
-inbook = 
+inbook =
 ## [inbook] A part of a book, which may be a chapter (or section or
 ##   whatever) and/or a range of pages.
 ##   Required fields: author or editor, title, chapter and/or pages,
@@ -260,24 +260,24 @@ inbook.required =
      )
 
 inbook.optional =
-    volumeOrNumber & series? & type? & address? & edition? & month? & note?
+    volumeOrNumber & series? & type? & address? & edition? & month? & note? & key?
 
 inbook.user =
     user.elements &
-    (element ( * - ( 
+    (element ( * - (
     (
        author | authors | editor | editors | title | chapter | pages | publisher | year |
-       volume | number | series | type | address | edition | month | note
-    ) | ( 
-        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
-        keywords |  language |  lccn |  location |  mrnumber |  price |  
-        size |  url |  category 
+       volume | number | series | type | address | edition | month | note | key
+    ) | (
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |
+        keywords |  language |  lccn |  location |  mrnumber |  price |
+        size |  url |  category
      )
      )){ text })*
 
 
 
-incollection = 
+incollection =
 ## [incollection] A part of a book having its own title.
 ##   Required fields: author, title, booktitle, publisher, year.
 ##   Optional fields: editor, volume or number, series, type,
@@ -306,25 +306,25 @@ incollection.required =
 
 incollection.optional =
     editor.optional & volumeOrNumber & series? & type? & chapter? & pages? & address? &
-    edition? & month? & note?
+    edition? & month? & note? & key?
 
 incollection.user =
     user.elements &
-    (element ( * - ( 
+    (element ( * - (
     (
         author | authors | title | booktitle | publisher | year |
         editor | editors | volume | number | series | type | chapter | pages | address |
-        edition | month | note
-    ) | ( 
-        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
-        keywords |  language |  lccn |  location |  mrnumber |  price |  
-        size |  url |  category 
+        edition | month | note | key
+    ) | (
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |
+        keywords |  language |  lccn |  location |  mrnumber |  price |
+        size |  url |  category
      )
      )){ text })*
 
 
 
-inproceedings = 
+inproceedings =
 ## [inproceedings] An article in a conference proceedings.
 ##   Required fields: author, title, booktitle, year.
 ##   Optional fields: editor, volume or number, series, pages,
@@ -342,32 +342,32 @@ inproceedings.required =
 
 inproceedings.optional =
   editor.optional & volumeOrNumber? & series? & pages? & address? & month? &
-  organization? & publisher? & note?
+  organization? & publisher? & note? & key?
 
 inproceedings.user =
     user.elements &
-    (element ( * - ( 
+    (element ( * - (
     (
         author | authors | title | booktitle | year |
         editor | editors | volume | number | series | pages | address | month |
-        organization | publisher | note
-    ) | ( 
-        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
-        keywords |  language |  lccn |  location |  mrnumber |  price |  
-        size |  url |  category 
+        organization | publisher | note | key
+    ) | (
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |
+        keywords |  language |  lccn |  location |  mrnumber |  price |
+        size |  url |  category
      )
      )){ text })*
 
 
 
-conference =  
+conference =
 ## [conference] The same as INPROCEEDINGS,
 ##   included for Scribe compatibility.
 element conference { inproceedings.content }
 
 
 
-manual = 
+manual =
 ## [manual] Technical documentation
 ##   Required field: title.
 ##   Optional fields: author, organization, address,
@@ -384,18 +384,18 @@ manual.required =
 
 manual.optional =
     author.optional & organization? & address? & edition? & month? & year? &
-    note?
+    note? & key?
 
 manual.user =
     user.elements &
-    (element ( * - ( 
+    (element ( * - (
     (
         title | author | authors | organization | address | edition | month | year |
-        note
-    ) | ( 
-        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
-        keywords |  language |  lccn |  location |  mrnumber |  price |  
-        size |  url |  category 
+        note | key
+    ) | (
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |
+        keywords |  language |  lccn |  location |  mrnumber |  price |
+        size |  url |  category
      )
      )){ text })*
 
@@ -414,24 +414,24 @@ thesis.required =
     [ m:fields="arbitrary" ] ( author.optional & title? & school? & year? )
 
 thesis.optional =
-    type? & address? & month? & note?
+    type? & address? & month? & note? & key?
 
 thesis.user =
     user.elements &
-    (element ( * - ( 
+    (element ( * - (
     (
         author | authors | title | school | year |
-        type | address | month | note
-    ) | ( 
-        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
-        keywords |  language |  lccn |  location |  mrnumber |  price |  
-        size |  url |  category 
+        type | address | month | note | key?
+    ) | (
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |
+        keywords |  language |  lccn |  location |  mrnumber |  price |
+        size |  url |  category
      )
      )){ text })*
 
 
 
-mastersthesis = 
+mastersthesis =
 ## [mastersthesis] A Master's thesis.
 ##   Required fields: author, title, school, year.
 ##   Optional fields: type, address, month, note.
@@ -439,7 +439,7 @@ element mastersthesis { thesis.content }
 
 
 
-phdthesis = 
+phdthesis =
 ## [phdthesis] A PhD thesis.
 ##   Required fields: author, title, school, year.
 ##   Optional fields: type, address, month, note.
@@ -447,7 +447,7 @@ element phdthesis { thesis.content }
 
 
 
-misc = 
+misc =
 ## [misc] Use this type when nothing else fits.
 ##   Required fields: none.
 ##   Optional fields: author, title, howpublished, month, year, note.
@@ -457,23 +457,23 @@ element misc {
 }
 
 misc.optional =
-    author.optional & title? & howpublished? & month? & year? & note?
+    author.optional & title? & howpublished? & month? & year? & note? & key?
 
 misc.user =
     user.elements &
-    (element ( * - ( 
+    (element ( * - (
     (
-        author | authors | title | howpublished | month | year | note
-    ) | ( 
-        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
-        keywords |  language |  lccn |  location |  mrnumber |  price |  
-        size |  url |  category 
+        author | authors | title | howpublished | month | year | note | key
+    ) | (
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |
+        keywords |  language |  lccn |  location |  mrnumber |  price |
+        size |  url |  category
      )
      )){ text })*
 
 
 
-proceedings = 
+proceedings =
 ## [proceedings] The proceedings of a conference.
 ##   Required fields: title, year.
 ##   Optional fields: editor, volume or number, series,
@@ -490,25 +490,25 @@ proceedings.required =
 
 proceedings.optional =
     editor.optional & volumeOrNumber & series? & address? & month? & organization? &
-    publisher & note?
+    publisher & note? & key?
 
 proceedings.user =
     user.elements &
-    (element ( * - ( 
+    (element ( * - (
     (
         title | year |
         volume | number | editor | editors | series | address | month | organization |
-        publisher | note
-    ) | ( 
-        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
-        keywords |  language |  lccn |  location |  mrnumber |  price |  
-        size |  url |  category 
+        publisher | note | key
+    ) | (
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |
+        keywords |  language |  lccn |  location |  mrnumber |  price |
+        size |  url |  category
      )
      )){ text })*
 
 
 
-techreport = 
+techreport =
 ## [techreport] A report published by a school or other institution,
 ##   usually numbered within a series.
 ##   Required fields: author, title, institution, year.
@@ -524,24 +524,24 @@ techreport.required =
     [ m:fields="arbitrary" ] ( author.optional & title? & institution? & year? )
 
 techreport.optional =
-    type? & number? & address? & month? & note?
+    type? & number? & address? & month? & note? & key?
 
 techreport.user =
     user.elements &
-    (element ( * - ( 
+    (element ( * - (
     (
         author | authors | title | institution | year |
-        type | number | address | month | note
-    ) | ( 
-        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
-        keywords |  language |  lccn |  location |  mrnumber |  price |  
-        size |  url |  category 
+        type | number | address | month | note | key
+    ) | (
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |
+        keywords |  language |  lccn |  location |  mrnumber |  price |
+        size |  url |  category
      )
      )){ text })*
 
 
 
-unpublished = 
+unpublished =
 ## [unpublished] A document having an author and title, but not
 ##   formally published.
 ##   Required fields: author, title, note.
@@ -557,18 +557,18 @@ unpublished.required =
     [ m:fields="arbitrary" ] ( author.optional & title? & note? )
 
 unpublished.optional =
-    month? & year?
+    month? & year? & key?
 
 unpublished.user =
     user.elements &
-    (element ( * - ( 
+    (element ( * - (
     (
         author | authors | title | note |
-        month | year
-    ) | ( 
-        abstract |  affiliation |  contents |  copyright |  isbn |  doi |  
-        keywords |  language |  lccn |  location |  mrnumber |  price |  
-        size |  url |  category 
+        month | year | key
+    ) | (
+        abstract |  affiliation |  contents |  copyright |  isbn |  doi |
+        keywords |  language |  lccn |  location |  mrnumber |  price |
+        size |  url |  category
      )
      )){ text })*
 
@@ -576,7 +576,7 @@ unpublished.user =
 # .....................................................................
 # Metadata fields for each bibliographic entry
 
-address = 
+address =
 ## [address] Usually the address of the publisher or other type of
 ##   institution  For major publishing houses, van~Leunen recommends
 ##   omitting the information entirely.  For small publishers, on the other
@@ -585,38 +585,38 @@ element address { text }
 
 
 
-booktitle = 
+booktitle =
 ## [booktitle] Title of a book, part of which is being cited.  See the
 ##   LaTeX book for how to type titles.  For book entries, use the title
 ##   field instead.
 element booktitle { text }
 
-chapter =  
+chapter =
 ## [chapter] A chapter (or section or whatever) number.
 element chapter { xsd:positiveInteger }
 
-edition = 
+edition =
 ## [edition] The edition of a book-for example, ``Second''.  This
 ##   should be an ordinal, and should have the first letter capitalized, as
 ##   shown here; the standard styles convert to lower case when necessary.
 element edition { [ m:datatypes="strict"] xsd:string { pattern="[A-Z].*" } |
                             [ m:datatypes="loose"   ] text }
 
-howpublished = 
+howpublished =
 ## [howpublished] How something strange has been published.
 ##   The first word should be capitalized.
 element howpublished { text }
 
-institution = 
+institution =
 ## [institution] The sponsoring institution of a technical report.
 element institution { text }
 
-journal = 
+journal =
 ## [journal] A journal name.  Abbreviations are provided for many
 ##   journals; see the Local Guide.
 element journal { text }
 
-month = 
+month =
 ## [month] The month in which the work was published or, for an
 ##   unpublished work, in which it was written. You should use the
 ##   standard three-letter abbreviation, as described in Appendix B.1.3 of
@@ -638,12 +638,12 @@ monthString.datatype =
  | string "Nov"
  | string "Dec"
 
-note = 
+note =
 ## [note] Any additional information that can help the reader.
 ##   The first word should be capitalized.
 element note { text }
 
-number = 
+number =
 ## [number] The number of a journal, magazine, technical report, or of a
 ##   work in a series.  An issue of a journal or magazine is usually
 ##   identified by its volume and number; the organization that issues a
@@ -651,12 +651,12 @@ number =
 ##   given numbers in a named series.
 element number { text }
 
-organization = 
+organization =
 ## [organization] The organization that sponsors a conference or that
 ##   publishes a manual.
 element organization { text }
 
-pages = 
+pages =
 ## [pages] One or more page numbers or range of numbers, such as 42-111
 ##   or 7,41,73-97 or 43+ (the `+' in this last example indicates pages
 ##   following that don't form a simple range).  To make it easier to
@@ -668,34 +668,34 @@ element pages {
     [m:datatypes="loose" ] text
 }
 
-publisher = 
+publisher =
 ## [publisher] The publisher's name.
 element publisher { text }
 
-school = 
+school =
 ## [school] The name of the school where a thesis was written
 element school {  text }
 
-series = 
+series =
 ## [series] The name of a series or set of books.  When citing an entire
 ##   book, the the title field gives its title and an optional series field
 ##   gives the name of a series or multi-volume set in which the book is
 ##   published.
 element series { text }
 
-title = 
+title =
 ## [title] The work's title, typed as explained in the LaTeX book.
 element title { text }
 
-type =   
+type =
 ## [type] The type of a technical report-for example, ``Research Note''.
 element type { text }
 
-volume = 
+volume =
 ## [volume] The volume of a journal or multivolume book.
 element volume { text }
 
-year = 
+year =
 ## [year] The year of publication or, for an unpublished work, the year
 ##   it was written.  Generally it should consist of four numerals, such as
 ##   1984, although the standard styles can handle any year whose last four
@@ -704,13 +704,13 @@ year =
 ##   as such a type is pre-defined in XML Schema.
 element year { xsd:gYear }
 
-annote = 
+annote =
 ## [annote] An annotation  It is not used by the standard bibliography
 ##   styles, but may be used by others that produce an annotated
 ##   bibliography.
 element annote { text }
 
-crossref = 
+crossref =
 ## [crossref] The database key of the entry being cross referenced.
 ##   BibTEX has a new cross-referencing feature, explained by an example.
 ##     @INPROCEEDINGS(no-gnats,
@@ -718,7 +718,7 @@ crossref =
 ##     @PROCEEDINGS(gg-proceedings,
 element crossref { xsd:NCName }
 
-key = 
+key =
 ## [key] Used for alphabetizing, cross referencing, and creating a label
 ##   when the ``author'' information (described in Section [ref: ] is
 ##   missing. This field should not be confused with the key that appears
