@@ -68,17 +68,17 @@ import org.xml.sax.SAXException;
 import net.sourceforge.bibtexml.util.GUIUtils;
 
 public class StyleSheetController {
-    static Preferences PREF =
-            Preferences.userNodeForPackage(StyleSheetController.class).node("styles");
-    private final Preferences pref;
+    private Preferences pref;
     private final XMLConverter conv;
     private final String name;
     private final String ext;
     private final URL style;
     private final boolean crlf;
     private final boolean customEncoding;
+    private boolean builtin = false;
 
     private final static String P_NODE_PARAM = "param";
+    private final static String P_NODE_CHILDREN = "children";
     private final static String P_KEY_STYLE = "stylesheet";
     private final static String P_KEY_NEWLINE = "newline";
     private final static String P_KEY_SUFFIX = "suffix";
@@ -87,6 +87,8 @@ public class StyleSheetController {
 
     private StyleSheetControllerUI ui;
     private boolean active = true;
+    private boolean allowsChildren = false;
+    private ArrayList<StyleSheetController> children;
 
     private String enc;
     protected Map<String, Object> params = null;
@@ -94,12 +96,12 @@ public class StyleSheetController {
     private final static String PARAM_PREFIX = "{http://www.w3.org/1999/XSL/Transform}param=";
     static final ImageIcon config = new ImageIcon(StyleSheetController.class.getResource("icon/configure.png"));
 
-    private StyleSheetController(XMLConverter conv, String name)
+    private StyleSheetController(XMLConverter conv, String name, Preferences xpref)
              throws SAXException, IOException
     {
         this.conv = conv;
         this.name = name;
-        this.pref = PREF.node(name);
+        this.pref = xpref.node(name);
         this.ext = pref.get(P_KEY_SUFFIX, "." + name.toLowerCase().replaceAll("\\s",""));
         this.style = new URL(pref.get(P_KEY_STYLE, ""));
         this.crlf = pref.getBoolean(P_KEY_NEWLINE, false);
@@ -116,13 +118,22 @@ public class StyleSheetController {
         init(customParams);
     }
 
+    public StyleSheetController(XMLConverter conv, StyleConfig sconfig,
+        Preferences xpref)
+            throws SAXException, IOException{
+        this(conv, sconfig.name, sconfig.suffix,
+            sconfig.style, sconfig.customParams, sconfig.customEncoding,
+            sconfig.windowsLineTerminators, xpref);
+    }
+
     public StyleSheetController(final XMLConverter conv,
             final String outputname,
             final String outputSuffix,
             final URL stylesheet,
             final boolean customParams,
             final boolean customEncoding,
-            final boolean newlineConversion)
+            final boolean newlineConversion,
+            final Preferences xpref)
             throws SAXException, IOException
     {
         this.conv = conv;
@@ -131,11 +142,18 @@ public class StyleSheetController {
         this.style = stylesheet;
         this.crlf = newlineConversion;
         this.customEncoding = customEncoding;
-        pref = PREF.node(name);
+        pref = xpref.node(name);
         pref.put(P_KEY_SUFFIX, ext);
         pref.put(P_KEY_STYLE, style.toString());
         pref.putBoolean(P_KEY_NEWLINE, crlf);
         init(customParams);
+    }
+
+    public static StyleSheetController newInstance(XMLConverter conv,
+        StyleConfig sconfig, Preferences xpref){
+        return newInstance(conv, sconfig.name, sconfig.suffix,
+            sconfig.style, sconfig.customParams, sconfig.customEncoding,
+            sconfig.windowsLineTerminators, xpref);
     }
 
     /** Doesn't throw any exceptions, prints errors to stderr. **/
@@ -145,11 +163,12 @@ public class StyleSheetController {
             final URL stylesheet,
             final boolean customParams,
             final boolean customEncoding,
-            final boolean newlineConversion){
+            final boolean newlineConversion,
+            final Preferences xpref){
         StyleSheetController ssc = null;
         try{
             ssc = new StyleSheetController(conv, outputname, outputSuffix,
-                   stylesheet, customParams, customEncoding, newlineConversion);
+                   stylesheet, customParams, customEncoding, newlineConversion, xpref);
         } catch (SAXException ex){
             System.err.println("Error compiling stylesheet for " + outputname);
             System.err.println((ex.getCause() == null)? ex : ex.getCause());
@@ -172,6 +191,14 @@ public class StyleSheetController {
         return ext;
     }
 
+    public void setBuiltin(boolean b){
+        builtin = b;
+    }
+
+    public boolean isBuiltin(){
+        return builtin;
+    }
+
     private void init(boolean customParams) throws SAXException, IOException{
         InputStream in = null;
         boolean customParams2 = customParams;
@@ -181,10 +208,11 @@ public class StyleSheetController {
             if(t == null){
                 throw new IOException("Cannot compile style sheet.");
             }
+            in.close();
+            in = new BufferedInputStream(style.openStream());
+            XSLParamHandler xslph = XSLParamHandler.analyze(in, null);
             if(customParams2){
-                in.close();
-                in = new BufferedInputStream(style.openStream());
-                params = XSLParamHandler.getStyleSheetParameters(in);
+                params = xslph.getStyleSheetParameters();
                 for(String key : params.keySet().toArray(new String[0])){
                     if(key.startsWith(XMLConverter.INTERNAL_PARAMETER_PREFIX)){
                         params.remove(key);
@@ -192,6 +220,7 @@ public class StyleSheetController {
                 }
                 customParams2 = (!params.isEmpty());
             }
+            allowsChildren = "xml".equals(xslph.getOutputMethod());
         } catch (TransformerConfigurationException ex){
             throw new SAXException(ex);
         } finally {
@@ -222,6 +251,30 @@ public class StyleSheetController {
                 }
             }
         }
+
+        boolean hasChildren = false;
+        try{
+            hasChildren = pref.nodeExists(P_NODE_CHILDREN);
+        } catch (Exception ex){
+            System.err.println(ex);
+        }
+        if(allowsChildren && hasChildren){
+            final Preferences cpref = pref.node(P_NODE_CHILDREN);
+            StyleSheetController[] xchild = null;
+            try{
+                xchild = StyleSheetController.load(conv, cpref);
+            } catch (Exception ex){
+                System.err.println(ex);
+            }
+            if(xchild != null && xchild.length != 0){
+                children = new ArrayList<StyleSheetController>();
+                for(StyleSheetController child : xchild){
+                    children.add(child);
+                }
+            }
+        }
+
+        active = pref.getBoolean(P_KEY_ACTIVE, true);
     }
 
     private static Object getSavedParam(final Preferences p, final String key, final Object o){
@@ -242,46 +295,45 @@ public class StyleSheetController {
         return result;
     }
 
-    public static StyleSheetController load(final XMLConverter cv, final String name)
+    public static StyleSheetController load(final XMLConverter cv, final String name, final Preferences xpref)
     throws SAXException, IOException
     {
-        return new StyleSheetController(cv, name);
+        return new StyleSheetController(cv, name, xpref);
     }
 
-    public static StyleSheetController[] load(final XMLConverter cv, final String[] excludeNames)
+    public static StyleSheetController[] load(final XMLConverter cv, final Preferences xpref)
             throws BackingStoreException{
         final Collection<StyleSheetController> result = new ArrayList<StyleSheetController>();
         StyleSheetController cssc;
-        final boolean noexclude = (excludeNames == null);
-        if(!noexclude){
-            Arrays.sort(excludeNames);
-        }
-        for(String name : PREF.childrenNames()){
-            if(noexclude || Arrays.binarySearch(excludeNames, name) < 0){
-                try{
-                    cssc = load(cv, name);
-                } catch (Exception ex){
-                    cv.handleException("Cannot load output format " + name, ex);
-                    PREF.node(name).removeNode();
-                    continue;
-                }
-                result.add(cssc);
+        for(String name : xpref.childrenNames()){
+            try{
+                cssc = load(cv, name, xpref);
+            } catch (Exception ex){
+                cv.handleException("Cannot load output format " + name, ex);
+                xpref.node(name).removeNode();
+                continue;
             }
+            result.add(cssc);
         }
         return result.toArray(new StyleSheetController[result.size()]);
     }
 
-    public static StyleSheetController[] load(final XMLConverter cv)
-            throws BackingStoreException{
-        return load(cv, (String[]) null);
-    }
-
     public void destroyPrefNode() throws BackingStoreException{
-        pref.removeNode();
+        if(pref != null){
+            pref.removeNode();
+        }
     }
 
     public boolean isActive(){
         return active;
+    }
+
+    public void setActive(boolean b){
+        active = b;
+        if(ui != null){
+            ui.typeCheckBox.setSelected(active);
+        }
+        pref.putBoolean(P_KEY_ACTIVE, active);
     }
 
     public void transform(final Source src, final File dir, final String basename)
@@ -299,6 +351,7 @@ public class StyleSheetController {
         } finally {
             outstream.close();
         }
+        childTransformations(xslout, dir, basename);
     }
 
     public void transform(final File xml,
@@ -310,6 +363,21 @@ public class StyleSheetController {
         System.out.printf("Creating %s in %s\n", name, xslout.toString());
         System.out.flush();
         transformImpl(xml, xslout);
+        childTransformations(xslout, dir, basename);
+    }
+
+    public void childTransformations(final File xml,
+                           final File dir,
+                           final String basename) throws TransformerException, IOException{
+        if(hasChildren()){
+            synchronized(children){
+                for(StyleSheetController child: children){
+                    if(child.isActive()){
+                        child.transform(xml, dir, basename);
+                    }
+                }
+            }
+        }
     }
 
     protected void transformImpl(final File xml, final File xslout)
@@ -325,6 +393,11 @@ public class StyleSheetController {
     public synchronized void disposeUI(){
         if(ui != null){
             ui.dispose();
+            if(children != null){
+                for(StyleSheetController child : children){
+                    child.disposeUI();
+                }
+            }
         }
     }
 
@@ -353,9 +426,100 @@ public class StyleSheetController {
         return result;
     }
 
+    public boolean allowsChildren(){
+        return allowsChildren;
+    }
+
+    public synchronized boolean hasChildren(){
+        return children != null && !children.isEmpty();
+    }
+
+    public boolean hasChild(String name){
+        return getChild(name) != null;
+    }
+
+
+    public static class StyleConfig{
+        public String name;
+        public String suffix;
+        public boolean windowsLineTerminators;
+        public boolean customEncoding;
+        public boolean customParams;
+        public URL style;
+    }
+
+    public StyleSheetController addNewChild(StyleConfig sconfig){
+        return addNewChild(
+            sconfig.name,
+            sconfig.suffix,
+            sconfig.style,
+            sconfig.customParams,
+            sconfig.customEncoding,
+            sconfig.windowsLineTerminators);
+    }
+
+    public synchronized StyleSheetController addNewChild(
+            final String name,
+            final String outputSuffix,
+            final URL stylesheet,
+            final boolean customParams,
+            final boolean customEncoding,
+            final boolean newlineConversion){
+        if(!allowsChildren()){
+           return null;
+        } else if (hasChild(name)){
+            return getChild(name);
+        }
+        StyleSheetController newChild = StyleSheetController.newInstance(
+            conv,
+            name,
+            outputSuffix,
+            stylesheet,
+            customParams,
+            customEncoding,
+            newlineConversion,
+            pref.node(P_NODE_CHILDREN));
+        if(newChild == null){
+            return null;
+        }
+        if(children == null){
+            children = new ArrayList<StyleSheetController>();
+        }
+        if(ui != null){
+            ui.dispose();
+        }
+        return children.add(newChild)? newChild : null;
+    }
+
+    public synchronized boolean removeChild(StyleSheetController child){
+        if(ui != null){
+            ui.dispose();
+        }
+        child.disposeUI();
+        return children.remove(child);
+    }
+
+    public StyleSheetController getChild(String name){
+        if(hasChildren()){
+            synchronized(children){
+                for(StyleSheetController child : children){
+                    if(child.name.equals(name)){
+                        return child;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public StyleSheetController[] getChildren(){
+        return children.toArray(new StyleSheetController[children.size()]);
+    }
+
     private static class StyleSheetControllerUI extends JPanel{
         final private StyleSheetController ssc;
         final private Container custom = new JPanel(new SpringLayout());
+        final JCheckBox typeCheckBox;
         private JButton expcoll = null;
         private JDialog dialog;
 
@@ -368,6 +532,7 @@ public class StyleSheetController {
 
         public StyleSheetControllerUI(StyleSheetController ssc){
             this.ssc = ssc;
+            typeCheckBox = new JCheckBox(ssc.name);
             initUI();
         }
 
@@ -375,10 +540,10 @@ public class StyleSheetController {
             final ActionListener updater = new Updater();
             setLayout(new BorderLayout());
             boolean customParams = (ssc.params != null) && !ssc.params.isEmpty();
-            final boolean customizable = customParams || ssc.customEncoding;
+            final boolean customizable = customParams || ssc.customEncoding || ssc.hasChildren();
             if(customizable){
                 expcoll = new JButton(config);
-                expcoll.setToolTipText("Edit Parameters...");
+                expcoll.setToolTipText("Configure...");
                 expcoll.setBorderPainted(false);
                 expcoll.setContentAreaFilled(false);
                 expcoll.addActionListener(
@@ -388,7 +553,6 @@ public class StyleSheetController {
                         }
                     });
             }
-            final JCheckBox typeCheckBox = new JCheckBox(ssc.name);
             typeCheckBox.addActionListener(
                 new ActionListener(){
                     public void actionPerformed(ActionEvent e){
@@ -433,7 +597,7 @@ public class StyleSheetController {
                             outpEnc.setSelectedItem(outpEnc.getEditor().getItem());
                         }
                 });
-                label = new JLabel("encoding");
+                label = new JLabel("Encoding");
                 label.setLabelFor(outpEnc);
                 custom.add(label);
                 custom.add(outpEnc);
@@ -471,7 +635,6 @@ public class StyleSheetController {
                 rowcount, 2, //rows, cols
                 2, 2,        //initX, initY
                 5, 2);       //xPad, yPad
-            ssc.active = ssc.pref.getBoolean(P_KEY_ACTIVE, true);
             typeCheckBox.setSelected(ssc.active);
             if(expcoll != null){
                 expcoll.setEnabled(ssc.active);
@@ -501,7 +664,21 @@ public class StyleSheetController {
                     : new JDialog((Frame)
                         ((w instanceof Frame)? w : null), ssc.name, false);
                     dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-                    dialog.setContentPane(custom);
+                    if(!ssc.hasChildren()){
+                        dialog.setContentPane(custom);
+                    } else {
+                        JPanel panel = new JPanel(new BorderLayout());
+                        panel.add(new JLabel("Child formats"), BorderLayout.NORTH);
+                        Box box = Box.createVerticalBox();
+                        for(StyleSheetController child : ssc.getChildren()){
+                            box.add(child.getUI());
+                        }
+                        panel.add(box, BorderLayout.CENTER);
+                        box = box.createVerticalBox();
+                        box.add(custom);
+                        box.add(panel);
+                        dialog.setContentPane(box);
+                    }
                     dialog.pack();
                 }
                 GUIUtils.getInstance().placeWindow(dialog, w);
