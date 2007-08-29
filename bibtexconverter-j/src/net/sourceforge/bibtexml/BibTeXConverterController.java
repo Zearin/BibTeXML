@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.PrintStream;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -72,20 +73,14 @@ import javax.swing.JLabel;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.Source;
-import javax.xml.parsers.DocumentBuilderFactory;
 import de.mospace.swing.LookAndFeelMenu;
 import de.mospace.swing.PathInput;
 import de.mospace.xml.XMLUtils;
 import net.sourceforge.bibtexml.metadata.*;
 import net.sourceforge.bibtexml.util.GUIUtils;
 import net.sourceforge.bibtexml.util.XSLTUtils;
-import net.sourceforge.bibtexml.util.ReusableSource;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.w3c.dom.Document;
 
 public class BibTeXConverterController extends JFrame implements ActionListener{
     private static final Preferences PREF =
@@ -131,7 +126,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             System.err.println("Only XML output is possible.");
             styleManager = null;
         } else {
-            styleManager = new StyleSheetManager(convert, styleContainer, builtInStyles(convert), errorHandler);
+            styleManager = new StyleSheetManager(convert, styleContainer, builtInStyles(convert), errorHandler, PREF.node("styles").node("user"));
         }
         pack();
 
@@ -173,7 +168,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         }
         final File outdir = new File(PREF.get("OutputDir", ""));
         final StyleSheetManager styleManager = new StyleSheetManager(btc, null,
-            builtInStyles(btc), null);
+            builtInStyles(btc), null, PREF.node("styles").node("user"));
         final File[] inf = inp.isDirectory()?
             inp.listFiles(
                 new FileFilter(){
@@ -234,33 +229,119 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         System.out.flush();
     }
 
+    private PrintStream sysOut;
+    private PrintStream sysErr;
+    @Override
+    public void setVisible(boolean b){
+        boolean wasVisible = isVisible();
+        super.setVisible(b);
+        if(isVisible() && !wasVisible){
+            sysOut = System.out;
+            sysErr = System.err;
+            msgPane.makeSystemOut();
+            msgPane.makeSystemErr();
+        } else if (wasVisible && !isVisible()) {
+            if(sysOut != null){
+                System.setOut(sysOut);
+            }
+            if(sysErr != null){
+                System.setErr(sysErr);
+            }
+        }
+    }
+
     private static Collection<StyleSheetController> builtInStyles(BibTeXConverter konvert){
+        Preferences xpref = PREF.node("styles").node("builtin");
         Class clazz = BibTeXConverterController.class;
         final List<StyleSheetController> builtins = new ArrayList<StyleSheetController>();
-        builtins.add(
-            StyleSheetController.newInstance(konvert, "BibTeX", "-new.bib",
-                    clazz.getResource("xslt/bibxml2bib.xsl"),
-                    true, true, true));
-        builtins.add(
-            StyleSheetController.newInstance(konvert, "RIS (Reference Manager & Endnote)", ".ris",
-                    clazz.getResource("xslt/bibxml2ris.xsl"),
-                    false, false, true));
-        builtins.add(
-            StyleSheetController.newInstance(konvert, "Endnote Export", ".enw",
-                    clazz.getResource("xslt/bibxml2enw.xsl"),
-                    false, false, true));
-        builtins.add(
-            StyleSheetController.newInstance(konvert, "HTML (flat)", "-flat.html",
-                    clazz.getResource("xslt/bibxml2htmlf.xsl"),
-                    true, true, false));
-        builtins.add(
-            StyleSheetController.newInstance(konvert, "HTML (grouped)", "-grouped.html",
-                        clazz.getResource("xslt/bibxml2htmlg.xsl"),
-                        true, true, false));
-        builtins.add(
-            StyleSheetController.newInstance(konvert, "DocBook 4.5 bibliography", "-docbook.xml",
-                        clazz.getResource("xslt/bibxml2docbook.xsl"),
-                        true, true, false));
+
+        StyleSheetController.StyleConfig config = new StyleSheetController.StyleConfig();
+
+        config.name = "BibTeX";
+        config.suffix = "-new.bib";
+        config.style = clazz.getResource("xslt/bibxml2bib.xsl");
+        config.customParams = true;
+        config.customEncoding = true;
+        config.windowsLineTerminators = false;
+        StyleSheetController x =
+            StyleSheetController.newInstance(konvert, config, xpref);
+        x.setBuiltin(true);
+        builtins.add(x);
+
+        config.name = "RIS (Reference Manager & Endnote)";
+        config.suffix = ".ris";
+        config.style = clazz.getResource("xslt/bibxml2ris.xsl");
+        config.customParams = false;
+        config.customEncoding = false;
+        config.windowsLineTerminators = true;
+        x = StyleSheetController.newInstance(konvert, config, xpref);
+        x.setBuiltin(true);
+        builtins.add(x);
+
+        config.name = "Endnote Export";
+        config.suffix = ".enw";
+        config.style = clazz.getResource("xslt/bibxml2enw.xsl");
+        x = StyleSheetController.newInstance(konvert, config, xpref);
+        x.setBuiltin(true);
+        builtins.add(x);
+
+        config.name = "HTML (flat)";
+        config.suffix = "-flat.html";
+        config.style = clazz.getResource("xslt/bibxml2htmlf.xsl");
+        config.customParams = true;
+        config.customEncoding = true;
+        config.windowsLineTerminators = false;
+        x = StyleSheetController.newInstance(konvert, config, xpref);
+        x.setBuiltin(true);
+        builtins.add(x);
+
+        config.name = "HTML (grouped)";
+        config.suffix = "-grouped.html";
+        config.style = clazz.getResource("xslt/bibxml2htmlg.xsl");
+        x = StyleSheetController.newInstance(konvert, config, xpref);
+        x.setBuiltin(true);
+        builtins.add(x);
+
+        config.name = "DocBook 4.5 bibliography";
+        config.suffix = "-docbook.xml";
+        config.style = clazz.getResource("xslt/bibxml2docbook.xsl");
+        x = StyleSheetController.newInstance(konvert, config, xpref);
+        x.setBuiltin(true);
+        builtins.add(x);
+
+        config.name = "MODS v3.2";
+        config.suffix = "-mods.xml";
+        config.style = clazz.getResource("xslt/bibxml2mods32.xsl");
+        StyleSheetController mods =
+            StyleSheetController.newInstance(konvert, config, xpref);
+        mods.setBuiltin(true);
+        builtins.add(mods);
+
+        config.name = "MARC 21 slim";
+        x = mods.getChild(config.name);
+        if(x == null){
+            config.suffix = "-marc.xml";
+            config.style = clazz.getResource("xslt/mods2marc.xsl");
+            x = mods.addNewChild(config);
+        }
+        if(x != null){
+            x.setBuiltin(true);
+        }
+
+        config.name = "MODS HTML";
+        x = mods.getChild(config.name);
+        if(x == null){
+            config.suffix = "-mods.html";
+            config.style = clazz.getResource("xslt/mods2html.xsl");
+            x = mods.addNewChild(config);
+            if(x != null){
+                x.setActive(false); //is very slow
+            }
+        }
+        if(x != null){
+            x.setBuiltin(true);
+        }
+        System.err.flush();
         return builtins;
     }
 
@@ -338,6 +419,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                     d.setModal(true);
                     d.setVisible(true);
                     if(d.getOkPressed()){
+                        System.out.println("Saving default metadata");
+                        System.out.flush();
                         d.getMetadata().save(node);
                     }
                 }
@@ -973,7 +1056,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             System.exit(0);
 
         } else if("addXSLT".equals(cmd)){
-            if(styleManager.addStyle()){
+            if(styleManager.addStyleWithUnknownInput()){
                 pack();
             }
 
