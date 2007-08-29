@@ -20,12 +20,13 @@ package net.sourceforge.bibtexml;
 
 import java.util.List;
 import java.awt.Container;
+import java.awt.Component;
 import java.io.File;
-import java.net.URL;
+import java.util.LinkedList;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Vector;
+import java.util.Iterator;
 import java.util.Collection;
 import java.util.prefs.Preferences;
 import javax.swing.JOptionPane;
@@ -37,50 +38,33 @@ import javax.xml.transform.ErrorListener;
 class StyleSheetManager {
     private Collection<StyleSheetController> styles;
     private final XMLConverter convert;
-    private final Collection<StyleSheetController> builtins;
     private final Container styleContainer; // = Box.createVerticalBox();
     private final ErrorListener errorHandler;
-    protected File styledir;
+    private final Preferences userStyles;
 
     public StyleSheetManager(XMLConverter convert, Container styleContainer,
-        Collection<StyleSheetController> builtins, ErrorListener errorHandler){
+        Collection<StyleSheetController> builtins,
+        ErrorListener errorHandler,
+        Preferences userStyles){
         this.styleContainer = styleContainer;
         this.errorHandler = errorHandler;
         this.convert = convert;
+        this.userStyles = userStyles;
 
-        String[] builtInNames = new String[builtins.size()];
-        int i = 0;
         for(StyleSheetController style : builtins){
             if(style != null){
-                builtInNames[i++] = style.getName();
                 addStyleImpl(style);
             }
         }
-        this.builtins = builtins;
-
-        Preferences pref = Preferences.userNodeForPackage(getClass());
-        String styledirpath = pref.get("styledir", null);
-        styledir = (styledirpath == null)? null : new File(styledirpath);
 
         try{
-        for(StyleSheetController style : StyleSheetController.load(convert, builtInNames)){
+        for(StyleSheetController style : StyleSheetController.load(convert, userStyles)){
             addStyleImpl(style);
         }
         } catch (Exception ex){
             ex.printStackTrace();
         }
 
-    }
-
-    protected String[] getBuiltinStyleNames(){
-        if(builtins == null){
-            return new String[0];
-        }
-        List<String> result = new ArrayList<String>();
-        for(StyleSheetController style : builtins){
-            result.add(style.getName());
-        }
-        return (String[]) result.toArray(new String[result.size()]);
     }
 
     protected boolean hasStyles(){
@@ -97,53 +81,56 @@ class StyleSheetManager {
         return addStyleImpl(style);
     }
 
-    public boolean addStyle(){
-        JFileChooser jfc = new JFileChooser(styledir);
+    private StyleSheetController.StyleConfig
+            queryStyleConfig(Component comp, StyleSheetController parent){
+        StyleSheetController.StyleConfig result = new StyleSheetController.StyleConfig();
+
+        JFileChooser jfc = new JFileChooser(
+                Preferences.userNodeForPackage(getClass()).get("styledir",""));
         jfc.setDialogTitle("Choose an XSLT stylesheet");
         jfc.setMultiSelectionEnabled(false);
-        int returnVal = jfc.showOpenDialog(styleContainer);
-        URL style = null;
+        int returnVal = jfc.showOpenDialog(comp);
         if(returnVal == JFileChooser.APPROVE_OPTION){
             try{
-                style = jfc.getSelectedFile().toURI().toURL();
+                result.style = jfc.getSelectedFile().toURI().toURL();
             } catch (Exception ex){
                 ex.printStackTrace();
             }
         }
         File dir = jfc.getCurrentDirectory();
         if(dir != null){
-            styledir = dir;
-            Preferences.userNodeForPackage(getClass()).put("styledir", styledir.getAbsolutePath());
+            Preferences.userNodeForPackage(getClass()).put("styledir", dir.getAbsolutePath());
         }
-        if(style == null){
-            return false;
+        if(result.style == null){
+            return null;
         }
-        String name = null;
-        name = JOptionPane.showInputDialog(styleContainer, "Please enter a name for the new output format.");
-        if(name == null){
-            return false;
+        result.name = JOptionPane.showInputDialog(comp, "Please enter a name for the new output format.");
+        if(result.name == null){
+            return null;
         } else {
-            name = name.replaceAll("[\\./]", " ");
+            result.name = result.name.replaceAll("[\\./]", " ");
         }
-        while(nameExists(name)){
-            name = JOptionPane.showInputDialog(styleContainer,
-            "This name is already in use, please enter another one.", name);
-            if(name == null){
-                return false;
+        while((parent == null && nameExists(result.name)) ||
+              (parent != null && parent.hasChild(result.name))){
+            result.name = JOptionPane.showInputDialog(comp,
+                "This name is already in use, please enter another one.",
+                result.name);
+            if(result.name == null){
+                return null;
             } else {
-                name = name.replaceAll("[\\./]", " ");
+                result.name = result.name.replaceAll("[\\./]", " ");
             }
         }
-        String suffix = null;
-        suffix = JOptionPane.showInputDialog(styleContainer, "Please enter a filename suffix for the new output format.");
-        if(suffix == null){
-            return false;
+        result.suffix = JOptionPane.showInputDialog(comp, "Please enter a filename suffix for the new output format.");
+        if(result.suffix == null){
+            return null;
         }
-        while(suffixExists(suffix)){
-            suffix = JOptionPane.showInputDialog(styleContainer,
-            "This suffix is already in use, please enter another one.", suffix);
-            if(suffix == null){
-                return false;
+        while(suffixExists(result.suffix)){
+            result.suffix = JOptionPane.showInputDialog(comp,
+            "This suffix is already in use, please enter another one.",
+                result.suffix);
+            if(result.suffix == null){
+                return null;
             }
         }
         Box b = Box.createVerticalBox();
@@ -161,28 +148,99 @@ class StyleSheetManager {
             JOptionPane.QUESTION_MESSAGE);
         StyleSheetController ssc = null;
         if(returnVal == JOptionPane.OK_OPTION){
+            result.customParams = params.isSelected();
+            result.customEncoding = enc.isSelected();
+            result.windowsLineTerminators = crlf.isSelected();
+        } else {
+            result = null;
+        }
+        return result;
+    }
+
+    public synchronized boolean addChildStyle(){
+        List<StyleSheetController> possibleParents = new LinkedList<StyleSheetController>();
+        if(styles != null){
+            flatten(styles, possibleParents);
+        }
+        Iterator<StyleSheetController> it = possibleParents.iterator();
+        while(it.hasNext()){
+            if(!it.next().allowsChildren()){
+                it.remove();
+            }
+        }
+        StyleSheetController parent =
+                    (StyleSheetController)
+                    JOptionPane.showInputDialog(styleContainer,
+                    "Pick parent format",
+                    "Pick parent format",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    possibleParents.toArray(new StyleSheetController[
+                        possibleParents.size()]),
+                    null);
+        if(parent == null){
+            return false;
+        }
+        StyleSheetController.StyleConfig config =
+                queryStyleConfig(styleContainer, parent);
+        StyleSheetController newChild = null;
+        if(config != null){
             try{
-                ssc = new StyleSheetController(
-                        convert,
-                        name,
-                        suffix,
-                        style,
-                        params.isSelected(),
-                        enc.isSelected(),
-                        crlf.isSelected());
+                newChild = parent.addNewChild(config);
+                newChild.setErrorHandler(errorHandler);
+            } catch (Exception ex){
+                convert.handleException(null, ex);
+            }
+        }
+        System.err.flush();
+        return newChild != null;
+    }
+
+    private static void flatten(Collection<StyleSheetController> src, List<StyleSheetController> dst){
+        for(StyleSheetController element : src){
+            dst.add(element);
+            if(element.allowsChildren() && element.hasChildren()){
+                flatten(Arrays.asList(element.getChildren()), dst);
+            }
+        }
+    }
+
+    public boolean addStyleWithUnknownInput(){
+        int result = JOptionPane.showOptionDialog(styleContainer,
+            "What kind of input does the stylesheet accept?",
+            "Input", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+            null, new String[]{"BibTeXML", "Other"}, "BibTeXML");
+        if(result == 0){
+            return addStyle();
+        } else if (result == 1){
+            return addChildStyle();
+        } else {
+            return false;
+        }
+    }
+
+    public boolean addStyle(){
+        StyleSheetController.StyleConfig config = queryStyleConfig(styleContainer, null);
+        StyleSheetController ssc = null;
+        if(config != null){
+            try{
+                ssc = new StyleSheetController(convert, config, userStyles);
                 addStyle(ssc);
                 ssc.setErrorHandler(errorHandler);
             } catch (Exception ex){
                 convert.handleException(null, ex);
             }
         }
+        System.err.flush();
         return ssc != null;
     }
 
-    private boolean nameExists(String name){
+    public boolean nameExists(String name){
         boolean result = false;
         if(hasStyles()){
-            for(StyleSheetController ssc : getStyles()){
+            List<StyleSheetController> allStyles = new ArrayList<StyleSheetController>();
+            flatten(styles, allStyles);
+            for(StyleSheetController ssc : allStyles){
                 if(ssc.getName().equals(name)){
                     result = true;
                     break;
@@ -195,7 +253,9 @@ class StyleSheetManager {
     private boolean suffixExists(String suffix){
         boolean result = false;
         if(hasStyles()){
-            for(StyleSheetController ssc : getStyles()){
+            List<StyleSheetController> allStyles = new ArrayList<StyleSheetController>();
+            flatten(styles, allStyles);
+            for(StyleSheetController ssc : allStyles){
                 if(ssc.getSuffix().equals(suffix)){
                     result = true;
                     break;
@@ -221,12 +281,13 @@ class StyleSheetManager {
 
     boolean removeStyle(){
         if(hasStyles()){
-            Collection<StyleSheetController> v =
-                new Vector<StyleSheetController>();
-            Collection<String> c = Arrays.asList(getBuiltinStyleNames());
-            for(StyleSheetController style : getStyles()){
-                if(!c.contains(style.getName())){
-                    v.add(style);
+            List<StyleSheetController> v =
+                new LinkedList<StyleSheetController>();
+            flatten(styles, v);
+            Iterator<StyleSheetController> it = v.iterator();
+            while(it.hasNext()){
+                if(it.next().isBuiltin()){
+                    it.remove();
                 }
             }
             if(!v.isEmpty()){
@@ -262,6 +323,17 @@ class StyleSheetManager {
         if(result){
             styleContainer.remove(cssc.getUI());
             cssc.disposeUI();
+        } else {
+            StyleSheetController parent = null;
+            final String name = cssc.getName();
+            List<StyleSheetController> allStyles = new ArrayList<StyleSheetController>();
+            flatten(styles, allStyles);
+            for(StyleSheetController candidate : allStyles){
+                if(candidate.hasChild(name)){
+                    result = candidate.removeChild(cssc);
+                    break;
+                }
+            }
         }
         return result;
     }
