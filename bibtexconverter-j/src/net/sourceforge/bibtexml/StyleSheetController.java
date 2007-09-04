@@ -384,6 +384,7 @@ public class StyleSheetController {
     throws TransformerException, IOException
     {
         conv.transform(t, xml, xslout, params, enc, crlf);
+        System.gc();
     }
 
     public void setErrorHandler(final ErrorListener handler){

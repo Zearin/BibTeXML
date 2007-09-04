@@ -48,6 +48,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimerTask;
+import java.util.Timer;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -85,6 +87,17 @@ import org.xml.sax.SAXParseException;
 public class BibTeXConverterController extends JFrame implements ActionListener{
     private static final Preferences PREF =
             Preferences.userNodeForPackage(BibTeXConverterController.class);
+
+    private final static class GcTimerTask extends TimerTask{
+        public GcTimerTask(){
+            //default constructor;
+        }
+
+        public void run(){
+            System.gc();
+        }
+    }
+    private final static Timer GCTIMER = new Timer("GCTimer", true);
     private static final ImageIcon logo = new ImageIcon((URL) BibTeXConverterController.class.getResource("icon/ledgreen2.png"));
     private final static String INPUT_PREFIX = InputType.class.getName()+":";
     final static String ENCODING_PREFIX = Charset.class.getName()+":";
@@ -108,6 +121,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private JRadioButton xmlInput;
     private JComboBox encodings;
     private transient JDialog xmlconfig;
+    private Thread workThread = null;
 
     protected MessagePanel msgPane = new MessagePanel();
     private final ErrorCounter ecount = new ErrorCounter();
@@ -747,6 +761,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     }
 
     private void doConversion(){
+        /** Let's try to free some memory first */
+        System.gc();
         long nanoTime = System.nanoTime();
         msgPane.showConsole();
 
@@ -856,6 +872,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         break FILELOOP;
                     }
                 }
+                System.gc();
                 System.err.flush();
                 System.out.flush();
 
@@ -913,6 +930,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         System.out.println("Document is valid.");
                     }
                 }
+                System.gc();
                 System.err.flush();
                 System.out.flush();
 
@@ -955,6 +973,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                                 }
                                 break FILELOOP;
                             }
+                            System.gc();
                             System.err.flush();
                             System.out.flush();
                         }
@@ -984,6 +1003,11 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             System.err.flush();
             throw ex;
         } finally {
+            //free some memory before returning and then again
+            // 2 seconds later
+            System.gc();
+            GCTIMER.schedule(new GcTimerTask(), 2000);
+            workThread = null;
             startbutton.setEnabled(true);
         }
     }
@@ -1047,11 +1071,16 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         String cmd = c.getActionCommand();
 
         if (cmd.equals(START_CONVERSION)){
-            (new Thread(){
-                public void run(){
-                    doConversion();
-                }
-            }).start();
+            //check if we are already running a conversion
+            //the transformers are not thread-safe.
+            if(workThread == null || workThread.getState() == Thread.State.TERMINATED){
+                workThread = new Thread("BibTexConversion"){
+                    public void run(){
+                        doConversion();
+                    }
+                };
+                workThread.start();
+            }
         } else if ("exit".equals(cmd)){
             System.exit(0);
 
