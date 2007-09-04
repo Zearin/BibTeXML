@@ -37,6 +37,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.lang.ref.SoftReference;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
@@ -92,7 +93,9 @@ public class StyleSheetController {
 
     private String enc;
     protected Map<String, Object> params = null;
-    private Transformer t;
+    private SoftReference<Transformer> transf = new SoftReference<Transformer>(null);
+    private ErrorListener errorlistener;
+
     private final static String PARAM_PREFIX = "{http://www.w3.org/1999/XSL/Transform}param=";
     static final ImageIcon config = new ImageIcon(StyleSheetController.class.getResource("icon/configure.png"));
 
@@ -199,16 +202,39 @@ public class StyleSheetController {
         return builtin;
     }
 
+    public Transformer getTransformer() throws IOException, TransformerConfigurationException{
+        synchronized(transf){
+            Transformer t = transf.get();
+            if(t == null){
+                //System.out.print("... compiling stylesheet... ");
+                InputStream in = new BufferedInputStream(style.openStream());
+                try{
+                    t = conv.loadStyleSheet(in, style);
+                    if(t == null){
+                        throw new IOException("Cannot compile style sheet.");
+                    } else {
+                        t.setErrorListener(errorlistener);
+                        transf = new SoftReference<Transformer>(t);
+                    }
+                } finally {
+                    in.close();
+                }
+            } else {
+                //System.out.print("... using cached stylesheet... ");
+            }
+            System.err.flush();
+            return t;
+        }
+    }
+
+    static boolean preload = false;
     private void init(boolean customParams) throws SAXException, IOException{
         InputStream in = null;
         boolean customParams2 = customParams;
         try{
-            in = new BufferedInputStream(style.openStream());
-            t = conv.loadStyleSheet(in, style);
-            if(t == null){
-                throw new IOException("Cannot compile style sheet.");
+            if(preload){
+                getTransformer();
             }
-            in.close();
             in = new BufferedInputStream(style.openStream());
             XSLParamHandler xslph = XSLParamHandler.analyze(in, null);
             if(customParams2){
@@ -344,10 +370,10 @@ public class StyleSheetController {
         if(crlf){
             outstream = new CRLFOutputStream(outstream);
         }
-        System.out.printf("Creating %s in %s\n", name, xslout.toString());
+        System.out.printf("Creating %s in\n  %s\n", name, xslout.toString());
         System.out.flush();
         try{
-            conv.transform(t, src, new StreamResult(outstream), params, enc);
+            conv.transform(getTransformer(), src, new StreamResult(outstream), params, enc);
         } finally {
             outstream.close();
         }
@@ -360,7 +386,7 @@ public class StyleSheetController {
     throws TransformerException, IOException
     {
         final File xslout = new File(dir, basename + ext);
-        System.out.printf("Creating %s in %s\n", name, xslout.toString());
+        System.out.printf("Creating %s in\n  %s\n", name, xslout.toString());
         System.out.flush();
         transformImpl(xml, xslout);
         childTransformations(xslout, dir, basename);
@@ -383,12 +409,26 @@ public class StyleSheetController {
     protected void transformImpl(final File xml, final File xslout)
     throws TransformerException, IOException
     {
+        final Runtime rt = Runtime.getRuntime();
+        final long membefore = rt.freeMemory();
+        Transformer t = getTransformer();
+        //System.out.print("running transformation... ");
         conv.transform(t, xml, xslout, params, enc, crlf);
-        System.gc();
+        final long memafter = rt.freeMemory();
+        final long memtotal = rt.totalMemory();
+        if(membefore - memafter > memtotal/10 &&
+           memafter < memtotal/2){
+            //System.out.print("running Garbage collector...");
+            System.gc();
+        }
+        //System.out.println();
     }
 
     public void setErrorHandler(final ErrorListener handler){
-        t.setErrorListener(handler);
+        if(transf.get() != null){
+            transf.get().setErrorListener(handler);
+        }
+        errorlistener = handler;
     }
 
     public synchronized void disposeUI(){
