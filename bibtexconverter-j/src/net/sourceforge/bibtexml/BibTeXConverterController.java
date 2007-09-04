@@ -200,7 +200,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             if(isBibTeX){
                 long nanoTime = System.nanoTime();
                 xml = new File(outdir, basename + ".xml");
-                System.out.println("Creating XML in " + xml.getPath());
+                System.out.println("Creating XML in\n  " + xml.getPath());
                 btc.bibTexToXml(inputf, xml);
                 System.out.println("Time (s): " + (System.nanoTime() - nanoTime)/1e9);
             }
@@ -269,6 +269,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         Class clazz = BibTeXConverterController.class;
         final List<StyleSheetController> builtins = new ArrayList<StyleSheetController>();
 
+        StyleSheetController.preload = false;
         StyleSheetController.StyleConfig config = new StyleSheetController.StyleConfig();
 
         config.name = "BibTeX";
@@ -356,6 +357,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             x.setBuiltin(true);
         }
         System.err.flush();
+        StyleSheetController.preload = true;
         return builtins;
     }
 
@@ -762,7 +764,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
 
     private void doConversion(){
         /** Let's try to free some memory first */
-        System.gc();
         long nanoTime = System.nanoTime();
         msgPane.showConsole();
 
@@ -839,7 +840,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                     /* bibtex to bibxml */
                     xmlencoding = convert.getXMLEncoding();
                     xml = new File(dir, basename + ".xml");
-                    System.out.println("Creating XML in " + xml.getPath());
+                    System.out.println("Creating XML in\n  " + xml.getPath());
                     System.out.flush();
                     try{
                         errorHandler.reset();
@@ -872,7 +873,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         break FILELOOP;
                     }
                 }
-                System.gc();
                 System.err.flush();
                 System.out.flush();
 
@@ -930,7 +930,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                         System.out.println("Document is valid.");
                     }
                 }
-                System.gc();
                 System.err.flush();
                 System.out.flush();
 
@@ -973,7 +972,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                                 }
                                 break FILELOOP;
                             }
-                            System.gc();
                             System.err.flush();
                             System.out.flush();
                         }
@@ -1005,7 +1003,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         } finally {
             //free some memory before returning and then again
             // 2 seconds later
-            System.gc();
+            GCTIMER.schedule(new GcTimerTask(), 1000);
             GCTIMER.schedule(new GcTimerTask(), 2000);
             workThread = null;
             startbutton.setEnabled(true);
