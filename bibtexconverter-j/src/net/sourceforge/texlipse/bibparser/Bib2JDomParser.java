@@ -109,7 +109,12 @@ public class Bib2JDomParser {
     */
     public Document getResultDocument() throws IOException{
         BibXMLCreator xmlmaker = new BibXMLCreator();
-        ast.apply(xmlmaker);
+        if(ast != null){
+            ast.apply(xmlmaker);
+        } //else {
+            // do nothing. xmlmaker will return an entry count of 0
+            // and an exception will be thrown below.
+        //}
         if(xmlmaker.checkError()){
             IOException ex = new IOException("Error creating XML tree.");
             ex.initCause(xmlmaker.getError());
