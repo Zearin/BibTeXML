@@ -835,8 +835,12 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             FILELOOP: for(File inputf : inf){
                 if(i++ != 0){
                     System.out.println();
+                    System.out.flush();
                 }
-                System.out.println("CONVERTING " + inputf.getPath());
+                msgPane.printNormal("CONVERTING\n  ");
+                msgPane.printFilePath(inputf.getPath()+"\n");
+                msgPane.printNormal("Output is created in\n  ");
+                msgPane.printFilePath(dir.getPath()+"\n");
                 System.out.flush();
                 final String basename = getBasename(inputf);
 
