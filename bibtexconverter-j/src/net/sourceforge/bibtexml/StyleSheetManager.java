@@ -196,7 +196,7 @@ class StyleSheetManager {
         return newChild != null;
     }
 
-    private static void flatten(Collection<StyleSheetController> src, List<StyleSheetController> dst){
+    static void flatten(Collection<StyleSheetController> src, List<StyleSheetController> dst){
         for(StyleSheetController element : src){
             dst.add(element);
             if(element.allowsChildren() && element.hasChildren()){

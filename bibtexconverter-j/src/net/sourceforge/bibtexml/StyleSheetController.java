@@ -77,6 +77,7 @@ public class StyleSheetController {
     private final boolean crlf;
     private final boolean customEncoding;
     private boolean builtin = false;
+    private MessagePanel msgPane = null;
 
     private final static String P_NODE_PARAM = "param";
     private final static String P_NODE_CHILDREN = "children";
@@ -200,6 +201,15 @@ public class StyleSheetController {
 
     public boolean isBuiltin(){
         return builtin;
+    }
+
+    public void setOutputPanel(MessagePanel msgpanel){
+        msgPane = msgpanel;
+        if(hasChildren()){
+            for(StyleSheetController child : children){
+                child.setOutputPanel(msgPane);
+            }
+        }
     }
 
     public Transformer getTransformer() throws IOException, TransformerConfigurationException{
@@ -370,8 +380,7 @@ public class StyleSheetController {
         if(crlf){
             outstream = new CRLFOutputStream(outstream);
         }
-        System.out.printf("Creating %s in\n  %s\n", name, xslout.toString());
-        System.out.flush();
+        printMessage(xslout);
         try{
             conv.transform(getTransformer(), src, new StreamResult(outstream), params, enc);
         } finally {
@@ -386,10 +395,19 @@ public class StyleSheetController {
     throws TransformerException, IOException
     {
         final File xslout = new File(dir, basename + ext);
-        System.out.printf("Creating %s in\n  %s\n", name, xslout.toString());
-        System.out.flush();
+        printMessage(xslout);
         transformImpl(xml, xslout);
         childTransformations(xslout, dir, basename);
+    }
+
+    private void printMessage(File xslout){
+        if(msgPane == null){
+            System.out.printf("Creating %s in\n  %s\n", name, xslout.getPath());
+            System.out.flush();
+        } else {
+            msgPane.printNormal("Creating " + name + " in\n  ");
+            msgPane.printFilePath(xslout.getPath() + "\n");
+        }
     }
 
     public void childTransformations(final File xml,
@@ -529,6 +547,7 @@ public class StyleSheetController {
         if(ui != null){
             ui.dispose();
         }
+        newChild.setOutputPanel(msgPane);
         return children.add(newChild)? newChild : null;
     }
 
