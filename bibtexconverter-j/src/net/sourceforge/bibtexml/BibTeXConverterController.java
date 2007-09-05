@@ -141,6 +141,9 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             styleManager = null;
         } else {
             styleManager = new StyleSheetManager(convert, styleContainer, builtInStyles(convert), errorHandler, PREF.node("styles").node("user"));
+            for(StyleSheetController controller : styleManager.getStyles()){
+                controller.setOutputPanel(msgPane);
+            }
         }
         pack();
 
@@ -254,6 +257,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             sysErr = System.err;
             msgPane.makeSystemOut();
             msgPane.makeSystemErr();
+            msgPane.init();
         } else if (wasVisible && !isVisible()) {
             if(sysOut != null){
                 System.setOut(sysOut);
@@ -362,10 +366,12 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     }
 
     public boolean addStyle(final StyleSheetController cssc){
+        cssc.setOutputPanel(msgPane);
         return styleManager.addStyle(cssc);
     }
 
     public boolean removeStyle(final StyleSheetController cssc){
+        cssc.setOutputPanel(null);
         return styleManager.removeStyle(cssc);
     }
 
@@ -823,6 +829,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
 
             boolean html = false;
             int parseErrors  = 0;
+            boolean ioerror = false;
 
             int i = 0;
             FILELOOP: for(File inputf : inf){
@@ -840,17 +847,17 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                     /* bibtex to bibxml */
                     xmlencoding = convert.getXMLEncoding();
                     xml = new File(dir, basename + ".xml");
-                    System.out.println("Creating XML in\n  " + xml.getPath());
                     System.out.flush();
+                    msgPane.printNormal("Creating XML in\n  ");
+                    msgPane.printFilePath(xml.getPath() + "\n");
                     try{
                         errorHandler.reset();
                         convert.bibTexToXml(inputf, xml);
-                        parseErrors  = ecount.getErrorCount();
                     } catch (IOException ex){
                         convert.handleException("*** ERROR TRANSFORMING BIBTEX TO XML ***", ex);
-                        parseErrors = 0;
-                        break FILELOOP;
+                        ioerror = true;
                     }
+                    parseErrors  = ecount.getErrorCount();
                     if(parseErrors  > 0){
                         final ErrorList el = msgPane.getErrorList();
                         el.setFile(new XFile(inputf, InputType.BIBTEX, convert.getBibTeXEncoding()));
@@ -860,6 +867,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                             System.err.println(parseErrors  + " errors parsing " +  inputf.getName());
                         }
                         System.err.flush();
+                    }
+                    if(parseErrors > 0 || ioerror){
                         break FILELOOP;
                     }
                 } else {
