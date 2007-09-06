@@ -18,7 +18,7 @@
   <xsl:strip-space elements="meta head"/>
 
   <xsl:include href="include/dcxml2html.xsl"/>
-  <xsl:include href="include/fn-parse-author.xsl"/>
+  <xsl:include href="include/bibfunc.xsl"/>
 
   <xsl:template match="/">
     <xsl:variable name="title"

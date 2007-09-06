@@ -11,7 +11,7 @@
   <xsl:output method="text" indent="no" encoding="windows-1252"/>
   <xsl:strip-space elements="*"/>
 
-  <xsl:include href="include/fn-parse-author.xsl"/>
+  <xsl:include href="include/bibfunc.xsl"/>
 
   <xsl:template match="/">
     <xsl:apply-templates select="bibtex:file"/>

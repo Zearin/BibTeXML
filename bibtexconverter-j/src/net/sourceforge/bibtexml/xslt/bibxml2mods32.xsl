@@ -22,7 +22,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     exclude-result-prefixes="bibtex fn bibfunc">
 
-  <xsl:include href="include/fn-parse-author.xsl"/>
+  <xsl:include href="include/bibfunc.xsl"/>
   <xsl:include href="include/mods-classification.xsl"/>
 
   <xsl:output
