@@ -381,8 +381,7 @@
 
   <xsl:template match="bibtex:doi" mode="url">
     <mods:url>
-      <xsl:text>http://dx.doi.org/</xsl:text>
-      <xsl:value-of select="normalize-space(text())"/>
+      <xsl:value-of select="foo:doi-to-url(text())"/>
     </mods:url>
   </xsl:template>
 

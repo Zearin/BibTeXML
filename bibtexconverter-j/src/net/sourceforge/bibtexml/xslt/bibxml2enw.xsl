@@ -250,7 +250,7 @@
         <xsl:with-param name="enwid" select="'%U'"/>
         <xsl:with-param
             name="value"
-            select="if(local-name() eq 'doi') then concat('http://dx.doi.org/', text()) else if(local-name() eq 'howpublished') then substring-after(text(),'\url') else text()" />
+            select="if(local-name() eq 'doi') then foo:doi-to-url(text()) else if(local-name() eq 'howpublished') then substring-after(text(),'\url') else text()" />
       </xsl:call-template>
     </xsl:if>
   </xsl:template>

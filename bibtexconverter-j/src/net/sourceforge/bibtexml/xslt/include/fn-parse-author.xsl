@@ -102,4 +102,27 @@
     <xsl:sequence select="$result"/>
   </xsl:function>
 
+<xsl:function name="foo:normalize-doi">
+    <xsl:param name="doi" as="xs:string" />
+    <!-- Step 1 : remove leading and trailing whitespace -->
+    <xsl:variable name="step1" select="normalize-space($doi)"/>
+    <!-- Step 2 : remove a possible leading "urn:doi:" -->
+    <xsl:variable name="step2"
+      select="if (starts-with($step1, 'urn:doi:')) then substring-after($step1, 'urn:doi:') else $step1"/>
+    <!-- Step 3 : remove a possible leading "doi:" -->
+    <xsl:sequence
+      select="if (starts-with($step1, 'doi:')) then substring-after($step1, 'doi:') else $step2"/>
+  </xsl:function>
+
+  <xsl:function name="foo:doi-to-url">
+    <xsl:param name="doi" as="xs:string" />
+    <xsl:param name="proxy" as="xs:string" />
+    <xsl:sequence select="concat($proxy, foo:normalize-doi($doi))"/>
+  </xsl:function>
+
+  <xsl:function name="foo:doi-to-url">
+    <xsl:param name="doi" as="xs:string" />
+    <xsl:sequence select="foo:doi-to-url($doi, 'http://dx.doi.org/')"/>
+  </xsl:function>
+
 </xsl:transform>
