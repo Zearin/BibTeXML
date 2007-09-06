@@ -18,9 +18,9 @@
     xmlns:fn="http://www.w3.org/2003/11/xpath-functions"
     xmlns:mods="http://www.loc.gov/mods/v3"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:foo="http://foo/bar/baz"
+    xmlns:bibfunc="http://bibtexml.sf.net/functions"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    exclude-result-prefixes="bibtex fn foo">
+    exclude-result-prefixes="bibtex fn bibfunc">
 
   <xsl:include href="include/fn-parse-author.xsl"/>
   <xsl:include href="include/mods-classification.xsl"/>
@@ -381,7 +381,7 @@
 
   <xsl:template match="bibtex:doi" mode="url">
     <mods:url>
-      <xsl:value-of select="foo:doi-to-url(text())"/>
+      <xsl:value-of select="bibfunc:doi-to-url(text())"/>
     </mods:url>
   </xsl:template>
 
@@ -458,17 +458,17 @@
 
   <xsl:template match="bibtex:pages">
     <mods:extent unit="pages">
-      <xsl:apply-templates select="foo:parse-pages(text())/foo:pages/*"/>
+      <xsl:apply-templates select="bibfunc:parse-pages(text())/bibfunc:pages/*"/>
     </mods:extent>
   </xsl:template>
 
-  <xsl:template match="foo:start-page">
+  <xsl:template match="bibfunc:start-page">
     <mods:start>
       <xsl:apply-templates />
     </mods:start>
   </xsl:template>
 
-  <xsl:template match="foo:end-page">
+  <xsl:template match="bibfunc:end-page">
     <mods:end>
       <xsl:apply-templates />
     </mods:end>
@@ -497,7 +497,7 @@
 
   <xsl:template match="bibtex:author|bibtex:editor">
     <mods:name type="personal">
-      <xsl:apply-templates select="foo:parse-author(.)/foo:person/*"/>
+      <xsl:apply-templates select="bibfunc:parse-author(.)/bibfunc:person/*"/>
       <mods:role>
         <mods:roleTerm type="text">
           <xsl:value-of select="local-name()"/>
@@ -514,19 +514,19 @@
     </mods:affiliation>
   </xsl:template>
 
-  <xsl:template match="foo:last">
+  <xsl:template match="bibfunc:last">
     <mods:namePart type="family">
       <xsl:apply-templates />
     </mods:namePart>
   </xsl:template>
 
-  <xsl:template match="foo:junior">
+  <xsl:template match="bibfunc:junior">
     <mods:namePart type="termsOfAddress">
       <xsl:apply-templates />
     </mods:namePart>
   </xsl:template>
 
-  <xsl:template match="foo:first">
+  <xsl:template match="bibfunc:first">
     <mods:namePart type="given">
       <xsl:apply-templates />
     </mods:namePart>

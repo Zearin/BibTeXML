@@ -7,8 +7,8 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:bibtex="http://bibtexml.sf.net/"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:foo="http://foo/bar/baz"
-    exclude-result-prefixes="bibtex xs foo xsl">
+    xmlns:bibfunc="http://bibtexml.sf.net/functions"
+    exclude-result-prefixes="bibtex xs bibfunc xsl">
     <!-- We could put xmlns="http://docbook.org/ns/docbook".
      But then the result does not validate any more against the dtd -->
   <xsl:output method="xml" indent="yes" encoding="utf-8"
@@ -63,7 +63,7 @@
       <xsl:otherwise>
         <xsl:for-each select="tokenize(normalize-space(text()), ' and ', 'i')">
           <author>
-            <xsl:apply-templates select="foo:parse-author(.)/foo:person/*"/>
+            <xsl:apply-templates select="bibfunc:parse-author(.)/bibfunc:person/*"/>
           </author>
         </xsl:for-each>
       </xsl:otherwise>
@@ -81,14 +81,14 @@
       <xsl:otherwise>
         <xsl:for-each select="tokenize(normalize-space(text()), ' and ', 'i')">
           <editor>
-            <xsl:apply-templates select="foo:parse-author(.)/foo:person/*"/>
+            <xsl:apply-templates select="bibfunc:parse-author(.)/bibfunc:person/*"/>
           </editor>
         </xsl:for-each>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="bibtex:givennames|foo:first">
+  <xsl:template match="bibtex:givennames|bibfunc:first">
     <xsl:variable name="tokens" select="tokenize(., '\s+')"/>
     <firstname>
       <xsl:value-of select="$tokens[1]"/>
@@ -100,13 +100,13 @@
     </xsl:for-each>
   </xsl:template>
 
-  <xsl:template match="bibtex:surname|foo:last">
+  <xsl:template match="bibtex:surname|bibfunc:last">
     <surname>
       <xsl:value-of select="text()"/>
     </surname>
   </xsl:template>
 
-  <xsl:template match="bibtex:jr|foo:junior">
+  <xsl:template match="bibtex:jr|bibfunc:junior">
     <lineage>
       <xsl:value-of select="text()"/>
     </lineage>

@@ -4,7 +4,7 @@
 <xsl:stylesheet version="2.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:bibtex="http://bibtexml.sf.net/"
-    xmlns:my="foo:bar"
+    xmlns:my="bibfunc:bar"
     xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xsl:param name="bibtexml.sf.net.encoding" select="'ISO-8859-1'" />
   <xsl:param name="protectTitleCapitalization" select="false" as="xs:boolean" />

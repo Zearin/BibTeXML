@@ -7,7 +7,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:bibtex="http://bibtexml.sf.net/"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:foo="http://foo/bar/baz">
+    xmlns:bibfunc="http://bibtexml.sf.net/functions">
   <xsl:output method="text" indent="no" encoding="windows-1252"/>
   <xsl:strip-space elements="*"/>
 
@@ -99,7 +99,7 @@
     <xsl:variable name="enwid" select="if (local-name() eq 'author') then '%A ' else '%E '" />
     <xsl:for-each select="tokenize(normalize-space(text()), ' and ', 'i')">
       <xsl:value-of select="$enwid" />
-      <xsl:apply-templates select="foo:parse-author(.)/foo:person"/>
+      <xsl:apply-templates select="bibfunc:parse-author(.)/bibfunc:person"/>
       <xsl:text>&#xA;</xsl:text>
     </xsl:for-each>
   </xsl:template>
@@ -107,15 +107,15 @@
     <!-- von Last[, First[, Jr]], at most 255 charaters
     -->
   <xsl:template
-      match="foo:person">
+      match="bibfunc:person">
     <xsl:variable name="formatted-author">
-      <xsl:value-of select="replace(foo:last,'&#160;', ' ')" />
-      <xsl:if test="foo:first">
+      <xsl:value-of select="replace(bibfunc:last,'&#160;', ' ')" />
+      <xsl:if test="bibfunc:first">
         <xsl:text>, </xsl:text>
-        <xsl:value-of select="replace(foo:first,'&#160;', ' ')"/>
-        <xsl:if test="foo:junior">
+        <xsl:value-of select="replace(bibfunc:first,'&#160;', ' ')"/>
+        <xsl:if test="bibfunc:junior">
           <xsl:text>, </xsl:text>
-          <xsl:value-of select="replace(foo:junior,'&#160;', ' ')" />
+          <xsl:value-of select="replace(bibfunc:junior,'&#160;', ' ')" />
         </xsl:if>
       </xsl:if>
     </xsl:variable>
@@ -250,7 +250,7 @@
         <xsl:with-param name="enwid" select="'%U'"/>
         <xsl:with-param
             name="value"
-            select="if(local-name() eq 'doi') then foo:doi-to-url(text()) else if(local-name() eq 'howpublished') then substring-after(text(),'\url') else text()" />
+            select="if(local-name() eq 'doi') then bibfunc:doi-to-url(text()) else if(local-name() eq 'howpublished') then substring-after(text(),'\url') else text()" />
       </xsl:call-template>
     </xsl:if>
   </xsl:template>

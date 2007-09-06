@@ -5,7 +5,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:fn="http://www.w3.org/2003/11/xpath-functions"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:foo="http://foo/bar/baz"
+    xmlns:bibfunc="http://bibtexml.sf.net/functions"
     exclude-result-prefixes="bibtex fn dc">
 
   <xsl:output
@@ -128,7 +128,7 @@ Style sheet: $Id$ by Moritz Ringler, 2003-2007</xsl:text>
           <xsl:when test="exists(*/bibtex:doi) and not(*/bibtex:doi eq '')">
             <a>
               <xsl:attribute name="href"
-              select="foo:doi-to-url(*/bibtex:doi/text())" />
+              select="bibfunc:doi-to-url(*/bibtex:doi/text())" />
               <xsl:call-template name="ref"/>
             </a>
           </xsl:when>
