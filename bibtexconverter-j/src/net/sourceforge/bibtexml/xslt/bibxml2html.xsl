@@ -6,7 +6,7 @@
     xmlns:fn="http://www.w3.org/2003/11/xpath-functions"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:bibfunc="http://bibtexml.sf.net/functions"
-    exclude-result-prefixes="bibtex fn dc">
+    exclude-result-prefixes="bibtex bibfunc fn dc">
 
   <xsl:output
       method="xhtml"
