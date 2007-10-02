@@ -71,7 +71,9 @@ public final class BibXMLCreator extends DepthFirstAdapter {
         text = text.replaceAll("<", "&lt;");
         text = text.replaceAll("~", "\u00A0");
         text = text.replaceAll("--", "-");
-        text = text.replaceAll("[\\{\\}]","");
+        if(!text.startsWith("{")){
+            text = text.replaceAll("[\\{\\}]","");
+        }
         return text;
     }
 
