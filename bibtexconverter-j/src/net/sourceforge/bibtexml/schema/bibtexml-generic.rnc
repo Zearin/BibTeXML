@@ -421,7 +421,7 @@ thesis.user =
     (element ( * - (
     (
         author | authors | title | school | year |
-        type | address | month | note | key?
+        type | address | month | note | key
     ) | (
         abstract |  affiliation |  contents |  copyright |  isbn |  doi |
         keywords |  language |  lccn |  location |  mrnumber |  price |
