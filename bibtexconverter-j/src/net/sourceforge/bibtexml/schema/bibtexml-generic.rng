@@ -344,6 +344,9 @@
       <optional>
         <ref name="note"/>
       </optional>
+      <optional>
+        <ref name="key"/>
+      </optional>
     </interleave>
   </define>
   <define name="article.user">
@@ -364,6 +367,7 @@
                 <name>pages</name>
                 <name>month</name>
                 <name>note</name>
+                <name>key</name>
               </choice>
               <choice>
                 <name>abstract</name>
@@ -444,6 +448,9 @@
       <optional>
         <ref name="note"/>
       </optional>
+      <optional>
+        <ref name="key"/>
+      </optional>
     </interleave>
   </define>
   <define name="book.user">
@@ -468,6 +475,7 @@
                 <name>edition</name>
                 <name>month</name>
                 <name>note</name>
+                <name>key</name>
               </choice>
               <choice>
                 <name>abstract</name>
@@ -536,6 +544,9 @@
       <optional>
         <ref name="note"/>
       </optional>
+      <optional>
+        <ref name="key"/>
+      </optional>
     </interleave>
   </define>
   <define name="booklet.user">
@@ -554,6 +565,7 @@
                 <name>month</name>
                 <name>year</name>
                 <name>note</name>
+                <name>key</name>
               </choice>
               <choice>
                 <name>abstract</name>
@@ -654,6 +666,9 @@
       <optional>
         <ref name="note"/>
       </optional>
+      <optional>
+        <ref name="key"/>
+      </optional>
     </interleave>
   </define>
   <define name="inbook.user">
@@ -681,6 +696,7 @@
                 <name>edition</name>
                 <name>month</name>
                 <name>note</name>
+                <name>key</name>
               </choice>
               <choice>
                 <name>abstract</name>
@@ -775,6 +791,9 @@
       <optional>
         <ref name="note"/>
       </optional>
+      <optional>
+        <ref name="key"/>
+      </optional>
     </interleave>
   </define>
   <define name="incollection.user">
@@ -803,6 +822,7 @@
                 <name>edition</name>
                 <name>month</name>
                 <name>note</name>
+                <name>key</name>
               </choice>
               <choice>
                 <name>abstract</name>
@@ -895,6 +915,9 @@
       <optional>
         <ref name="note"/>
       </optional>
+      <optional>
+        <ref name="key"/>
+      </optional>
     </interleave>
   </define>
   <define name="inproceedings.user">
@@ -921,6 +944,7 @@
                 <name>organization</name>
                 <name>publisher</name>
                 <name>note</name>
+                <name>key</name>
               </choice>
               <choice>
                 <name>abstract</name>
@@ -999,6 +1023,9 @@
       <optional>
         <ref name="note"/>
       </optional>
+      <optional>
+        <ref name="key"/>
+      </optional>
     </interleave>
   </define>
   <define name="manual.user">
@@ -1018,6 +1045,7 @@
                 <name>month</name>
                 <name>year</name>
                 <name>note</name>
+                <name>key</name>
               </choice>
               <choice>
                 <name>abstract</name>
@@ -1091,6 +1119,9 @@
       <optional>
         <ref name="note"/>
       </optional>
+      <optional>
+        <ref name="key"/>
+      </optional>
     </interleave>
   </define>
   <define name="thesis.user">
@@ -1110,6 +1141,7 @@
                 <name>address</name>
                 <name>month</name>
                 <name>note</name>
+                <name>key</name>
               </choice>
               <choice>
                 <name>abstract</name>
@@ -1182,6 +1214,9 @@
       <optional>
         <ref name="note"/>
       </optional>
+      <optional>
+        <ref name="key"/>
+      </optional>
     </interleave>
   </define>
   <define name="misc.user">
@@ -1199,6 +1234,7 @@
                 <name>month</name>
                 <name>year</name>
                 <name>note</name>
+                <name>key</name>
               </choice>
               <choice>
                 <name>abstract</name>
@@ -1275,6 +1311,9 @@
       <optional>
         <ref name="note"/>
       </optional>
+      <optional>
+        <ref name="key"/>
+      </optional>
     </interleave>
   </define>
   <define name="proceedings.user">
@@ -1297,6 +1336,7 @@
                 <name>organization</name>
                 <name>publisher</name>
                 <name>note</name>
+                <name>key</name>
               </choice>
               <choice>
                 <name>abstract</name>
@@ -1376,6 +1416,9 @@
       <optional>
         <ref name="note"/>
       </optional>
+      <optional>
+        <ref name="key"/>
+      </optional>
     </interleave>
   </define>
   <define name="techreport.user">
@@ -1396,6 +1439,7 @@
                 <name>address</name>
                 <name>month</name>
                 <name>note</name>
+                <name>key</name>
               </choice>
               <choice>
                 <name>abstract</name>
@@ -1462,6 +1506,9 @@
       <optional>
         <ref name="year"/>
       </optional>
+      <optional>
+        <ref name="key"/>
+      </optional>
     </interleave>
   </define>
   <define name="unpublished.user">
@@ -1478,6 +1525,7 @@
                 <name>note</name>
                 <name>month</name>
                 <name>year</name>
+                <name>key</name>
               </choice>
               <choice>
                 <name>abstract</name>
