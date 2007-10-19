@@ -36,6 +36,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.event.EventListenerList;
@@ -96,16 +97,8 @@ public class PathInput extends Box{
         JFileChooser jfc = new JFileChooser(path);
         jfc.setFileSelectionMode(selectionMode);
         if(extension != null){
-            jfc.setFileFilter(new FileFilter(){
-                public String getDescription(){
-                    return extension;
-                }
-
-                public boolean accept(File f){
-                    return (f != null) && (f.toString().endsWith(extension)) || f.isDirectory();
-                }
-            }
-            );
+            jfc.setFileFilter(new ExtensionFileFilter(null,
+                extension.replaceAll("\\*", "").split("\\s+")));
         }
         try{
             File pwd = new File(getPath());
@@ -127,6 +120,7 @@ public class PathInput extends Box{
 
     public void setPath(String p){
         textfield.setText(p);
+        fireActionPerformed();
     }
 
     public String getPath(){
@@ -181,7 +175,7 @@ public class PathInput extends Box{
         event = null;
     }
 
-    private static class FileTransferHandler extends TransferHandler{
+    private class FileTransferHandler extends TransferHandler{
         private final TransferHandler parent;
 
         public FileTransferHandler(TransferHandler parent){
@@ -189,7 +183,7 @@ public class PathInput extends Box{
         }
 
         public boolean canImport(JComponent comp, DataFlavor[] flavor){
-            boolean result = (comp instanceof JTextField) &&
+            boolean result =
                 Arrays.asList(flavor).contains(DataFlavor.javaFileListFlavor);
             if(! result){
                 result = (parent == null)
@@ -200,24 +194,16 @@ public class PathInput extends Box{
         }
 
         public int getSourceActions(JComponent comp){
-            if(comp instanceof JTextField){
-                return COPY_OR_MOVE;
-            } else {
-                return super.getSourceActions(comp);
-            }
+            return COPY_OR_MOVE;
         }
 
         public Transferable createTransferable(JComponent c){
-            if(c instanceof JTextField){
-                return new StringSelection(((JTextField) c).getSelectedText());
-            } else {
-                return super.createTransferable(c);
-            }
+            return new StringSelection(textfield.getSelectedText());
         }
 
         public boolean importData(JComponent comp, Transferable t){
+            boolean result = false;
             if(
-                (comp instanceof JTextField) &&
                  t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
             ){
                 List data = null;
@@ -230,17 +216,24 @@ public class PathInput extends Box{
                     System.err.flush();
                 }
                 if(data != null && !data.isEmpty()){
-                    ((JTextField) comp).setText(((File) data.get(0)).getAbsolutePath());
-                    return true;
+                    textfield.setText(((File) data.get(0)).getAbsolutePath());
+                    result = true;
                 }
-                return false;
             } else {
                 if(parent == null) {
-                    return super.importData(comp, t);
+                    result = super.importData(comp, t);
                 } else {
-                    return parent.importData(comp, t);
+                    result = parent.importData(comp, t);
                 }
             }
+            if(result){
+                SwingUtilities.invokeLater(new Runnable(){
+                    public void run(){
+                        fireActionPerformed();
+                    }
+                });
+            }
+            return result;
         }
 
     }
