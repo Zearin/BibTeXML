@@ -44,7 +44,7 @@ public class ExtensionFileFilter extends FileFilter{
     }
 
     public boolean accept(File f){
-        if(ext == null){
+        if(ext == null || f.isDirectory()){
             return true;
         }
         String name = f.getName();
