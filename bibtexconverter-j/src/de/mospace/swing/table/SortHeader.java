@@ -34,6 +34,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.UIManager;
+import javax.swing.plaf.TableHeaderUI;
 import javax.swing.SwingUtilities;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -63,8 +65,8 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
     private final Action sortAction;
     private final Action randomizeAction;
     private transient MouseEvent trigger;
-    private final JButton noneButton;
-    private final ArrowButton arrowButton;
+    private final JButton noneButton = new JButton();
+    private final ArrowButton arrowButton = new ArrowButton(BevelArrowIcon.DOWN);;
 
     private static class ArrowButton extends JButton{
         BevelArrowIcon icon, pressedIcon;
@@ -95,9 +97,6 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
         MouseListener ml = new MouseListener();
         addMouseListener(ml);
 
-        arrowButton = new ArrowButton(BevelArrowIcon.DOWN);
-
-        noneButton = new JButton();
         noneButton.setHorizontalTextPosition(JButton.CENTER);
         noneButton.setIcon(new BlankIcon());
         noneButton.setMargin(new Insets(0,0,0,0));
@@ -129,6 +128,17 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
     */
     public void setTable(JTable table){
         setTableImpl(table);
+    }
+
+    /** must do this to avoid bug in Java 6 */
+    public void updateUI(){
+        setUI((TableHeaderUI)UIManager.getUI(this));
+        //updateUI is called by super constructor
+        //when noneButton and arrowButton have not been initialized
+        if(noneButton != null){
+            noneButton.updateUI();
+            arrowButton.updateUI();
+        }
     }
 
     private final void setTableImpl(JTable table){
