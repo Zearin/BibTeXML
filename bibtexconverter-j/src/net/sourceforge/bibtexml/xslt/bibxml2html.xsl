@@ -88,6 +88,7 @@ Style sheet: $Id$ by Moritz Ringler, 2003-2007</xsl:text>
       </td>
       <td class="author">
         <xsl:apply-templates select="*/bibtex:author"/>
+        <xsl:apply-templates select="*/bibtex:others"/>
       </td>
       <td class="year">
         <xsl:value-of select="*/bibtex:year"/>
@@ -141,9 +142,22 @@ Style sheet: $Id$ by Moritz Ringler, 2003-2007</xsl:text>
   </xsl:template>
 
   <xsl:template name="author" match="*/bibtex:author">
-    <xsl:value-of select="."/>
-    <xsl:text>;</xsl:text>
+        <xsl:choose>
+        <xsl:when test="exists(bibtex:others)">
+          <span style="font-style:italic"><xsl:text>et al.</xsl:text></span>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="text()"/>
+          <xsl:text>;</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
     <br/>
+  </xsl:template>
+
+  <xsl:template name="others" match="*/bibtex:others">
+    <xsl:if test=". == ../bibtex:others[1]">
+      <span style="font-style:italic"><xsl:text>et al.</xsl:text></span>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template name="ref">

@@ -95,8 +95,9 @@ person =
 givennames = element givennames { text }
 surname = element surname { text }
 jr = element jr { text }
+others = element others {empty}
 
-author = element author { person }
+author = element author { person | others }
 authors = element authors { author+ }
 
 editor = element editor { person }

@@ -53,6 +53,31 @@
     <xsl:text>},&#xA;</xsl:text>
   </xsl:template>
 
+  <xsl:template match="bibtex:entry/*/bibtex:author" priority="0.6">
+    <xsl:variable name="brothers" select="../bibtex:author"/>
+
+    <xsl:if test="empty(./*) and (. = $brothers[1])"> <!-- no output for containers -->
+      <xsl:text>   author = {</xsl:text>
+      <xsl:value-of select="text()"/>
+      <xsl:apply-templates select="$brothers" mode="join-authors"/>
+      <xsl:text>},&#xA;</xsl:text>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="bibtex:author" mode="join-authors">
+    <xsl:if test="position() ne 1">
+      <xsl:text> and </xsl:text>
+      <xsl:choose>
+        <xsl:when test="exists(bibtex:others)">
+          <xsl:text>others</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="text()"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+  </xsl:template>
+
   <xsl:template match="bibtex:entry/*/bibtex:*" priority="0.5">
     <xsl:variable name="myname" select="name()" />
     <xsl:variable name="my-local-name" select="local-name()" />
@@ -62,7 +87,7 @@
       <xsl:text>   </xsl:text>
       <xsl:value-of select="if ($my-local-name eq 'keyword') then 'keywords' else $my-local-name"/>
       <xsl:text> = {</xsl:text>
-      <xsl:value-of select="string-join($brothers/text(), if ($my-local-name eq 'author') then ' and ' else ', ')"/>
+      <xsl:value-of select="string-join($brothers, ', ')"/>
       <xsl:text>},&#xA;</xsl:text>
     </xsl:if>
   </xsl:template>

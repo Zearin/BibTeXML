@@ -196,9 +196,14 @@ public final class BibXMLCreator extends DepthFirstAdapter {
     public void outAValueValOrSid(AValueValOrSid node) {
         String value = node.getStringLiteral().getText();
         String[] values;
+        boolean etal = false;
         if(key.equals("author")){
             values = AUTHOR_REX.split(value);
             for(int i=0; i<values.length; i++){
+                if("others".equals(values[i].trim().toLowerCase())){
+                    etal = true;
+                    continue;
+                }
                 try{
                     values[i] = new Author(values[i]).toString();
                 } catch (java.text.ParseException ignore){
@@ -217,6 +222,11 @@ public final class BibXMLCreator extends DepthFirstAdapter {
         for(int i=0, stop = values.length; i< stop; i++){
             Element bibnode = new Element(key, BIB_NAMESPACE);
             bibnode.setText(replacements(values[i]));
+            entrysub.addContent(bibnode);
+        }
+        if(etal){
+            Element bibnode = new Element(key, BIB_NAMESPACE);
+            bibnode.addContent(new Element("others", BIB_NAMESPACE));
             entrysub.addContent(bibnode);
         }
     }
