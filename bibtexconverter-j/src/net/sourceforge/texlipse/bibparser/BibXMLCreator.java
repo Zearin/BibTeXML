@@ -102,6 +102,11 @@ public final class BibXMLCreator extends AbbrevRetriever {
         Pattern.compile("\\\\([\"'`^])\\{([aeiouAEIOUyY])\\}");
     private static final Pattern PTILDE =
         Pattern.compile("\\\\~\\{([anoANO])\\}");
+    /** Replaces LaTeX accented characters in the input String with
+        their unicode equivalents.
+        @param txt the input string
+        @return the decoded input string
+     **/
     private static String replaceAccents(String txt){
         String text = txt;
 
