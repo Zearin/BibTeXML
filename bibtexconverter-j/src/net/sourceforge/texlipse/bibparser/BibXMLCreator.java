@@ -26,8 +26,10 @@ import net.sourceforge.texlipse.bibparser.analysis.DepthFirstAdapter;
 import net.sourceforge.texlipse.bibparser.node.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.*;
 import org.xml.sax.SAXException;
 import org.jdom.*;
+import net.sourceforge.texlipse.model.ReferenceEntry;
 
 
 /**
@@ -43,7 +45,7 @@ import org.jdom.*;
  *
  * @author Moritz Ringler
  */
-public final class BibXMLCreator extends AbbrevRetriever {
+public final class BibXMLCreator extends NullAdapter {
     private Document doc;
     private transient Element root;
     private transient Element entry;
@@ -60,6 +62,8 @@ public final class BibXMLCreator extends AbbrevRetriever {
     private transient String entryType;
     private int entryCount = 0;
     private BibTeXDecoder decoder = new BibTeXDecoder();
+    private SortedMap<String,ReferenceEntry> abbrevs =
+        new TreeMap<String,ReferenceEntry>();
 
     private Throwable error = null;
 
@@ -79,6 +83,10 @@ public final class BibXMLCreator extends AbbrevRetriever {
     **/
     public Throwable getError(){
         return error;
+    }
+
+    public SortedMap<String, ReferenceEntry> getAbbrevMap(){
+        return abbrevs;
     }
 
     /** Constructs a new isntance of this class. */
@@ -124,10 +132,6 @@ public final class BibXMLCreator extends AbbrevRetriever {
 
     public void outAEntryparenEntry(AEntryparenEntry node) {
         entry = null;
-    }
-
-    public void inAEntryDef(AEntryDef node) {
-        //do nothing
     }
 
     /**
@@ -212,6 +216,29 @@ public final class BibXMLCreator extends AbbrevRetriever {
         root.addContent(preamble);
     }
 
+    public void inAStrbraceStringEntry(AStrbraceStringEntry node) {
+        value = new StringBuilder();
+    }
+
+    public void outAStrbraceStringEntry(AStrbraceStringEntry node) {
+        makeAbbreviation(node.getIdentifier().getText(),
+                         value.toString());
+        value = null;
+    }
+
+    public void inAStrparenStringEntry(AStrparenStringEntry node) {
+        value = new StringBuilder();
+    }
+
+    public void outAStrparenStringEntry(AStrparenStringEntry node) {
+        makeAbbreviation(node.getIdentifier().getText(),
+                         value.toString());
+        value = null;
+    }
+
+    private void makeAbbreviation(String key, String val){
+        abbrevs.put(key, new ReferenceEntry(key, val));
+    }
 
     public void outAValueValOrSid(AValueValOrSid node) {
         value.append(node.getStringLiteral().getText());

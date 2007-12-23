@@ -138,9 +138,17 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     public void caseAStrbraceStringEntry(AStrbraceStringEntry node)
     {
         inAStrbraceStringEntry(node);
-        if(node.getStringLiteral() != null)
         {
-            node.getStringLiteral().apply(this);
+            List<PConcat> copy = new ArrayList<PConcat>(node.getConcat());
+            Collections.reverse(copy);
+            for(PConcat e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getValOrSid() != null)
+        {
+            node.getValOrSid().apply(this);
         }
         if(node.getIdentifier() != null)
         {
@@ -163,9 +171,17 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     public void caseAStrparenStringEntry(AStrparenStringEntry node)
     {
         inAStrparenStringEntry(node);
-        if(node.getStringLiteral() != null)
         {
-            node.getStringLiteral().apply(this);
+            List<PConcat> copy = new ArrayList<PConcat>(node.getConcat());
+            Collections.reverse(copy);
+            for(PConcat e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getValOrSid() != null)
+        {
+            node.getValOrSid().apply(this);
         }
         if(node.getIdentifier() != null)
         {

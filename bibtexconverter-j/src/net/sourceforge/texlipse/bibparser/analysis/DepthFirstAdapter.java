@@ -141,9 +141,16 @@ public class DepthFirstAdapter extends AnalysisAdapter
         {
             node.getIdentifier().apply(this);
         }
-        if(node.getStringLiteral() != null)
+        if(node.getValOrSid() != null)
         {
-            node.getStringLiteral().apply(this);
+            node.getValOrSid().apply(this);
+        }
+        {
+            List<PConcat> copy = new ArrayList<PConcat>(node.getConcat());
+            for(PConcat e : copy)
+            {
+                e.apply(this);
+            }
         }
         outAStrbraceStringEntry(node);
     }
@@ -166,9 +173,16 @@ public class DepthFirstAdapter extends AnalysisAdapter
         {
             node.getIdentifier().apply(this);
         }
-        if(node.getStringLiteral() != null)
+        if(node.getValOrSid() != null)
         {
-            node.getStringLiteral().apply(this);
+            node.getValOrSid().apply(this);
+        }
+        {
+            List<PConcat> copy = new ArrayList<PConcat>(node.getConcat());
+            for(PConcat e : copy)
+            {
+                e.apply(this);
+            }
         }
         outAStrparenStringEntry(node);
     }

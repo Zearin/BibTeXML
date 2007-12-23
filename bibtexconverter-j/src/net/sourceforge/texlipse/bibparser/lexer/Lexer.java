@@ -214,7 +214,7 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 0: state = State.INATENTRY; break;
+                                case 0: state = State.INPREAMBLE; break;
                             }
                             return token;
                         }
@@ -260,8 +260,8 @@ public class Lexer
                             {
                                 case 3: state = State.BRACESTRING; break;
                                 case 4: state = State.BRACESTRING; break;
-                                case 2: state = State.ASSIGN; break;
                                 case 1: state = State.INENTRY; break;
+                                case 2: state = State.ASSIGN; break;
                                 case 6: state = State.REMOVE; break;
                             }
                             return token;
@@ -309,8 +309,8 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 2: state = State.ASSIGN; break;
                                 case 1: state = State.INENTRY; break;
+                                case 2: state = State.ASSIGN; break;
                             }
                             return token;
                         }
@@ -602,7 +602,7 @@ public class Lexer
             {},
             {{9, 32, -2}, },
         }
-        { // INATENTRY
+        { // INPREAMBLE
             {{40, 40, 1}, {123, 123, 2}, },
             {},
             {},
@@ -671,7 +671,7 @@ public class Lexer
         {5, 5, -1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 2, 2, 4, 4, 3, 3, },
         // INENTRY
         {-1, 0, 0, 0, 0, 0, 9, 10, 15, 11, 15, 15, 15, 15, 15, 12, 15, 15, 15, 6, 7, 0, },
-        // INATENTRY
+        // INPREAMBLE
         {-1, 9, 6, },
         // ASSIGN
         {-1, 0, 0, 0, 0, 0, 16, 13, 10, 15, 11, 15, 15, 15, 14, 15, 15, 15, 15, 6, 7, 0, 15, },
@@ -688,7 +688,7 @@ public class Lexer
     {
         public final static State NORMAL = new State(0);
         public final static State INENTRY = new State(1);
-        public final static State INATENTRY = new State(2);
+        public final static State INPREAMBLE = new State(2);
         public final static State ASSIGN = new State(3);
         public final static State BRACESTRING = new State(4);
         public final static State QSTRING = new State(5);

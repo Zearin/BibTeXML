@@ -26,8 +26,9 @@
  */
 /*
     Modifications by Moritz Ringler
-        * store preamble sections
-        * allow string, preamble, entry definitions in arbitrary order
+        * store @preamble sections
+        * allow concatenation inside @string
+        * allow @string, @preamble, @<entry> definitions in arbitrary order
 */
 
 //Package fi.hut.soberit.texlipse.bibparser;
@@ -65,7 +66,7 @@ Helpers
 // ----------------------------------------------------------------------------
 States
 
-normal, inentry, inatentry, assign, bracestring, qstring, remove;
+normal, inentry, inpreamble, assign, bracestring, qstring, remove;
 
 // ----------------------------------------------------------------------------
 Tokens
@@ -75,7 +76,7 @@ Tokens
     {normal->inentry} estring = '@' ['S'+'s'] ['T'+'t'] ['R'+'r'] ['I'+'i'] ['N'+'n'] ['G'+'g'];
 
     {normal->remove} scribe_comment = '@' ['C'+'c'] ['O'+'o'] ['M'+'m'] ['M'+'m'] ['E'+'e'] ['N'+'n'] ['T'+'t'];
-    {normal->inatentry} preamble = '@' ['P'+'p'] ['R'+'r'] ['E'+'e'] ['A'+'a'] ['M'+'m'] ['B'+'b'] ['L'+'l'] ['E'+'e'];
+    {normal->inpreamble} preamble = '@' ['P'+'p'] ['R'+'r'] ['E'+'e'] ['A'+'a'] ['M'+'m'] ['B'+'b'] ['L'+'l'] ['E'+'e'];
 
     {normal->inentry} entry_name = '@' letter+;
 
@@ -106,12 +107,12 @@ Tokens
 */
 
 
-    {inentry, inatentry->assign, assign->bracestring, bracestring, remove} l_brace = '{';
+    {inentry, inpreamble->assign, assign->bracestring, bracestring, remove} l_brace = '{';
     {inentry->normal, assign->normal, bracestring, remove} r_brace = '}';
 
     {bracestring, remove} b_string = b_str_char+;
 
-    {inentry, inatentry->assign} l_paren = '(';
+    {inentry, inpreamble->assign} l_paren = '(';
     {inentry->normal, assign->normal} r_paren = ')';
 
 //    {normal} at = '@';
@@ -131,7 +132,7 @@ Tokens
 // ----------------------------------------------------------------------------
 Ignored Tokens
 
-// we take care of the preamble and scribe comment in the custom lexer
+// we take care of the scribe comment in the custom lexer
     whitespace,
     comment;
 
@@ -158,10 +159,10 @@ preamble_entry {-> preamble_entry}
 // anyway)...
 
 string_entry {-> string_entry}
-    = {strbrace} estring l_brace [ckey]:identifier equals [q1]:quotec? [value]:string_literal [q2]:quotec? r_brace
-    {-> New string_entry.strbrace(ckey, value)}
-    | {strparen} estring l_paren [ckey]:identifier equals [q1]:quotec? [value]:string_literal [q2]:quotec? r_paren
-    {-> New string_entry.strparen(ckey, value)};
+    = {strbrace} estring l_brace [ckey]:identifier equals val_or_sid concat* r_brace
+    {-> New string_entry.strbrace(ckey, val_or_sid, [concat.concat])}
+    | {strparen} estring l_paren [ckey]:identifier equals val_or_sid concat* r_paren
+    {-> New string_entry.strparen(ckey, val_or_sid, [concat.concat])};
 
 entry {-> entry } = {entrybrace} entry_def l_brace [ckey]:identifier keyval_decl+ comma? r_brace
     {-> New entry.entrybrace(entry_def.entry_def, ckey, [keyval_decl.keyval_decl])}
@@ -212,7 +213,8 @@ content = {str} string_entry |
           {pre} preamble_entry |
           {ent} entry;
 
-string_entry = {strbrace} identifier string_literal | {strparen} identifier string_literal;
+string_entry = {strbrace} identifier val_or_sid concat* |
+               {strparen} identifier val_or_sid concat*;
 
 preamble_entry = {prebrace} val_or_sid concat* | {preparen} val_or_sid concat*;
 

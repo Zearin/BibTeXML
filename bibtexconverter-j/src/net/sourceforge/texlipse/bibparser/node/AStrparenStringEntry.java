@@ -2,13 +2,15 @@
 
 package net.sourceforge.texlipse.bibparser.node;
 
+import java.util.*;
 import net.sourceforge.texlipse.bibparser.analysis.*;
 
 @SuppressWarnings("nls")
 public final class AStrparenStringEntry extends PStringEntry
 {
     private TIdentifier _identifier_;
-    private TStringLiteral _stringLiteral_;
+    private PValOrSid _valOrSid_;
+    private final LinkedList<PConcat> _concat_ = new LinkedList<PConcat>();
 
     public AStrparenStringEntry()
     {
@@ -17,12 +19,15 @@ public final class AStrparenStringEntry extends PStringEntry
 
     public AStrparenStringEntry(
         @SuppressWarnings("hiding") TIdentifier _identifier_,
-        @SuppressWarnings("hiding") TStringLiteral _stringLiteral_)
+        @SuppressWarnings("hiding") PValOrSid _valOrSid_,
+        @SuppressWarnings("hiding") List<PConcat> _concat_)
     {
         // Constructor
         setIdentifier(_identifier_);
 
-        setStringLiteral(_stringLiteral_);
+        setValOrSid(_valOrSid_);
+
+        setConcat(_concat_);
 
     }
 
@@ -31,7 +36,8 @@ public final class AStrparenStringEntry extends PStringEntry
     {
         return new AStrparenStringEntry(
             cloneNode(this._identifier_),
-            cloneNode(this._stringLiteral_));
+            cloneNode(this._valOrSid_),
+            cloneList(this._concat_));
     }
 
     public void apply(Switch sw)
@@ -64,16 +70,16 @@ public final class AStrparenStringEntry extends PStringEntry
         this._identifier_ = node;
     }
 
-    public TStringLiteral getStringLiteral()
+    public PValOrSid getValOrSid()
     {
-        return this._stringLiteral_;
+        return this._valOrSid_;
     }
 
-    public void setStringLiteral(TStringLiteral node)
+    public void setValOrSid(PValOrSid node)
     {
-        if(this._stringLiteral_ != null)
+        if(this._valOrSid_ != null)
         {
-            this._stringLiteral_.parent(null);
+            this._valOrSid_.parent(null);
         }
 
         if(node != null)
@@ -86,7 +92,27 @@ public final class AStrparenStringEntry extends PStringEntry
             node.parent(this);
         }
 
-        this._stringLiteral_ = node;
+        this._valOrSid_ = node;
+    }
+
+    public LinkedList<PConcat> getConcat()
+    {
+        return this._concat_;
+    }
+
+    public void setConcat(List<PConcat> list)
+    {
+        this._concat_.clear();
+        this._concat_.addAll(list);
+        for(PConcat e : list)
+        {
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+        }
     }
 
     @Override
@@ -94,7 +120,8 @@ public final class AStrparenStringEntry extends PStringEntry
     {
         return ""
             + toString(this._identifier_)
-            + toString(this._stringLiteral_);
+            + toString(this._valOrSid_)
+            + toString(this._concat_);
     }
 
     @Override
@@ -107,9 +134,14 @@ public final class AStrparenStringEntry extends PStringEntry
             return;
         }
 
-        if(this._stringLiteral_ == child)
+        if(this._valOrSid_ == child)
         {
-            this._stringLiteral_ = null;
+            this._valOrSid_ = null;
+            return;
+        }
+
+        if(this._concat_.remove(child))
+        {
             return;
         }
 
@@ -126,10 +158,28 @@ public final class AStrparenStringEntry extends PStringEntry
             return;
         }
 
-        if(this._stringLiteral_ == oldChild)
+        if(this._valOrSid_ == oldChild)
         {
-            setStringLiteral((TStringLiteral) newChild);
+            setValOrSid((PValOrSid) newChild);
             return;
+        }
+
+        for(ListIterator<PConcat> i = this._concat_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PConcat) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
         }
 
         throw new RuntimeException("Not a child.");

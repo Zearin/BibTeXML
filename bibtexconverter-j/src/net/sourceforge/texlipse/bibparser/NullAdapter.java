@@ -19,8 +19,6 @@
  */
 package net.sourceforge.texlipse.bibparser;
 
-import java.util.*;
-
 import net.sourceforge.texlipse.bibparser.analysis.DepthFirstAdapter;
 import net.sourceforge.texlipse.bibparser.node.ABibtex;
 import net.sourceforge.texlipse.bibparser.node.AConcat;
@@ -33,37 +31,18 @@ import net.sourceforge.texlipse.bibparser.node.ANumValOrSid;
 import net.sourceforge.texlipse.bibparser.node.AStrbraceStringEntry;
 import net.sourceforge.texlipse.bibparser.node.AStrparenStringEntry;
 import net.sourceforge.texlipse.bibparser.node.AValueValOrSid;
-import net.sourceforge.texlipse.model.ReferenceEntry;
 
 
 /**
- * Retrieves the BibTeX abbreviations (defined with @string{...}) from the AST.
+ * NullImplementation.
  *
  * This class is a visitor, that is applied on the AST that is a result of parsing a
  * BibTeX-file. See <a href="http://www.sablecc.org">http://www.sablecc.org</a> for
  * more information on the structure of the AST and the visitors.
  *
- * @author Oskar Ojala
+ * @author Moritz Ringler
  */
-public class AbbrevRetriever extends DepthFirstAdapter {
-
-    private SortedMap<String,ReferenceEntry> abbrevs = new TreeMap<String,ReferenceEntry>(); //type: ReferenceEntry
-    private ReferenceEntry currEntry;
-    private String currEntryInfo;
-
-    /**
-     * @deprecated use getAbbrevMap instead
-     * @return The abbreviations as a list of <code>ReferenceEntry</code>s
-     */
-    public ArrayList<ReferenceEntry> getAbbrevs() {
-        ArrayList<ReferenceEntry> result = new ArrayList<ReferenceEntry>();
-        result.addAll(abbrevs.values());
-        return result;
-    }
-
-    public SortedMap<String, ReferenceEntry> getAbbrevMap(){
-        return abbrevs;
-    }
+public class NullAdapter extends DepthFirstAdapter {
 
     public void inABibtex(ABibtex node) {
     }
@@ -72,18 +51,12 @@ public class AbbrevRetriever extends DepthFirstAdapter {
     }
 
     public void inAStrbraceStringEntry(AStrbraceStringEntry node) {
-        final String key = node.getIdentifier().getText();
-        final String val = node.getStringLiteral().getText();
-        abbrevs.put(key, new ReferenceEntry(key, val));
     }
 
     public void outAStrbraceStringEntry(AStrbraceStringEntry node) {
     }
 
     public void inAStrparenStringEntry(AStrparenStringEntry node) {
-        final String key = node.getIdentifier().getText();
-        final String val = node.getStringLiteral().getText();
-        abbrevs.put(key, new ReferenceEntry(key, val));
     }
 
     public void outAStrparenStringEntry(AStrparenStringEntry node) {
