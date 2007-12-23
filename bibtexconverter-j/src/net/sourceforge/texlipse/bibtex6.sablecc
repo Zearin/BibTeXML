@@ -60,7 +60,7 @@ Helpers
 // ----------------------------------------------------------------------------
 States
 
-normal, inentry, assign, bracestring, qstring, remove;
+normal, inentry, inatentry, assign, bracestring, qstring, remove;
 
 // ----------------------------------------------------------------------------
 Tokens
@@ -70,7 +70,7 @@ Tokens
     {normal->inentry} estring = '@' ['S'+'s'] ['T'+'t'] ['R'+'r'] ['I'+'i'] ['N'+'n'] ['G'+'g'];
 
     {normal->remove} scribe_comment = '@' ['C'+'c'] ['O'+'o'] ['M'+'m'] ['M'+'m'] ['E'+'e'] ['N'+'n'] ['T'+'t'];
-    {normal->remove} preamble = '@' ['P'+'p'] ['R'+'r'] ['E'+'e'] ['A'+'a'] ['M'+'m'] ['B'+'b'] ['L'+'l'] ['E'+'e'];
+    {normal->inatentry} preamble = '@' ['P'+'p'] ['R'+'r'] ['E'+'e'] ['A'+'a'] ['M'+'m'] ['B'+'b'] ['L'+'l'] ['E'+'e'];
 
     {normal->inentry} entry_name = '@' letter+;
 
@@ -101,12 +101,12 @@ Tokens
 */
 
 
-    {inentry, assign->bracestring, bracestring, remove} l_brace = '{';
+    {inentry, inatentry->assign, assign->bracestring, bracestring, remove} l_brace = '{';
     {inentry->normal, assign->normal, bracestring, remove} r_brace = '}';
 
     {bracestring, remove} b_string = b_str_char+;
 
-    {inentry} l_paren = '(';
+    {inentry, inatentry->assign} l_paren = '(';
     {inentry->normal, assign->normal} r_paren = ')';
 
 //    {normal} at = '@';
@@ -135,10 +135,17 @@ Ignored Tokens
 Productions
 
 bibtex {-> bibtex}
-    = string_entry* entry*
-    { -> New bibtex([string_entry.string_entry], [entry.entry])};
+    = string_entry* preamble_entry* entry*
+    { -> New bibtex([string_entry.string_entry], [preamble_entry.preamble_entry], [entry.entry])};
+//    = string_entry* entry*
+//    { -> New bibtex([string_entry.string_entry], [entry.entry])};
 
-//preamble_entry {-> } = preamble string_literal {-> };
+
+preamble_entry {-> preamble_entry}
+    = {prebrace} preamble l_brace val_or_sid concat* r_brace
+    {-> New preamble_entry.prebrace(val_or_sid, [concat.concat])}
+    | {preparen} preamble l_paren val_or_sid concat* r_paren
+    {-> New preamble_entry.preparen(val_or_sid, [concat.concat])};
 
 // d'oh...BibTeX grammar...we could cheat a bit here, but Sable does apparently not make it possible
 // to map two different productions to the same AST node (which isn't needed in a WELL DESIGNED grammar
@@ -194,9 +201,12 @@ concat {-> concat} = sharp val_or_sid {->New concat(val_or_sid)};
 // ----------------------------------------------------------------------------
 Abstract Syntax Tree
 
-bibtex = string_entry* entry*;
+bibtex = string_entry* preamble_entry* entry*;
+//bibtex = string_entry* entry*;
 
 string_entry = {strbrace} identifier string_literal | {strparen} identifier string_literal;
+
+preamble_entry = {prebrace} val_or_sid concat* | {preparen} val_or_sid concat*;
 
 entry = {entrybrace} entry_def identifier keyval_decl+ | {entryparen} entry_def identifier keyval_decl+;
 

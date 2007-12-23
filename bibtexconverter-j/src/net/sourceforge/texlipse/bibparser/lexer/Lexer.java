@@ -166,10 +166,10 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 2: state = State.ASSIGN; break;
-                                case 3: state = State.BRACESTRING; break;
+                                case 3: state = State.ASSIGN; break;
+                                case 4: state = State.BRACESTRING; break;
                                 case 1: state = State.INENTRY; break;
-                                case 5: state = State.REMOVE; break;
+                                case 6: state = State.REMOVE; break;
                             }
                             return token;
                         }
@@ -214,7 +214,7 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 0: state = State.REMOVE; break;
+                                case 0: state = State.INATENTRY; break;
                             }
                             return token;
                         }
@@ -258,10 +258,11 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 2: state = State.BRACESTRING; break;
                                 case 3: state = State.BRACESTRING; break;
+                                case 4: state = State.BRACESTRING; break;
+                                case 2: state = State.ASSIGN; break;
                                 case 1: state = State.INENTRY; break;
-                                case 5: state = State.REMOVE; break;
+                                case 6: state = State.REMOVE; break;
                             }
                             return token;
                         }
@@ -275,10 +276,10 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 2: state = State.NORMAL; break;
-                                case 3: state = State.BRACESTRING; break;
+                                case 3: state = State.NORMAL; break;
+                                case 4: state = State.BRACESTRING; break;
                                 case 1: state = State.NORMAL; break;
-                                case 5: state = State.REMOVE; break;
+                                case 6: state = State.REMOVE; break;
                             }
                             return token;
                         }
@@ -293,8 +294,8 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 3: state = State.BRACESTRING; break;
-                                case 5: state = State.REMOVE; break;
+                                case 4: state = State.BRACESTRING; break;
+                                case 6: state = State.REMOVE; break;
                             }
                             return token;
                         }
@@ -308,6 +309,7 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
+                                case 2: state = State.ASSIGN; break;
                                 case 1: state = State.INENTRY; break;
                             }
                             return token;
@@ -322,7 +324,7 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 2: state = State.NORMAL; break;
+                                case 3: state = State.NORMAL; break;
                                 case 1: state = State.NORMAL; break;
                             }
                             return token;
@@ -337,7 +339,7 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 2: state = State.INENTRY; break;
+                                case 3: state = State.INENTRY; break;
                                 case 1: state = State.INENTRY; break;
                             }
                             return token;
@@ -366,7 +368,7 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 2: state = State.ASSIGN; break;
+                                case 3: state = State.ASSIGN; break;
                             }
                             return token;
                         }
@@ -381,7 +383,7 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 2: state = State.ASSIGN; break;
+                                case 3: state = State.ASSIGN; break;
                             }
                             return token;
                         }
@@ -396,7 +398,7 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 2: state = State.ASSIGN; break;
+                                case 3: state = State.ASSIGN; break;
                                 case 1: state = State.INENTRY; break;
                             }
                             return token;
@@ -411,8 +413,8 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 2: state = State.QSTRING; break;
-                                case 4: state = State.ASSIGN; break;
+                                case 3: state = State.QSTRING; break;
+                                case 5: state = State.ASSIGN; break;
                             }
                             return token;
                         }
@@ -427,7 +429,7 @@ public class Lexer
                             this.line = accept_line;
                             switch(state.id())
                             {
-                                case 4: state = State.QSTRING; break;
+                                case 5: state = State.QSTRING; break;
                             }
                             return token;
                         }
@@ -600,6 +602,11 @@ public class Lexer
             {},
             {{9, 32, -2}, },
         }
+        { // INATENTRY
+            {{40, 40, 1}, {123, 123, 2}, },
+            {},
+            {},
+        }
         { // ASSIGN
             {{9, 9, 1}, {10, 10, 2}, {12, 12, 3}, {13, 13, 4}, {32, 32, 5}, {34, 34, 6}, {35, 35, 7}, {41, 41, 8}, {43, 43, 9}, {44, 44, 10}, {45, 45, 11}, {46, 46, 12}, {47, 47, 13}, {48, 57, 14}, {58, 58, 15}, {65, 90, 16}, {95, 95, 17}, {97, 122, 18}, {123, 123, 19}, {125, 125, 20}, },
             {{9, 32, -2}, },
@@ -664,6 +671,8 @@ public class Lexer
         {5, 5, -1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 2, 2, 4, 4, 3, 3, },
         // INENTRY
         {-1, 0, 0, 0, 0, 0, 9, 10, 15, 11, 15, 15, 15, 15, 15, 12, 15, 15, 15, 6, 7, 0, },
+        // INATENTRY
+        {-1, 9, 6, },
         // ASSIGN
         {-1, 0, 0, 0, 0, 0, 16, 13, 10, 15, 11, 15, 15, 15, 14, 15, 15, 15, 15, 6, 7, 0, 15, },
         // BRACESTRING
@@ -679,10 +688,11 @@ public class Lexer
     {
         public final static State NORMAL = new State(0);
         public final static State INENTRY = new State(1);
-        public final static State ASSIGN = new State(2);
-        public final static State BRACESTRING = new State(3);
-        public final static State QSTRING = new State(4);
-        public final static State REMOVE = new State(5);
+        public final static State INATENTRY = new State(2);
+        public final static State ASSIGN = new State(3);
+        public final static State BRACESTRING = new State(4);
+        public final static State QSTRING = new State(5);
+        public final static State REMOVE = new State(6);
 
         private int id;
 

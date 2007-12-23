@@ -27,6 +27,11 @@
     <xsl:apply-templates/>
   </xsl:template>
 
+  <xsl:template match="bibtex:preamble" priority="1">
+    <xsl:text>@PREAMBLE{"</xsl:text><xsl:value-of
+      select="text()"/><xsl:text>"}</xsl:text>
+  </xsl:template>
+
   <xsl:template match="bibtex:entry" priority="1">
     <xsl:text>&#xA;</xsl:text>
     <xsl:apply-templates/>

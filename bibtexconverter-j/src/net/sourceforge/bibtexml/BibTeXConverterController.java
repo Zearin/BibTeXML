@@ -171,6 +171,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     public static void noGUI() throws IOException, TransformerException,
             javax.xml.parsers.ParserConfigurationException, SAXException{
         final BibTeXConverter btc = new BibTeXConverter();
+        btc.setBibTeXErrorHandler(null);
         final InputType inputType = Enum.valueOf(InputType.class,
                 PREF.get(INPUT_PREFIX, InputType.BIBTEX.name()));
         final boolean isBibTeX =  (InputType.BIBTEX == inputType);

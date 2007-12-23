@@ -59,92 +59,7 @@ public final class BibXMLCreator extends AbbrevRetriever {
     private transient StringBuilder value;
     private transient String entryType;
     private int entryCount = 0;
-
-    /** Normalizes whitespace in the string argument; encodes the XML
-        special characters &, >, and <; decodes LaTeX ~ and --,
-        decodes LaTeX accented characters, and removes
-        remaining braces (except in entries that enclosed in double braces).
-        @Return the processed string
-    **/
-    private static String replacements(String txt){
-        String text = txt.replaceAll("\\s+", " ");
-        text = replaceAccents(text);
-        text = text.replaceAll("&", "&amp;");
-        text = text.replaceAll(">", "&gt;");
-        text = text.replaceAll("<", "&lt;");
-        text = text.replaceAll("~", "\u00A0");
-        text = text.replaceAll("--", "-");
-        if(!text.startsWith("{")){
-            text = text.replaceAll("[\\{\\}]","");
-        }
-        return text;
-    }
-
-    private static final char[][] ACCENTED = new char[][]{
-        "\u00e4\u00eb\u00ef\u00f6\u00fc\u00c4\u00cb\u00cf\u00d6\u00dc\u00ff".toCharArray(),
-        "\u00e1\u00e9\u00ed\u00f3\u00fa\u00c1\u00c9\u00cd\u00d3\u00da\u00fd\u00dd".toCharArray(),
-        "\u00e0\u00e8\u00ec\u00f2\u00f9\u00c0\u00c8\u00cc\u00d2\u00d9".toCharArray(),
-        "\u00e2\u00ea\u00ee\u00f4\u00fb\u00c2\u00ca\u00ce\u00d4\u00db".toCharArray(),
-        "\u00e3\u00f1\u00f5\u00c3\u00d1\u00d5".toCharArray()};
-    private static final char[] ACCENTS = "\"'`^".toCharArray();
-    private static final char[] VOWELS = "aeiouAEIOUyY".toCharArray();
-    private static final char[] TILDE_CHARS = "anoANO".toCharArray();
-    private static final int indexOf(char[] cc, char c){
-        int i = cc.length - 1;
-        for(; i != -1; i--){
-            if(cc[i] == c){
-                break;
-            }
-        }
-        return i;
-    }
-    private static final Pattern PACCENTS =
-        Pattern.compile("\\\\([\"'`^])\\{([aeiouAEIOUyY])\\}");
-    private static final Pattern PTILDE =
-        Pattern.compile("\\\\~\\{([anoANO])\\}");
-    /** Replaces LaTeX accented characters in the input String with
-        their unicode equivalents.
-        @param txt the input string
-        @return the decoded input string
-     **/
-    private static String replaceAccents(String txt){
-        String text = txt;
-
-        //Accents \u00e4\u00e1\u00e0\u00e2
-        Matcher m = PACCENTS.matcher(text);
-        StringBuffer sb = new StringBuffer();
-        while (m.find()) {
-            final int vowel = indexOf(VOWELS, m.group(2).charAt(0));
-            final int accent = indexOf(ACCENTS, m.group(1).charAt(0));
-            final String repl =
-                (vowel == -1 || accent == -1 || ACCENTED[accent].length <= vowel )
-                ? m.group(0)
-                : String.valueOf(ACCENTED[accent][vowel]);
-            m.appendReplacement(sb, repl);
-        }
-        m.appendTail(sb);
-        text = sb.toString();
-
-        //Tilde
-        m = PTILDE.matcher(text);
-        sb.setLength(0);
-        while (m.find()) {
-            final int tchar = indexOf(TILDE_CHARS, m.group(1).charAt(0));
-            final String repl =
-                (tchar == -1)
-                ? m.group(0)
-                : String.valueOf(ACCENTED[ACCENTS.length + 1][tchar]);
-            m.appendReplacement(sb, repl);
-        }
-        m.appendTail(sb);
-        text = sb.toString();
-
-        //Cedille
-        text = text.replaceAll("\\\\c\\{(c)\\}","\u00e7");
-        text = text.replaceAll("\\\\c\\{(C)\\}","\u00c7");
-
-        return text;
-    }
+    private BibTeXDecoder decoder = new BibTeXDecoder();
 
     private Throwable error = null;
 
@@ -231,12 +146,12 @@ public final class BibXMLCreator extends AbbrevRetriever {
     }
 
     public void outAKeyvalDecl(AKeyvalDecl node) {
-        makeNodes(node.getIdentifier().getText().toLowerCase(),
+        makeKeyvalNodes(node.getIdentifier().getText().toLowerCase(),
                   value.toString());
         value = null;
     }
 
-    private void makeNodes(String key, String val){
+    private void makeKeyvalNodes(String key, String val){
         String[] values;
         boolean etal = false;
         if(key.equals("author")){
@@ -263,7 +178,7 @@ public final class BibXMLCreator extends AbbrevRetriever {
         }
         for(int i=0, stop = values.length; i< stop; i++){
             Element bibnode = new Element(key, BIB_NAMESPACE);
-            bibnode.setText(replacements(values[i]));
+            bibnode.setText(decoder.decode(values[i]));
             entrysub.addContent(bibnode);
         }
         if(etal){
@@ -273,32 +188,37 @@ public final class BibXMLCreator extends AbbrevRetriever {
         }
     }
 
-    public void inAConcat(AConcat node) {
-        //do nothing
+    public void inAPrebracePreambleEntry(APrebracePreambleEntry node) {
+        value = new StringBuilder();
     }
 
-    public void outAConcat(AConcat node) {
-        //do nothing
+    public void outAPrebracePreambleEntry(APrebracePreambleEntry node) {
+        makePreambleNode(value.toString());
+        value = null;
     }
 
-    public void inAValueValOrSid(AValueValOrSid node) {
-        //do nothing
+    public void inAPreparenPreambleEntry(APreparenPreambleEntry node) {
+        value = new StringBuilder();
     }
+
+    public void outAPreparenPreambleEntry(APreparenPreambleEntry node) {
+        makePreambleNode(value.toString());
+        value = null;
+    }
+
+    private void makePreambleNode(String text){
+        Element preamble = new Element("preamble", BIB_NAMESPACE);
+        preamble.setText(text);
+        root.addContent(preamble);
+    }
+
 
     public void outAValueValOrSid(AValueValOrSid node) {
         value.append(node.getStringLiteral().getText());
     }
 
-    public void inANumValOrSid(ANumValOrSid node) {
-        //do nothing
-    }
-
     public void outANumValOrSid(ANumValOrSid node) {
         value.append(node.getNumber().getText());
-    }
-
-    public void inAIdValOrSid(AIdValOrSid node) {
-        //do nothing
     }
 
     public void outAIdValOrSid(AIdValOrSid node) {

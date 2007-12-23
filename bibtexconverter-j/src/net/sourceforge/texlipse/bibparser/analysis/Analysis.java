@@ -15,6 +15,8 @@ public interface Analysis extends Switch
     void caseABibtex(ABibtex node);
     void caseAStrbraceStringEntry(AStrbraceStringEntry node);
     void caseAStrparenStringEntry(AStrparenStringEntry node);
+    void caseAPrebracePreambleEntry(APrebracePreambleEntry node);
+    void caseAPreparenPreambleEntry(APreparenPreambleEntry node);
     void caseAEntrybraceEntry(AEntrybraceEntry node);
     void caseAEntryparenEntry(AEntryparenEntry node);
     void caseAEntryDef(AEntryDef node);

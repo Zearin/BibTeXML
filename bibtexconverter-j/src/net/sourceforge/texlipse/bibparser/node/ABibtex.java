@@ -9,6 +9,7 @@ import net.sourceforge.texlipse.bibparser.analysis.*;
 public final class ABibtex extends PBibtex
 {
     private final LinkedList<PStringEntry> _stringEntry_ = new LinkedList<PStringEntry>();
+    private final LinkedList<PPreambleEntry> _preambleEntry_ = new LinkedList<PPreambleEntry>();
     private final LinkedList<PEntry> _entry_ = new LinkedList<PEntry>();
 
     public ABibtex()
@@ -18,10 +19,13 @@ public final class ABibtex extends PBibtex
 
     public ABibtex(
         @SuppressWarnings("hiding") List<PStringEntry> _stringEntry_,
+        @SuppressWarnings("hiding") List<PPreambleEntry> _preambleEntry_,
         @SuppressWarnings("hiding") List<PEntry> _entry_)
     {
         // Constructor
         setStringEntry(_stringEntry_);
+
+        setPreambleEntry(_preambleEntry_);
 
         setEntry(_entry_);
 
@@ -32,6 +36,7 @@ public final class ABibtex extends PBibtex
     {
         return new ABibtex(
             cloneList(this._stringEntry_),
+            cloneList(this._preambleEntry_),
             cloneList(this._entry_));
     }
 
@@ -50,6 +55,26 @@ public final class ABibtex extends PBibtex
         this._stringEntry_.clear();
         this._stringEntry_.addAll(list);
         for(PStringEntry e : list)
+        {
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+        }
+    }
+
+    public LinkedList<PPreambleEntry> getPreambleEntry()
+    {
+        return this._preambleEntry_;
+    }
+
+    public void setPreambleEntry(List<PPreambleEntry> list)
+    {
+        this._preambleEntry_.clear();
+        this._preambleEntry_.addAll(list);
+        for(PPreambleEntry e : list)
         {
             if(e.parent() != null)
             {
@@ -85,6 +110,7 @@ public final class ABibtex extends PBibtex
     {
         return ""
             + toString(this._stringEntry_)
+            + toString(this._preambleEntry_)
             + toString(this._entry_);
     }
 
@@ -93,6 +119,11 @@ public final class ABibtex extends PBibtex
     {
         // Remove child
         if(this._stringEntry_.remove(child))
+        {
+            return;
+        }
+
+        if(this._preambleEntry_.remove(child))
         {
             return;
         }
@@ -116,6 +147,24 @@ public final class ABibtex extends PBibtex
                 if(newChild != null)
                 {
                     i.set((PStringEntry) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
+        }
+
+        for(ListIterator<PPreambleEntry> i = this._preambleEntry_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PPreambleEntry) newChild);
                     newChild.parent(this);
                     oldChild.parent(null);
                     return;

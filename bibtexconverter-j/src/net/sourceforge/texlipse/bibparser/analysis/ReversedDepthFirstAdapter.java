@@ -59,6 +59,14 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
             }
         }
         {
+            List<PPreambleEntry> copy = new ArrayList<PPreambleEntry>(node.getPreambleEntry());
+            Collections.reverse(copy);
+            for(PPreambleEntry e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
             List<PStringEntry> copy = new ArrayList<PStringEntry>(node.getStringEntry());
             Collections.reverse(copy);
             for(PStringEntry e : copy)
@@ -117,6 +125,64 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
             node.getIdentifier().apply(this);
         }
         outAStrparenStringEntry(node);
+    }
+
+    public void inAPrebracePreambleEntry(APrebracePreambleEntry node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAPrebracePreambleEntry(APrebracePreambleEntry node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAPrebracePreambleEntry(APrebracePreambleEntry node)
+    {
+        inAPrebracePreambleEntry(node);
+        {
+            List<PConcat> copy = new ArrayList<PConcat>(node.getConcat());
+            Collections.reverse(copy);
+            for(PConcat e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getValOrSid() != null)
+        {
+            node.getValOrSid().apply(this);
+        }
+        outAPrebracePreambleEntry(node);
+    }
+
+    public void inAPreparenPreambleEntry(APreparenPreambleEntry node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAPreparenPreambleEntry(APreparenPreambleEntry node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAPreparenPreambleEntry(APreparenPreambleEntry node)
+    {
+        inAPreparenPreambleEntry(node);
+        {
+            List<PConcat> copy = new ArrayList<PConcat>(node.getConcat());
+            Collections.reverse(copy);
+            for(PConcat e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getValOrSid() != null)
+        {
+            node.getValOrSid().apply(this);
+        }
+        outAPreparenPreambleEntry(node);
     }
 
     public void inAEntrybraceEntry(AEntrybraceEntry node)

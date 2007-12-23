@@ -52,7 +52,7 @@ public class BibLexer extends Lexer {
 
     /**
      * We define a filter that recognizes braced strings and removes
-     * the preamble and scribe-comments
+     * the scribe-comments
      */
     protected void filter() throws LexerException {
 

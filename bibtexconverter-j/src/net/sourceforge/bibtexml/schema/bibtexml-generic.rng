@@ -33,7 +33,7 @@
   
 -->
 <!-- Namespace and namespace prefix -->
-<grammar xmlns:bibtex="http://bibtexml.sf.net/" xmlns:m="http://bibtexml.sourceforge.net/version-annotations" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" ns="http://bibtexml.sf.net/" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<grammar xmlns:dc="http://purl.org/dc/elements/1.1/" ns="http://bibtexml.sf.net/" xmlns:bibtex="http://bibtexml.sf.net/" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:m="http://bibtexml.sourceforge.net/version-annotations" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!-- Document top element -->
   <start>
     <ref name="file"/>
@@ -45,7 +45,10 @@
         <ref name="metadata"/>
       </optional>
       <zeroOrMore>
-        <ref name="entry"/>
+        <choice>
+          <ref name="preamble"/>
+          <ref name="entry"/>
+        </choice>
       </zeroOrMore>
     </element>
   </define>
@@ -114,6 +117,12 @@
     .....................................................................
     Main structure
   -->
+  <define name="preamble">
+    <a:documentation>preamble</a:documentation>
+    <element name="preamble">
+      <text/>
+    </element>
+  </define>
   <define name="standard.entries.class">
     <a:documentation>Each entry may contain one of the bibliographic types.</a:documentation>
     <choice>

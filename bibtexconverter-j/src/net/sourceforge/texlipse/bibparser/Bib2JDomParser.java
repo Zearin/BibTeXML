@@ -111,10 +111,11 @@ public class Bib2JDomParser {
         BibXMLCreator xmlmaker = new BibXMLCreator();
         if(ast != null){
             ast.apply(xmlmaker);
-        } //else {
+        } else {
+            System.err.println("Warning: No AST!");
             // do nothing. xmlmaker will return an entry count of 0
             // and an exception will be thrown below.
-        //}
+        }
         if(xmlmaker.checkError()){
             IOException ex = new IOException("Error creating XML tree.");
             ex.initCause(xmlmaker.getError());
@@ -125,18 +126,6 @@ public class Bib2JDomParser {
             }
         }
         return xmlmaker.getResultDocument();
-    }
-
-    /**
-     * @return Returns the abbreviations.
-     */
-    public ArrayList<ReferenceEntry> getAbbrevs() {
-        if (ast != null) {
-            AbbrevRetriever ar = new AbbrevRetriever();
-            ast.apply(ar);
-            return ar.getAbbrevs();
-        }
-        return null;
     }
 
     /**

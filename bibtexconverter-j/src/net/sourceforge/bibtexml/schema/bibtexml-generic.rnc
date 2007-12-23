@@ -37,7 +37,7 @@ namespace dc = "http://purl.org/dc/elements/1.1/"
 
 # Document top element
 start = file
-file = element file { file.attlist, metadata?, entry* }
+file = element file { file.attlist, metadata?, (preamble | entry)* }
 
 file.attlist  &= attribute structure {
     [ m:structure="flat" ] ( "flat" ) |
@@ -61,7 +61,8 @@ metadata.dc = (element (dc:*){ text })*
 
 # .....................................................................
 # Main structure
-
+##preamble
+preamble = element preamble{ text }
 
 ## Each entry may contain one of the bibliographic types.
 standard.entries.class =

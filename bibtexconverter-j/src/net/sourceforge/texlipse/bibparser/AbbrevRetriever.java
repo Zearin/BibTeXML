@@ -52,6 +52,7 @@ public class AbbrevRetriever extends DepthFirstAdapter {
     private String currEntryInfo;
 
     /**
+     * @deprecated use getAbbrevMap instead
      * @return The abbreviations as a list of <code>ReferenceEntry</code>s
      */
     public ArrayList<ReferenceEntry> getAbbrevs() {

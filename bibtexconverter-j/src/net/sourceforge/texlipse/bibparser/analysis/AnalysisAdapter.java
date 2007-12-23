@@ -84,6 +84,16 @@ public class AnalysisAdapter implements Analysis
         defaultCase(node);
     }
 
+    public void caseAPrebracePreambleEntry(APrebracePreambleEntry node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseAPreparenPreambleEntry(APreparenPreambleEntry node)
+    {
+        defaultCase(node);
+    }
+
     public void caseAEntrybraceEntry(AEntrybraceEntry node)
     {
         defaultCase(node);
