@@ -25,6 +25,7 @@ package net.sourceforge.texlipse.bibparser;
 import net.sourceforge.texlipse.bibparser.analysis.DepthFirstAdapter;
 import net.sourceforge.texlipse.bibparser.node.*;
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import org.xml.sax.SAXException;
 import org.jdom.*;
 
@@ -42,7 +43,7 @@ import org.jdom.*;
  *
  * @author Moritz Ringler
  */
-public final class BibXMLCreator extends DepthFirstAdapter {
+public final class BibXMLCreator extends AbbrevRetriever {
     private Document doc;
     private transient Element root;
     private transient Element entry;
@@ -55,17 +56,19 @@ public final class BibXMLCreator extends DepthFirstAdapter {
     final static Pattern KEYWORDS_REX = Pattern.compile("\\s*[,;]\\s*");
     /** A regular expression describing one or more whitespace characters.**/
     final static Pattern WHITESPACE_REX = Pattern.compile("\\s+");
-    private transient String key = "";
+    private transient StringBuilder value;
     private transient String entryType;
     private int entryCount = 0;
 
     /** Normalizes whitespace in the string argument; encodes the XML
-        special characters &, >, and <; decodes LaTeX ~, and --, and removes
-        all braces.
+        special characters &, >, and <; decodes LaTeX ~ and --,
+        decodes LaTeX accented characters, and removes
+        remaining braces (except in entries that enclosed in double braces).
         @Return the processed string
     **/
     private static String replacements(String txt){
         String text = txt.replaceAll("\\s+", " ");
+        text = replaceAccents(text);
         text = text.replaceAll("&", "&amp;");
         text = text.replaceAll(">", "&gt;");
         text = text.replaceAll("<", "&lt;");
@@ -74,6 +77,67 @@ public final class BibXMLCreator extends DepthFirstAdapter {
         if(!text.startsWith("{")){
             text = text.replaceAll("[\\{\\}]","");
         }
+        return text;
+    }
+
+    private static final char[][] ACCENTED = new char[][]{
+        "\u00e4\u00eb\u00ef\u00f6\u00fc\u00c4\u00cb\u00cf\u00d6\u00dc\u00ff".toCharArray(),
+        "\u00e1\u00e9\u00ed\u00f3\u00fa\u00c1\u00c9\u00cd\u00d3\u00da\u00fd\u00dd".toCharArray(),
+        "\u00e0\u00e8\u00ec\u00f2\u00f9\u00c0\u00c8\u00cc\u00d2\u00d9".toCharArray(),
+        "\u00e2\u00ea\u00ee\u00f4\u00fb\u00c2\u00ca\u00ce\u00d4\u00db".toCharArray(),
+        "\u00e3\u00f1\u00f5\u00c3\u00d1\u00d5".toCharArray()};
+    private static final char[] ACCENTS = "\"'`^".toCharArray();
+    private static final char[] VOWELS = "aeiouAEIOUyY".toCharArray();
+    private static final char[] TILDE_CHARS = "anoANO".toCharArray();
+    private static final int indexOf(char[] cc, char c){
+        int i = cc.length - 1;
+        for(; i != -1; i--){
+            if(cc[i] == c){
+                break;
+            }
+        }
+        return i;
+    }
+    private static final Pattern PACCENTS =
+        Pattern.compile("\\\\([\"'`^])\\{([aeiouAEIOUyY])\\}");
+    private static final Pattern PTILDE =
+        Pattern.compile("\\\\~\\{([anoANO])\\}");
+    private static String replaceAccents(String txt){
+        String text = txt;
+
+        //Accents \u00e4\u00e1\u00e0\u00e2
+        Matcher m = PACCENTS.matcher(text);
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            final int vowel = indexOf(VOWELS, m.group(2).charAt(0));
+            final int accent = indexOf(ACCENTS, m.group(1).charAt(0));
+            final String repl =
+                (vowel == -1 || accent == -1 || ACCENTED[accent].length <= vowel )
+                ? m.group(0)
+                : String.valueOf(ACCENTED[accent][vowel]);
+            m.appendReplacement(sb, repl);
+        }
+        m.appendTail(sb);
+        text = sb.toString();
+
+        //Tilde
+        m = PTILDE.matcher(text);
+        sb.setLength(0);
+        while (m.find()) {
+            final int tchar = indexOf(TILDE_CHARS, m.group(1).charAt(0));
+            final String repl =
+                (tchar == -1)
+                ? m.group(0)
+                : String.valueOf(ACCENTED[ACCENTS.length + 1][tchar]);
+            m.appendReplacement(sb, repl);
+        }
+        m.appendTail(sb);
+        text = sb.toString();
+
+        //Cedille
+        text = text.replaceAll("\\\\c\\{(c)\\}","\u00e7");
+        text = text.replaceAll("\\\\c\\{(C)\\}","\u00c7");
+
         return text;
     }
 
@@ -120,22 +184,6 @@ public final class BibXMLCreator extends DepthFirstAdapter {
         root = null;
     }
 
-    public void inAStrbraceStringEntry(AStrbraceStringEntry node) {
-        //do nothing
-    }
-
-    public void outAStrbraceStringEntry(AStrbraceStringEntry node) {
-        //do nothing
-    }
-
-    public void inAStrparenStringEntry(AStrparenStringEntry node) {
-        //do nothing
-    }
-
-    public void outAStrparenStringEntry(AStrparenStringEntry node) {
-        //do nothing
-    }
-
     public void inAEntrybraceEntry(AEntrybraceEntry node) {
         entry = new Element("entry", BIB_NAMESPACE);
         entry.setAttribute("id", node.getIdentifier().getText());
@@ -174,11 +222,50 @@ public final class BibXMLCreator extends DepthFirstAdapter {
     }
 
     public void inAKeyvalDecl(AKeyvalDecl node) {
-        key = node.getIdentifier().getText().toLowerCase();
+        value = new StringBuilder();
     }
 
     public void outAKeyvalDecl(AKeyvalDecl node) {
-        key = null;
+        makeNodes(node.getIdentifier().getText().toLowerCase(),
+                  value.toString());
+        value = null;
+    }
+
+    private void makeNodes(String key, String val){
+        String[] values;
+        boolean etal = false;
+        if(key.equals("author")){
+            values = AUTHOR_REX.split(val);
+            for(int i=0; i<values.length; i++){
+                if("others".equals(values[i].trim().toLowerCase())){
+                    etal = true;
+                    continue;
+                }
+                try{
+                    values[i] = new Author(values[i]).toString();
+                } catch (java.text.ParseException ignore){
+                    System.err.println("Cannot parse author "+values[i]);
+                    System.err.println(ignore);
+                    System.err.flush();
+                }
+            }
+        } else if (key.equals("keywords") || key.equals("refgroup")){
+            values = KEYWORDS_REX.split(val);
+        } else if (key.equals("pages")){
+            values = new String[]{WHITESPACE_REX.matcher(val).replaceAll("")};
+        }  else {
+            values = new String[]{val};
+        }
+        for(int i=0, stop = values.length; i< stop; i++){
+            Element bibnode = new Element(key, BIB_NAMESPACE);
+            bibnode.setText(replacements(values[i]));
+            entrysub.addContent(bibnode);
+        }
+        if(etal){
+            Element bibnode = new Element(key, BIB_NAMESPACE);
+            bibnode.addContent(new Element("others", BIB_NAMESPACE));
+            entrysub.addContent(bibnode);
+        }
     }
 
     public void inAConcat(AConcat node) {
@@ -194,41 +281,7 @@ public final class BibXMLCreator extends DepthFirstAdapter {
     }
 
     public void outAValueValOrSid(AValueValOrSid node) {
-        String value = node.getStringLiteral().getText();
-        String[] values;
-        boolean etal = false;
-        if(key.equals("author")){
-            values = AUTHOR_REX.split(value);
-            for(int i=0; i<values.length; i++){
-                if("others".equals(values[i].trim().toLowerCase())){
-                    etal = true;
-                    continue;
-                }
-                try{
-                    values[i] = new Author(values[i]).toString();
-                } catch (java.text.ParseException ignore){
-                    System.err.println("Cannot parse author "+values[i]);
-                    System.err.println(ignore);
-                    System.err.flush();
-                }
-            }
-        } else if (key.equals("keywords") || key.equals("refgroup")){
-            values = KEYWORDS_REX.split(value);
-        } else if (key.equals("pages")){
-            values = new String[]{WHITESPACE_REX.matcher(value).replaceAll("")};
-        }  else {
-            values = new String[]{value};
-        }
-        for(int i=0, stop = values.length; i< stop; i++){
-            Element bibnode = new Element(key, BIB_NAMESPACE);
-            bibnode.setText(replacements(values[i]));
-            entrysub.addContent(bibnode);
-        }
-        if(etal){
-            Element bibnode = new Element(key, BIB_NAMESPACE);
-            bibnode.addContent(new Element("others", BIB_NAMESPACE));
-            entrysub.addContent(bibnode);
-        }
+        value.append(node.getStringLiteral().getText());
     }
 
     public void inANumValOrSid(ANumValOrSid node) {
@@ -236,9 +289,7 @@ public final class BibXMLCreator extends DepthFirstAdapter {
     }
 
     public void outANumValOrSid(ANumValOrSid node) {
-        Element bibnode = new Element(key, BIB_NAMESPACE);
-        bibnode.setText(replacements(node.getNumber().getText()));
-        entrysub.addContent(bibnode);
+        value.append(node.getNumber().getText());
     }
 
     public void inAIdValOrSid(AIdValOrSid node) {
@@ -246,9 +297,11 @@ public final class BibXMLCreator extends DepthFirstAdapter {
     }
 
     public void outAIdValOrSid(AIdValOrSid node) {
-        Element bibnode = new Element(key, BIB_NAMESPACE);
-        bibnode.setText(replacements(node.getIdentifier().getText()));
-        entrysub.addContent(bibnode);
+        String nodeText = node.getIdentifier().getText();
+        if(getAbbrevMap().containsKey(nodeText)){
+            nodeText = getAbbrevMap().get(nodeText).info;
+        }
+        value.append(nodeText);
     }
 
     /** Returns the number of entries that have been converted to BibTeXML
