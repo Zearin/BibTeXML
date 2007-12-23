@@ -51,27 +51,76 @@ public class DepthFirstAdapter extends AnalysisAdapter
     {
         inABibtex(node);
         {
-            List<PStringEntry> copy = new ArrayList<PStringEntry>(node.getStringEntry());
-            for(PStringEntry e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        {
-            List<PPreambleEntry> copy = new ArrayList<PPreambleEntry>(node.getPreambleEntry());
-            for(PPreambleEntry e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        {
-            List<PEntry> copy = new ArrayList<PEntry>(node.getEntry());
-            for(PEntry e : copy)
+            List<PContent> copy = new ArrayList<PContent>(node.getContent());
+            for(PContent e : copy)
             {
                 e.apply(this);
             }
         }
         outABibtex(node);
+    }
+
+    public void inAStrContent(AStrContent node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAStrContent(AStrContent node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAStrContent(AStrContent node)
+    {
+        inAStrContent(node);
+        if(node.getStringEntry() != null)
+        {
+            node.getStringEntry().apply(this);
+        }
+        outAStrContent(node);
+    }
+
+    public void inAPreContent(APreContent node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAPreContent(APreContent node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAPreContent(APreContent node)
+    {
+        inAPreContent(node);
+        if(node.getPreambleEntry() != null)
+        {
+            node.getPreambleEntry().apply(this);
+        }
+        outAPreContent(node);
+    }
+
+    public void inAEntContent(AEntContent node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAEntContent(AEntContent node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAEntContent(AEntContent node)
+    {
+        inAEntContent(node);
+        if(node.getEntry() != null)
+        {
+            node.getEntry().apply(this);
+        }
+        outAEntContent(node);
     }
 
     public void inAStrbraceStringEntry(AStrbraceStringEntry node)

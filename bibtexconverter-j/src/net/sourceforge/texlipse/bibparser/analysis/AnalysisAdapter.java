@@ -74,6 +74,21 @@ public class AnalysisAdapter implements Analysis
         defaultCase(node);
     }
 
+    public void caseAStrContent(AStrContent node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseAPreContent(APreContent node)
+    {
+        defaultCase(node);
+    }
+
+    public void caseAEntContent(AEntContent node)
+    {
+        defaultCase(node);
+    }
+
     public void caseAStrbraceStringEntry(AStrbraceStringEntry node)
     {
         defaultCase(node);

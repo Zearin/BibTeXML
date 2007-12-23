@@ -8,9 +8,7 @@ import net.sourceforge.texlipse.bibparser.analysis.*;
 @SuppressWarnings("nls")
 public final class ABibtex extends PBibtex
 {
-    private final LinkedList<PStringEntry> _stringEntry_ = new LinkedList<PStringEntry>();
-    private final LinkedList<PPreambleEntry> _preambleEntry_ = new LinkedList<PPreambleEntry>();
-    private final LinkedList<PEntry> _entry_ = new LinkedList<PEntry>();
+    private final LinkedList<PContent> _content_ = new LinkedList<PContent>();
 
     public ABibtex()
     {
@@ -18,16 +16,10 @@ public final class ABibtex extends PBibtex
     }
 
     public ABibtex(
-        @SuppressWarnings("hiding") List<PStringEntry> _stringEntry_,
-        @SuppressWarnings("hiding") List<PPreambleEntry> _preambleEntry_,
-        @SuppressWarnings("hiding") List<PEntry> _entry_)
+        @SuppressWarnings("hiding") List<PContent> _content_)
     {
         // Constructor
-        setStringEntry(_stringEntry_);
-
-        setPreambleEntry(_preambleEntry_);
-
-        setEntry(_entry_);
+        setContent(_content_);
 
     }
 
@@ -35,9 +27,7 @@ public final class ABibtex extends PBibtex
     public Object clone()
     {
         return new ABibtex(
-            cloneList(this._stringEntry_),
-            cloneList(this._preambleEntry_),
-            cloneList(this._entry_));
+            cloneList(this._content_));
     }
 
     public void apply(Switch sw)
@@ -45,56 +35,16 @@ public final class ABibtex extends PBibtex
         ((Analysis) sw).caseABibtex(this);
     }
 
-    public LinkedList<PStringEntry> getStringEntry()
+    public LinkedList<PContent> getContent()
     {
-        return this._stringEntry_;
+        return this._content_;
     }
 
-    public void setStringEntry(List<PStringEntry> list)
+    public void setContent(List<PContent> list)
     {
-        this._stringEntry_.clear();
-        this._stringEntry_.addAll(list);
-        for(PStringEntry e : list)
-        {
-            if(e.parent() != null)
-            {
-                e.parent().removeChild(e);
-            }
-
-            e.parent(this);
-        }
-    }
-
-    public LinkedList<PPreambleEntry> getPreambleEntry()
-    {
-        return this._preambleEntry_;
-    }
-
-    public void setPreambleEntry(List<PPreambleEntry> list)
-    {
-        this._preambleEntry_.clear();
-        this._preambleEntry_.addAll(list);
-        for(PPreambleEntry e : list)
-        {
-            if(e.parent() != null)
-            {
-                e.parent().removeChild(e);
-            }
-
-            e.parent(this);
-        }
-    }
-
-    public LinkedList<PEntry> getEntry()
-    {
-        return this._entry_;
-    }
-
-    public void setEntry(List<PEntry> list)
-    {
-        this._entry_.clear();
-        this._entry_.addAll(list);
-        for(PEntry e : list)
+        this._content_.clear();
+        this._content_.addAll(list);
+        for(PContent e : list)
         {
             if(e.parent() != null)
             {
@@ -109,26 +59,14 @@ public final class ABibtex extends PBibtex
     public String toString()
     {
         return ""
-            + toString(this._stringEntry_)
-            + toString(this._preambleEntry_)
-            + toString(this._entry_);
+            + toString(this._content_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._stringEntry_.remove(child))
-        {
-            return;
-        }
-
-        if(this._preambleEntry_.remove(child))
-        {
-            return;
-        }
-
-        if(this._entry_.remove(child))
+        if(this._content_.remove(child))
         {
             return;
         }
@@ -140,49 +78,13 @@ public final class ABibtex extends PBibtex
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        for(ListIterator<PStringEntry> i = this._stringEntry_.listIterator(); i.hasNext();)
+        for(ListIterator<PContent> i = this._content_.listIterator(); i.hasNext();)
         {
             if(i.next() == oldChild)
             {
                 if(newChild != null)
                 {
-                    i.set((PStringEntry) newChild);
-                    newChild.parent(this);
-                    oldChild.parent(null);
-                    return;
-                }
-
-                i.remove();
-                oldChild.parent(null);
-                return;
-            }
-        }
-
-        for(ListIterator<PPreambleEntry> i = this._preambleEntry_.listIterator(); i.hasNext();)
-        {
-            if(i.next() == oldChild)
-            {
-                if(newChild != null)
-                {
-                    i.set((PPreambleEntry) newChild);
-                    newChild.parent(this);
-                    oldChild.parent(null);
-                    return;
-                }
-
-                i.remove();
-                oldChild.parent(null);
-                return;
-            }
-        }
-
-        for(ListIterator<PEntry> i = this._entry_.listIterator(); i.hasNext();)
-        {
-            if(i.next() == oldChild)
-            {
-                if(newChild != null)
-                {
-                    i.set((PEntry) newChild);
+                    i.set((PContent) newChild);
                     newChild.parent(this);
                     oldChild.parent(null);
                     return;

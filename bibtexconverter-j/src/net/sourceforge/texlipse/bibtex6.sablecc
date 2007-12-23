@@ -2,6 +2,7 @@
  * $Id: bibtex6.sablecc,v 1.2 2006/09/11 15:48:43 Moritz.Ringler Exp $
  *
  * Copyright (c) 2004-2005 Oskar Ojala
+ * Copyright (c) 2007 Moritz Ringler
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,9 +22,13 @@
 /**
  * A BibTeX parser
  *
- * @author Oskar Ojala
+ * @author Oskar Ojala, Moritz Ringler
  */
-
+/*
+    Modifications by Moritz Ringler
+        * store preamble sections
+        * allow string, preamble, entry definitions in arbitrary order
+*/
 
 //Package fi.hut.soberit.texlipse.bibparser;
 //Package bibtex6;
@@ -135,11 +140,12 @@ Ignored Tokens
 Productions
 
 bibtex {-> bibtex}
-    = string_entry* preamble_entry* entry*
-    { -> New bibtex([string_entry.string_entry], [preamble_entry.preamble_entry], [entry.entry])};
-//    = string_entry* entry*
-//    { -> New bibtex([string_entry.string_entry], [entry.entry])};
+    = content*
+    { -> New bibtex([content.content])};
 
+content = {str} string_entry {-> New content.str(string_entry)}|
+          {pre} preamble_entry {-> New content.pre(preamble_entry)}|
+          {ent} entry {-> New content.ent(entry)};
 
 preamble_entry {-> preamble_entry}
     = {prebrace} preamble l_brace val_or_sid concat* r_brace
@@ -200,9 +206,11 @@ concat {-> concat} = sharp val_or_sid {->New concat(val_or_sid)};
 
 // ----------------------------------------------------------------------------
 Abstract Syntax Tree
+bibtex = content*;
 
-bibtex = string_entry* preamble_entry* entry*;
-//bibtex = string_entry* entry*;
+content = {str} string_entry |
+          {pre} preamble_entry |
+          {ent} entry;
 
 string_entry = {strbrace} identifier string_literal | {strparen} identifier string_literal;
 

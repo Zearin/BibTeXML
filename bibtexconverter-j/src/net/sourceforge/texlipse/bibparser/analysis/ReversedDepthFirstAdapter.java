@@ -51,30 +51,77 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     {
         inABibtex(node);
         {
-            List<PEntry> copy = new ArrayList<PEntry>(node.getEntry());
+            List<PContent> copy = new ArrayList<PContent>(node.getContent());
             Collections.reverse(copy);
-            for(PEntry e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        {
-            List<PPreambleEntry> copy = new ArrayList<PPreambleEntry>(node.getPreambleEntry());
-            Collections.reverse(copy);
-            for(PPreambleEntry e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        {
-            List<PStringEntry> copy = new ArrayList<PStringEntry>(node.getStringEntry());
-            Collections.reverse(copy);
-            for(PStringEntry e : copy)
+            for(PContent e : copy)
             {
                 e.apply(this);
             }
         }
         outABibtex(node);
+    }
+
+    public void inAStrContent(AStrContent node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAStrContent(AStrContent node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAStrContent(AStrContent node)
+    {
+        inAStrContent(node);
+        if(node.getStringEntry() != null)
+        {
+            node.getStringEntry().apply(this);
+        }
+        outAStrContent(node);
+    }
+
+    public void inAPreContent(APreContent node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAPreContent(APreContent node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAPreContent(APreContent node)
+    {
+        inAPreContent(node);
+        if(node.getPreambleEntry() != null)
+        {
+            node.getPreambleEntry().apply(this);
+        }
+        outAPreContent(node);
+    }
+
+    public void inAEntContent(AEntContent node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAEntContent(AEntContent node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAEntContent(AEntContent node)
+    {
+        inAEntContent(node);
+        if(node.getEntry() != null)
+        {
+            node.getEntry().apply(this);
+        }
+        outAEntContent(node);
     }
 
     public void inAStrbraceStringEntry(AStrbraceStringEntry node)
