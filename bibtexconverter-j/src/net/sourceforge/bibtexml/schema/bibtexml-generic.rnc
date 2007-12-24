@@ -718,7 +718,7 @@ crossref =
 ##     @INPROCEEDINGS(no-gnats,
 ##         crossref = "gg-proceedings",
 ##     @PROCEEDINGS(gg-proceedings,
-element crossref { xsd:NCName }
+element crossref { xsd:IDREF }
 
 key =
 ## [key] Used for alphabetizing, cross referencing, and creating a label

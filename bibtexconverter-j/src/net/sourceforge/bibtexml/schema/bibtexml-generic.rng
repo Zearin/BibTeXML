@@ -1765,7 +1765,7 @@
     @INPROCEEDINGS(no-gnats,
         crossref = "gg-proceedings",
     @PROCEEDINGS(gg-proceedings,</a:documentation>
-      <data type="NCName"/>
+      <data type="IDREF"/>
     </element>
   </define>
   <define name="key">
