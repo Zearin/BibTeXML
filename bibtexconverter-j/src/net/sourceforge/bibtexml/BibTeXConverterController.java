@@ -108,6 +108,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
 
     private final Container styleContainer = Box.createVerticalBox();
     private final StyleSheetManager styleManager;
+    private StyleSheetController resolveCrossref;
     private InputType input = InputType.BIBTEX;
     BibTeXConverter convert = new BibTeXConverter();
 
@@ -157,9 +158,24 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             System.err.println("Error setting XML encoding.");
             System.err.println(ex);
         }
-
         System.err.flush();
         System.out.flush();
+    }
+
+    private void loadCrossrefResolver(){
+        StyleSheetController.preload = false;
+        StyleSheetController.StyleConfig config = new StyleSheetController.StyleConfig();
+
+        config.name = "BibXML (inherit missing fields from crossreferenced entries)";
+        config.suffix = "-crossref.xml";
+        config.style = getClass().getResource("xslt/resolve-crossref.xsl");
+        config.customParams = false;
+        config.customEncoding = true;
+        config.windowsLineTerminators = false;
+        resolveCrossref =
+            StyleSheetController.newInstance(convert, config,
+                PREF.node("styles").node("internal"));
+        resolveCrossref.setBuiltin(true);
     }
 
     /** Loads the settings last used and runs the
@@ -398,7 +414,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         startbutton.setContentAreaFilled(false);
         startbutton.addActionListener(this);
 
-        cp.add(createOutputPanel(), gbc);
+        cp.add(createOutputPanel(hasSaxon), gbc);
 
         gbc.gridy++;
         gbc.weighty = 1;
@@ -614,7 +630,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         return input;
     }
 
-    private JComponent createOutputPanel(){
+    private JComponent createOutputPanel(boolean hasSaxon){
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridy = 0;
         gbc.gridx = 0;
@@ -664,14 +680,23 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         p2.add(bconfig);
 
         gbc.gridy++;
-        gbc.insets = new Insets(10,0,0,0);
         gbc.gridx = 0;
+        final Insets ins10 = new Insets(10,0,0,0);
+        gbc.insets = ins10;
         result.add(p2, gbc);
 
         bibTeXComps.add(p2);
 
-        /* styles */
         gbc.gridwidth = 2;
+        if(hasSaxon){
+            loadCrossrefResolver();
+            gbc.gridy++;
+            gbc.insets = new Insets(0,0,0,0);
+            result.add(resolveCrossref.getUI(), gbc);
+            gbc.insets = ins10;
+        }
+
+        /* styles */
         gbc.fill = GridBagConstraints.BOTH;
         final JPanel panel = new JPanel(new BorderLayout());
         panel.add(styleContainer, BorderLayout.CENTER);
@@ -701,7 +726,6 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
             panel.add(label);
             panel.add(button);
             de.mospace.swing.SpringUtilities.makeCompactGrid(panel, 2, 2, 0, 0, 3, 3);
-
             button.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent e){
                         DCMetadataDialog d = new DCMetadataDialog(
@@ -769,8 +793,45 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         }
     }
 
+    private void transform(StyleSheetController cssc, File xml,
+            File dir, String basename) throws IOException
+    {
+        int parseErrors = 0;
+        try{
+            errorHandler.reset();
+            cssc.transform(xml, dir, basename);
+            parseErrors = ecount.getErrorCount();
+        } catch (TransformerException ex){
+            System.err.println("*** FATAL ERROR TRANSFORMING BIBXML ***");
+            try{
+                //add the error to the error list
+                //never mind if it has already been added
+                //the SortedSetListModel of the errorlist will take
+                //care of eliminating duplicates
+                msgPane.getErrorHandler().fatalError(ex);
+            } catch (TransformerException ignore){
+            }
+            parseErrors  = 1;
+        } catch (IOException ex){
+            convert.handleException("*** FATAL ERROR TRANSFORMING BIBXML ***", ex);
+            parseErrors  = 0;
+            throw ex;
+        }
+        if(parseErrors  > 0){
+            final ErrorList el = msgPane.getErrorList();
+            el.setFile(new XFile(xml, InputType.BIBXML, convert.getXMLEncoding()));
+            el.setTitle("Errors transforming " + xml.getName() + " to " + cssc.getName());
+            el.setAllowDoubleClick(true);
+            if(parseErrors != 1){
+                System.err.println(parseErrors  + " errors transforming " +  xml.getName());
+            }
+            throw new IOException();
+        }
+        System.err.flush();
+        System.out.flush();
+    }
+
     private void doConversion(){
-        /** Let's try to free some memory first */
         long nanoTime = System.nanoTime();
         msgPane.showConsole();
 
@@ -890,6 +951,17 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                 System.err.flush();
                 System.out.flush();
 
+                /* cross ref resolution */
+                if(resolveCrossref.isActive()){
+                    try{
+                        transform(resolveCrossref, xml, dir, basename);
+                        xml = new File(dir,
+                                basename + resolveCrossref.getSuffix());
+                    } catch (IOException ex){
+                        break FILELOOP;
+                    }
+                }
+
                 /* xml validation */
                 if(convert.hasSchema()){
                     String schemaID = convert.getXMLSchemaID();
@@ -952,42 +1024,15 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
                     for(StyleSheetController cssc : styleManager.getStyles()){
                         if(cssc.isActive()){
                             try{
-                                errorHandler.reset();
-                                cssc.transform(xml, dir, basename);
-                                parseErrors = ecount.getErrorCount();
+                                transform(cssc, xml, dir, basename);
                                 if( cssc.getName().equals("HTML (flat)") ||
                                     cssc.getName().equals("HTML (grouped)") )
                                 {
                                     html = true;
                                 }
-                            } catch (TransformerException ex){
-                                System.err.println("*** FATAL ERROR TRANSFORMING BIBXML ***");
-                                try{
-                                    //add the error to the error list
-                                    //never mind if it has already been added
-                                    //the SortedSetListModel of the errorlist will take
-                                    //care of eliminating duplicates
-                                    msgPane.getErrorHandler().fatalError(ex);
-                                } catch (TransformerException ignore){
-                                }
-                                parseErrors  = 1;
                             } catch (IOException ex){
-                                convert.handleException("*** FATAL ERROR TRANSFORMING BIBXML ***", ex);
-                                parseErrors  = 0;
                                 break FILELOOP;
                             }
-                            if(parseErrors  > 0){
-                                final ErrorList el = msgPane.getErrorList();
-                                el.setFile(new XFile(xml, InputType.BIBXML, convert.getXMLEncoding()));
-                                el.setTitle("Errors transforming " + xml.getName() + " to " + cssc.getName());
-                                el.setAllowDoubleClick(true);
-                                if(parseErrors != 1){
-                                    System.err.println(parseErrors  + " errors transforming " +  xml.getName());
-                                }
-                                break FILELOOP;
-                            }
-                            System.err.flush();
-                            System.out.flush();
                         }
                     }
                 }
