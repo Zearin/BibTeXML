@@ -155,7 +155,7 @@ Style sheet: $Id$ by Moritz Ringler, 2003-2007</xsl:text>
   </xsl:template>
 
   <xsl:template name="others" match="*/bibtex:others">
-    <xsl:if test=". == ../bibtex:others[1]">
+    <xsl:if test=". eq ../bibtex:others[1]">
       <span style="font-style:italic"><xsl:text>et al.</xsl:text></span>
     </xsl:if>
   </xsl:template>
