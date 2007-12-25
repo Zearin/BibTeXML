@@ -30,7 +30,7 @@
    <resources>
       <j2se version="1.5+" href="http://java.sun.com/products/autodl/j2se"/>
       <j2se version="1.5+"/>
-      <jar href="bibtexconverter-0.2.2.jar" main="true" download="eager"/>
+      <jar href="bibtexconverter-0.4.jar" main="true" download="eager"/>
    </resources>
    <application-desc/>
 </jnlp>
