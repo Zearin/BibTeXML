@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2211"
+   sodipodi:version="0.32"
+   inkscape:version="0.44.1"
+   width="492"
+   height="292"
+   version="1.0"
+   sodipodi:docbase="F:\Moritz\dokumente\programm\java\bibtexml\bibtexconverter-j\src\net\sourceforge\bibtexml"
+   sodipodi:docname="splash.svg"
+   inkscape:export-filename="D:\Users\ringler\Eigene Dateien\arbeit\programmierung\java\mp3dings\mp3dings-svn\mp3dings\trunk\src\net\sourceforge\mp3dings\mp3dings_splash.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <metadata
+     id="metadata2216">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs2214">
+    <linearGradient
+       id="linearGradient3238">
+      <stop
+         style="stop-color:#e1e4fd;stop-opacity:1;"
+         offset="0"
+         id="stop3240" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="1"
+         id="stop3242" />
+    </linearGradient>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1968">
+      <rect
+         style="opacity:1;color:black;fill:#5757ab;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible"
+         id="rect1966"
+         width="442"
+         height="101"
+         x="-54"
+         y="328" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     inkscape:window-height="754"
+     inkscape:window-width="1028"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     height="300px"
+     width="500px"
+     inkscape:zoom="1"
+     inkscape:cx="248.6875"
+     inkscape:cy="25"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     inkscape:current-layer="svg2211" />
+  <rect
+     style="opacity:1;color:#000000;fill:#dae3eb;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible"
+     id="rect2246"
+     width="491"
+     height="291"
+     x="0.5"
+     y="0.5"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+  <text
+     xml:space="preserve"
+     style="font-size:9px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:125%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;opacity:1;color:black;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;font-family:Bitstream Vera Sans"
+     x="27.98584"
+     y="208.5"
+     id="text2220"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan4717"
+       x="27.98584"
+       y="208.5">This program is free software; you can redistribute it and/or modify it under the terms </tspan><tspan
+       sodipodi:role="line"
+       id="tspan4719"
+       x="27.98584"
+       y="219.75">of the GNU General Public License as published by the Free Software Foundation; </tspan><tspan
+       sodipodi:role="line"
+       id="tspan4721"
+       x="27.98584"
+       y="231">either version 2 of the License, or (at your option) any later version.</tspan><tspan
+       sodipodi:role="line"
+       id="tspan4723"
+       x="27.98584"
+       y="242.25"></tspan><tspan
+       sodipodi:role="line"
+       id="tspan4725"
+       x="27.98584"
+       y="253.5">This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; </tspan><tspan
+       sodipodi:role="line"
+       id="tspan4727"
+       x="27.98584"
+       y="264.75">without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. </tspan><tspan
+       sodipodi:role="line"
+       id="tspan4729"
+       x="27.98584"
+       y="276">See the GNU General Public License for more details.</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:center;text-decoration:none;line-height:125%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:middle;opacity:1;color:black;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;font-family:Arial"
+     x="235.4292"
+     y="123.5"
+     id="text2240"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan2242"
+       x="236.81592"
+       y="123.5">© 2006-2007 Moritz Ringler, Vidar B. Gundersen </tspan><tspan
+       sodipodi:role="line"
+       x="236.81592"
+       y="136"
+       id="tspan4647">and others </tspan><tspan
+       sodipodi:role="line"
+       x="235.4292"
+       y="148.5"
+       id="tspan4649" /><tspan
+       sodipodi:role="line"
+       x="235.4292"
+       y="161"
+       id="tspan4643" /></text>
+  <image
+     xlink:href="F:\Moritz\Desktop\bibtexml-stripes.png"
+     sodipodi:absref="F:\Moritz\Desktop\bibtexml-stripes.png"
+     width="720"
+     height="90"
+     id="image1945"
+     x="-86"
+     y="336"
+     clip-path="url(#clipPath1968)"
+     transform="translate(79,-329)" />
+  <text
+     xml:space="preserve"
+     style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;stroke:#4e7698;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:cmr10"
+     x="151"
+     y="92"
+     id="text1971"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan1973"
+       x="151"
+       y="92"
+       style="fill:none;fill-opacity:1;stroke:#4e7698;stroke-opacity:1">Converter</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:center;text-decoration:none;line-height:125%;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:middle;opacity:1;color:black;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;font-family:Arial"
+     x="230.99268"
+     y="142.83789"
+     id="text4651"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       x="230.99268"
+       y="142.83789"
+       id="tspan4655" /><tspan
+       sodipodi:role="line"
+       x="230.99268"
+       y="155.33789"
+       id="tspan4657" /><tspan
+       sodipodi:role="line"
+       x="230.99268"
+       y="167.83789"
+       id="tspan4659">http://bibtexml.sf.net/bibtexconverter-j.html</tspan></text>
+</svg>

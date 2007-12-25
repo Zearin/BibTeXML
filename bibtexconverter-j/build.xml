@@ -61,6 +61,8 @@
   <property
       name="app.name"
       value="BibTeXConverter"/>
+  <property name="app.splash"
+      value="net/sourceforge/bibtexml/splash.png"/>
   <property
       name="app.javaVersion"
       value="1.5"/>

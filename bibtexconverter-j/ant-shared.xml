@@ -126,6 +126,7 @@
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
         <attribute name="Main-Class" value="${app.mainClass}"/>
+        <attribute name="SplashScreen-Image" value="${app.splash}"/>
         <!--<attribute name="Class-Path" value="${app.libraries}"/>-->
       </manifest>
     </jar>
