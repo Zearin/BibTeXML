@@ -163,6 +163,7 @@ public final class BibXMLCreator extends NullAdapter {
             for(int i=0; i<values.length; i++){
                 if("others".equals(values[i].trim().toLowerCase())){
                     etal = true;
+                    values[i] = null;
                     continue;
                 }
                 try{
@@ -181,9 +182,11 @@ public final class BibXMLCreator extends NullAdapter {
             values = new String[]{val};
         }
         for(int i=0, stop = values.length; i< stop; i++){
-            Element bibnode = new Element(key, BIB_NAMESPACE);
-            bibnode.setText(decoder.decode(values[i]));
-            entrysub.addContent(bibnode);
+            if(values[i] != null){
+                Element bibnode = new Element(key, BIB_NAMESPACE);
+                bibnode.setText(decoder.decode(values[i]));
+                entrysub.addContent(bibnode);
+            }
         }
         if(etal){
             Element bibnode = new Element(key, BIB_NAMESPACE);
