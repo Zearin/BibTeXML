@@ -51,6 +51,7 @@ import java.util.Set;
 import java.util.TimerTask;
 import java.util.Timer;
 import java.util.prefs.Preferences;
+import java.util.prefs.BackingStoreException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
@@ -288,6 +289,29 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private static Collection<StyleSheetController> builtInStyles(BibTeXConverter konvert){
         Preferences xpref = PREF.node("styles").node("builtin");
         Class clazz = BibTeXConverterController.class;
+
+        //assure that child stylesheets are loaded from same location
+        //as this class
+        //This prevents a local install from downloading these stylesheets from
+        //internet when
+        //bibtexconverter has previously been run over javawebstart
+        Map<String, String> childURLs = new HashMap<String, String>();
+        childURLs.put("MODS v3.2/children/MARC 21 slim",
+            clazz.getResource("xslt/mods2marc.xsl").toString());
+        childURLs.put("MODS v3.2/children/MODS HTML",
+            clazz.getResource("xslt/mods2html.xsl").toString());
+        for(String node : childURLs.keySet()){
+            System.err.println(node);
+            try{
+            if(xpref.nodeExists(node)){
+                System.err.println("Resetting...");
+                xpref.node(node).put("stylesheet", childURLs.get(node));
+            }
+            } catch (BackingStoreException ex){
+                ex.printStackTrace();
+            }
+        }
+
         final List<StyleSheetController> builtins = new ArrayList<StyleSheetController>();
 
         StyleSheetController.preload = false;
