@@ -301,12 +301,10 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         childURLs.put("MODS v3.2/children/MODS HTML",
             clazz.getResource("xslt/mods2html.xsl").toString());
         for(String node : childURLs.keySet()){
-            System.err.println(node);
             try{
-            if(xpref.nodeExists(node)){
-                System.err.println("Resetting...");
-                xpref.node(node).put("stylesheet", childURLs.get(node));
-            }
+                if(xpref.nodeExists(node)){
+                    xpref.node(node).put("stylesheet", childURLs.get(node));
+                }
             } catch (BackingStoreException ex){
                 ex.printStackTrace();
             }
