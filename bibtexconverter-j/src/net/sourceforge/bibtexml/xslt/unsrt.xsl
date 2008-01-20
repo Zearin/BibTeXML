@@ -10,8 +10,6 @@
         does not (so far I have not figured out the algorithm bibtex/unsrt.bst
         uses)
       * long lines are not wrapped
-
-     Currently only @ARTICLE is handled.
 -->
 <!-- (c) 2008 Moritz Ringler -->
 <xsl:stylesheet version="2.0"
@@ -280,6 +278,69 @@
     <xsl:text>&#xA;\bibitem{</xsl:text>
     <xsl:value-of select="../@id" />
     <xsl:text>}&#xA;</xsl:text>
+  </xsl:template>
+
+
+  <xsl:template match="bibtex:book">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:booklet">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:inbook">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:incollection">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:inproceedings">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:conference">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:manual">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:mastersthesis">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:misc">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:phdthesis">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:proceedings">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:techreport">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:unpublished">
+    <xsl:call-template name="not-implemented"/>
+  </xsl:template>
+
+  <xsl:template name="not-implemented">
+    <xsl:message>
+    <xsl:text>Warning: No output for </xsl:text>
+    <xsl:value-of select="../@id"/>
+    <xsl:text>.&#xA; Entry type </xsl:text>
+    <xsl:value-of select="local-name()"/>
+    <xsl:text> is not yet implemented.</xsl:text>
+    </xsl:message>
   </xsl:template>
 
   <xsl:template match="*">
