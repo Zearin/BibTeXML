@@ -1,5 +1,18 @@
 <?xml version="1.0"?>
 <!-- $Id: bibxml2bib.xsl 391 2007-12-23 17:42:35Z ringler $ -->
+<!-- This stylesheet produces a latex thebibliography environment
+     (bbl file) that is similar to what bibtex produces with the
+     standard bibtex style unsrt.bst.
+     Notable differences include:
+      * braces are completely ignored (e.g. in author parsing)
+      * case inside titles is not changed
+      * this style puts ~ between name parts in places where bibtex/unsrt.bst
+        does not (so far I have not figured out the algorithm bibtex/unsrt.bst
+        uses)
+      * long lines are not wrapped
+
+     Currently only @ARTICLE is handled.
+-->
 <!-- (c) 2008 Moritz Ringler -->
 <xsl:stylesheet version="2.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -34,10 +47,10 @@
         <xsl:value-of select="$citations"/>
       </xsl:message>
     </xsl:if>
-    <!--
-      FEHLT:
-      Preamble
-    -->
+    <xsl:apply-templates select="bibtex:preamble"/>
+    <xsl:if test="exists(bibtex:preamble)">
+      <xsl:text>&#xA;</xsl:text>
+    </xsl:if>
     <!--
       Have \(no)cite{*} ?
     -->
@@ -71,6 +84,10 @@
           <xsl:text>&#xA;\end{thebibliography}</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="bibtex:preamble">
+    <xsl:value-of select="normalize-space(text())"/>
   </xsl:template>
 
   <xsl:template match="bibtex:entry">
