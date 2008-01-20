@@ -32,6 +32,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.TreeSet;
+import java.util.regex.*;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -274,9 +275,6 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
         }
 
         public boolean installSaxon(final JFrame trigger, final ClassLoaderProvider clp){
-            final String saxon8jar = "saxon8.jar";
-            final String saxon8domjar = "saxon8-jdom.jar";
-            final String saxon8jdomjar = "saxon8-dom.jar";
             final String saxonURI =
             "http://sf.net/project/showfiles.php?group_id=29872&package_id=21888";
             final ExtensionInstaller extInst = new ExtensionInstaller(trigger);
@@ -344,7 +342,7 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
                 dialogPane.add(dl);//2
             }
 
-            final String filename = (freshInstall? "downloaded Saxon zip" : saxon8jar);
+            final String filename = (freshInstall? "downloaded Saxon zip" : "saxon jar");
             text = new JLabel(
                 "<html><br>Please enter the location of the "+
                 filename +
@@ -450,18 +448,26 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
             if(freshInstall){
                 success = starget != null;
                 if(success){
+                    String saxonZip = pinz.getPath();
+                    File fSaxonZip = new File(pinz.getPath());
+                    Matcher m = Pattern.compile("\\d+").matcher(fSaxonZip.getName());
+                    String version = "9";
+                    if(m.find()){
+                        version = m.group(0);
+                    }
+
                     File ftarget = new File(starget);
                     ftarget.mkdirs();
                     extInst.setTargetDirectory(ftarget);
-                    final String saxon_jar = (new File(saxon8jar)).getName();
+                    final String saxon_jar = "saxon"+version+".jar";
                     //ftarget = new File(ftarget, saxon_jar);
                     Preferences.userNodeForPackage(net.sourceforge.bibtexml.BibTeXConverter.class)
                     .put("saxon", ftarget.getAbsolutePath());
                     //try to install saxon8-dom.jar and saxon8-jdom.jar
-                    extInst.installExtension((new File(pinz.getPath(), saxon8domjar)));
-                    extInst.installExtension((new File(pinz.getPath(), saxon8jdomjar)));
+                    extInst.installExtension(new File(pinz.getPath()), "saxon"+version+"-dom.jar");
+                    extInst.installExtension(new File(pinz.getPath()), "saxon"+version+"-jdom.jar");
                     //install saxon.jar
-                    if(extInst.installExtension(new File(pinz.getPath()), saxon8jar)){
+                    if(extInst.installExtension(new File(pinz.getPath()), "saxon"+version+".jar")){
                         JOptionPane.showMessageDialog(trigger,
                             "Saxon has been installed successfully.");
                         clp.registerLibraryDirectory(ftarget);
