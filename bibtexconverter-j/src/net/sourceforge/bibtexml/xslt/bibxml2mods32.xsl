@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- $Id: bibxml2mods32.xsl 338 2007-08-27 17:27:58Z ringler $
-     (c) Moritz Ringler, 2007
-
       XSLT stylesheet that converts bibliographic data
       from BibXML to MODS v3.2.
 
@@ -11,6 +9,23 @@
       http://www.loc.gov/standards/mods/v3/mods-mapping.html
       http://www.loc.gov/standards/mods/#examples
       http://www.loc.gov/standards/mods/v3/mods-userguide-examples.html
+-->
+<!--
+ * Copyright (c) 2007 Moritz Ringler
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 -->
 <xsl:transform version="2.0"
     xmlns:bibtex="http://bibtexml.sf.net/"
