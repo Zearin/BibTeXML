@@ -92,27 +92,32 @@
     <!-- title -->
     <xsl:text>\newblock </xsl:text>
     <xsl:apply-templates select="bibtex:title"/>
-    <xsl:text>&#xA;</xsl:text>
     <!-- journal -->
-    <xsl:text>\newblock </xsl:text>
+    <xsl:text>&#xA;\newblock </xsl:text>
     <xsl:apply-templates select="bibtex:journal"/>
     <!-- volume, number, pages -->
     <xsl:if
       test="exists(bibtex:volume) or
             exists(bibtex:number) or
             exists(bibtex:pages)">
-    <xsl:apply-templates select="bibtex:volume"/>
-    <xsl:apply-templates select="bibtex:number"/>
-    <xsl:apply-templates select="bibtex:pages">
+      <xsl:text>, </xsl:text>
+      <xsl:apply-templates select="bibtex:volume"/>
+      <xsl:apply-templates select="bibtex:number"/>
+      <xsl:apply-templates select="bibtex:pages">
         <xsl:with-param
           name="has-volume-or-number"
           select="exists(bibtex:volume) or exists(bibtex:number)"
         />
       </xsl:apply-templates>
-      <xsl:text>, </xsl:text>
     </xsl:if>
-    <!-- year -->
-    <xsl:apply-templates select="bibtex:year" />
+    <!-- month and year -->
+    <xsl:if
+      test="exists(bibtex:month) or
+            exists(bibtex:year)">
+      <xsl:text>,</xsl:text>
+      <xsl:apply-templates select="bibtex:month" />
+      <xsl:apply-templates select="bibtex:year" />
+    </xsl:if>
     <xsl:text>.</xsl:text>
     <!-- note -->
     <xsl:apply-templates select="bibtex:note"/>
@@ -122,8 +127,12 @@
     <xsl:param name="author-count" as="xs:integer"/>
     <xsl:variable name="pos" select="position()"/>
     <xsl:if test="$pos ne 1">
-      <xsl:text>, </xsl:text>
-      <xsl:if test="($pos eq $author-count) and not(bibtex:others)">
+      <xsl:variable name="is-last" select="($pos eq $author-count)"/>
+      <xsl:if test="not($is-last and $pos eq 2)">
+        <xsl:text>,</xsl:text>
+      </xsl:if>
+       <xsl:text> </xsl:text>
+      <xsl:if test="$is-last and not(bibtex:others)">
         <xsl:text>and </xsl:text>
       </xsl:if>
     </xsl:if>
@@ -144,8 +153,11 @@
   </xsl:template>
 
   <xsl:template match="bibfunc:first">
-    <xsl:value-of select="normalize-space(text())"/>
-    <xsl:text> </xsl:text>
+    <xsl:variable name="ff" select="replace(normalize-space(text()),' ','~')"/>
+    <xsl:if test="(string-length($ff) gt 0) and ($ff ne ' ')">
+      <xsl:value-of select="$ff"/>
+      <xsl:value-of select="if(string-length($ff) le 2) then '~' else ' '"/>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="bibfunc:junior">
@@ -154,11 +166,12 @@
   </xsl:template>
 
   <xsl:template match="bibfunc:last">
-    <xsl:value-of select="normalize-space(text())"/>
+    <xsl:variable name="ll" select="normalize-space(text())"/>
+    <xsl:value-of select="replace($ll, '^(\p{L}[^ ]) (.+)', '$1~$2')"/>
   </xsl:template>
 
   <xsl:template match="bibtex:note">
-    <xsl:text>\newblock </xsl:text>
+    <xsl:text>&#xA;\newblock </xsl:text>
       <xsl:value-of select="normalize-space(text())"/>
     <xsl:text>.</xsl:text>
   </xsl:template>
@@ -217,17 +230,33 @@
 
   <xsl:template match="bibtex:title">
     <!-- FEHLT: Gross/Kleinschreibung -->
-    <xsl:value-of select="normalize-space(text())"/>
+    <xsl:variable name="tt" select="normalize-space(text())"/>
+    <xsl:value-of select="$tt"/>
+    <xsl:if test="not(matches($tt,'[\.!?]$'))">
+      <xsl:text>.</xsl:text>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="bibtex:journal">
     <xsl:text>{\em </xsl:text>
     <xsl:value-of select="normalize-space(text())"/>
-    <xsl:text>}, </xsl:text>
+    <xsl:text>}</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="bibtex:month">
+    <xsl:variable name="mm" select="normalize-space(text())" />
+    <xsl:if test="string-length($mm) gt 0">
+      <xsl:text> </xsl:text>
+      <xsl:value-of select="$mm"/>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="bibtex:year">
-    <xsl:value-of select="normalize-space(text())" />
+    <xsl:variable name="yy" select="normalize-space(text())" />
+    <xsl:if test="string-length($yy) gt 0">
+      <xsl:text> </xsl:text>
+      <xsl:value-of select="$yy"/>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template name="output-bibitem">
