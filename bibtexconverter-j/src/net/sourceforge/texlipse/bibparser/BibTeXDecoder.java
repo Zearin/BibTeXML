@@ -113,17 +113,14 @@ public class BibTeXDecoder{
         return text;
     }
 
-    /** Normalizes whitespace in the string argument; encodes the XML
-    special characters &, >, and <; decodes LaTeX ~ and --,
+    /** Normalizes whitespace in the string argument;
+    decodes LaTeX ~ and --,
     and removes remaining braces (except in entries that enclosed in
     double braces).
     @Return the processed string
     **/
     private String replacements(String txt){
         String text = txt.replaceAll("\\s+", " ");
-        text = text.replaceAll("&", "&amp;");
-        text = text.replaceAll(">", "&gt;");
-        text = text.replaceAll("<", "&lt;");
         text = text.replaceAll("~", "\u00A0");
         text = text.replaceAll("--", "-");
         if(!text.startsWith("{")){
