@@ -182,7 +182,7 @@ public final class BibXMLCreator extends NullAdapter {
             values = new String[]{val};
         }
         for(int i=0, stop = values.length; i< stop; i++){
-            if(values[i] != null){
+            if(values[i] != null && values[i].trim().length() != 0){
                 Element bibnode = new Element(key, BIB_NAMESPACE);
                 bibnode.setText(decoder.decode(values[i]));
                 entrysub.addContent(bibnode);
