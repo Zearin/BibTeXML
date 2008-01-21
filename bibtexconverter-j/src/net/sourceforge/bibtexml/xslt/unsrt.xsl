@@ -6,9 +6,8 @@
      Notable differences include:
       * braces are completely ignored (e.g. in author parsing)
       * case inside titles is not changed
-      * this style puts ~ between name parts in places where bibtex/unsrt.bst
-        does not (so far I have not figured out the algorithm bibtex/unsrt.bst
-        uses)
+      * some differences concerning tying with ~ under relatively rare
+        circumstances
       * long lines are not wrapped
 -->
 <!--
@@ -33,7 +32,8 @@
     xmlns:bibtex="http://bibtexml.sf.net/"
     xmlns:bibfunc="http://bibtexml.sf.net/functions"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:auxparser="java:net.sourceforge.bibtexml.AuxParser">
+    xmlns:auxparser="java:net.sourceforge.bibtexml.AuxParser"
+    xmlns:my="foo:bar">
 
   <xsl:param name="bibtexml.sf.net.encoding" select="'ISO-8859-1'" />
   <xsl:param name="aux-file" select="'test.aux'" as="xs:string"/>
@@ -106,59 +106,81 @@
 
   <xsl:template match="bibtex:entry">
     <xsl:apply-templates select="bibtex:*"/>
-    <xsl:text>&#xA;</xsl:text>
   </xsl:template>
 
+  <!-- @ARTICLE -->
   <xsl:template match="bibtex:article">
     <!-- bibitem -->
     <xsl:call-template name="output-bibitem"/>
     <!-- author(s) -->
-    <xsl:apply-templates select="bibtex:author">
-      <xsl:with-param
-        name="author-count"
-        select="count(bibtex:author)"
-      />
-    </xsl:apply-templates>
-    <xsl:text>.&#xA;</xsl:text>
-    <!-- title -->
-    <xsl:text>\newblock </xsl:text>
-    <xsl:apply-templates select="bibtex:title"/>
-    <!-- journal -->
-    <xsl:text>&#xA;\newblock </xsl:text>
-    <xsl:apply-templates select="bibtex:journal"/>
-    <!-- volume, number, pages -->
-    <xsl:if
-      test="exists(bibtex:volume) or
-            exists(bibtex:number) or
-            exists(bibtex:pages)">
-      <xsl:text>, </xsl:text>
-      <xsl:apply-templates select="bibtex:volume"/>
-      <xsl:apply-templates select="bibtex:number"/>
-      <xsl:apply-templates select="bibtex:pages">
-        <xsl:with-param
-          name="has-volume-or-number"
-          select="exists(bibtex:volume) or exists(bibtex:number)"
-        />
-      </xsl:apply-templates>
+    <xsl:if test="exists(bibtex:author)">
+      <xsl:call-template name="sentence">
+        <xsl:with-param name="elements">
+          <my:word>
+          <xsl:apply-templates select="bibtex:author">
+            <xsl:with-param
+              name="person-count"
+              select="count(bibtex:author)"
+            />
+          </xsl:apply-templates>
+          </my:word>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:text>&#xA;</xsl:text>
     </xsl:if>
-    <!-- month and year -->
-    <xsl:if
-      test="exists(bibtex:month) or
-            exists(bibtex:year)">
-      <xsl:text>,</xsl:text>
-      <xsl:apply-templates select="bibtex:month" />
-      <xsl:apply-templates select="bibtex:year" />
-    </xsl:if>
-    <xsl:text>.</xsl:text>
-    <!-- note -->
-    <xsl:apply-templates select="bibtex:note"/>
+    <!--
+      block: title
+    -->
+    <xsl:call-template name="block">
+      <xsl:with-param name="contents">
+        <xsl:call-template name="sentence">
+          <xsl:with-param name="elements">
+            <xsl:apply-templates select="bibtex:title"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:with-param>
+    </xsl:call-template>
+    <!--
+      block: journal, volume, number, pages, month, year
+    -->
+    <xsl:call-template name="block">
+      <xsl:with-param name="contents">
+        <xsl:call-template name="sentence">
+          <xsl:with-param name="elements">
+            <xsl:apply-templates select="bibtex:journal">
+              <xsl:with-param name="emphasize" select="true()"/>
+            </xsl:apply-templates>
+            <!-- word: volume, number, pages -->
+            <xsl:if test="exists(bibtex:volume) or
+                          exists(bibtex:number) or
+                          exists(bibtex:pages)">
+              <my:word>
+                <xsl:apply-templates select="bibtex:volume"/>
+                <xsl:apply-templates select="bibtex:number"/>
+                <xsl:apply-templates select="bibtex:pages">
+                  <xsl:with-param
+                    name="has-volume-or-number"
+                    select="exists(bibtex:volume) or exists(bibtex:number)"
+                  />
+                </xsl:apply-templates>
+              </my:word>
+            </xsl:if>
+            <xsl:call-template name="date"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:with-param>
+    </xsl:call-template>
+    <!--
+      block: note
+    -->
+    <xsl:apply-templates select="bibtex:note" mode="block"/>
   </xsl:template>
 
-  <xsl:template match="bibtex:author">
-    <xsl:param name="author-count" as="xs:integer"/>
+  <xsl:template match="bibtex:author|bibtex:editor">
+    <xsl:param name="person-count" as="xs:integer"/>
     <xsl:variable name="pos" select="position()"/>
     <xsl:if test="$pos ne 1">
-      <xsl:variable name="is-last" select="($pos eq $author-count)"/>
+      <xsl:variable name="is-last" select="($pos eq $person-count)"/>
       <xsl:if test="not($is-last and $pos eq 2)">
         <xsl:text>,</xsl:text>
       </xsl:if>
@@ -169,7 +191,7 @@
     </xsl:if>
     <xsl:choose>
         <xsl:when test="bibtex:others">
-            <xsl:text>et~al</xsl:text>
+            <xsl:text>et~al.</xsl:text>
         </xsl:when>
         <xsl:otherwise>
             <xsl:apply-templates select="bibfunc:parse-author(text())" />
@@ -184,8 +206,8 @@
   </xsl:template>
 
   <xsl:template match="bibfunc:first">
-    <xsl:variable name="ff" select="replace(normalize-space(text()),' ','~')"/>
-    <xsl:if test="(string-length($ff) gt 0) and ($ff ne ' ')">
+    <xsl:variable name="ff" select="my:tie(text())"/>
+    <xsl:if test="$ff ne ''">
       <xsl:value-of select="$ff"/>
       <xsl:value-of select="if(string-length($ff) le 2) then '~' else ' '"/>
     </xsl:if>
@@ -193,18 +215,27 @@
 
   <xsl:template match="bibfunc:junior">
     <xsl:text>, </xsl:text>
-    <xsl:value-of select="normalize-space(text())"/>
+    <xsl:value-of select="my:tie(text())"/>
   </xsl:template>
 
   <xsl:template match="bibfunc:last">
     <xsl:variable name="ll" select="normalize-space(text())"/>
-    <xsl:value-of select="replace($ll, '^(\p{L}[^ ]) (.+)', '$1~$2')"/>
+    <xsl:variable name="von" select="if(matches($ll, '((^\p{Ll})|(.* \p{Ll}))\P{Lu}* .+'))
+                                     then replace($ll,'(((^\p{Ll})|(.* \p{Ll}))\P{Lu}* ).+', '$1')
+                                     else ''"/>
+    <xsl:value-of select="my:tie-if-short(my:tie($von), my:tie(substring-after($ll, $von)))"/>
   </xsl:template>
 
-  <xsl:template match="bibtex:note">
-    <xsl:text>&#xA;\newblock </xsl:text>
-      <xsl:value-of select="normalize-space(text())"/>
-    <xsl:text>.</xsl:text>
+  <xsl:template match="bibtex:note" mode="block">
+    <xsl:call-template name="block">
+      <xsl:with-param name="contents">
+        <xsl:call-template name="sentence">
+          <xsl:with-param name="elements">
+            <xsl:apply-templates select="."/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
   <xsl:template match="bibfunc:pages" mode="long">
@@ -233,60 +264,46 @@
 
   <xsl:template match="bibtex:pages">
     <xsl:param name="has-volume-or-number" as="xs:boolean"/>
-    <xsl:choose>
-      <xsl:when test="$has-volume-or-number">
-        <xsl:apply-templates
-          select="bibfunc:parse-pages(text())"
-          mode="brief"
-        />
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates
-          select="bibfunc:parse-pages(text())"
-          mode="long"
-        />
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:variable name="pp" select="normalize-space(text())"/>
+    <xsl:if test="$pp ne ''">
+      <xsl:choose>
+        <xsl:when test="$has-volume-or-number">
+          <xsl:apply-templates
+            select="bibfunc:parse-pages($pp)"
+            mode="brief"
+          />
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates
+            select="bibfunc:parse-pages($pp)"
+            mode="long"
+          />
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="bibtex:volume">
-    <xsl:value-of select="normalize-space(text())"/>
+    <xsl:variable name="vv" select="normalize-space(text())"/>
+    <xsl:if test="$vv ne ''">
+      <xsl:value-of select="normalize-space($vv)"/>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="bibtex:number">
-    <xsl:text>(</xsl:text>
-    <xsl:value-of select="normalize-space(text())"/>
-    <xsl:text>)</xsl:text>
-  </xsl:template>
-
-  <xsl:template match="bibtex:title">
-    <!-- FEHLT: Gross/Kleinschreibung -->
-    <xsl:variable name="tt" select="normalize-space(text())"/>
-    <xsl:value-of select="$tt"/>
-    <xsl:if test="not(matches($tt,'[\.!?]$'))">
-      <xsl:text>.</xsl:text>
+    <xsl:variable name="nn" select="normalize-space(text())"/>
+    <xsl:if test="$nn ne ''">
+      <xsl:text>(</xsl:text>
+      <xsl:value-of select="normalize-space(text())"/>
+      <xsl:text>)</xsl:text>
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="bibtex:journal">
-    <xsl:text>{\em </xsl:text>
-    <xsl:value-of select="normalize-space(text())"/>
-    <xsl:text>}</xsl:text>
-  </xsl:template>
-
-  <xsl:template match="bibtex:month">
+  <xsl:template match="bibtex:month|bibtex:year">
     <xsl:variable name="mm" select="normalize-space(text())" />
-    <xsl:if test="string-length($mm) gt 0">
+    <xsl:if test="$mm ne ''">
       <xsl:text> </xsl:text>
       <xsl:value-of select="$mm"/>
-    </xsl:if>
-  </xsl:template>
-
-  <xsl:template match="bibtex:year">
-    <xsl:variable name="yy" select="normalize-space(text())" />
-    <xsl:if test="string-length($yy) gt 0">
-      <xsl:text> </xsl:text>
-      <xsl:value-of select="$yy"/>
     </xsl:if>
   </xsl:template>
 
@@ -297,8 +314,166 @@
   </xsl:template>
 
 
+  <!-- @BOOK -->
   <xsl:template match="bibtex:book">
-    <xsl:call-template name="not-implemented"/>
+  <!--
+  crossref missing$
+    { format.bvolume output
+      new.block
+      format.number.series output
+      new.sentence
+      publisher "publisher" output.check
+      address output
+    }
+    { new.block
+      format.book.crossref output.nonnull
+    }
+  if$
+  format.edition output
+  format.date "year" output.check
+  new.block
+  note output
+  fin.entry
+}-->
+     <!-- bibitem -->
+    <xsl:call-template name="output-bibitem"/>
+    <!-- author or editor -->
+    <xsl:if test="exists(bibtex:author) or exists(bibtex:editor)">
+      <xsl:choose>
+        <xsl:when test="exists(bibtex:author)">
+          <xsl:apply-templates select="bibtex:author">
+            <xsl:with-param
+              name="person-count"
+              select="count(bibtex:author)"
+            />
+          </xsl:apply-templates>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:variable
+              name="editor-count"
+              select="count(bibtex:editor)"/>
+            <xsl:apply-templates select="bibtex:editor">
+            <xsl:with-param
+              name="person-count"
+              select="$editor-count"
+            />
+          </xsl:apply-templates>
+          <xsl:value-of select="if($editor-count gt 1)
+            then ', editors' else ', editor'"/>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:text>.&#xA;</xsl:text>
+    </xsl:if>
+    <!--
+      block: title, volume(series)
+    -->
+    <xsl:call-template name="block">
+      <xsl:with-param name="contents">
+        <xsl:call-template name="sentence">
+          <xsl:with-param name="elements">
+              <xsl:apply-templates select="bibtex:title">
+                <xsl:with-param name="emphasize" select="true()"/>
+              </xsl:apply-templates>
+              <xsl:apply-templates select="bibtex:volume" mode="book"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:with-param>
+    </xsl:call-template>
+    <!--
+      block: number, publisher, edition, year etc.
+    -->
+    <xsl:call-template name="block">
+      <xsl:with-param name="contents">
+        <!-- number or series when there is no volume -->
+        <xsl:if test="not(exists(bibtex:volume)) and
+              (
+                exists(bibtex:number) or
+                exists(bibtex:series)
+              )">
+          <xsl:call-template name="sentence">
+            <xsl:with-param name="elements">
+              <my:word>
+                <xsl:apply-templates select="bibtex:number" mode="book"/>
+                <xsl:apply-templates select="bibtex:series"/>
+              </my:word>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
+        <!-- publisher, address, edition, month and year -->
+        <xsl:call-template name="sentence">
+          <xsl:with-param name="elements">
+            <xsl:apply-templates select="bibtex:publisher"/>
+            <xsl:apply-templates select="bibtex:address"/>
+            <xsl:apply-templates select="bibtex:edition"/>
+            <xsl:call-template name="date"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:with-param>
+    </xsl:call-template>
+    <!--
+      block: note
+    -->
+    <xsl:apply-templates select="bibtex:note" mode="block"/>
+  </xsl:template>
+
+
+  <xsl:template match="bibtex:edition">
+    <xsl:variable name="tt" select="normalize-space(text())"/>
+    <xsl:if test="$tt ne ''">
+      <my:word>
+        <xsl:value-of select="lower-case($tt)"/>
+        <xsl:text> edition</xsl:text>
+      </my:word>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="bibtex:publisher|bibtex:address|bibtex:title|bibtex:journal|bibtex:note">
+    <xsl:param name="emphasize" select="false()" as="xs:boolean"/>
+    <xsl:variable name="tt" select="normalize-space(text())"/>
+    <xsl:if test="$tt ne ''">
+      <my:word>
+        <xsl:value-of select="if($emphasize) then my:emphasize($tt) else $tt"/>
+      </my:word>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="date">
+    <xsl:if test="exists(bibtex:year) or
+                  exists(bibtex:month)">
+      <my:word>
+        <xsl:value-of select="bibtex:month"/>
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="bibtex:year"/>
+      </my:word>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="bibtex:series">
+    <xsl:variable name="tt" select="normalize-space(text())"/>
+    <xsl:value-of select="concat(' ',$tt)"/>
+  </xsl:template>
+
+  <xsl:template match="bibtex:number" mode="book">
+    <xsl:variable name="nn" select="normalize-space(text())"/>
+    <xsl:text> Number~</xsl:text>
+    <xsl:value-of select="$nn"/>
+    <xsl:if test="exists(../bibtex:series)">
+      <xsl:text> in</xsl:text>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="bibtex:volume" mode="book">
+    <xsl:variable name="vv" select="normalize-space(text())"/>
+    <xsl:if test="$vv ne ''">
+      <my:word>
+      <xsl:text>volume~</xsl:text>
+      <xsl:value-of select="$vv"/>
+      <xsl:if test="exists(../bibtex:series)">
+        <xsl:text> of </xsl:text>
+        <xsl:value-of select="my:emphasize(../bibtex:series)"/>
+      </xsl:if>
+      </my:word>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="bibtex:booklet">
@@ -359,6 +534,84 @@
     </xsl:message>
   </xsl:template>
 
-  <xsl:template match="*">
+  <xsl:template match="*"/>
+
+  <xsl:template name="block">
+    <xsl:param name="contents"/>
+    <xsl:variable name="tt" select="normalize-space($contents/text())"/>
+    <xsl:if test="$tt ne ''">
+      <xsl:text>\newblock </xsl:text>
+      <xsl:value-of select="$tt"/>
+      <xsl:text>&#xA;</xsl:text>
+    </xsl:if>
   </xsl:template>
+
+  <xsl:template name="sentence">
+    <xsl:param name="elements" required="yes"/>
+    <xsl:variable name="element-count" select="count($elements/my:word)"/>
+    <xsl:apply-templates select="$elements/my:word">
+      <xsl:with-param name="word-count" select="$element-count"/>
+    </xsl:apply-templates>
+  </xsl:template>
+
+  <xsl:template match="my:word">
+    <xsl:param name="word-count" as="xs:integer" required="yes"/>
+    <xsl:variable name="pos" select="position()"/>
+    <xsl:variable name="tt" select="normalize-space(text())"/>
+    <xsl:if test="$pos ne 1">
+      <xsl:text>,</xsl:text>
+    </xsl:if>
+    <xsl:text> </xsl:text>
+    <xsl:value-of select="$tt"/>
+    <xsl:if test="($pos eq $word-count) and not(matches($tt,'[\.!\?]\}?$'))">
+      <xsl:text>.</xsl:text>
+    </xsl:if>
+  </xsl:template>
+
+
+  <xsl:function name="my:emphasize">
+    <xsl:param name="txt" as="xs:string" />
+    <xsl:sequence select="concat('{\em ',$txt, '}')"/>
+  </xsl:function>
+
+  <xsl:function name="my:tie">
+    <xsl:param name="str" as="xs:string"/>
+    <xsl:variable name="tt" select="normalize-space($str)"/>
+    <xsl:value-of select="my:tie-seq(tokenize($tt, ' '))"/>
+  </xsl:function>
+
+  <xsl:function name="my:tie-seq">
+    <xsl:param name="seq" as="xs:string*"/>
+    <xsl:variable name="cnt" select="count($seq)"/>
+    <xsl:choose>
+      <xsl:when test="$cnt le 2">
+        <xsl:value-of select="string-join($seq, '~')"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:variable name="end" select="concat($seq[$cnt - 1],'~', $seq[$cnt])"/>
+        <xsl:variable name="middle" select="string-join(subsequence($seq, 2, $cnt - 3), ' ')"/>
+        <xsl:value-of select="my:tie-if-short($seq[1], concat($middle,' ', $end))"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+
+  <xsl:function name="my:tie-if-short">
+    <xsl:param name="start" as="xs:string"/>
+    <xsl:param name="end" as="xs:string"/>
+    <xsl:variable name="st" select="normalize-space($start)"/>
+    <xsl:variable name="ed" select="normalize-space($end)"/>
+    <xsl:choose>
+      <xsl:when test="$st eq ''">
+        <xsl:value-of select="$ed"/>
+      </xsl:when>
+      <xsl:when test="string-length($st) lt 3">
+        <xsl:value-of select="concat($st, '~', $ed)"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="concat($st, ' ', $ed)"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
 </xsl:stylesheet>
+
+
