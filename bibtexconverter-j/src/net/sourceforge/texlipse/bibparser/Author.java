@@ -26,7 +26,7 @@ public class Author{
       private final String[] givenNames;
       private final String junior;
       private final static java.util.regex.Pattern containsLowerCaseWord =
-        java.util.regex.Pattern.compile("(.*?)\\b([\\p{L}&&[^\\p{Lu}]].*)");
+        java.util.regex.Pattern.compile("(.*?)\\s([\\p{L}&&[^\\p{Lu}]].*)");
 
       /** Constructs a new Author from the specified name parts. */
       public Author(String familyName, String[] givenNames, String junior){
