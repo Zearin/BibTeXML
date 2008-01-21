@@ -26,7 +26,7 @@ public class Author{
       private final String[] givenNames;
       private final String junior;
       private final static java.util.regex.Pattern containsLowerCaseWord =
-        java.util.regex.Pattern.compile("(.*?)\\s([\\p{L}&&[^\\p{Lu}]].*)");
+      java.util.regex.Pattern.compile("(^\\p{Ll}.* .*)|(?:(.*?)\\s(\\p{Ll}.*))");
 
       /** Constructs a new Author from the specified name parts. */
       public Author(String familyName, String[] givenNames, String junior){
@@ -41,7 +41,7 @@ public class Author{
          BibTeX rules for author names.
       */
       public Author(String bibTeXAuthor) throws java.text.ParseException{
-          bibTeXAuthor = bibTeXAuthor.trim();
+          bibTeXAuthor = bibTeXAuthor.trim().replaceAll("\\s+"," ");
           String[] parts = bibTeXAuthor.split(" *, *",-1);
           switch(parts.length){
           case 3: //von Last, Junior, First
@@ -61,8 +61,8 @@ public class Author{
               if(m.matches()){
                   //we have a 'von' part and use its start
                   //as the beginning of the family name
-                  familyName = m.group(2).trim();
-                  String gN = m.group(1).trim();
+                  familyName = ((m.group(1) == null)? m.group(3) : m.group(1)).trim();
+                  String gN = (m.group(2) == null)? "" : m.group(2).trim();
                   givenNames = (gN.length() == 0)? new String[0] : gN.split("[ ~]");
               } else if(lastBlank != -1){
                   //we have no von part and use the last blank as the beginning
