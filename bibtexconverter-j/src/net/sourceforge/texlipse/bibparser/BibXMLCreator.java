@@ -158,7 +158,7 @@ public final class BibXMLCreator extends NullAdapter {
     private void makeKeyvalNodes(String key, String val){
         String[] values;
         boolean etal = false;
-        if(key.equals("author")){
+        if(key.equals("author")||key.equals("editor")){
             values = AUTHOR_REX.split(val);
             for(int i=0; i<values.length; i++){
                 if("others".equals(values[i].trim().toLowerCase())){

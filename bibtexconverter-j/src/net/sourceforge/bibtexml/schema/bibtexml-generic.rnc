@@ -101,7 +101,7 @@ others = element others {empty}
 author = element author { person | others }
 authors = element authors { author+ }
 
-editor = element editor { person }
+editor = element editor { person | others }
 editors = element editors { editor+ }
 
 author.required =

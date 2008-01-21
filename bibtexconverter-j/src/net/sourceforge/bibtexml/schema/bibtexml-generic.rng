@@ -33,7 +33,7 @@
   
 -->
 <!-- Namespace and namespace prefix -->
-<grammar xmlns:dc="http://purl.org/dc/elements/1.1/" ns="http://bibtexml.sf.net/" xmlns:bibtex="http://bibtexml.sf.net/" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:m="http://bibtexml.sourceforge.net/version-annotations" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<grammar xmlns:bibtex="http://bibtexml.sf.net/" xmlns:m="http://bibtexml.sourceforge.net/version-annotations" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" ns="http://bibtexml.sf.net/" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!-- Document top element -->
   <start>
     <ref name="file"/>
@@ -212,7 +212,10 @@
   </define>
   <define name="editor">
     <element name="editor">
-      <ref name="person"/>
+      <choice>
+        <ref name="person"/>
+        <ref name="others"/>
+      </choice>
     </element>
   </define>
   <define name="editors">
