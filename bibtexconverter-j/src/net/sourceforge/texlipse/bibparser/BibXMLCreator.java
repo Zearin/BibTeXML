@@ -53,7 +53,7 @@ public final class BibXMLCreator extends NullAdapter {
     /** The BibTeXML namespace. **/
     public static final String BIB_NAMESPACE = "http://bibtexml.sf.net/";
     /** A regular expression describing the separator in author lists.**/
-    final static Pattern AUTHOR_REX = Pattern.compile("\\s+and\\s+");
+    final static Pattern AUTHOR_REX = Pattern.compile("\\s+[aA][nN][dD]\\s+");
     /** A regular expression describing the separator in keyword lists.**/
     final static Pattern KEYWORDS_REX = Pattern.compile("\\s*[,;]\\s*");
     /** A regular expression describing one or more whitespace characters.**/
