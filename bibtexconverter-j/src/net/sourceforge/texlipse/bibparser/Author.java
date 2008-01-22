@@ -41,7 +41,7 @@ public class Author{
          BibTeX rules for author names.
       */
       public Author(String bibTeXAuthor) throws java.text.ParseException{
-          bibTeXAuthor = bibTeXAuthor.trim().replaceAll("\\s+"," ");
+          bibTeXAuthor = bibTeXAuthor.trim().replaceAll("-?\\s+"," ").replaceAll("-$","");
           String[] parts = bibTeXAuthor.split(" *, *",-1);
           switch(parts.length){
           case 3: //von Last, Junior, First
