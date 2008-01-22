@@ -111,104 +111,98 @@
 
   <!-- @ARTICLE -->
   <xsl:template match="bibtex:article">
-    <xsl:variable name="blocks">
-      <!-- author(s) -->
-      <xsl:call-template name="author-block"/>
-      <!-- block: title -->
-      <xsl:call-template name="title-block"/>
-      <!-- block: journal, volume, number, pages, month, year -->
-      <xsl:call-template name="journal-block"/>
-      <!-- block: note -->
-      <xsl:apply-templates select="bibtex:note" mode="block"/>
-    </xsl:variable>
     <xsl:call-template name="output-bibitem">
-      <xsl:with-param name="blocks" select="$blocks"/>
+      <xsl:with-param name="blocks">
+        <!-- author(s) -->
+        <xsl:call-template name="author-block"/>
+        <!-- block: title -->
+        <xsl:call-template name="title-block"/>
+        <!-- block: journal, volume, number, pages, month, year -->
+        <xsl:call-template name="journal-block"/>
+        <!-- block: note -->
+        <xsl:apply-templates select="bibtex:note" mode="block"/>
+      </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
 
 
   <!-- @BOOK -->
   <xsl:template match="bibtex:book">
-    <xsl:variable name="blocks">
-      <!-- author or editor -->
-      <xsl:call-template name="author-or-editor-block"/>
-      <!-- block: title, volume(series) -->
-      <xsl:call-template name="title-block-in-book"/>
-      <!-- block: number, publisher, edition, year etc. -->
-      <xsl:call-template name="publisher-block"/>
-      <!-- block: note -->
-      <xsl:apply-templates select="bibtex:note" mode="block"/>
-    </xsl:variable>
     <xsl:call-template name="output-bibitem">
-      <xsl:with-param name="blocks" select="$blocks"/>
+      <xsl:with-param name="blocks">
+        <!-- author or editor -->
+        <xsl:call-template name="author-or-editor-block"/>
+        <!-- block: title, volume(series) -->
+        <xsl:call-template name="title-block-in-book"/>
+        <!-- block: number, publisher, edition, year etc. -->
+        <xsl:call-template name="publisher-block"/>
+        <!-- block: note -->
+        <xsl:apply-templates select="bibtex:note" mode="block"/>
+      </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
 
   <!-- @BOOKLET -->
   <xsl:template match="bibtex:booklet">
-    <xsl:variable name="blocks">
-      <!-- author(s) -->
-      <xsl:call-template name="author-block"/>
-      <!-- block: title, howpublished, adress, month, year -->
-      <xsl:call-template name="title-block-in-booklet"/>
-      <!-- block: note -->
-      <xsl:apply-templates select="bibtex:note" mode="block"/>
-    </xsl:variable>
     <xsl:call-template name="output-bibitem">
-      <xsl:with-param name="blocks" select="$blocks"/>
+        <xsl:with-param name="blocks">
+        <!-- author(s) -->
+        <xsl:call-template name="author-block"/>
+        <!-- block: title, howpublished, adress, month, year -->
+        <xsl:call-template name="title-block-in-booklet"/>
+        <!-- block: note -->
+        <xsl:apply-templates select="bibtex:note" mode="block"/>
+      </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
 
   <!-- @INBOOK -->
   <xsl:template match="bibtex:inbook">
-    <xsl:variable name="blocks">
-      <!-- author or editor -->
-      <xsl:call-template name="author-or-editor-block"/>
-      <!-- block: title, volume(series), chapter, pages -->
-      <xsl:call-template name="title-block-in-book">
-        <xsl:with-param name="chapter-and-pages" select="true()"/>
-      </xsl:call-template>
-      <!-- block: number, publisher, edition, year etc.  -->
-      <xsl:call-template name="publisher-block"/>
-      <!-- block: note  -->
-      <xsl:apply-templates select="bibtex:note" mode="block"/>
-    </xsl:variable>
     <xsl:call-template name="output-bibitem">
-      <xsl:with-param name="blocks" select="$blocks"/>
+      <xsl:with-param name="blocks">
+        <!-- author or editor -->
+        <xsl:call-template name="author-or-editor-block"/>
+        <!-- block: title, volume(series), chapter, pages -->
+        <xsl:call-template name="title-block-in-book">
+          <xsl:with-param name="chapter-and-pages" select="true()"/>
+        </xsl:call-template>
+        <!-- block: number, publisher, edition, year etc.  -->
+        <xsl:call-template name="publisher-block"/>
+        <!-- block: note  -->
+        <xsl:apply-templates select="bibtex:note" mode="block"/>
+      </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
 
   <!-- @INCOLLECTION -->
   <xsl:template match="bibtex:incollection">
-    <xsl:variable name="blocks">
-      <!-- author(s) -->
-      <xsl:call-template name="author-block"/>
-      <!-- block: title -->
-      <xsl:call-template name="title-block"/>
-      <!-- block: booktitle etc. -->
-      <xsl:call-template name="booktitle-block"/>
-      <!-- block: note  -->
-      <xsl:apply-templates select="bibtex:note" mode="block"/>
-    </xsl:variable>
     <xsl:call-template name="output-bibitem">
-      <xsl:with-param name="blocks" select="$blocks"/>
+      <xsl:with-param name="blocks">
+        <!-- author(s) -->
+        <xsl:call-template name="author-block"/>
+        <!-- block: title -->
+        <xsl:call-template name="title-block"/>
+        <!-- block: booktitle etc. -->
+        <xsl:call-template name="booktitle-block"/>
+        <!-- block: note  -->
+        <xsl:apply-templates select="bibtex:note" mode="block"/>
+      </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
 
   <!-- @INPROCEEDINGS /  @CONFERENCE -->
   <xsl:template match="bibtex:inproceedings|bibtex:conference">
-    <xsl:variable name="blocks">
-      <!-- author(s) -->
-      <xsl:call-template name="author-block"/>
-      <!-- block: title -->
-      <xsl:call-template name="title-block"/>
-      <!-- block: booktitle etc. -->
-      <xsl:call-template name="booktitle-block-in-inproceedings"/>
-      <!-- block: note  -->
-      <xsl:apply-templates select="bibtex:note" mode="block"/>
-    </xsl:variable>
     <xsl:call-template name="output-bibitem">
-      <xsl:with-param name="blocks" select="$blocks"/>
+      <xsl:with-param name="blocks">
+        <!-- author(s) -->
+        <xsl:call-template name="author-block"/>
+        <!-- block: title -->
+        <xsl:call-template name="title-block"/>
+        <!-- block: booktitle etc. -->
+        <xsl:call-template name="booktitle-block-in-inproceedings"/>
+        <!-- block: note  -->
+        <xsl:apply-templates select="bibtex:note" mode="block"/>
+      </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
 
