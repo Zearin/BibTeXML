@@ -385,7 +385,6 @@
 
   <xsl:template name="title-block-in-book">
     <xsl:param name="chapter-and-pages" select="false()" as="xs:boolean"/>
-    <xsl:message><xsl:value-of select="concat(../@id,' ', $chapter-and-pages)"/></xsl:message>
     <xsl:call-template name="block">
       <xsl:with-param name="contents">
         <xsl:call-template name="sentence">
