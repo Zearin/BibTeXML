@@ -37,23 +37,31 @@
     <xsl:variable name="author" select="normalize-space(replace($author-raw, '\*', ''))"/>
     <xsl:variable name="parts" select="tokenize($author, ',')" />
     <xsl:variable name="numparts" select="count($parts)" />
+    <xsl:if test="not($parts[1])">
+      <xsl:message terminate="yes">
+        <xsl:text>No "last" name part in author name </xsl:text>
+        <xsl:value-of select="$author-raw"/>
+      </xsl:message>
+    </xsl:if>
     <xsl:variable name="result">
       <bibfunc:person>
         <xsl:choose>
-          <xsl:when test="$numparts ge 3">
+          <xsl:when test="$numparts ge 3 and ($parts[3])">
                     <!-- von last, junior, first -->
             <bibfunc:first>
               <xsl:value-of select="normalize-space($parts[3])" />
             </bibfunc:first>
-            <bibfunc:junior>
-              <xsl:value-of select="normalize-space($parts[2])" />
-            </bibfunc:junior>
+            <xsl:if test="($parts[2])">
+              <bibfunc:junior>
+                <xsl:value-of select="normalize-space($parts[2])" />
+              </bibfunc:junior>
+            </xsl:if>
             <bibfunc:last>
               <xsl:value-of select="normalize-space($parts[1])" />
             </bibfunc:last>
           </xsl:when>
-          <xsl:when test="$numparts eq 2">
-                    <!-- von last, first -->
+          <xsl:when test="$numparts ge 2 and ($parts[2])">
+            <!-- von last, first -->
             <bibfunc:first>
               <xsl:value-of select="normalize-space($parts[2])" />
             </bibfunc:first>
@@ -62,28 +70,28 @@
             </bibfunc:last>
           </xsl:when>
           <xsl:otherwise>
-                    <!-- first von last -->
+            <!-- first von last -->
             <xsl:choose>
-              <xsl:when test="matches(normalize-space($author), ' \p{Ll}')">
+              <xsl:when test="matches(normalize-space($parts[1]), ' \p{Ll}')">
                                 <!-- we have a word starting with a lowercase char, must be a von particle -->
                 <bibfunc:first>
-                  <xsl:value-of select="normalize-space(replace($author, '^(.*?) (\p{Ll}.*)$', '$1'))"/>
+                  <xsl:value-of select="normalize-space(replace($parts[1], '^(.*?) (\p{Ll}.*)$', '$1'))"/>
                 </bibfunc:first>
                 <bibfunc:last>
-                  <xsl:value-of select="normalize-space(replace($author, '^(.*?) (\p{Ll}.*)$', '$2'))"/>
+                  <xsl:value-of select="normalize-space(replace($parts[1], '^(.*?) (\p{Ll}.*)$', '$2'))"/>
                 </bibfunc:last>
               </xsl:when>
-              <xsl:when test="matches(normalize-space($author), ' \p{Lu}')">
+              <xsl:when test="matches(normalize-space($parts[1]), ' \p{Lu}')">
                 <bibfunc:first>
-                  <xsl:value-of select="normalize-space(replace($author, '^(.*) (\p{Lu}.*)$', '$1'))"/>
+                  <xsl:value-of select="normalize-space(replace($parts[1], '^(.*) (\p{Lu}.*)$', '$1'))"/>
                 </bibfunc:first>
                 <bibfunc:last>
-                  <xsl:value-of select="normalize-space(replace($author, '^(.*) (\p{Lu}.*)$', '$2'))"/>
+                  <xsl:value-of select="normalize-space(replace($parts[1], '^(.*) (\p{Lu}.*)$', '$2'))"/>
                 </bibfunc:last>
               </xsl:when>
               <xsl:otherwise>
                 <bibfunc:last>
-                  <xsl:value-of select="normalize-space($author)"/>
+                  <xsl:value-of select="normalize-space($parts[1])"/>
                 </bibfunc:last>
               </xsl:otherwise>
             </xsl:choose>
