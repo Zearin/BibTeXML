@@ -444,8 +444,8 @@ is not available. Processing all entries in database.
 
   <xsl:template name="booktitle-block-in-inproceedings">
     <xsl:variable name="has-address" select="my:exists(bibtex:address)"/>
-    <xsl:variable name="has-organization-and-publisher"
-        select="my:exists(bibtex:organization) and
+    <xsl:variable name="has-organization-or-publisher"
+        select="my:exists(bibtex:organization) or
         my:exists(bibtex:publisher)"
     />
     <xsl:call-template name="block">
@@ -459,25 +459,18 @@ is not available. Processing all entries in database.
                 select="my:exists(bibtex:booktitle) or my:exists(bibtex:volume)"/>
             </xsl:call-template>
             <xsl:apply-templates select="bibtex:pages"/>
-            <xsl:choose>
-              <xsl:when test="$has-address">
-                <xsl:apply-templates select="bibtex:address"/>
-                <xsl:call-template name="date"/>
-              </xsl:when>
-              <xsl:when test="not($has-organization-and-publisher)">
-                  <xsl:apply-templates select="bibtex:organization"/>
-                  <xsl:apply-templates select="bibtex:publisher"/>
-                  <xsl:call-template name="date"/>
-              </xsl:when>
-            </xsl:choose>
+            <xsl:if test="$has-address or not($has-organization-or-publisher)">
+              <xsl:apply-templates select="bibtex:address"/>
+              <xsl:call-template name="date"/>
+            </xsl:if>
           </xsl:with-param>
         </xsl:call-template>
-        <xsl:if test="$has-address or $has-organization-and-publisher">
+        <xsl:if test="$has-address or $has-organization-or-publisher">
           <xsl:call-template name="sentence">
             <xsl:with-param name="elements">
               <xsl:apply-templates select="bibtex:organization"/>
               <xsl:apply-templates select="bibtex:publisher"/>
-              <xsl:if test="not($has-address)">
+              <xsl:if test="not($has-address) and $has-organization-or-publisher">
                 <xsl:call-template name="date"/>
               </xsl:if>
             </xsl:with-param>
