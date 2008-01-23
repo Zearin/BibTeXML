@@ -5,7 +5,7 @@
      standard bibtex style unsrt.bst.
      Notable differences include:
       * braces are completely ignored (e.g. in author parsing)
-      * case is never changed
+      * case is never changed except in edition (always lower)
       * some differences concerning tying with ~ under very rare
         circumstances
       * long lines are not wrapped
@@ -458,7 +458,11 @@ is not available. Processing all entries in database.
               <xsl:with-param name="mid-sentence"
                 select="my:exists(bibtex:booktitle) or my:exists(bibtex:volume)"/>
             </xsl:call-template>
-            <xsl:apply-templates select="bibtex:pages"/>
+            <xsl:if test="my:exists(bibtex:pages)">
+              <my:word>
+                <xsl:apply-templates select="bibtex:pages"/>
+              </my:word>
+            </xsl:if>
             <xsl:if test="$has-address or not($has-organization-or-publisher)">
               <xsl:apply-templates select="bibtex:address"/>
               <xsl:call-template name="date"/>
@@ -657,7 +661,7 @@ is not available. Processing all entries in database.
   </xsl:template>
 
   <xsl:template match="bibtex:author|bibtex:editor">
-    <xsl:param name="person-count" as="xs:integer"/>
+    <xsl:param name="person-count" as="xs:integer" required="yes"/>
     <xsl:variable name="pos" select="position()"/>
     <xsl:if test="$pos ne 1">
       <xsl:variable name="is-last" select="($pos eq $person-count)"/>
@@ -832,8 +836,8 @@ is not available. Processing all entries in database.
     <xsl:variable name="tt" select="normalize-space(text())"/>
     <xsl:if test="$tt ne ''">
       <my:word>
-        <!--<xsl:value-of select="lower-case($tt)"/>-->
-        <xsl:value-of select="$tt"/>
+        <xsl:value-of select="lower-case($tt)"/>
+        <!--<xsl:value-of select="$tt"/>-->
         <xsl:text> edition</xsl:text>
       </my:word>
     </xsl:if>
@@ -861,8 +865,13 @@ is not available. Processing all entries in database.
     <xsl:if test="$tt ne ''">
       <my:word>
         <xsl:text>In </xsl:text>
-        <xsl:if test="my:exists(bibtex:editor)">
-          <xsl:apply-templates select="bibtex:editor"/>
+        <xsl:if test="my:exists(../bibtex:editor)">
+          <xsl:variable name="editor-count" select="count(../bibtex:editor)"/>
+          <xsl:apply-templates select="../bibtex:editor">
+            <xsl:with-param name="person-count" select="$editor-count"/>
+          </xsl:apply-templates>
+          <xsl:value-of select="if($editor-count gt 1)
+                  then ', editors' else ', editor'"/>
           <xsl:text>, </xsl:text>
         </xsl:if>
         <xsl:value-of select="my:emphasize($tt)"/>
