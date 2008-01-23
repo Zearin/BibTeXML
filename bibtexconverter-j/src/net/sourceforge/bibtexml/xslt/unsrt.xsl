@@ -270,14 +270,10 @@ is not available. Processing all entries in database.
         </xsl:if>
         <!-- block?: howpublished, date  -->
         <xsl:if test="$has-howpublished">
-          <xsl:call-template name="block">
-            <xsl:with-param name="contents">
-              <xsl:call-template name="sentence">
-                <xsl:with-param name="elements">
-                  <xsl:apply-templates select="bibtex:howpublished"/>
-                  <xsl:call-template name="date" />
-                </xsl:with-param>
-              </xsl:call-template>
+          <xsl:call-template name="single-sentence-block">
+            <xsl:with-param name="elements">
+              <xsl:apply-templates select="bibtex:howpublished"/>
+              <xsl:call-template name="date" />
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -325,26 +321,22 @@ is not available. Processing all entries in database.
 
   <xsl:template name="thesis-block" >
     <xsl:param name="default-type" as="xs:string"/>
-    <xsl:call-template name="block">
-      <xsl:with-param name="contents">
-        <xsl:call-template name="sentence">
-          <xsl:with-param name="elements">
-            <my:word>
-              <xsl:choose>
-                <xsl:when test="my:exists(bibtex:type)">
-                    <!--ToDo change case to titlecase -->
-                    <xsl:value-of select="normalize-space(bibtex:type[1]/text())"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="$default-type"/>
-                </xsl:otherwise>
-              </xsl:choose>
-            </my:word>
-            <xsl:apply-templates select="bibtex:school"/>
-            <xsl:apply-templates select="bibtex:address"/>
-            <xsl:call-template name="date"/>
-          </xsl:with-param>
-        </xsl:call-template>
+    <xsl:call-template name="single-sentence-block">
+      <xsl:with-param name="elements">
+        <my:word>
+          <xsl:choose>
+            <xsl:when test="my:exists(bibtex:type)">
+                <!--ToDo change case to titlecase -->
+                <xsl:value-of select="normalize-space(bibtex:type[1]/text())"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$default-type"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </my:word>
+        <xsl:apply-templates select="bibtex:school"/>
+        <xsl:apply-templates select="bibtex:address"/>
+        <xsl:call-template name="date"/>
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
@@ -361,33 +353,25 @@ is not available. Processing all entries in database.
               )"
     />
     <!-- block: title, ((org, add)?, ed, date)? -->
-    <xsl:call-template name="block">
-      <xsl:with-param name="contents">
-        <xsl:call-template name="sentence">
-          <xsl:with-param name="elements">
-              <xsl:apply-templates select="bibtex:title">
-                <xsl:with-param name="emphasize" select="true()"/>
-              </xsl:apply-templates>
-              <xsl:if test="not($has-extra-block)">
-                <xsl:apply-templates select="bibtex:edition"/>
-                <xsl:call-template name="date"/>
-              </xsl:if>
-          </xsl:with-param>
-        </xsl:call-template>
+    <xsl:call-template name="single-sentence-block">
+      <xsl:with-param name="elements">
+        <xsl:apply-templates select="bibtex:title">
+          <xsl:with-param name="emphasize" select="true()"/>
+        </xsl:apply-templates>
+        <xsl:if test="not($has-extra-block)">
+          <xsl:apply-templates select="bibtex:edition"/>
+          <xsl:call-template name="date"/>
+        </xsl:if>
       </xsl:with-param>
     </xsl:call-template>
     <!-- block?: org, add, ed, date -->
     <xsl:if test="$has-extra-block">
-      <xsl:call-template name="block">
-        <xsl:with-param name="contents">
-          <xsl:call-template name="sentence">
-            <xsl:with-param name="elements">
-              <xsl:apply-templates select="bibtex:organization"/>
-              <xsl:apply-templates select="bibtex:address"/>
-              <xsl:apply-templates select="bibtex:edition"/>
-              <xsl:call-template name="date"/>
-            </xsl:with-param>
-          </xsl:call-template>
+      <xsl:call-template name="single-sentence-block">
+        <xsl:with-param name="elements">
+          <xsl:apply-templates select="bibtex:organization"/>
+          <xsl:apply-templates select="bibtex:address"/>
+          <xsl:apply-templates select="bibtex:edition"/>
+          <xsl:call-template name="date"/>
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
@@ -397,14 +381,10 @@ is not available. Processing all entries in database.
     <xsl:choose>
       <xsl:when test="my:empty(bibtex:author)">
         <xsl:if test="my:exists(bibtex:organization)">
-          <xsl:call-template name="block">
-            <xsl:with-param name="contents">
-              <xsl:call-template name="sentence">
-                <xsl:with-param name="elements">
-                  <xsl:apply-templates select="bibtex:organization"/>
-                  <xsl:apply-templates select="bibtex:address"/>
-                </xsl:with-param>
-              </xsl:call-template>
+          <xsl:call-template name="single-sentence-block">
+            <xsl:with-param name="elements">
+              <xsl:apply-templates select="bibtex:organization"/>
+              <xsl:apply-templates select="bibtex:address"/>
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -417,31 +397,27 @@ is not available. Processing all entries in database.
   </xsl:template>
 
   <xsl:template name="journal-block">
-    <xsl:call-template name="block">
-      <xsl:with-param name="contents">
-        <xsl:call-template name="sentence">
-          <xsl:with-param name="elements">
-            <xsl:apply-templates select="bibtex:journal">
-              <xsl:with-param name="emphasize" select="true()"/>
+    <xsl:call-template name="single-sentence-block">
+      <xsl:with-param name="elements">
+        <xsl:apply-templates select="bibtex:journal">
+          <xsl:with-param name="emphasize" select="true()"/>
+        </xsl:apply-templates>
+        <!-- word: volume, number, pages -->
+        <xsl:if test="my:exists(bibtex:volume) or
+                      my:exists(bibtex:number) or
+                      my:exists(bibtex:pages)">
+          <my:word>
+            <xsl:apply-templates select="bibtex:volume"/>
+            <xsl:apply-templates select="bibtex:number"/>
+            <xsl:apply-templates select="bibtex:pages">
+              <xsl:with-param
+                name="brief"
+                select="my:exists(bibtex:volume) or my:exists(bibtex:number)"
+              />
             </xsl:apply-templates>
-            <!-- word: volume, number, pages -->
-            <xsl:if test="my:exists(bibtex:volume) or
-                          my:exists(bibtex:number) or
-                          my:exists(bibtex:pages)">
-              <my:word>
-                <xsl:apply-templates select="bibtex:volume"/>
-                <xsl:apply-templates select="bibtex:number"/>
-                <xsl:apply-templates select="bibtex:pages">
-                  <xsl:with-param
-                    name="brief"
-                    select="my:exists(bibtex:volume) or my:exists(bibtex:number)"
-                  />
-                </xsl:apply-templates>
-              </my:word>
-            </xsl:if>
-            <xsl:call-template name="date"/>
-          </xsl:with-param>
-        </xsl:call-template>
+          </my:word>
+        </xsl:if>
+        <xsl:call-template name="date"/>
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
@@ -525,15 +501,11 @@ is not available. Processing all entries in database.
       block?: howpublished, adress, date
     -->
     <xsl:if test="$has-howpublished-or-address">
-      <xsl:call-template name="block">
-        <xsl:with-param name="contents">
-          <xsl:call-template name="sentence">
-            <xsl:with-param name="elements">
-              <xsl:apply-templates select="bibtex:howpublished"/>
-              <xsl:apply-templates select="bibtex:address"/>
-              <xsl:call-template name="date"/>
-            </xsl:with-param>
-          </xsl:call-template>
+      <xsl:call-template name="single-sentence-block">
+        <xsl:with-param name="elements">
+          <xsl:apply-templates select="bibtex:howpublished"/>
+          <xsl:apply-templates select="bibtex:address"/>
+          <xsl:call-template name="date"/>
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
@@ -542,37 +514,29 @@ is not available. Processing all entries in database.
   <xsl:template name="title-block">
     <xsl:param name="with-date" select="false()" as="xs:boolean"/>
     <xsl:param name="emphasize" select="false()" as="xs:boolean"/>
-    <xsl:call-template name="block">
-      <xsl:with-param name="contents">
-        <xsl:call-template name="sentence">
-          <xsl:with-param name="elements">
-            <xsl:apply-templates select="bibtex:title" >
-              <xsl:with-param name="emphasize" select="$emphasize"/>
-            </xsl:apply-templates>
-            <xsl:if test="$with-date">
-              <xsl:call-template name="date"/>
-            </xsl:if>
-          </xsl:with-param>
-        </xsl:call-template>
+    <xsl:call-template name="single-sentence-block">
+      <xsl:with-param name="elements">
+        <xsl:apply-templates select="bibtex:title" >
+          <xsl:with-param name="emphasize" select="$emphasize"/>
+        </xsl:apply-templates>
+        <xsl:if test="$with-date">
+          <xsl:call-template name="date"/>
+        </xsl:if>
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
 
   <xsl:template name="title-block-in-book">
     <xsl:param name="chapter-and-pages" select="false()" as="xs:boolean"/>
-    <xsl:call-template name="block">
-      <xsl:with-param name="contents">
-        <xsl:call-template name="sentence">
-          <xsl:with-param name="elements">
-              <xsl:apply-templates select="bibtex:title">
-                <xsl:with-param name="emphasize" select="true()"/>
-              </xsl:apply-templates>
-              <xsl:apply-templates select="bibtex:volume" mode="book"/>
-              <xsl:if test="$chapter-and-pages">
-                <xsl:call-template name="chapter-and-pages"/>
-              </xsl:if>
-          </xsl:with-param>
-        </xsl:call-template>
+    <xsl:call-template name="single-sentence-block">
+      <xsl:with-param name="elements">
+          <xsl:apply-templates select="bibtex:title">
+            <xsl:with-param name="emphasize" select="true()"/>
+          </xsl:apply-templates>
+          <xsl:apply-templates select="bibtex:volume" mode="book"/>
+          <xsl:if test="$chapter-and-pages">
+            <xsl:call-template name="chapter-and-pages"/>
+          </xsl:if>
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
@@ -644,25 +608,21 @@ is not available. Processing all entries in database.
 
   <xsl:template name="author-block">
     <xsl:param name="with-date" select="false()" as="xs:boolean"/>
-    <xsl:call-template name="block">
-      <xsl:with-param name="contents">
-        <xsl:call-template name="sentence">
-          <xsl:with-param name="elements">
-            <xsl:if test="my:exists(bibtex:author)">
-              <my:word>
-                <xsl:apply-templates select="bibtex:author">
-                <xsl:with-param
-                  name="person-count"
-                  select="count(bibtex:author)"
-                />
-                </xsl:apply-templates>
-              </my:word>
-            </xsl:if>
-            <xsl:if test="$with-date">
-              <xsl:call-template name="date"/>
-            </xsl:if>
-          </xsl:with-param>
-        </xsl:call-template>
+    <xsl:call-template name="single-sentence-block">
+      <xsl:with-param name="elements">
+        <xsl:if test="my:exists(bibtex:author)">
+          <my:word>
+            <xsl:apply-templates select="bibtex:author">
+            <xsl:with-param
+              name="person-count"
+              select="count(bibtex:author)"
+            />
+            </xsl:apply-templates>
+          </my:word>
+        </xsl:if>
+        <xsl:if test="$with-date">
+          <xsl:call-template name="date"/>
+        </xsl:if>
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
@@ -950,6 +910,17 @@ is not available. Processing all entries in database.
     </xsl:if>
     <xsl:value-of select="normalize-space(text())"/>
     <xsl:text>&#xA;</xsl:text>
+  </xsl:template>
+
+  <xsl:template name="single-sentence-block">
+    <xsl:param name="elements" required="yes"/>
+    <xsl:call-template name="block">
+      <xsl:with-param name="contents">
+        <xsl:call-template name="sentence">
+          <xsl:with-param name="elements" select="$elements"/>
+        </xsl:call-template>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
   <xsl:template name="block">
