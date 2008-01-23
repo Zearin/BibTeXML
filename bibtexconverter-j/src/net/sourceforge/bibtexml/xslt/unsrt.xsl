@@ -5,8 +5,8 @@
      standard bibtex style unsrt.bst.
      Notable differences include:
       * braces are completely ignored (e.g. in author parsing)
-      * case inside titles is not changed
-      * some differences concerning tying with ~ under relatively rare
+      * case is never changed
+      * some differences concerning tying with ~ under very rare
         circumstances
       * long lines are not wrapped
 -->
@@ -612,8 +612,12 @@
   <xsl:template name="chapter-and-pages">
     <xsl:if test="my:exists(bibtex:chapter)">
       <my:word>
+      <!--
       <xsl:variable name="chap" select="if(my:empty(bibtex:type))
         then 'chapter' else lower-case(bibtex:type/text())"/>
+        -->
+      <xsl:variable name="chap" select="if(my:empty(bibtex:type))
+        then 'chapter' else bibtex:type/text()"/>
       <xsl:value-of select="my:tie-or-space-connect($chap, bibtex:chapter/text())"/>
       </my:word>
     </xsl:if>
@@ -861,7 +865,8 @@
     <xsl:variable name="tt" select="normalize-space(text())"/>
     <xsl:if test="$tt ne ''">
       <my:word>
-        <xsl:value-of select="lower-case($tt)"/>
+        <!--<xsl:value-of select="lower-case($tt)"/>-->
+        <xsl:value-of select="$tt"/>
         <xsl:text> edition</xsl:text>
       </my:word>
     </xsl:if>
