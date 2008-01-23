@@ -206,20 +206,97 @@
     </xsl:call-template>
   </xsl:template>
 
+  <!-- @MANUAL -->
   <xsl:template match="bibtex:manual">
-    <xsl:call-template name="not-implemented"/>
+    <xsl:call-template name="output-bibitem">
+      <xsl:with-param name="blocks">
+        <!-- block: author | (org, add) -->
+        <xsl:call-template name="author-block-in-manual"/>
+        <!-- one or two block(s): title, (org, add)?, ed, date -->
+        <xsl:call-template name="title-block-in-manual"/>
+        <!-- block: note  -->
+        <xsl:apply-templates select="bibtex:note" mode="block"/>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
+  <!-- @MASTERSTHESIS -->
   <xsl:template match="bibtex:mastersthesis">
-    <xsl:call-template name="not-implemented"/>
+    <xsl:call-template name="output-bibitem">
+      <xsl:with-param name="blocks">
+        <xsl:call-template name="author-block"/>
+        <xsl:call-template name="title-block" />
+        <!-- block: thesis type, school, address, date -->
+        <xsl:call-template name="thesis-block" >
+          <xsl:with-param name="default-type">Master's thesis</xsl:with-param>
+        </xsl:call-template>
+        <xsl:apply-templates select="bibtex:note" mode="block"/>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
+  <!-- @MISC -->
   <xsl:template match="bibtex:misc">
-    <xsl:call-template name="not-implemented"/>
+    <xsl:call-template name="output-bibitem">
+      <xsl:with-param name="blocks">
+        <!-- block: author, title? -->
+        <xsl:call-template name="block">
+            <xsl:with-param name="contents">
+              <xsl:call-template name="sentence">
+                <xsl:with-param name="elements">
+                  <xsl:if test="my:exists(bibtex:author)">
+                    <my:word>
+                      <xsl:message><xsl:value-of select="count(bibtex:author)"/></xsl:message>
+                      <xsl:apply-templates select="bibtex:author">
+                       <xsl:with-param
+                          name="person-count"
+                          select="count(bibtex:author)"
+                        />
+                       </xsl:apply-templates>
+                     </my:word>
+                  </xsl:if>
+                  <xsl:if test="my:empty(bibtex:howpublished)">
+                    <xsl:apply-templates select="bibtex:title"/>
+                    <xsl:call-template name="date" />
+                  </xsl:if>
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:with-param>
+          </xsl:call-template>
+        <!-- block?: title, howpublished, date  -->
+        <xsl:if test="my:exists(bibtex:howpublished)">
+          <xsl:call-template name="block">
+            <xsl:with-param name="contents">
+              <xsl:call-template name="sentence">
+                <xsl:with-param name="elements">
+                  <xsl:apply-templates select="bibtex:title"/>
+                  <xsl:apply-templates select="bibtex:howpublished"/>
+                  <xsl:call-template name="date" />
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
+        <!-- block: note  -->
+        <xsl:apply-templates select="bibtex:note" mode="block"/>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
   <xsl:template match="bibtex:phdthesis">
-    <xsl:call-template name="not-implemented"/>
+    <xsl:call-template name="output-bibitem">
+      <xsl:with-param name="blocks">
+        <xsl:call-template name="author-block"/>
+        <xsl:call-template name="title-block" >
+          <xsl:with-param name="emphasize" select="true()"/>
+        </xsl:call-template>
+        <!-- block: thesis type, school, address, date -->
+        <xsl:call-template name="thesis-block" >
+          <xsl:with-param name="default-type" select="'PhD thesis'"/>
+        </xsl:call-template>
+        <xsl:apply-templates select="bibtex:note" mode="block"/>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
   <xsl:template match="bibtex:proceedings">
@@ -231,7 +308,112 @@
   </xsl:template>
 
   <xsl:template match="bibtex:unpublished">
-    <xsl:call-template name="not-implemented"/>
+    <xsl:call-template name="output-bibitem">
+      <xsl:with-param name="blocks">
+        <xsl:call-template name="author-block"/>
+        <xsl:call-template name="title-block"/>
+        <xsl:apply-templates select="bibtex:note" mode="block">
+          <xsl:with-param name="with-date" select="true()"/>
+        </xsl:apply-templates>
+      </xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template name="thesis-block" >
+    <xsl:param name="default-type" as="xs:string"/>
+    <xsl:call-template name="block">
+      <xsl:with-param name="contents">
+        <xsl:call-template name="sentence">
+          <xsl:with-param name="elements">
+            <my:word>
+              <xsl:choose>
+                <xsl:when test="my:exists(bibtex:type)">
+                    <!--ToDo change case to titlecase -->
+                    <xsl:value-of select="normalize-space(bibtex:type[1]/text())"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$default-type"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </my:word>
+            <xsl:apply-templates select="bibtex:school"/>
+            <xsl:apply-templates select="bibtex:address"/>
+            <xsl:call-template name="date"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template name="title-block-in-manual">
+    <xsl:variable name="has-extra-block"
+      select="(my:exists(bibtex:author) and
+               my:exists(bibtex:organization) and
+               my:exists(bibtex:address)
+               ) or (
+               my:empty(bibtex:author) and
+               my:empty(bibtex:organization) and
+               my:exists(bibtex:address)
+              )"
+    />
+    <!-- block: title, ((org, add)?, ed, date)? -->
+    <xsl:call-template name="block">
+      <xsl:with-param name="contents">
+        <xsl:call-template name="sentence">
+          <xsl:with-param name="elements">
+              <xsl:apply-templates select="bibtex:title">
+                <xsl:with-param name="emphasize" select="true()"/>
+              </xsl:apply-templates>
+              <xsl:if test="not($has-extra-block)">
+                <xsl:if test="my:exists(bibtex:author)">
+                  <xsl:apply-templates select="bibtex:organization"/>
+                  <xsl:apply-templates select="bibtex:address"/>
+                </xsl:if>
+                <xsl:apply-templates select="bibtex:edition"/>
+                <xsl:call-template name="date"/>
+              </xsl:if>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:with-param>
+    </xsl:call-template>
+    <!-- block?: org, add, ed, date -->
+    <xsl:if test="$has-extra-block">
+      <xsl:call-template name="block">
+        <xsl:with-param name="contents">
+          <xsl:call-template name="sentence">
+            <xsl:with-param name="elements">
+              <xsl:apply-templates select="bibtex:organization"/>
+              <xsl:apply-templates select="bibtex:address"/>
+              <xsl:apply-templates select="bibtex:edition"/>
+              <xsl:call-template name="date"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="author-block-in-manual">
+    <xsl:choose>
+      <xsl:when test="my:empty(bibtex:author)">
+        <xsl:if test="my:exists(bibtex:organization)">
+          <xsl:call-template name="block">
+            <xsl:with-param name="contents">
+              <xsl:call-template name="sentence">
+                <xsl:with-param name="elements">
+                  <xsl:apply-templates select="bibtex:organization"/>
+                  <xsl:apply-templates select="bibtex:address"/>
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
+      </xsl:when>
+      <xsl:otherwise>
+        <!-- author(s) -->
+        <xsl:call-template name="author-block"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template name="journal-block">
@@ -366,11 +548,14 @@
   </xsl:template>
 
   <xsl:template name="title-block">
+    <xsl:param name="emphasize" select="false()" as="xs:boolean"/>
     <xsl:call-template name="block">
       <xsl:with-param name="contents">
         <xsl:call-template name="sentence">
           <xsl:with-param name="elements">
-            <xsl:apply-templates select="bibtex:title"/>
+            <xsl:apply-templates select="bibtex:title" >
+              <xsl:with-param name="emphasize" select="$emphasize"/>
+            </xsl:apply-templates>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:with-param>
@@ -443,7 +628,6 @@
   </xsl:template>
 
   <xsl:template name="chapter-and-pages">
-    <xsl:variable name="has-pages" select="my:exists(bibtex:pages)"/>
     <xsl:if test="my:exists(bibtex:chapter)">
       <my:word>
       <xsl:variable name="chap" select="if(my:empty(bibtex:type))
@@ -451,7 +635,7 @@
       <xsl:value-of select="my:tie-or-space-connect($chap, bibtex:chapter/text())"/>
       </my:word>
     </xsl:if>
-    <xsl:if test="$has-pages">
+    <xsl:if test="my:exists(bibtex:pages)">
       <my:word>
         <xsl:apply-templates select="bibtex:pages"/>
       </my:word>
@@ -564,11 +748,15 @@
   </xsl:template>
 
   <xsl:template match="bibtex:note" mode="block">
+    <xsl:param name="with-date" select="false()" as="xs:boolean"/>
     <xsl:call-template name="block">
       <xsl:with-param name="contents">
         <xsl:call-template name="sentence">
           <xsl:with-param name="elements">
             <xsl:apply-templates select="."/>
+            <xsl:if test="$with-date">
+              <xsl:call-template name="date"/>
+            </xsl:if>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:with-param>
@@ -680,6 +868,7 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- To-do: titlecase for value if at beginning of sentence -->
   <xsl:template match="bibtex:edition">
     <xsl:variable name="tt" select="normalize-space(text())"/>
     <xsl:if test="$tt ne ''">
@@ -690,7 +879,14 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="bibtex:publisher|bibtex:address|bibtex:title|bibtex:journal|bibtex:note">
+  <xsl:template match="bibtex:school|
+                       bibtex:howpublished|
+                       bibtex:publisher|
+                       bibtex:address|
+                       bibtex:title|
+                       bibtex:journal|
+                       bibtex:note|
+                       bibtex:organization">
     <xsl:param name="emphasize" select="false()" as="xs:boolean"/>
     <xsl:variable name="tt" select="normalize-space(text())"/>
     <xsl:if test="$tt ne ''">
