@@ -25,6 +25,8 @@ import java.util.*;
 import java.net.URL;
 import java.net.MalformedURLException;
 
+/** Retrieves citations from LaTeX aux files. Dependent aux files referenced
+    with \@input are automatically included in the search.**/
 public class AuxParser {
     private final List<String> citations = new ArrayList<String>();
     private final Set<URL> urlCache = new HashSet<URL>();
