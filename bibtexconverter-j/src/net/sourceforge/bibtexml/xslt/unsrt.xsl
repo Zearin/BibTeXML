@@ -237,39 +237,29 @@
 
   <!-- @MISC -->
   <xsl:template match="bibtex:misc">
+    <xsl:variable name="has-howpublished"
+      select="my:exists(bibtex:howpublished)"/>
+    <xsl:variable name="has-title"
+      select="my:exists(bibtex:title)"/>
     <xsl:call-template name="output-bibitem">
       <xsl:with-param name="blocks">
-        <!-- block: author, title? -->
-        <xsl:call-template name="block">
-            <xsl:with-param name="contents">
-              <xsl:call-template name="sentence">
-                <xsl:with-param name="elements">
-                  <xsl:if test="my:exists(bibtex:author)">
-                    <my:word>
-                      <xsl:message><xsl:value-of select="count(bibtex:author)"/></xsl:message>
-                      <xsl:apply-templates select="bibtex:author">
-                       <xsl:with-param
-                          name="person-count"
-                          select="count(bibtex:author)"
-                        />
-                       </xsl:apply-templates>
-                     </my:word>
-                  </xsl:if>
-                  <xsl:if test="my:empty(bibtex:howpublished)">
-                    <xsl:apply-templates select="bibtex:title"/>
-                    <xsl:call-template name="date" />
-                  </xsl:if>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:with-param>
+        <!-- block: author, date? -->
+        <xsl:call-template name="author-block">
+          <xsl:with-param name="with-date"
+            select="not($has-howpublished) and not($has-title)"/>
+        </xsl:call-template>
+        <!-- block: (title, date?)? -->
+        <xsl:if test="$has-title">
+          <xsl:call-template name="title-block">
+            <xsl:with-param name="with-date" select="not($has-howpublished)"/>
           </xsl:call-template>
-        <!-- block?: title, howpublished, date  -->
-        <xsl:if test="my:exists(bibtex:howpublished)">
+        </xsl:if>
+        <!-- block?: howpublished, date  -->
+        <xsl:if test="$has-howpublished">
           <xsl:call-template name="block">
             <xsl:with-param name="contents">
               <xsl:call-template name="sentence">
                 <xsl:with-param name="elements">
-                  <xsl:apply-templates select="bibtex:title"/>
                   <xsl:apply-templates select="bibtex:howpublished"/>
                   <xsl:call-template name="date" />
                 </xsl:with-param>
@@ -348,8 +338,8 @@
   <xsl:template name="title-block-in-manual">
     <xsl:variable name="has-extra-block"
       select="(my:exists(bibtex:author) and
-               my:exists(bibtex:organization) and
-               my:exists(bibtex:address)
+               (my:exists(bibtex:organization) or
+               my:exists(bibtex:address))
                ) or (
                my:empty(bibtex:author) and
                my:empty(bibtex:organization) and
@@ -365,10 +355,6 @@
                 <xsl:with-param name="emphasize" select="true()"/>
               </xsl:apply-templates>
               <xsl:if test="not($has-extra-block)">
-                <xsl:if test="my:exists(bibtex:author)">
-                  <xsl:apply-templates select="bibtex:organization"/>
-                  <xsl:apply-templates select="bibtex:address"/>
-                </xsl:if>
                 <xsl:apply-templates select="bibtex:edition"/>
                 <xsl:call-template name="date"/>
               </xsl:if>
@@ -513,41 +499,34 @@
 
   <xsl:template name="title-block-in-booklet">
     <!--
-      block: title (if both howpublished and adress exists)
+      block: title (if howpublished or adress exists)
     -->
-    <xsl:variable name="has-howpublished-and-address"
-      select="my:exists(bibtex:howpublished) and my:exists(bibtex:address)"/>
-    <xsl:if test="has-howpublished-and-address">
+    <xsl:variable name="has-howpublished-or-address"
+      select="my:exists(bibtex:howpublished) or my:exists(bibtex:address)"/>
+    <xsl:call-template name="title-block">
+      <xsl:with-param name="with-date"
+        select="not($has-howpublished-or-address)"/>
+    </xsl:call-template>
+    <!--
+      block?: howpublished, adress, date
+    -->
+    <xsl:if test="$has-howpublished-or-address">
       <xsl:call-template name="block">
         <xsl:with-param name="contents">
           <xsl:call-template name="sentence">
             <xsl:with-param name="elements">
-              <xsl:apply-templates select="bibtex:title"/>
+              <xsl:apply-templates select="bibtex:howpublished"/>
+              <xsl:apply-templates select="bibtex:address"/>
+              <xsl:call-template name="date"/>
             </xsl:with-param>
           </xsl:call-template>
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
-    <!--
-      block: title(?), howpublished, adress, month, year
-    -->
-    <xsl:call-template name="block">
-      <xsl:with-param name="contents">
-        <xsl:call-template name="sentence">
-          <xsl:with-param name="elements">
-            <xsl:if test="not(has-howpublished-and-address)">
-              <xsl:apply-templates select="bibtex:title"/>
-            </xsl:if>
-            <xsl:apply-templates select="bibtex:howpublished"/>
-            <xsl:apply-templates select="bibtex:address"/>
-            <xsl:call-template name="date"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:with-param>
-    </xsl:call-template>
   </xsl:template>
 
   <xsl:template name="title-block">
+    <xsl:param name="with-date" select="false()" as="xs:boolean"/>
     <xsl:param name="emphasize" select="false()" as="xs:boolean"/>
     <xsl:call-template name="block">
       <xsl:with-param name="contents">
@@ -556,6 +535,9 @@
             <xsl:apply-templates select="bibtex:title" >
               <xsl:with-param name="emphasize" select="$emphasize"/>
             </xsl:apply-templates>
+            <xsl:if test="$with-date">
+              <xsl:call-template name="date"/>
+            </xsl:if>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:with-param>
@@ -643,22 +625,28 @@
   </xsl:template>
 
   <xsl:template name="author-block">
-    <xsl:if test="my:exists(bibtex:author)">
-      <my:block>
-      <xsl:call-template name="sentence">
-        <xsl:with-param name="elements">
-          <my:word>
-          <xsl:apply-templates select="bibtex:author">
-            <xsl:with-param
-              name="person-count"
-              select="count(bibtex:author)"
-            />
-          </xsl:apply-templates>
-          </my:word>
-        </xsl:with-param>
-      </xsl:call-template>
-      </my:block>
-    </xsl:if>
+    <xsl:param name="with-date" select="false()" as="xs:boolean"/>
+    <xsl:call-template name="block">
+      <xsl:with-param name="contents">
+        <xsl:call-template name="sentence">
+          <xsl:with-param name="elements">
+            <xsl:if test="my:exists(bibtex:author)">
+              <my:word>
+                <xsl:apply-templates select="bibtex:author">
+                <xsl:with-param
+                  name="person-count"
+                  select="count(bibtex:author)"
+                />
+                </xsl:apply-templates>
+              </my:word>
+            </xsl:if>
+            <xsl:if test="$with-date">
+              <xsl:call-template name="date"/>
+            </xsl:if>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
   <xsl:template name="author-or-editor-block">
