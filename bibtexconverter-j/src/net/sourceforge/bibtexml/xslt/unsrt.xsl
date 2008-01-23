@@ -52,15 +52,29 @@
       Retrieve citations from aux file
     -->
     <xsl:variable name="citations"
+      use-when="function-available('auxparser:xslt-parse', 2)"
       select="auxparser:xslt-parse($aux-file, $aux-encoding)"
       as="xs:string*"/>
-    <xsl:if test="exists($citations)">
-      <xsl:message>
-        <xsl:text>Parsing aux file </xsl:text><xsl:value-of select="$aux-file"/>
+    <xsl:variable name="citations"
+      use-when="not(function-available('auxparser:xslt-parse', 2))"
+      select="'*'"
+      as="xs:string*"/>
+    <xsl:choose>
+      <xsl:when test="function-available('auxparser:xslt-parse', 2)">
+       <xsl:message>
+        <xsl:text>Top-level aux file: </xsl:text><xsl:value-of select="$aux-file"/>
         <xsl:text>&#xA;Found the following citations:&#xA;</xsl:text>
         <xsl:value-of select="$citations"/>
       </xsl:message>
-    </xsl:if>
+      </xsl:when>
+      <xsl:otherwise>
+       <xsl:message><xsl:text>Cannot parse aux files because Java function
+net.sourceforge.bibtexml.AuxParser.xsltParse(String, String)
+is not available. Processing all entries in database.
+</xsl:text></xsl:message>
+      </xsl:otherwise>
+    </xsl:choose>
+
     <xsl:apply-templates select="bibtex:preamble"/>
     <xsl:if test="my:exists(bibtex:preamble)">
       <xsl:text>&#xA;</xsl:text>
