@@ -36,7 +36,7 @@
     xmlns:my="foo:bar">
 
   <xsl:param name="bibtexml.sf.net.encoding" select="'ISO-8859-1'" />
-  <xsl:param name="aux-file" select="'test.aux'" as="xs:string"/>
+  <xsl:param name="aux-file" select="''" as="xs:string"/>
   <xsl:param name="aux-encoding" select="'ISO-8859-1'" as="xs:string"/>
 
   <xsl:key match="*" name="idkey" use="@id"/>
@@ -53,13 +53,16 @@
     -->
     <xsl:variable name="citations"
       use-when="function-available('auxparser:xslt-parse', 2)"
-      select="auxparser:xslt-parse($aux-file, $aux-encoding)"
+      select="if($aux-file) then auxparser:xslt-parse($aux-file, $aux-encoding) else '*'"
       as="xs:string*"/>
     <xsl:variable name="citations"
       use-when="not(function-available('auxparser:xslt-parse', 2))"
       select="'*'"
       as="xs:string*"/>
     <xsl:choose>
+      <xsl:when test="$aux-file eq ''">
+        <xsl:message>No aux file specified. Processing all entries in database.</xsl:message>
+      </xsl:when>
       <xsl:when test="function-available('auxparser:xslt-parse', 2)">
        <xsl:message>
         <xsl:text>Top-level aux file: </xsl:text><xsl:value-of select="$aux-file"/>

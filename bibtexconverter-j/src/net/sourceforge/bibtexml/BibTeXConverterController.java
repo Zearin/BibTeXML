@@ -326,6 +326,16 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         x.setBuiltin(true);
         builtins.add(x);
 
+        config.name = "LaTeX bibliography (unsrt)";
+        config.suffix = ".bbl";
+        config.style = clazz.getResource("xslt/unsrt.xsl");
+        config.customParams = true;
+        config.customEncoding = true;
+        config.windowsLineTerminators = false;
+        x = StyleSheetController.newInstance(konvert, config, xpref);
+        x.setBuiltin(true);
+        builtins.add(x);
+
         config.name = "RIS (Reference Manager & Endnote)";
         config.suffix = ".ris";
         config.style = clazz.getResource("xslt/bibxml2ris.xsl");
