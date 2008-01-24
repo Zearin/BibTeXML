@@ -65,7 +65,7 @@
     <xsl:text>&#xA;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="bibtex:entry/*/bibtex:title" priority="0.6">
+  <xsl:template match="bibtex:title" priority="0.6">
     <xsl:variable name="text" select="normalize-space(text())"/>
     <xsl:text>   </xsl:text>
     <xsl:value-of select="local-name()"/>
@@ -74,18 +74,21 @@
     <xsl:text>},&#xA;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="bibtex:entry/*/bibtex:author" priority="0.6">
-    <xsl:variable name="brothers" select="../bibtex:author"/>
+  <xsl:template match="bibtex:author|bibtex:editor" priority="0.6">
+    <xsl:variable name="me" select="local-name()"/>
+    <xsl:variable name="brothers" select="../bibtex:*[local-name() eq $me]"/>
 
     <xsl:if test="empty(./*) and (. = $brothers[1])"> <!-- no output for containers -->
-      <xsl:text>   author = {</xsl:text>
+      <xsl:text>   </xsl:text>
+      <xsl:value-of select="$me"/>
+      <xsl:text>= {</xsl:text>
       <xsl:value-of select="text()"/>
       <xsl:apply-templates select="$brothers" mode="join-authors"/>
       <xsl:text>},&#xA;</xsl:text>
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="bibtex:author" mode="join-authors">
+  <xsl:template match="bibtex:author|bibtex:editor" mode="join-authors">
     <xsl:if test="position() ne 1">
       <xsl:text> and </xsl:text>
       <xsl:choose>
