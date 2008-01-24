@@ -29,6 +29,9 @@ import org.xml.sax.SAXException;
 import org.jdom.*;
 
 public class BibTeXDecoder{
+    public static enum BraceMode{ HEURISTICS, KEEP, STRIP };
+    private BraceMode bracemode = BraceMode.HEURISTICS;
+
     private static final char[][] ACCENTED = new char[][]{
         "\u00e4\u00eb\u00ef\u00f6\u00fc\u00c4\u00cb\u00cf\u00d6\u00dc\u00ff".toCharArray(),
         "\u00e1\u00e9\u00ed\u00f3\u00fa\u00c1\u00c9\u00cd\u00d3\u00da\u00fd\u00dd".toCharArray(),
@@ -113,6 +116,10 @@ public class BibTeXDecoder{
         return text;
     }
 
+    public void setBraceMode(BraceMode mode){
+        bracemode = mode;
+    }
+
     /** Normalizes whitespace in the string argument;
     decodes LaTeX ~ and --,
     and removes remaining braces (except in entries that enclosed in
@@ -123,7 +130,13 @@ public class BibTeXDecoder{
         String text = txt.replaceAll("\\s+", " ");
         text = text.replaceAll("~", "\u00A0");
         text = text.replaceAll("--", "-");
-        if(!text.startsWith("{")){
+        if(
+          bracemode == BraceMode.STRIP ||
+          (
+              bracemode == BraceMode.HEURISTICS &&
+              !(text.startsWith("{") || text.indexOf('\\') >= 0)
+           )
+        ){
             text = text.replaceAll("[\\{\\}]","");
         }
         return text;
