@@ -93,7 +93,7 @@ is not available. Processing all entries in database.
             name="explicit-entries"
             select="subsequence($citations, 1, $star[1])"/>
           <xsl:text>\begin{thebibliography}{</xsl:text>
-          <xsl:value-of select="count(bibtex:entry)"/>
+          <xsl:value-of select="my:normalize-count(count(bibtex:entry), 1)"/>
           <xsl:text>}&#xA;</xsl:text>
           <!-- process explicit citations in cite order -->
           <xsl:apply-templates select="for $id in $explicit-entries return key('idkey', $id)"/>
@@ -138,7 +138,6 @@ is not available. Processing all entries in database.
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
-
 
   <!-- @BOOK -->
   <xsl:template match="bibtex:book">
@@ -283,6 +282,7 @@ is not available. Processing all entries in database.
     </xsl:call-template>
   </xsl:template>
 
+  <!-- @PHDTHESIS -->
   <xsl:template match="bibtex:phdthesis">
     <xsl:call-template name="output-bibitem">
       <xsl:with-param name="blocks">
@@ -299,14 +299,54 @@ is not available. Processing all entries in database.
     </xsl:call-template>
   </xsl:template>
 
+  <!-- @PROCEEDINGS -->
   <xsl:template match="bibtex:proceedings">
-    <xsl:call-template name="not-implemented"/>
+    <xsl:call-template name="output-bibitem">
+      <xsl:with-param name="blocks">
+        <!-- block: editor or organization -->
+        <xsl:call-template name="single-sentence-block">
+          <xsl:with-param name="elements">
+            <xsl:choose>
+              <xsl:when test="my:empty(bibtex:editor)">
+                <xsl:apply-templates select="bibtex:organization"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <my:word>
+                  <xsl:call-template name="editors"/>
+                </my:word>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:with-param>
+        </xsl:call-template>
+        <!-- block: title, volume, number, series, address, organization?,
+         publisher, date -->
+        <xsl:call-template name="title-block-in-proceedings"/>
+        <!-- block:note -->
+        <xsl:apply-templates select="bibtex:note" mode="block"/>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
+  <!-- @TECHREPORT -->
   <xsl:template match="bibtex:techreport">
-    <xsl:call-template name="not-implemented"/>
+    <xsl:call-template name="output-bibitem">
+      <xsl:with-param name="blocks">
+        <xsl:call-template name="author-block"/>
+        <xsl:call-template name="title-block"/>
+        <xsl:call-template name="single-sentence-block">
+          <xsl:with-param name="elements">
+            <xsl:call-template name="techreport-number"/>
+            <xsl:apply-templates select="bibtex:institution"/>
+            <xsl:apply-templates select="bibtex:address"/>
+            <xsl:call-template name="date"/>
+          </xsl:with-param>
+        </xsl:call-template>
+        <xsl:apply-templates select="bibtex:note" mode="block"/>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
+  <!-- @UNPUBLISHED -->
   <xsl:template match="bibtex:unpublished">
     <xsl:call-template name="output-bibitem">
       <xsl:with-param name="blocks">
@@ -315,6 +355,46 @@ is not available. Processing all entries in database.
         <xsl:apply-templates select="bibtex:note" mode="block">
           <xsl:with-param name="with-date" select="true()"/>
         </xsl:apply-templates>
+      </xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- block: title, volume, number, series, address, organization?,
+         publisher, date -->
+  <xsl:template name="title-block-in-proceedings">
+    <xsl:variable name="has-editor" select="my:exists(bibtex:editor)"/>
+    <xsl:variable name="has-address" select="my:exists(bibtex:address)"/>
+    <xsl:variable name="single-sentence"
+          select="not($has-address) and my:empty(bibtex:publisher)
+                 and (not($has-editor) or my:empty(bibtex:organization))"/>
+    <xsl:call-template name="block">
+      <xsl:with-param name="contents">
+        <xsl:call-template name="sentence">
+          <xsl:with-param name="elements">
+            <xsl:apply-templates select="bibtex:title">
+              <xsl:with-param name="emphasize" select="true()"/>
+            </xsl:apply-templates>
+            <xsl:apply-templates select="bibtex:volume" mode="book"/>
+            <xsl:call-template name="number-and-series"/>
+            <xsl:if test="$has-address or $single-sentence">
+              <xsl:apply-templates select="bibtex:address"/>
+              <xsl:call-template name="date"/>
+            </xsl:if>
+          </xsl:with-param>
+        </xsl:call-template>
+        <xsl:if test="not($single-sentence)">
+          <xsl:call-template name="sentence">
+          <xsl:with-param name="elements">
+            <xsl:if test="$has-editor">
+              <xsl:apply-templates select="bibtex:organization"/>
+            </xsl:if>
+            <xsl:apply-templates select="bibtex:publisher"/>
+            <xsl:if test="not($has-address)">
+              <xsl:call-template name="date"/>
+            </xsl:if>
+          </xsl:with-param>
+        </xsl:call-template>
+        </xsl:if>
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
@@ -377,6 +457,27 @@ is not available. Processing all entries in database.
     </xsl:if>
   </xsl:template>
 
+  <xsl:template name="author-block">
+    <xsl:param name="with-date" select="false()" as="xs:boolean"/>
+    <xsl:call-template name="single-sentence-block">
+      <xsl:with-param name="elements">
+        <xsl:if test="my:exists(bibtex:author)">
+          <my:word>
+            <xsl:apply-templates select="bibtex:author">
+            <xsl:with-param
+              name="person-count"
+              select="count(bibtex:author)"
+            />
+            </xsl:apply-templates>
+          </my:word>
+        </xsl:if>
+        <xsl:if test="$with-date">
+          <xsl:call-template name="date"/>
+        </xsl:if>
+      </xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
   <xsl:template name="author-block-in-manual">
     <xsl:choose>
       <xsl:when test="my:empty(bibtex:author)">
@@ -394,6 +495,33 @@ is not available. Processing all entries in database.
         <xsl:call-template name="author-block"/>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+
+  <xsl:template name="author-or-editor-block">
+    <xsl:if test="my:exists(bibtex:author) or my:exists(bibtex:editor)">
+      <my:block>
+      <xsl:call-template name="sentence">
+        <xsl:with-param name="elements">
+          <my:word>
+            <xsl:choose>
+              <xsl:when test="my:exists(bibtex:author)">
+                <xsl:apply-templates select="bibtex:author">
+                  <xsl:with-param
+                    name="person-count"
+                    select="count(bibtex:author)"
+                  />
+                </xsl:apply-templates>
+              </xsl:when>
+              <xsl:otherwise>
+                  <xsl:call-template name="editors"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </my:word>
+        </xsl:with-param>
+      </xsl:call-template>
+      </my:block>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template name="journal-block">
@@ -559,6 +687,24 @@ is not available. Processing all entries in database.
     </xsl:call-template>
   </xsl:template>
 
+  <xsl:template name="techreport-number">
+    <xsl:variable name="has-type" select="my:exists(bibtex:type)"/>
+    <xsl:variable name="has-number" select="my:exists(bibtex:number)"/>
+    <my:word>
+      <xsl:variable name="type"
+        select="if($has-type)
+            then
+              bibtex:type[1]/text()
+            else
+              'Technical Report'"/>
+      <xsl:value-of select="if($has-number)
+          then
+            my:tie-or-space-connect($type, bibtex:number[1]/text())
+          else
+            $type"/>
+    </my:word>
+  </xsl:template>
+
   <xsl:template name="number-and-series-sentence">
     <xsl:call-template name="sentence">
       <xsl:with-param name="elements">
@@ -603,60 +749,27 @@ is not available. Processing all entries in database.
     </xsl:if>
   </xsl:template>
 
-  <xsl:template name="author-block">
-    <xsl:param name="with-date" select="false()" as="xs:boolean"/>
-    <xsl:call-template name="single-sentence-block">
-      <xsl:with-param name="elements">
-        <xsl:if test="my:exists(bibtex:author)">
-          <my:word>
-            <xsl:apply-templates select="bibtex:author">
-            <xsl:with-param
-              name="person-count"
-              select="count(bibtex:author)"
-            />
-            </xsl:apply-templates>
-          </my:word>
-        </xsl:if>
-        <xsl:if test="$with-date">
-          <xsl:call-template name="date"/>
-        </xsl:if>
-      </xsl:with-param>
-    </xsl:call-template>
+
+  <xsl:template name="date">
+    <xsl:if test="my:exists(bibtex:year) or
+                  my:exists(bibtex:month)">
+      <my:word>
+        <xsl:value-of select="bibtex:month"/>
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="bibtex:year"/>
+      </my:word>
+    </xsl:if>
   </xsl:template>
 
-  <xsl:template name="author-or-editor-block">
-    <xsl:if test="my:exists(bibtex:author) or my:exists(bibtex:editor)">
-      <my:block>
-      <xsl:call-template name="sentence">
-        <xsl:with-param name="elements">
-          <my:word>
-            <xsl:choose>
-              <xsl:when test="my:exists(bibtex:author)">
-                <xsl:apply-templates select="bibtex:author">
-                  <xsl:with-param
-                    name="person-count"
-                    select="count(bibtex:author)"
-                  />
-                </xsl:apply-templates>
-              </xsl:when>
-              <xsl:otherwise>
-                  <xsl:variable
-                    name="editor-count"
-                    select="count(bibtex:editor)"/>
-                  <xsl:apply-templates select="bibtex:editor">
-                  <xsl:with-param
-                    name="person-count"
-                    select="$editor-count"
-                  />
-                </xsl:apply-templates>
-                <xsl:value-of select="if($editor-count gt 1)
-                  then ', editors' else ', editor'"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </my:word>
-        </xsl:with-param>
-      </xsl:call-template>
-      </my:block>
+  <xsl:template name="editors">
+    <xsl:param name="in" select="."/>
+    <xsl:if test="my:exists($in/bibtex:editor)">
+      <xsl:variable name="editor-count" select="count($in/bibtex:editor)"/>
+      <xsl:apply-templates select="$in/bibtex:editor">
+        <xsl:with-param name="person-count" select="$editor-count"/>
+      </xsl:apply-templates>
+      <xsl:value-of select="if($editor-count gt 1) then ', editors' else ', editor'"/>
+      <xsl:text>, </xsl:text>
     </xsl:if>
   </xsl:template>
 
@@ -812,17 +925,6 @@ is not available. Processing all entries in database.
     </xsl:if>
   </xsl:template>
 
-  <xsl:template name="date">
-    <xsl:if test="my:exists(bibtex:year) or
-                  my:exists(bibtex:month)">
-      <my:word>
-        <xsl:value-of select="bibtex:month"/>
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="bibtex:year"/>
-      </my:word>
-    </xsl:if>
-  </xsl:template>
-
   <xsl:template match="bibtex:month|bibtex:year">
     <xsl:variable name="mm" select="normalize-space(text())" />
     <xsl:if test="$mm ne ''">
@@ -850,7 +952,8 @@ is not available. Processing all entries in database.
                        bibtex:title|
                        bibtex:journal|
                        bibtex:note|
-                       bibtex:organization">
+                       bibtex:organization|
+                       bibtex:institution">
     <xsl:param name="emphasize" select="false()" as="xs:boolean"/>
     <xsl:variable name="tt" select="normalize-space(text())"/>
     <xsl:if test="$tt ne ''">
@@ -865,15 +968,9 @@ is not available. Processing all entries in database.
     <xsl:if test="$tt ne ''">
       <my:word>
         <xsl:text>In </xsl:text>
-        <xsl:if test="my:exists(../bibtex:editor)">
-          <xsl:variable name="editor-count" select="count(../bibtex:editor)"/>
-          <xsl:apply-templates select="../bibtex:editor">
-            <xsl:with-param name="person-count" select="$editor-count"/>
-          </xsl:apply-templates>
-          <xsl:value-of select="if($editor-count gt 1)
-                  then ', editors' else ', editor'"/>
-          <xsl:text>, </xsl:text>
-        </xsl:if>
+        <xsl:call-template name="editors">
+          <xsl:with-param name="in" select=".."/>
+        </xsl:call-template>
         <xsl:value-of select="my:emphasize($tt)"/>
       </my:word>
     </xsl:if>
@@ -1040,6 +1137,20 @@ is not available. Processing all entries in database.
   <xsl:function name="my:empty">
     <xsl:param name="n"/>
     <xsl:sequence select="not(my:exists($n))"/>
+  </xsl:function>
+
+  <xsl:function name="my:normalize-count">
+    <xsl:param name="a" />
+    <xsl:param name="b" />
+    <xsl:variable name="c" select="$a div 10"/>
+    <xsl:choose>
+      <xsl:when test="$c lt 1">
+        <xsl:sequence select="$b"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="my:normalize-count($c, $b * 10)"/>
+    </xsl:otherwise>
+  </xsl:choose>
   </xsl:function>
 </xsl:stylesheet>
 
