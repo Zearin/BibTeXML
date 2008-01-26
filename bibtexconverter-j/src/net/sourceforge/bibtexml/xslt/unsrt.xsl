@@ -51,32 +51,8 @@
     <!--
       Retrieve citations from aux file
     -->
-    <xsl:variable name="citations"
-      use-when="function-available('auxparser:xslt-parse', 2)"
-      select="if($aux-file) then auxparser:xslt-parse($aux-file, $aux-encoding) else '*'"
+    <xsl:variable name="citations" select="my:citations()"
       as="xs:string*"/>
-    <xsl:variable name="citations"
-      use-when="not(function-available('auxparser:xslt-parse', 2))"
-      select="'*'"
-      as="xs:string*"/>
-    <xsl:choose>
-      <xsl:when test="$aux-file eq ''">
-        <xsl:message>No aux file specified. Processing all entries in database.</xsl:message>
-      </xsl:when>
-      <xsl:when test="function-available('auxparser:xslt-parse', 2)">
-       <xsl:message>
-        <xsl:text>Top-level aux file: </xsl:text><xsl:value-of select="$aux-file"/>
-        <xsl:text>&#xA;Found the following citations:&#xA;</xsl:text>
-        <xsl:value-of select="$citations"/>
-      </xsl:message>
-      </xsl:when>
-      <xsl:otherwise>
-       <xsl:message><xsl:text>Cannot parse aux files because Java function
-net.sourceforge.bibtexml.AuxParser.xsltParse(String, String)
-is not available. Processing all entries in database.
-</xsl:text></xsl:message>
-      </xsl:otherwise>
-    </xsl:choose>
 
     <xsl:apply-templates select="bibtex:preamble"/>
     <xsl:if test="my:exists(bibtex:preamble)">
@@ -1154,6 +1130,31 @@ is not available. Processing all entries in database.
         <xsl:sequence select="my:normalize-count($c, $b * 10)"/>
     </xsl:otherwise>
   </xsl:choose>
+  </xsl:function>
+
+  <xsl:function name="my:citations">
+      <xsl:choose>
+      <xsl:when test="$aux-file eq ''">
+        <xsl:message>No aux file specified. Processing all entries in database.</xsl:message>
+      </xsl:when>
+      <xsl:when test="function-available('auxparser:xslt-parse', 2)">
+       <xsl:message>
+        <xsl:text>Top-level aux file: </xsl:text><xsl:value-of select="$aux-file"/>
+      </xsl:message>
+      </xsl:when>
+      <xsl:otherwise>
+       <xsl:message><xsl:text>Cannot parse aux files because Java function
+net.sourceforge.bibtexml.AuxParser.xsltParse(String, String)
+is not available. Processing all entries in database.
+</xsl:text></xsl:message>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:sequence
+      use-when="function-available('auxparser:xslt-parse', 2)"
+      select="if($aux-file) then auxparser:xslt-parse($aux-file, $aux-encoding) else '*'"/>
+    <xsl:sequence
+      use-when="not(function-available('auxparser:xslt-parse', 2))"
+      select="'*'"/>
   </xsl:function>
 </xsl:stylesheet>
 
