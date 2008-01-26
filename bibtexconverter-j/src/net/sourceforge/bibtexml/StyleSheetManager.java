@@ -209,7 +209,7 @@ class StyleSheetManager {
         int result = JOptionPane.showOptionDialog(styleContainer,
             "What kind of input does the stylesheet accept?",
             "Input", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-            null, new String[]{"BibTeXML", "Other"}, "BibTeXML");
+            null, new String[]{"BibXML", "Other"}, "BibTeXML");
         if(result == 0){
             return addStyle();
         } else if (result == 1){
