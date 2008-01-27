@@ -93,8 +93,14 @@
 
   <xsl:function name="bibsort:year">
     <xsl:param name="me"/>
-    <xsl:sequence select="if (my:exists($me/bibtex:*/bibtex:year))
-                          then xs:integer($me/bibtex:*/bibtex:year[1]/text())
+    <xsl:variable name="year" select="$me/bibtex:*/bibtex:year"/>
+    <xsl:variable name="y2" select="if(exists($year))
+                                    then normalize-space($year[1]/text())
+                                    else ''"/>
+    <xsl:variable name="y3" select="replace($y2, '^\P{Nd}+', '')"/>
+    <xsl:variable name="y4" select="replace($y3, '\P{Nd}.*', '')"/>
+    <xsl:sequence select="if ($y4 ne '')
+                          then xs:integer($y4)
                           else xs:integer('0')"/>
   </xsl:function>
 
@@ -161,7 +167,7 @@
   </xsl:template>
 
   <xsl:template match="bibtex:key" mode="sort">
-    <xsl:value-of select="my:sortify(bibtex:key[1]/text())"/>
+    <xsl:value-of select="my:sortify(text())"/>
   </xsl:template>
 
   <xsl:template match="bibtex:title" mode="sort">
