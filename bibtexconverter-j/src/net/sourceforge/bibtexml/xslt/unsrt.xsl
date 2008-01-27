@@ -335,9 +335,12 @@
       <xsl:with-param name="blocks">
         <xsl:call-template name="author-block"/>
         <xsl:call-template name="title-block"/>
-        <xsl:apply-templates select="bibtex:note" mode="block">
-          <xsl:with-param name="with-date" select="true()"/>
-        </xsl:apply-templates>
+        <xsl:call-template name="single-sentence-block">
+          <xsl:with-param name="elements">
+            <xsl:apply-templates select="bibtex:note"/>
+            <xsl:call-template name="date"/>
+          </xsl:with-param>
+        </xsl:call-template>
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
@@ -806,17 +809,9 @@
   </xsl:template>
 
   <xsl:template match="bibtex:note" mode="block">
-    <xsl:param name="with-date" select="false()" as="xs:boolean"/>
-    <xsl:call-template name="block">
-      <xsl:with-param name="contents">
-        <xsl:call-template name="sentence">
-          <xsl:with-param name="elements">
-            <xsl:apply-templates select="."/>
-            <xsl:if test="$with-date">
-              <xsl:call-template name="date"/>
-            </xsl:if>
-          </xsl:with-param>
-        </xsl:call-template>
+    <xsl:call-template name="single-sentence-block">
+      <xsl:with-param name="elements">
+        <xsl:apply-templates select="."/>
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
