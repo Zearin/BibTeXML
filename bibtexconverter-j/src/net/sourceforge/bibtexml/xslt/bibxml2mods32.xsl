@@ -511,16 +511,18 @@
   </xsl:template>
 
   <xsl:template match="bibtex:author|bibtex:editor">
-    <mods:name type="personal">
-      <xsl:apply-templates select="bibfunc:parse-author(.)/bibfunc:person/*"/>
-      <mods:role>
-        <mods:roleTerm type="text">
-          <xsl:value-of select="local-name()"/>
-        </mods:roleTerm>
-      </mods:role>
-      <xsl:apply-templates select="../bibtex:affiliation"/>
-      <xsl:apply-templates select="../bibtex:school" mode="affiliation"/>
-    </mods:name>
+    <xsl:if test="normalize-space(.) ne ''">
+      <mods:name type="personal">
+        <xsl:apply-templates select="bibfunc:parse-author(.)/bibfunc:person/*"/>
+        <mods:role>
+          <mods:roleTerm type="text">
+            <xsl:value-of select="local-name()"/>
+          </mods:roleTerm>
+        </mods:role>
+        <xsl:apply-templates select="../bibtex:affiliation"/>
+        <xsl:apply-templates select="../bibtex:school" mode="affiliation"/>
+      </mods:name>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="bibtex:affiliation">
