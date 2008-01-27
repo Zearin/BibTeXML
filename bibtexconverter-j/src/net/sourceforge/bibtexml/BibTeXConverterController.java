@@ -151,6 +151,7 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
 
         convert.setValidationErrorHandler(errorHandler);
         convert.setBibTeXErrorHandler(errorHandler);
+        convert.setTransformErrorListener(errorHandler);
         convert.setMetadata(DCMetadata.load(PREF.node(PREF_DEFAULT_META)));
         try{
             convert.setXMLEncoding(Charset.forName(

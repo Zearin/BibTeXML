@@ -106,7 +106,17 @@ public class ErrorList{
 
     private void edit(final ErrorItem item){
         editor = getEditor(); //assure editor is initialized
-        if(editor.showFile(file)){
+        boolean editing = false;
+        if(item.sysID == null){
+            editing = editor.showFile(file);
+        } else {
+            try{
+                editing = editor.showURL(new java.net.URL(item.sysID));
+            } catch (Exception x){
+                System.err.println(x);
+            }
+        }
+        if(editing){
             editor.window().setVisible(true);
             if(item.line != -1){
                 editor.goTo(item.line, (item.column == -1)? 0 : item.column);
@@ -214,26 +224,30 @@ public class ErrorList{
         /** first column is 1 **/
         public final int column;
         public final String message;
+        public final String sysID;
 
         public ErrorItem(
-            String message, int line, int column){
+            String message, int line, int column, String sysID){
             this.column = column;
             this.line = line;
             this.message = (message == null)? "" : message; //assure message is non-null
+            this.sysID = sysID;
         }
 
         public static ErrorItem fromSaxParseException(final SAXParseException e){
             return new ErrorItem(
                 e.getLocalizedMessage(),
                 e.getLineNumber(),
-                e.getColumnNumber());
+                e.getColumnNumber(),
+                null);
         }
 
         public static ErrorItem fromParseErrorMessage(final ParseErrorMessage e){
             return new ErrorItem(
                 e.getMsg(),
                 e.getLine(),
-                e.getPos() + 1);
+                e.getPos() + 1,
+                null);
         }
 
         public static ErrorItem fromTransformerException(final TransformerException e){
@@ -250,9 +264,10 @@ public class ErrorList{
                 return new ErrorItem(
                     e.getLocalizedMessage(),
                     e.getLocator().getLineNumber(),
-                    e.getLocator().getColumnNumber());
+                    e.getLocator().getColumnNumber(),
+                    e.getLocator().getSystemId());
             }
-            return new ErrorItem(e.getLocalizedMessage(), -1, -1);
+            return new ErrorItem(e.getLocalizedMessage(), -1, -1, null);
         }
 
         @Override

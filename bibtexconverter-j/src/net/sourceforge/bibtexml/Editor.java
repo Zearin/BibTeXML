@@ -27,17 +27,20 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 import org.xml.sax.*;
 import net.sourceforge.jeditsyntax.*;
+import java.nio.charset.Charset;
 
 /** This minimal editor allows to correct errors in BibTeX or XML input files. */
 public class Editor{
     private final JEditTextArea area = new JEditTextArea();
     private XFile activeFile = null;
+    private String activeURL = null;
     private final JDialog dialog;
     private final TokenMarker xmlTokenMarker = new XMLTokenMarker();
     private final TokenMarker bibTokenMarker = new BibTeXTokenMarker();
     private final Container toolbar = Box.createHorizontalBox();
     protected boolean dirty = false;
     private long lastModified = 0l;
+    private boolean canSave = true;
 
     private final DocumentListener dirtyMarker = new DocumentListener(){
         public void insertUpdate(final DocumentEvent e){
@@ -112,7 +115,11 @@ public class Editor{
     private String activeFilePath(){
         String result = null;
         if(activeFile == null){
-            result = "No file loaded.";
+            if(activeURL == null){
+                result = "No file loaded.";
+            } else {
+                result = activeURL;
+            }
         } else {
             try{
                 result = activeFile.getCanonicalPath();
@@ -132,13 +139,56 @@ public class Editor{
         if(dirty == b){
             return;
         }
-        dirty = b;
+        dirty = canSave && b;
         if(dirty){
             dialog.setTitle(activeFilePath() + " (modified) ");
         } else {
             dialog.setTitle(activeFilePath());
         }
         saveAction.setEnabled(dirty);
+    }
+
+    public boolean showURL(final java.net.URL url){
+        boolean load = false;
+        boolean success = true;
+        if(url == null){
+            if(!dirty || askSaveDirtyBuffer()){
+                area.setText("");
+                dialog.setTitle("");
+            }
+            load = false;
+        } else {
+            load = (dirty)? askSaveDirtyBuffer() : true;
+        }
+        if (load){
+            activeURL = null;
+            activeFile = null;
+            area.setText("");
+            area.setTokenMarker(xmlTokenMarker);
+            try{
+                InputStream stream = url.openStream();
+                try{
+                    canSave = false;
+                    activeFile = null;
+                    loadStream(stream, Charset.forName("UTF-8"));
+                    activeURL = url.toString();
+                    dialog.setTitle(activeURL);
+                    success = true;
+                } finally {
+                    stream.close();
+                }
+            } catch (IOException ex){
+                JOptionPane.showMessageDialog(
+                dialog,
+                "<html>Cannot load URL " + url + "<br>" +
+                ex.getMessage(),
+                "Error loading URL",
+                JOptionPane.WARNING_MESSAGE
+            );
+                success = false;
+            }
+        }
+        return success;
     }
 
     public boolean showFile(final XFile file){
@@ -162,6 +212,7 @@ public class Editor{
             load = (dirty)? askSaveDirtyBuffer() : true;
         }
         if (load){
+            activeURL = null;
             activeFile = null;
             area.setText("");
             switch(file.getType()){
@@ -211,25 +262,27 @@ public class Editor{
         return returnVal;
     }
 
+    private void loadStream(InputStream in, Charset cs) throws IOException{
+        StringBuilder sb = new StringBuilder();
+        Reader reader = new InputStreamReader(new BufferedInputStream(in),cs);
+        final char[] c = new char[1024];
+        int read = 0;
+        while((read = reader.read(c, 0, 1024)) != -1){
+            sb.append(c, 0, read);
+        }
+        area.setText(sb.toString());
+        dirty = true; //otherwise markDirty won't do anything
+        markDirty(false);
+    }
+
     private synchronized boolean loadFile(final XFile f){
-        InputStreamReader reader = null;
         boolean success = true;
+        InputStream in = null;
         try{
-            StringBuilder sb = new StringBuilder();
-            reader = new InputStreamReader(
-                    new BufferedInputStream(new FileInputStream(f)),
-                    f.getCharset());
-            final char[] c = new char[1024];
-            int read = 0;
-            while((read = reader.read(c, 0, 1024)) != -1){
-                sb.append(c, 0, read);
-            }
-            area.setText(sb.toString());
-            sb = null;
+            in = new BufferedInputStream(new FileInputStream(f));
+            loadStream(in, f.getCharset());
             activeFile = f;
             lastModified = f.lastModified();
-            dirty = true; //otherwise markDirty won't do anything
-            markDirty(false);
             success = true;
         } catch (IOException ex){
             JOptionPane.showMessageDialog(
@@ -241,9 +294,9 @@ public class Editor{
             );
             success = false;
         } finally {
-            if(reader != null){
+            if(in != null){
                 try{
-                    reader.close();
+                    in.close();
                 } catch (Exception ex){
                     System.err.println(ex);
                     System.err.flush();
@@ -299,9 +352,14 @@ public class Editor{
     }
 
     public void goTo(final int line, final int column){
-        int offset = area.getLineStartOffset(line - 1);
-        offset += column;
-        area.setCaretPosition(offset - 1);
+        int offset = 0;
+        if(line > 0){
+            offset += area.getLineStartOffset(line - 1);
+        }
+        if (column > 0){
+            offset += column - 1;
+        }
+        area.setCaretPosition(offset);
         area.scrollToCaret();
     }
 

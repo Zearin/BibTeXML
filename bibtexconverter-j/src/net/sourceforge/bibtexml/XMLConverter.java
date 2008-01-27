@@ -50,6 +50,7 @@ import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXException;
 import net.sourceforge.bibtexml.util.XSLTUtils;
 import de.mospace.xml.DraconianErrorHandler;
+import javax.xml.transform.ErrorListener;
 
 public class XMLConverter{
     private TransformerFactory tf;
@@ -62,6 +63,7 @@ public class XMLConverter{
         = "org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl";
     private Charset xmlenc = DEFAULT_ENC;
     protected ErrorHandler saxErrorHandler = DraconianErrorHandler.getInstance();
+    protected ErrorListener errorlistener = null;
     private String xmlSchemaID = null;
 
     public XMLConverter(){
@@ -97,6 +99,10 @@ public class XMLConverter{
             saxErrorHandler = DraconianErrorHandler.getInstance();
         }
         saxErrorHandler = handler;
+    }
+
+    public void setTransformErrorListener(ErrorListener listener){
+        errorlistener = listener;
     }
 
     /** @throws IllegalArgumentException if schema has an unknown extension or
@@ -190,12 +196,15 @@ public class XMLConverter{
     /** Converts BibXML from src to res using the specified transformer and
      * configuration.
      **/
-    public static void transform(Transformer t, Source src, Result res,
+    public void transform(Transformer t, Source src, Result res,
             Map<String,Object> parameters, String encoding)
             throws TransformerException{
 
         // configure the Transformer
         t.clearParameters();
+        if(t.getErrorListener() == null){
+            t.setErrorListener(errorlistener);
+        }
         if (parameters != null){
             Set<String> keys = parameters.keySet();
             for(String key: keys){
@@ -213,7 +222,7 @@ public class XMLConverter{
     /** Converts BibXML using the specified transformer and configuration.
      * The result is optionally converted
      *  to CRLF format. **/
-    public static void transform(Transformer t, InputStream in, String systemID, OutputStream out,
+    public void transform(Transformer t, InputStream in, String systemID, OutputStream out,
             Map<String,Object> parameters, String encoding, boolean crlf)
             throws TransformerException, IOException{
 
@@ -234,7 +243,7 @@ public class XMLConverter{
     /** Converts BibXML using the specified transformer and configuration.
      * The result is optionally converted
      *  to CRLF format. **/
-    public static void transform(Transformer t, File input, File output,
+    public void transform(Transformer t, File input, File output,
             Map<String,Object> parameters, String encoding, boolean crlf)
             throws TransformerException, IOException{
 

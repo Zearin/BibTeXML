@@ -455,7 +455,7 @@ public class SchemaSelection{
         final Map<String, Object> params = new HashMap<String, Object>();
         params.putAll(settings);
         try{
-            XMLConverter.transform(t, is, systemID, os, params,  null, false);
+            conv.transform(t, is, systemID, os, params,  null, false);
         } finally {
             if(is != null){
                 is.close();
