@@ -297,7 +297,7 @@
     </citetitle>
   </xsl:template>
 
-  <xsl:template match="bibtex:proceedings|bibtex:inproceedings|bibtex:conference">
+  <xsl:template match="bibtex:inproceedings|bibtex:conference">
     <confgroup>
       <confdates>
         <xsl:value-of select="bibtex:month" />
