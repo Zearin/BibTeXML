@@ -9,6 +9,10 @@
       * some differences concerning tying with ~ under very rare
         circumstances
       * long lines are not wrapped
+      * no cross-referencing, you can achieve a similar (but not
+        exactly the same) cross-ref behaviour if you precede
+        the bibtexml-to-latex transformation with
+        the bibtexml-to-bitexml transformation resolve-crossref.xsl
 
       *  unicode-aware sorting. '&auml;' is treated like 'a', not like ''
 -->

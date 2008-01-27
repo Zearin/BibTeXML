@@ -9,6 +9,10 @@
       * some differences concerning tying with ~ under very rare
         circumstances
       * long lines are not wrapped
+      * no cross-referencing, you can achieve a similar (but not
+        exactly the same) cross-ref behaviour if you precede
+        the bibtexml-to-latex transformation with
+        the bibtexml-to-bitexml transformation resolve-crossref.xsl
 -->
 <!--
  * Copyright (c) 2008 Moritz Ringler
@@ -748,7 +752,6 @@
         <xsl:with-param name="person-count" select="$editor-count"/>
       </xsl:apply-templates>
       <xsl:value-of select="if($editor-count gt 1) then ', editors' else ', editor'"/>
-      <xsl:text>, </xsl:text>
     </xsl:if>
   </xsl:template>
 
@@ -848,7 +851,7 @@
         <xsl:value-of select="bibfunc:end-page"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:text>page </xsl:text>
+        <xsl:value-of select="if(ends-with(bibfunc:start-page/text(),'+')) then 'pages ' else 'page '"/>
         <xsl:value-of select="bibfunc:start-page"/>
       </xsl:otherwise>
      </xsl:choose>
@@ -950,6 +953,9 @@
         <xsl:call-template name="editors">
           <xsl:with-param name="in" select=".."/>
         </xsl:call-template>
+        <xsl:if test="my:exists(../bibtex:editor)">
+          <xsl:text>, </xsl:text>
+        </xsl:if>
         <xsl:value-of select="my:emphasize($tt)"/>
       </my:word>
     </xsl:if>
@@ -1006,7 +1012,7 @@
     <xsl:variable name="tt" select="normalize-space($contents/text())"/>
     <xsl:if test="$tt ne ''">
       <my:block>
-      <xsl:value-of select="$tt"/>
+      <xsl:value-of select="replace($tt,'&#160;','~')"/>
       </my:block>
     </xsl:if>
   </xsl:template>
@@ -1022,7 +1028,7 @@
   <xsl:template match="my:word">
     <xsl:param name="word-count" as="xs:integer" required="yes"/>
     <xsl:variable name="pos" select="position()"/>
-    <xsl:variable name="tt" select="normalize-space(text())"/>
+    <xsl:variable name="tt" select="replace(normalize-space(text()),'&#160;','~')"/>
     <xsl:if test="$pos ne 1">
       <xsl:text>,</xsl:text>
     </xsl:if>
