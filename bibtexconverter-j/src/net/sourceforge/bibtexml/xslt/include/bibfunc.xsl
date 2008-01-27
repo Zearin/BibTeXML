@@ -37,13 +37,10 @@
     <xsl:variable name="author" select="normalize-space(replace($author-raw, '\*', ''))"/>
     <xsl:variable name="parts" select="tokenize($author, ',')" />
     <xsl:variable name="numparts" select="count($parts)" />
-    <xsl:if test="not($parts[1])">
-      <xsl:message terminate="yes">
-        <xsl:text>No "last" name part in author name </xsl:text>
-        <xsl:value-of select="$author-raw"/>
-      </xsl:message>
-    </xsl:if>
+
     <xsl:variable name="result">
+      <xsl:choose>
+      <xsl:when test="$parts[1]">
       <bibfunc:person>
         <xsl:choose>
           <xsl:when test="$numparts ge 3 and ($parts[3])">
@@ -98,6 +95,15 @@
           </xsl:otherwise>
         </xsl:choose>
       </bibfunc:person>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:message>
+          <xsl:text>Warning: No "last" name part in author name: </xsl:text>
+          <xsl:value-of select="$author-raw"/>
+          <xsl:text>Skipping...</xsl:text>
+        </xsl:message>
+      </xsl:otherwise>
+      </xsl:choose>
     </xsl:variable>
     <xsl:sequence select="$result"/>
   </xsl:function>
