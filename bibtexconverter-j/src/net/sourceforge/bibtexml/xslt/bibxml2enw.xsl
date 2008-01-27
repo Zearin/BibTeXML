@@ -70,7 +70,7 @@
   </xsl:template>
 
 <!-- generic -->
-  <xsl:template match="bibtex:manual|bibtex:unpublished|bibtex:misc">
+  <xsl:template match="bibtex:manual|bibtex:misc">
     <xsl:text>%0 Generic&#xA;</xsl:text>
   </xsl:template>
 
@@ -261,7 +261,7 @@
       match="bibtex:url|bibtex:doi|bibtex:howpublished"
       mode="url"
       priority="1">
-    <xsl:if test="not(./text() eq '')">
+    <xsl:if test="text()">
       <xsl:call-template name="field">
         <xsl:with-param name="enwid" select="'%U'"/>
         <xsl:with-param
@@ -291,21 +291,26 @@
 <!-- field -->
   <xsl:template name="field">
     <xsl:param name="enwid" as="xs:string"/>
-    <xsl:param name="value" select="./text()" as="xs:string"/>
-    <xsl:value-of select="$enwid" />
-    <xsl:text> </xsl:text>
-    <xsl:value-of select="normalize-space($value)"/>
-    <xsl:text>&#xA;</xsl:text>
+    <xsl:param name="value" select="if(text()) then text() else ''" as="xs:string"/>
+    <xsl:variable name="tt" select="normalize-space($value)"/>
+    <xsl:if test="$tt">
+      <xsl:value-of select="$enwid" />
+      <xsl:text> </xsl:text>
+      <xsl:value-of select="normalize-space($tt)"/>
+      <xsl:text>&#xA;</xsl:text>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template name="field255">
     <xsl:param name="enwid" as="xs:string"/>
-    <xsl:param name="value" select="./text()" as="xs:string"/>
-    <xsl:variable name="value-trimmed" select="normalize-space($value)"/>
-    <xsl:value-of select="$enwid" />
-    <xsl:text> </xsl:text>
-    <xsl:value-of select="if(string-length($value-trimmed) > 255) then substring($value-trimmed, 1, 255) else $value-trimmed"/>
-    <xsl:text>&#xA;</xsl:text>
+    <xsl:param name="value" select="if(text()) then text() else ''" as="xs:string"/>
+    <xsl:variable name="tt" select="normalize-space($value)"/>
+    <xsl:if test="$tt">
+      <xsl:value-of select="$enwid" />
+      <xsl:text> </xsl:text>
+      <xsl:value-of select="substring($tt, 1, 255)"/>
+      <xsl:text>&#xA;</xsl:text>
+    </xsl:if>
   </xsl:template>
 
 <!-- endofrecord -->
