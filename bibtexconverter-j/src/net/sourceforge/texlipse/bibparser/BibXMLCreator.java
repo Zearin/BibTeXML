@@ -91,7 +91,18 @@ public final class BibXMLCreator extends NullAdapter {
 
     /** Constructs a new isntance of this class. */
     public BibXMLCreator(){
-        //sole constructor
+        makeAbbreviation("jan", "January");
+        makeAbbreviation("feb", "February");
+        makeAbbreviation("mar", "March");
+        makeAbbreviation("apr", "April");
+        makeAbbreviation("may", "May");
+        makeAbbreviation("jun", "June");
+        makeAbbreviation("jul", "July");
+        makeAbbreviation("aug", "August");
+        makeAbbreviation("sep", "September");
+        makeAbbreviation("oct", "October");
+        makeAbbreviation("nov", "November");
+        makeAbbreviation("dec", "December");
     }
 
     /** Returns the BibTeXML document that resulted from the last
