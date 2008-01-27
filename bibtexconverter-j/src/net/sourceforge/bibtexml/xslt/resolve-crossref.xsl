@@ -28,7 +28,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     exclude-result-prefixes="bibtex xs">
-  <xsl:key match="bibtex:entry" name="idkey" use="@id"/>
+  <xsl:key match="bibtex:entry" name="idkey" use="lower-case(@id)"/>
 
   <xsl:output
       method="xml"
@@ -42,7 +42,7 @@
 
   <xsl:template match="bibtex:crossref">
     <xsl:call-template name="copy"/>
-    <xsl:apply-templates mode="copy-crossref" select="key('idkey', normalize-space(text()))/bibtex:*/bibtex:*">
+    <xsl:apply-templates mode="copy-crossref" select="key('idkey', lower-case(normalize-space(text())))/bibtex:*/bibtex:*">
       <xsl:with-param name="referencing-node" select=".." />
     </xsl:apply-templates>
   </xsl:template>
