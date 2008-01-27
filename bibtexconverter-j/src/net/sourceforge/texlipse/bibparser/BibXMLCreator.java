@@ -125,7 +125,7 @@ public final class BibXMLCreator extends NullAdapter {
 
     public void inAEntrybraceEntry(AEntrybraceEntry node) {
         entry = new Element("entry", BIB_NAMESPACE);
-        entry.setAttribute("id", node.getIdentifier().getText());
+        entry.setAttribute("id", node.getIdentifier().getText().toLowerCase());
         root.addContent(entry);
         entryCount++;
     }
