@@ -45,22 +45,25 @@ public class BibTeXDecoder{
 
     private static final char[] TILDE_CHARS = "anoANO".toCharArray();
 
-    private static final Pattern PACCENTS =
-        Pattern.compile("\\\\([\"'`^])" +
+    private static final String ACCENTS_REG_EX = "\\\\([\"'`^])" +
             "(" +
                 "(?:\\{[aeiouAEIOUyY]\\})" +
                 "|" +
                 "[aeiouAEIOUyY]" +
-            ")"
-            );
+            ")";
+    private static final Pattern PACCENTS = Pattern.compile(ACCENTS_REG_EX);
+    private static final Pattern PACCENTS_BRACED =
+            Pattern.compile("\\{" + ACCENTS_REG_EX + "\\}");
 
-    private static final Pattern PTILDE =
-        Pattern.compile("\\\\~" +
+    private static final String TILDE_REG_EX = "\\\\~" +
             "(" +
                 "(?:\\{[anoANO]\\})" +
                 "|" +
                 "[anoANO]" +
-            ")");
+            ")";
+    private static final Pattern PTILDE = Pattern.compile(TILDE_REG_EX);
+    private static final Pattern PTILDE_BRACED =
+            Pattern.compile("\\{" + TILDE_REG_EX + "\\}");
 
     public String decode(String latex){
         String result = replaceAccents(latex);
@@ -68,16 +71,7 @@ public class BibTeXDecoder{
         return result;
     }
 
-    /** Replaces LaTeX accented characters in the input String with
-        their unicode equivalents.
-        @param txt the input string
-        @return the decoded input string
-     **/
-    protected String replaceAccents(String txt){
-        String text = txt;
-
-        //Accents \u00e4\u00e1\u00e0\u00e2
-        Matcher m = PACCENTS.matcher(text);
+    private static String replaceAccents(Matcher m){
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             final String g2 = m.group(2);
@@ -91,11 +85,11 @@ public class BibTeXDecoder{
             m.appendReplacement(sb, repl);
         }
         m.appendTail(sb);
-        text = sb.toString();
+        return sb.toString();
+    }
 
-        //Tilde
-        m = PTILDE.matcher(text);
-        sb.setLength(0);
+    private static String replaceTilde(Matcher m){
+        StringBuffer sb = new StringBuffer();
         while (m.find()) {
             final String g2 = m.group(1);
             final char tc = (g2.length() == 1)? g2.charAt(0) : g2.charAt(1);
@@ -107,10 +101,34 @@ public class BibTeXDecoder{
             m.appendReplacement(sb, repl);
         }
         m.appendTail(sb);
-        text = sb.toString();
+        return sb.toString();
+    }
+
+    /** Replaces LaTeX accented characters in the input String with
+        their unicode equivalents.
+        @param txt the input string
+        @return the decoded input string
+     **/
+    protected String replaceAccents(String txt){
+        String text = txt;
+
+        //Accents \u00e4\u00e1\u00e0\u00e2
+        Matcher m = PACCENTS_BRACED.matcher(text);
+        text = replaceAccents(m);
+        m = PACCENTS.matcher(text);
+        text = replaceAccents(m);
+
+        //Tilde
+        m = PTILDE_BRACED.matcher(text);
+        text = replaceTilde(m);
+        m = PTILDE.matcher(text);
+        text = replaceTilde(m);
+
 
         //Cedille
+        text = text.replaceAll("\\{\\\\c\\{(c)\\}{2}","\u00e7");
         text = text.replaceAll("\\\\c\\{(c)\\}","\u00e7");
+        text = text.replaceAll("\\{\\\\c\\{(C)\\}{2}","\u00c7");
         text = text.replaceAll("\\\\c\\{(C)\\}","\u00c7");
 
         return text;
