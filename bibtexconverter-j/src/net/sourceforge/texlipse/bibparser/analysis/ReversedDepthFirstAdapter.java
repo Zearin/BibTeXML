@@ -451,4 +451,21 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         }
         outAIdValOrSid(node);
     }
+
+    public void inAEmptyValOrSid(AEmptyValOrSid node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAEmptyValOrSid(AEmptyValOrSid node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAEmptyValOrSid(AEmptyValOrSid node)
+    {
+        inAEmptyValOrSid(node);
+        outAEmptyValOrSid(node);
+    }
 }

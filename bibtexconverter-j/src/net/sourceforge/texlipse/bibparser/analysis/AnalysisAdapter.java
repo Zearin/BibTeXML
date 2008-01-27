@@ -149,6 +149,11 @@ public class AnalysisAdapter implements Analysis
         defaultCase(node);
     }
 
+    public void caseAEmptyValOrSid(AEmptyValOrSid node)
+    {
+        defaultCase(node);
+    }
+
     public void caseTWhitespace(TWhitespace node)
     {
         defaultCase(node);

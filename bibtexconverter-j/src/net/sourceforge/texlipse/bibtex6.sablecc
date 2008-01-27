@@ -200,7 +200,8 @@ keyval_decl {-> keyval_decl } = comma [vkey]:identifier equals val_or_sid concat
 // highlight in TeXlipse
 val_or_sid {-> val_or_sid} = {value} [q1]:quotec? string_literal [q2]:quotec? {-> New val_or_sid.value(string_literal)}
         | {num} number {-> New val_or_sid.num(number)}
-        | {id} identifier {-> New val_or_sid.id(identifier)};
+        | {id} identifier {-> New val_or_sid.id(identifier)}
+        | {empty} [q1]:quotec [q2]:quotec {-> New val_or_sid.empty()};
 
 concat {-> concat} = sharp val_or_sid {->New concat(val_or_sid)};
 
@@ -246,6 +247,7 @@ concat = val_or_sid;
 
 val_or_sid = {value} string_literal
         | {num} number
-        | {id} identifier;
+        | {id} identifier
+        | {empty};
 
 // ----------------------------------------------------------------------------

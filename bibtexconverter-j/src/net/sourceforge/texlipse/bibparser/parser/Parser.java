@@ -322,45 +322,51 @@ public class Parser
 			push(goTo(7), list);
 		    }
 		    break;
-                    case 26: /* reduce AConcat */
+                    case 26: /* reduce AEmptyValOrSid */
 		    {
 			ArrayList list = new26();
+			push(goTo(7), list);
+		    }
+		    break;
+                    case 27: /* reduce AConcat */
+		    {
+			ArrayList list = new27();
 			push(goTo(8), list);
 		    }
 		    break;
-                    case 27: /* reduce ATerminal$Content */
-		    {
-			ArrayList list = new27();
-			push(goTo(9), list);
-		    }
-		    break;
-                    case 28: /* reduce ANonTerminal$Content */
+                    case 28: /* reduce ATerminal$Content */
 		    {
 			ArrayList list = new28();
 			push(goTo(9), list);
 		    }
 		    break;
-                    case 29: /* reduce ATerminal$Concat */
+                    case 29: /* reduce ANonTerminal$Content */
 		    {
 			ArrayList list = new29();
-			push(goTo(10), list);
+			push(goTo(9), list);
 		    }
 		    break;
-                    case 30: /* reduce ANonTerminal$Concat */
+                    case 30: /* reduce ATerminal$Concat */
 		    {
 			ArrayList list = new30();
 			push(goTo(10), list);
 		    }
 		    break;
-                    case 31: /* reduce ATerminal$KeyvalDecl */
+                    case 31: /* reduce ANonTerminal$Concat */
 		    {
 			ArrayList list = new31();
+			push(goTo(10), list);
+		    }
+		    break;
+                    case 32: /* reduce ATerminal$KeyvalDecl */
+		    {
+			ArrayList list = new32();
 			push(goTo(11), list);
 		    }
 		    break;
-                    case 32: /* reduce ANonTerminal$KeyvalDecl */
+                    case 33: /* reduce ANonTerminal$KeyvalDecl */
 		    {
-			ArrayList list = new32();
+			ArrayList list = new33();
 			push(goTo(11), list);
 		    }
 		    break;
@@ -1108,7 +1114,26 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new26() /* reduce AConcat */
+    ArrayList new26() /* reduce AEmptyValOrSid */
+    {
+        @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+
+        @SuppressWarnings("unused") ArrayList nodeArrayList2 = pop();
+        @SuppressWarnings("unused") ArrayList nodeArrayList1 = pop();
+        PValOrSid pvalorsidNode1;
+        {
+            // Block
+
+        pvalorsidNode1 = new AEmptyValOrSid();
+        }
+	nodeList.add(pvalorsidNode1);
+        return nodeList;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    ArrayList new27() /* reduce AConcat */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -1129,7 +1154,7 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new27() /* reduce ATerminal$Content */
+    ArrayList new28() /* reduce ATerminal$Content */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -1151,7 +1176,7 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new28() /* reduce ANonTerminal$Content */
+    ArrayList new29() /* reduce ANonTerminal$Content */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -1180,7 +1205,7 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new29() /* reduce ATerminal$Concat */
+    ArrayList new30() /* reduce ATerminal$Concat */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -1202,7 +1227,7 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new30() /* reduce ANonTerminal$Concat */
+    ArrayList new31() /* reduce ANonTerminal$Concat */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -1231,7 +1256,7 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new31() /* reduce ATerminal$KeyvalDecl */
+    ArrayList new32() /* reduce ATerminal$KeyvalDecl */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -1253,7 +1278,7 @@ public class Parser
 
 
     @SuppressWarnings("unchecked")
-    ArrayList new32() /* reduce ANonTerminal$KeyvalDecl */
+    ArrayList new33() /* reduce ANonTerminal$KeyvalDecl */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
 
@@ -1288,7 +1313,7 @@ public class Parser
 			{{-1, ERROR, 2}, {4, SHIFT, 13}, {7, SHIFT, 14}, },
 			{{-1, REDUCE, 17}, },
 			{{-1, ERROR, 4}, {16, ACCEPT, -1}, },
-			{{-1, REDUCE, 27}, },
+			{{-1, REDUCE, 28}, },
 			{{-1, REDUCE, 3}, },
 			{{-1, REDUCE, 2}, },
 			{{-1, REDUCE, 4}, },
@@ -1300,55 +1325,56 @@ public class Parser
 			{{-1, ERROR, 14}, {12, SHIFT, 20}, {13, SHIFT, 21}, {14, SHIFT, 22}, {15, SHIFT, 23}, },
 			{{-1, ERROR, 15}, {13, SHIFT, 26}, },
 			{{-1, ERROR, 16}, {13, SHIFT, 27}, },
-			{{-1, REDUCE, 28}, },
+			{{-1, REDUCE, 29}, },
 			{{-1, ERROR, 18}, {10, SHIFT, 28}, },
 			{{-1, ERROR, 19}, {10, SHIFT, 29}, },
 			{{-1, REDUCE, 24}, },
 			{{-1, REDUCE, 25}, },
-			{{-1, ERROR, 22}, {15, SHIFT, 30}, },
-			{{-1, REDUCE, 20}, {14, SHIFT, 31}, },
-			{{-1, ERROR, 24}, {5, SHIFT, 32}, {11, SHIFT, 33}, },
-			{{-1, ERROR, 25}, {8, SHIFT, 36}, {11, SHIFT, 33}, },
-			{{-1, ERROR, 26}, {9, SHIFT, 38}, },
-			{{-1, ERROR, 27}, {9, SHIFT, 38}, },
+			{{-1, ERROR, 22}, {14, SHIFT, 30}, {15, SHIFT, 31}, },
+			{{-1, REDUCE, 20}, {14, SHIFT, 32}, },
+			{{-1, ERROR, 24}, {5, SHIFT, 33}, {11, SHIFT, 34}, },
+			{{-1, ERROR, 25}, {8, SHIFT, 37}, {11, SHIFT, 34}, },
+			{{-1, ERROR, 26}, {9, SHIFT, 39}, },
+			{{-1, ERROR, 27}, {9, SHIFT, 39}, },
 			{{-1, ERROR, 28}, {12, SHIFT, 20}, {13, SHIFT, 21}, {14, SHIFT, 22}, {15, SHIFT, 23}, },
 			{{-1, ERROR, 29}, {12, SHIFT, 20}, {13, SHIFT, 21}, {14, SHIFT, 22}, {15, SHIFT, 23}, },
-			{{-1, REDUCE, 21}, {14, SHIFT, 44}, },
+			{{-1, REDUCE, 26}, },
+			{{-1, REDUCE, 21}, {14, SHIFT, 45}, },
 			{{-1, REDUCE, 22}, },
 			{{-1, REDUCE, 5}, },
-			{{-1, ERROR, 33}, {12, SHIFT, 20}, {13, SHIFT, 21}, {14, SHIFT, 22}, {15, SHIFT, 23}, },
-			{{-1, REDUCE, 29}, },
-			{{-1, ERROR, 35}, {5, SHIFT, 46}, {11, SHIFT, 33}, },
-			{{-1, REDUCE, 7}, },
-			{{-1, ERROR, 37}, {8, SHIFT, 48}, {11, SHIFT, 33}, },
-			{{-1, ERROR, 38}, {13, SHIFT, 49}, },
-			{{-1, REDUCE, 31}, },
-			{{-1, ERROR, 40}, {5, SHIFT, 50}, {9, SHIFT, 51}, },
-			{{-1, ERROR, 41}, {8, SHIFT, 53}, {9, SHIFT, 54}, },
-			{{-1, ERROR, 42}, {5, SHIFT, 55}, {11, SHIFT, 33}, },
-			{{-1, ERROR, 43}, {8, SHIFT, 57}, {11, SHIFT, 33}, },
-			{{-1, REDUCE, 23}, },
-			{{-1, REDUCE, 26}, },
-			{{-1, REDUCE, 6}, },
+			{{-1, ERROR, 34}, {12, SHIFT, 20}, {13, SHIFT, 21}, {14, SHIFT, 22}, {15, SHIFT, 23}, },
 			{{-1, REDUCE, 30}, },
-			{{-1, REDUCE, 8}, },
-			{{-1, ERROR, 49}, {10, SHIFT, 59}, },
-			{{-1, REDUCE, 13}, },
-			{{-1, ERROR, 51}, {5, SHIFT, 60}, {13, SHIFT, 49}, },
+			{{-1, ERROR, 36}, {5, SHIFT, 47}, {11, SHIFT, 34}, },
+			{{-1, REDUCE, 7}, },
+			{{-1, ERROR, 38}, {8, SHIFT, 49}, {11, SHIFT, 34}, },
+			{{-1, ERROR, 39}, {13, SHIFT, 50}, },
 			{{-1, REDUCE, 32}, },
+			{{-1, ERROR, 41}, {5, SHIFT, 51}, {9, SHIFT, 52}, },
+			{{-1, ERROR, 42}, {8, SHIFT, 54}, {9, SHIFT, 55}, },
+			{{-1, ERROR, 43}, {5, SHIFT, 56}, {11, SHIFT, 34}, },
+			{{-1, ERROR, 44}, {8, SHIFT, 58}, {11, SHIFT, 34}, },
+			{{-1, REDUCE, 23}, },
+			{{-1, REDUCE, 27}, },
+			{{-1, REDUCE, 6}, },
+			{{-1, REDUCE, 31}, },
+			{{-1, REDUCE, 8}, },
+			{{-1, ERROR, 50}, {10, SHIFT, 60}, },
+			{{-1, REDUCE, 13}, },
+			{{-1, ERROR, 52}, {5, SHIFT, 61}, {13, SHIFT, 50}, },
+			{{-1, REDUCE, 33}, },
 			{{-1, REDUCE, 15}, },
-			{{-1, ERROR, 54}, {8, SHIFT, 61}, {13, SHIFT, 49}, },
+			{{-1, ERROR, 55}, {8, SHIFT, 62}, {13, SHIFT, 50}, },
 			{{-1, REDUCE, 9}, },
-			{{-1, ERROR, 56}, {5, SHIFT, 62}, {11, SHIFT, 33}, },
+			{{-1, ERROR, 57}, {5, SHIFT, 63}, {11, SHIFT, 34}, },
 			{{-1, REDUCE, 11}, },
-			{{-1, ERROR, 58}, {8, SHIFT, 63}, {11, SHIFT, 33}, },
-			{{-1, ERROR, 59}, {12, SHIFT, 20}, {13, SHIFT, 21}, {14, SHIFT, 22}, {15, SHIFT, 23}, },
+			{{-1, ERROR, 59}, {8, SHIFT, 64}, {11, SHIFT, 34}, },
+			{{-1, ERROR, 60}, {12, SHIFT, 20}, {13, SHIFT, 21}, {14, SHIFT, 22}, {15, SHIFT, 23}, },
 			{{-1, REDUCE, 14}, },
 			{{-1, REDUCE, 16}, },
 			{{-1, REDUCE, 10}, },
 			{{-1, REDUCE, 12}, },
-			{{-1, REDUCE, 18}, {11, SHIFT, 33}, },
-			{{-1, REDUCE, 19}, {11, SHIFT, 33}, },
+			{{-1, REDUCE, 18}, {11, SHIFT, 34}, },
+			{{-1, REDUCE, 19}, {11, SHIFT, 34}, },
         };*/
     private static int[][][] gotoTable;
 /*      {
@@ -1358,12 +1384,12 @@ public class Parser
 			{{-1, 7}, },
 			{{-1, 8}, },
 			{{-1, 9}, },
-			{{-1, 39}, {40, 52}, {41, 52}, },
-			{{-1, 24}, {14, 25}, {28, 42}, {29, 43}, {33, 45}, {59, 64}, },
-			{{-1, 34}, {35, 47}, {37, 47}, {56, 47}, {58, 47}, {65, 47}, },
+			{{-1, 40}, {41, 53}, {42, 53}, },
+			{{-1, 24}, {14, 25}, {28, 43}, {29, 44}, {34, 46}, {60, 65}, },
+			{{-1, 35}, {36, 48}, {38, 48}, {57, 48}, {59, 48}, {66, 48}, },
 			{{-1, 10}, },
-			{{-1, 35}, {25, 37}, {42, 56}, {43, 58}, {64, 65}, },
-			{{-1, 40}, {27, 41}, },
+			{{-1, 36}, {25, 38}, {43, 57}, {44, 59}, {65, 66}, },
+			{{-1, 41}, {27, 42}, },
         };*/
     private static String[] errorMessages;
 /*      {
@@ -1374,7 +1400,7 @@ public class Parser
 			"expecting: number, identifier, '"', string literal",
 			"expecting: '='",
 			"expecting: '}', ')', ',', '#'",
-			"expecting: string literal",
+			"expecting: '"', string literal",
 			"expecting: '}', ')', ',', '#', '"'",
 			"expecting: '}', '#'",
 			"expecting: ')', '#'",
@@ -1387,7 +1413,7 @@ public class Parser
         };*/
     private static int[] errors;
 /*      {
-			0, 1, 1, 1, 2, 0, 0, 0, 0, 1, 0, 3, 3, 4, 4, 3, 3, 0, 5, 5, 6, 6, 7, 8, 9, 10, 11, 11, 4, 4, 8, 6, 0, 4, 6, 9, 0, 10, 3, 12, 13, 14, 9, 10, 6, 6, 0, 6, 0, 5, 0, 15, 12, 0, 16, 0, 9, 0, 10, 4, 0, 0, 0, 0, 6, 6, 
+			0, 1, 1, 1, 2, 0, 0, 0, 0, 1, 0, 3, 3, 4, 4, 3, 3, 0, 5, 5, 6, 6, 7, 8, 9, 10, 11, 11, 4, 4, 6, 8, 6, 0, 4, 6, 9, 0, 10, 3, 12, 13, 14, 9, 10, 6, 6, 0, 6, 0, 5, 0, 15, 12, 0, 16, 0, 9, 0, 10, 4, 0, 0, 0, 0, 6, 6, 
         };*/
 
     static 

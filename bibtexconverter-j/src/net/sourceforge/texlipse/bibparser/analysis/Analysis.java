@@ -28,6 +28,7 @@ public interface Analysis extends Switch
     void caseAValueValOrSid(AValueValOrSid node);
     void caseANumValOrSid(ANumValOrSid node);
     void caseAIdValOrSid(AIdValOrSid node);
+    void caseAEmptyValOrSid(AEmptyValOrSid node);
 
     void caseTWhitespace(TWhitespace node);
     void caseTEstring(TEstring node);

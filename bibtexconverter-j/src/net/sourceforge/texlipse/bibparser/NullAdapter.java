@@ -28,6 +28,7 @@ import net.sourceforge.texlipse.bibparser.node.AEntryparenEntry;
 import net.sourceforge.texlipse.bibparser.node.AIdValOrSid;
 import net.sourceforge.texlipse.bibparser.node.AKeyvalDecl;
 import net.sourceforge.texlipse.bibparser.node.ANumValOrSid;
+import net.sourceforge.texlipse.bibparser.node.AEmptyValOrSid;
 import net.sourceforge.texlipse.bibparser.node.AStrbraceStringEntry;
 import net.sourceforge.texlipse.bibparser.node.AStrparenStringEntry;
 import net.sourceforge.texlipse.bibparser.node.AValueValOrSid;
