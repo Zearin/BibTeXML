@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- $Id: bibxml2mods32.xsl 338 2007-08-27 17:27:58Z ringler $
+<!-- $Id$
      (c) Moritz Ringler, 2007
 
       XSLT stylesheet that turn converts bibtexml to bibtexml

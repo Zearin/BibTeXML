@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- $Id: bibxml2bib.xsl 391 2007-12-23 17:42:35Z ringler $ -->
+<!-- $Id$ -->
 <!-- This stylesheet produces a latex thebibliography environment
      (bbl file) that is similar to what bibtex produces with the
      standard bibtex style plain.bst.
