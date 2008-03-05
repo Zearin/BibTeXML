@@ -1,7 +1,7 @@
 body {
   margin: auto;
   width: 720px;
-  background-color: rgb(218,227,235);
+  background-color: #E5F1F4;
   background-image: url(bibtexml-stripes.png);
   background-position: top center;
   background-repeat: no-repeat;
@@ -11,9 +11,9 @@ body {
   margin-top: 0px; padding-top: 90px;
   padding-bottom: 3em;
 }
-a:link, a:visited { color: rgb(78,118,152); }
-a:visited { color: rgb(100,80,152); }
-a:hover { text-decoration: none; }
+a { text-decoration:none; border-bottom: 1px dotted lightgrey; }
+a:link, a:visited { color: #2E8696; }
+a:hover { text-decoration: none; border-bottom: 1px dotted transparent; }
 p, address {
   margin-bottom: 0em;
   margin-top: .5em;
@@ -29,7 +29,7 @@ tt, pre { font-size: 8.5pt; }
 div { width: 560px; }
 div.menu {
   width: 600px;
-  background-color: rgb(78,118,152);
+  background-color: #433C2A;
   font-size: 8pt;
   line-height: 1.4em;
   margin: 0px;
@@ -46,11 +46,11 @@ div.menu a, div.menu a:link, div.menu a:visited {
   padding-right: 1.5em;
   text-decoration: none;
   font-weight: normal;
-  color: white;
+  color: #d0c8b7;
   border: 1px solid transparent;
 }
 div.menu a#current { border: 1px solid transparent; }
-div.menu a:hover { border: 1px solid white; }
+div.menu a:hover { border: 1px solid ##d0c8b7; }
 div.menu a:hover#current { border: 1px solid transparent; }
 
 pre { margin: 0px; padding: 0px; }
