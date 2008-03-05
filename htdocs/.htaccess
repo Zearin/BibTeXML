@@ -1,0 +1,4 @@
+RewriteEngine on
+# Redirect /index.html to /
+RewriteCond %{THE_REQUEST} ^.*\/index\.html?
+RewriteRule ^(.*)index\.html?$ http://bibtexml.sourceforge.net/$1 [R=301,L]
