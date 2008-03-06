@@ -50,6 +50,12 @@
     <bibtex:url><xsl:value-of select="foo:doi-to-url(text(), $doiproxy)" /></bibtex:url>
   </xsl:template>
 
+  <xsl:template match="bibtex:isbn">
+    <bibtex:url><xsl:value-of
+      select="concat('http://www.openurl.de/?isbn=', normalize-space(text()))"/>
+    </bibtex:url>
+  </xsl:template>
+
   <xsl:template match="*|text()|@*">
     <xsl:copy>
       <xsl:apply-templates select="@*" />
