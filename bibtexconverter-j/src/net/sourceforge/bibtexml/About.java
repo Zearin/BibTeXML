@@ -91,7 +91,7 @@ final class About extends JDialog implements ActionListener {
             "&copy; 2003-2007, V. B. Gundersen, Z. W. Hendrikse, M. Kuhlmann, M. Ringler" +
             "<br><br>" +
             "<b>XSLT stylesheets</b><br>" +
-            "&copy; 2003-2007, V. B. Gundersen, Z. W. Hendrikse, M. Ringler" +
+            "&copy; 2003-2008, V. B. Gundersen, Z. W. Hendrikse, M. Berger, M. Ringler" +
             "<br><br>" +
             ((saxonVersion == null)? "" : ("<b>XSLT-Processor:</b><br>"  + saxonVersion + "<br><br>"))
             + "Running on <br>" +
