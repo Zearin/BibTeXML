@@ -130,10 +130,10 @@ public abstract class InputHandler extends KeyAdapter
      */
     public static String getActionName(ActionListener listener)
     {
-        Enumeration êenum = getActions();
-        while(êenum.hasMoreElements())
+        Enumeration eenum = getActions();
+        while(eenum.hasMoreElements())
         {
-            String name = (String)êenum.nextElement();
+            String name = (String)eenum.nextElement();
             ActionListener _listener = getAction(name);
             if(_listener == listener)
                 return name;
