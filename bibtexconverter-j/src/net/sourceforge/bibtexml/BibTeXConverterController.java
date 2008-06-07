@@ -21,6 +21,7 @@ package net.sourceforge.bibtexml;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.ComponentOrientation;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -107,7 +108,8 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
     private final static String START_CONVERSION = "Start conversion";
     private final static String PREF_DEFAULT_META = "defaultMetadata";
 
-    private final Container styleContainer = Box.createVerticalBox();
+    //private final Container styleContainer = Box.createVerticalBox();
+    private final Container styleContainer = new JPanel(new de.mospace.swing.VGridLayout(5,0));
     private final StyleSheetManager styleManager;
     private StyleSheetController resolveCrossref;
     private InputType input = InputType.BIBTEX;
@@ -382,7 +384,14 @@ public class BibTeXConverterController extends JFrame implements ActionListener{
         x.setBuiltin(true);
         builtins.add(x);
 
-        config.name = "MODS v3.2";
+        config.name = "DocBook 5 bibliography";
+        config.suffix = "-docbook5.xml";
+        config.style = clazz.getResource("xslt/bibxml2docbook5.xsl");
+        x = StyleSheetController.newInstance(konvert, config, xpref);
+        x.setBuiltin(true);
+        builtins.add(x);
+
+         config.name = "MODS v3.2";
         config.suffix = "-mods.xml";
         config.style = clazz.getResource("xslt/bibxml2mods32.xsl");
         StyleSheetController mods =

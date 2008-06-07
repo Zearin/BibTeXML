@@ -51,8 +51,9 @@
 
   <xsl:template match="bibtex:entry">
     <biblioentry>
-      <xsl:attribute name="xreflabel" select="@id"/>
-      <xsl:attribute name="id" select="@id"/>
+      <xsl:variable name="xid" select="translate(@id,'/:','')"/>
+      <xsl:attribute name="xreflabel" select="$xid"/>
+      <xsl:attribute name="xml:id" select="$xid"/>
       <xsl:call-template name="authors"/>
       <xsl:call-template name="date"/>
       <xsl:apply-templates select="*" />
