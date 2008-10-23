@@ -359,15 +359,13 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
             final ButtonGroup targets = new ButtonGroup();
             if(freshInstall){
                 text = new JLabel(
-                    "<html><br>Press OK to install saxon...</html>");
+                    "<html><br>Press OK to install saxon in</html>");
                 dialogPane.add(text);//5
                 JRadioButton btarget;
                 boolean targetSelected = false;
                 final Insets bmargin = new Insets(0,20,0,0);
                 dialogPane.add(Box.createVerticalStrut(5));
                 if(userInstallTargets.length != 0){
-                    text = new JLabel("for BibTeXConverter only");
-                    dialogPane.add(text);
                     for(File f : userInstallTargets){
                         btarget = new JRadioButton(f.getAbsolutePath(), !targetSelected);
                         btarget.setActionCommand(f.getAbsolutePath());
@@ -377,7 +375,7 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
                         targetSelected = true;
                     }
                 }
-                btarget = new JRadioButton("to a location of your choice", !targetSelected);
+                btarget = new JRadioButton("another directory...", !targetSelected);
                 btarget.setActionCommand("*");
                 btarget.setMargin(bmargin);
                 targets.add(btarget);
