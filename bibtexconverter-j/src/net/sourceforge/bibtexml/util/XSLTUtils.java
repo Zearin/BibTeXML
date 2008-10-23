@@ -278,7 +278,6 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
             final String saxonURI =
             "http://sf.net/project/showfiles.php?group_id=29872&package_id=21888";
             final ExtensionInstaller extInst = new ExtensionInstaller(trigger);
-            final String systemInstallTarget = extInst.getWritableExtensionDirectory();
             final File[] userInstallTargets = getUserInstallTargets();
 
             Box dialogPane = Box.createVerticalBox();
@@ -359,16 +358,6 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
                 JRadioButton btarget;
                 boolean targetSelected = false;
                 final Insets bmargin = new Insets(0,20,0,0);
-                if(systemInstallTarget != null){
-                    dialogPane.add(Box.createVerticalStrut(5));
-                    text = new JLabel("system-wide (may affect other Java applications)");
-                    btarget = new JRadioButton(systemInstallTarget, false);
-                    btarget.setMargin(bmargin);
-                    btarget.setActionCommand(systemInstallTarget);
-                    targets.add(btarget);
-                    dialogPane.add(text);
-                    dialogPane.add(btarget);
-                }
                 dialogPane.add(Box.createVerticalStrut(5));
                 if(userInstallTargets.length != 0){
                     text = new JLabel("for BibTeXConverter only");
