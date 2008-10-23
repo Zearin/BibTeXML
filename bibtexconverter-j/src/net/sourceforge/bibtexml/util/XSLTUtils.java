@@ -114,8 +114,8 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
         }
 
         /* Try to obtain a Saxon transformer factory */
-        System.setProperty("javax.xml.transform.TransformerFactory",
-            TRANSFORMER_FACTORY_IMPLEMENTATION);
+       // System.setProperty("javax.xml.transform.TransformerFactory",
+         //   TRANSFORMER_FACTORY_IMPLEMENTATION);
         tf = tryToGetTransformerFactory();
     }
 
@@ -186,9 +186,13 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
     **/
     public final synchronized TransformerFactory tryToGetTransformerFactory(){
         if(tf == null){
-            Thread.currentThread().setContextClassLoader(getClassLoader());
+            //Thread.currentThread().setContextClassLoader(getClassLoader());
             try{
-                tf = TransformerFactory.newInstance();
+		Class<?> tfclass = Class.forName(TRANSFORMER_FACTORY_IMPLEMENTATION,
+			true, getClassLoader());
+		
+                tf = (TransformerFactory) tfclass.newInstance();
+		
                 System.out.println("Saxon found in " +
                     DefaultClassLoaderProvider.getRepositoryRoot(
                         tf.getClass()));
@@ -221,8 +225,10 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
                 }
                 System.out.flush();
                 System.err.flush();
-            } catch (TransformerFactoryConfigurationError ignore){
-            }
+            } catch (IllegalAccessException ignore){
+            } catch (InstantiationException ignore){
+	    } catch (ClassNotFoundException ignore){
+	    }
         }
         return tf;
     }
