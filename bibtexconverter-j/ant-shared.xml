@@ -476,7 +476,20 @@ org.xml.sax.helpers
     </exec>
   </target>
 
-  <!-- JSMOOTH PROJCET -->
+  <!-- JSMOOTH PROJECT -->
+<target name="packaging.win.jsmoothgen" depends="packaging.win.jsmooth">
+
+    <fail unless="jsmoothgen"
+        message="You must set the jsmoothgen property (root directory of your jsmooth installation)."/>
+<taskdef name="jsmoothgen"
+     classname="net.charabia.jsmoothgen.ant.JSmoothGen"
+     classpath="${jsmoothgen}/lib/jsmoothgen-ant.jar"/>
+<jsmoothgen project="${ant.project.name}-${buildID}.jsmooth" 
+      skeletonroot="${jsmoothgen}/skeletons"/>
+
+
+</target>
+
   <target
       name="packaging.win.jsmooth"
       depends="init">

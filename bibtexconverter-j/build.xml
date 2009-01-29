@@ -65,10 +65,10 @@
       value="net/sourceforge/bibtexml/splash.png"/>
   <property
       name="app.javaVersion"
-      value="1.5"/>
+      value="1.6"/>
   <property
       name="app.icon"
-      value="${src}\net\sourceforge\bibtexml\icon\ledgreen2.png"/>
+      value="${src}/net/sourceforge/bibtexml/icon/ledgreen2.png"/>
   <!-- Do not change order! -->
   <property name="app.libraries"
       value="lib/jdom.jar;lib/msv.jar;lib/xsdlib.jar;lib/relaxngDatatype.jar;lib/jaxp-isorelax.jar;lib/jing.jar;" />
