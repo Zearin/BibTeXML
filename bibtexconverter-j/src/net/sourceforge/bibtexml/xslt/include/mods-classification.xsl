@@ -304,6 +304,7 @@
     </mods:classification>
   </xsl:template>
 
+  <xsl:template match="bibtex:rubbknp">
   <xsl:comment>
       Pereizdaniíà tablits bibliotechno-bibliograficheskoi klassifikatsii
       dlíà nauchnykh bibliotek v 30-ti tomakh (Moskva: Kniga)
@@ -311,6 +312,7 @@
   <mods:classification authority="rubbknp">
     <xsl:value-of select="bibtex:rubbknp"/>
   </mods:classification>
+  </xsl:template>
 
   <xsl:template match="bibtex:rubbko">
     <xsl:comment>Tablitsy bibliotechno-bibliograficheskoi klassifikatsii dlíà

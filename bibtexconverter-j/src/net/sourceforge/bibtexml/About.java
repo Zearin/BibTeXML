@@ -76,7 +76,7 @@ final class About extends JDialog implements ActionListener {
             "http://mp3dings.sourceforge.net</a><br><br>" +
             */
 
-            "&copy; 2006-2007, Moritz Ringler<br><br>" +
+            "&copy; 2006-2009, Moritz Ringler<br><br>" +
             "<b>BibTeX-Parser:</b><br>" +
             "<u>texlipse.sf.net</u><br>&copy; Oskar Ojala 2004-2005, M. Ringler 2007<br><br>" +
             "<b>RELAX NG validator:</b><br>" +
