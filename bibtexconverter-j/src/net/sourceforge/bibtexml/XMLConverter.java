@@ -300,6 +300,7 @@ public class XMLConverter{
         if(tf == null){
             tf = XSLTUtils.getInstance().tryToGetTransformerFactory();
         }
+        Thread.currentThread().setContextClassLoader(XSLTUtils.getInstance().getClassLoader());
         if(tf != null){
             Source styleSrc = new StreamSource(in);
             if(systemId != null){
