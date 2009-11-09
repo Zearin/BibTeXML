@@ -1084,10 +1084,10 @@
   </xsl:function>
 
   <xsl:function name="my:tie-if-short">
-    <xsl:param name="start" as="xs:string"/>
-    <xsl:param name="end" as="xs:string"/>
-    <xsl:variable name="st" select="normalize-space($start)"/>
-    <xsl:variable name="ed" select="normalize-space($end)"/>
+    <xsl:param name="start" as="xs:string?"/>
+    <xsl:param name="end" as="xs:string?"/>
+    <xsl:variable name="st" select="if(empty($start)) then '' else normalize-space($start)"/>
+    <xsl:variable name="ed" select="if(empty($end)) then '' else normalize-space($end)"/>
     <xsl:choose>
       <xsl:when test="$st eq ''">
         <xsl:value-of select="$ed"/>
