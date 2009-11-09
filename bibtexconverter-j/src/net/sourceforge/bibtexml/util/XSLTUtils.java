@@ -188,11 +188,11 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
         if(tf == null){
             //Thread.currentThread().setContextClassLoader(getClassLoader());
             try{
-		Class<?> tfclass = Class.forName(TRANSFORMER_FACTORY_IMPLEMENTATION,
-			true, getClassLoader());
-		
+        Class<?> tfclass = Class.forName(TRANSFORMER_FACTORY_IMPLEMENTATION,
+            true, getClassLoader());
+
                 tf = (TransformerFactory) tfclass.newInstance();
-		
+
                 System.out.println("Saxon found in " +
                     DefaultClassLoaderProvider.getRepositoryRoot(
                         tf.getClass()));
@@ -227,8 +227,8 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
                 System.err.flush();
             } catch (IllegalAccessException ignore){
             } catch (InstantiationException ignore){
-	    } catch (ClassNotFoundException ignore){
-	    }
+        } catch (ClassNotFoundException ignore){
+        }
         }
         return tf;
     }
@@ -460,7 +460,8 @@ public class XSLTUtils extends DefaultClassLoaderProvider{
                     extInst.installExtension(new File(pinz.getPath()), "saxon"+version+"-dom.jar");
                     extInst.installExtension(new File(pinz.getPath()), "saxon"+version+"-jdom.jar");
                     //install saxon.jar
-                    if(extInst.installExtension(new File(pinz.getPath()), "saxon"+version+".jar")){
+                    if(extInst.installExtension(new File(pinz.getPath()), "saxon"+version+".jar") ||
+                       extInst.installExtension(new File(pinz.getPath()), "saxon"+version+"he.jar")){
                         JOptionPane.showMessageDialog(trigger,
                             "Saxon has been installed successfully.");
                         clp.registerLibraryDirectory(ftarget);
