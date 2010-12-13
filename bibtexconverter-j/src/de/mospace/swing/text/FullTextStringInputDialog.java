@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -43,14 +44,23 @@ import de.mospace.lang.FullTextString;
  * @see de.mospace.lang.FullTextString
  **/
 public class FullTextStringInputDialog extends JDialog{
-   private String result = null; 
-   
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7385054220816225569L;
+private String result = null;
+
    private FullTextStringInputDialog(Frame f,String m, String v){
         super(f, m, true);
         getContentPane().setLayout(new BorderLayout());
         final JTextArea jta = new JTextArea((v == null)? "":v.toString());
         Action okAction = new AbstractAction("OK"){
-            public void actionPerformed(ActionEvent e){
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = -6742812662384479083L;
+
+			public void actionPerformed(ActionEvent e){
                 result = jta.getText();
                 dispose();
             }
@@ -64,7 +74,12 @@ public class FullTextStringInputDialog extends JDialog{
         JButton ok = new JButton(okAction);
         Action cancelAction = new AbstractAction(
                 UIManager.getString("OptionPane.cancelButtonText")){
-            public void actionPerformed(ActionEvent e){
+            /**
+					 * 
+					 */
+					private static final long serialVersionUID = -5235723669537172261L;
+
+			public void actionPerformed(ActionEvent e){
                 result = null;
                 dispose();
             }
@@ -82,12 +97,37 @@ public class FullTextStringInputDialog extends JDialog{
         Dimension dlgSize = getPreferredSize();
         if(f != null){
             Dimension frmSize = f.getSize();
+            Dimension screen = f.getToolkit().getScreenSize();
+            Insets screenInsets = f.getToolkit().getScreenInsets(f.getGraphicsConfiguration());
+            screen.width -= (screenInsets.left + screenInsets.right);
+            screen.height -= (screenInsets.top + screenInsets.bottom);
             Point loc = f.getLocation();
-            setLocation((frmSize.width - dlgSize.width) / 2 +
-                loc.x, (frmSize.height - dlgSize.height) / 2 + loc.y);
+            int x = (frmSize.width - dlgSize.width) / 2 +  loc.x;
+            if(dlgSize.width > screen.width){
+                dlgSize.width = screen.width;
+                setSize(dlgSize);
+            }
+            if(x + dlgSize.width > screen.width){
+                x = screen.width - dlgSize.width;
+            }
+            if(x < screenInsets.left){
+                x = screenInsets.left;
+            }
+            int y = (frmSize.height - dlgSize.height) / 2 + loc.y;
+            if(dlgSize.height > screen.height){
+                dlgSize.height = screen.height;
+                setSize(dlgSize);
+            }
+            if(y + dlgSize.height > screen.height){
+                y = screen.height - dlgSize.height;
+            }
+            if(y < screenInsets.top){
+                y = screenInsets.top;
+            }
+            setLocation(x, y);
         }
     }
-    
+
     /** Gets the current value of the multi-line string that is or has been
     * edited by this input dialog.
     * @return the current value of the string being edited, or <code>null</code>
@@ -96,7 +136,7 @@ public class FullTextStringInputDialog extends JDialog{
     private String getValue(){
         return result;
     }
-    
+
     /** Displays a new FullTextStringInputDialog that is initialized with
     * the specified FullTextString.
     * @param owner the parent frame for this dialog, may be <code>null</code>
@@ -113,7 +153,7 @@ public class FullTextStringInputDialog extends JDialog{
         v = showDialog(owner, message, v);
         return (v == null)? null: new FullTextString(v);
     }
-    
+
     /** Displays a new FullTextStringInputDialog that is initialized with
     * the specified string.
     * @param owner the parent frame for this dialog, may be <code>null</code>
@@ -122,7 +162,7 @@ public class FullTextStringInputDialog extends JDialog{
     * may be <code>null</code>
     * @return the user input as a string, or <code>null</code>
     * if the user cancelled the dialog
-    */    
+    */
     static public String showDialog(Frame owner,
             String message,
             String x){

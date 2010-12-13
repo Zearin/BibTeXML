@@ -38,14 +38,19 @@ import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.event.EventListenerList;
+import java.util.logging.Logger;
 
 /**
 * @author Moritz Ringler
 * @version $Revision$ ($Date$)
 */
 public class PathInput extends Box{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4396922544652610241L;
+	private static final Logger logger = Logger.getLogger(PathInput.class.getPackage().getName());
     protected JTextField textfield = new JTextField(40);
     private JButton button;
     int selectionMode = JFileChooser.FILES_ONLY;
@@ -76,7 +81,12 @@ public class PathInput extends Box{
         add(textfield);
         add(Box.createHorizontalStrut(2));
         button = new JButton(new AbstractAction(GLOBALS.getString("...")){
-            public void actionPerformed(ActionEvent e){
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 178269836460842899L;
+
+			public void actionPerformed(ActionEvent e){
                 browse();
             }
         });
@@ -176,7 +186,11 @@ public class PathInput extends Box{
     }
 
     private class FileTransferHandler extends TransferHandler{
-        private final TransferHandler parent;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -7066260039944019815L;
+		private final TransferHandler parent;
 
         public FileTransferHandler(TransferHandler parent){
             this.parent =  parent;
@@ -212,8 +226,7 @@ public class PathInput extends Box{
                 } catch (UnsupportedFlavorException ex){
                     throw new Error(ex);
                 } catch (IOException ex){
-                    System.err.println(ex);
-                    System.err.flush();
+                    logger.severe(ex.toString());
                 }
                 if(data != null && !data.isEmpty()){
                     textfield.setText(((File) data.get(0)).getAbsolutePath());

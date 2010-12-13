@@ -34,7 +34,11 @@ import javax.swing.text.JTextComponent;
 * @author Moritz Ringler
 */
 public class NumericInputVerifier extends InputVerifier implements java.io.Serializable{
-    private Class  myClass = Double.class;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3369466113721179363L;
+	private Class  myClass = Double.class;
     private Method method;
     private Constructor constructor;
     private Comparable min = null;

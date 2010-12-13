@@ -35,7 +35,11 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @see de.mospace.lang.FullTextString
  */
 public class FullTextStringCellRenderer extends DefaultTableCellRenderer {
-    Border unselectedBorder = null;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8312180157075709027L;
+	Border unselectedBorder = null;
     Border selectedBorder = null;
     boolean isBordered = true;
     public FullTextStringCellRenderer() {

@@ -26,7 +26,12 @@ import java.awt.Color;
  *  @author Moritz Ringler
  */
 public class LabeledColorButton extends JColorButton{
-    /** Sets the background of this button to c and its foreground
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7961183365040983980L;
+
+	/** Sets the background of this button to c and its foreground
      * to the complementary color of c .**/
     public void setBackground(Color c){
         super.setBackground(c);

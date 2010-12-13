@@ -52,10 +52,12 @@ public final class FullTextString implements Serializable{
      * String will change the state of this object.
      * @return the FullTextString as a String
      **/
+    @Override
     public String toString(){
         return me;
     }
 
+    @Override
     public boolean equals(Object o){
         if(this == o){
             return true;
@@ -66,6 +68,7 @@ public final class FullTextString implements Serializable{
         }
     }
 
+    @Override
     public int hashCode(){
         return me.hashCode();
     }

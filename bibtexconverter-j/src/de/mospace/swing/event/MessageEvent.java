@@ -28,7 +28,12 @@ import java.util.EventObject;
  * @author Moritz Ringler
  */
 public class MessageEvent extends EventObject{
-    /** Type argument
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5893899514373624789L;
+
+	/** Type argument
     * for the 3- and 4-argument MessageEvent constructors -
     * for information messages. */
     public final static int TYPE_INFO = 0;

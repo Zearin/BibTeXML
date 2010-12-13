@@ -19,18 +19,14 @@
 package de.mospace.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -40,7 +36,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
@@ -52,11 +47,85 @@ import de.mospace.swing.text.HistoryTextField;
  * @version $Revision$ ($Date$)
  */
 abstract public class JReplaceDialogue extends JDialog implements ActionListener{
-    /** A common interface for JComboBoxes and JTextFields. **/
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5162323873902367105L;
+
+	/** A common interface for JComboBoxes and JTextFields. **/
     private static interface TextField{
         public void setText(String s);
         public String getText();
         public JComponent getComponent();
+    }
+
+    /** Extracted from bsh.BSHLiteral by Pat Niemeyer */
+    private static class StringLiteral{
+        private final String value;
+
+        public StringLiteral(String source){
+            value = stringSetup(source);
+        }
+
+        private static String stringSetup(String str){
+            StringBuffer buffer = new StringBuffer();
+            for(int i = 0; i < str.length(); i++) {
+                char ch = str.charAt(i);
+                if(ch == '\\') {
+                    // get next character
+                    ch = str.charAt(++i);
+                    if(Character.isDigit(ch)) {
+                        int endPos = i;
+                        // check the next two characters
+                        while(endPos < i + 2)
+                        {
+                            if(Character.isDigit(str.charAt(endPos + 1)))
+                                endPos++;
+                            else
+                                break;
+                        }
+                        ch = (char)Integer.parseInt(str.substring(i, endPos + 1), 8);
+                        i = endPos;
+                    } else {
+                        ch = getEscapeChar(ch);
+                    }
+                }
+                buffer.append(ch);
+            }
+            return buffer.toString();
+        }
+
+        private static char getEscapeChar(char ch)
+        {
+            switch(ch)
+            {
+                case 'b':
+                    ch = '\b';
+                    break;
+                case 't':
+                    ch = '\t';
+                    break;
+                case 'n':
+                    ch = '\n';
+                    break;
+                case 'f':
+                    ch = '\f';
+                    break;
+                case 'r':
+                    ch = '\r';
+                    break;
+                // do nothing - ch already contains correct character
+                case '"':
+                case '\'':
+                case '\\':
+                break;
+            }
+            return ch;
+        }
+
+        public String toString(){
+            return value;
+        }
     }
 
     /** A static class that wraps JComboBoxes and JTextFields into TextFields.
@@ -148,16 +217,20 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
         replListener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 boolean zAll=false;
-                if(e.getSource()==replAll){
-                    zAll=true;
+                if(e.getSource() == replAll){
+                    zAll = true;
                 }
-                String lookFor=replWhat.getText();
-                if(lookFor==null || lookFor.length() == 0){
+                final String lookFor = replWhat.getText();
+                if(lookFor == null || lookFor.length() == 0){
                     return;
                 }
-                performReplace(lookFor, replWith.getText(),
-                        matchWord.isSelected(),matchCase.isSelected(),
-                        regExp.isSelected(), zAll, scope);
+                String rWith = replWith.getText();
+                final boolean rE = regExp.isSelected();
+                if(rE){
+                    rWith = (new StringLiteral(rWith)).toString();
+                }
+                performReplace(lookFor, rWith, matchWord.isSelected(),
+                        matchCase.isSelected(), rE, zAll, scope);
             }
         };
 
@@ -175,14 +248,24 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
         seast = new JPanel();
 
         AbstractAction cancelAction = new AbstractAction(UIManager.getString("OptionPane.cancelButtonText")){
-                public void actionPerformed(ActionEvent e){
+                /**
+			 * 
+			 */
+			private static final long serialVersionUID = 6595495368666347281L;
+
+				public void actionPerformed(ActionEvent e){
                     cancel();
                 }
             };
 
         AbstractAction findAction = new AbstractAction(
                 GLOBALS.getString(showReplace? "Find/Replace..." : "Find...")){
-            public void actionPerformed(ActionEvent e){
+            /**
+					 * 
+					 */
+					private static final long serialVersionUID = 3952586083683443779L;
+
+			public void actionPerformed(ActionEvent e){
                 replListener.actionPerformed(
                     new ActionEvent(repl,ActionEvent.ACTION_PERFORMED,""));
             }

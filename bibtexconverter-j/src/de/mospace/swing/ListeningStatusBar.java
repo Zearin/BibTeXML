@@ -31,6 +31,11 @@ import de.mospace.swing.event.MessageListener;
 public class ListeningStatusBar extends StatusBar implements MessageListener {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3540977696176993069L;
+
+	/**
      * Creates a new ListeningStatusBar object.
      */
     public ListeningStatusBar() {

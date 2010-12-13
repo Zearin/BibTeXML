@@ -37,7 +37,7 @@ public final class GLOBALS{
     }
 
     public static int getKey(String s){
-        return (int) getString(s).charAt(0);
+        return getString(s).charAt(0);
     }
 
     public static Font getSuitableFont(Font f, char[] characters){

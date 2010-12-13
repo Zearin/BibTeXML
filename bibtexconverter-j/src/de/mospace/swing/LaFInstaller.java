@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.logging.Logger;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -65,10 +66,16 @@ import de.mospace.lang.ClassLoaderProvider;
  * @author Moritz Ringler
  */
 public final class LaFInstaller extends ExtensionInstaller {
+    private static final Logger logger = Logger.getLogger(LaFInstaller.class.getPackage().getName());
     private static String javahome = System.getProperty("java.home");
     private final Properties swingp =
         new Properties() {
-            /*
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 2413082473917029589L;
+
+			/*
              *  This hack causes sorted output, if store()
              *  uses keys() to iterate over properties.
              *  Since this is not necessarily so, this is
@@ -148,9 +155,11 @@ public final class LaFInstaller extends ExtensionInstaller {
                 fips = new BufferedInputStream(new FileInputStream(propf));
                 swingp.load(fips);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                logger.warning("Error reading Look and Feel properties from file " + propf);
+                logger.warning(ex.toString());
             } catch (IllegalArgumentException ex) {
-                ex.printStackTrace();
+                logger.warning("Error reading Look and Feel properties from file " + propf);
+                logger.warning(ex.toString());
             } finally {
                 if (fips != null) {
                     try {
@@ -279,9 +288,7 @@ public final class LaFInstaller extends ExtensionInstaller {
             }
         }
         } catch (Exception ioerror){
-            System.err.println(ioerror.getMessage());
-            System.err.flush();
-            result = null;
+            logger.severe(ioerror.toString());
         }
         return result;
     }
@@ -597,7 +604,8 @@ public final class LaFInstaller extends ExtensionInstaller {
                     try {
                         zip.close();
                     } catch (IOException ex) {
-                        ex.printStackTrace();
+                        logger.warning("Error closing jar file " + jar);
+                        logger.warning(ex.toString());
                     }
                 }
             }

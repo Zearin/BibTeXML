@@ -28,7 +28,11 @@ import java.util.*;
 * @author Moritz Ringler
 **/
 public class SortedSetListModel extends AbstractListModel {
-    private final SortedSet set;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4418159824081831084L;
+	private final SortedSet set;
 
     public SortedSetListModel(){
         set = new TreeSet();

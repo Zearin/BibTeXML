@@ -26,6 +26,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /** A runnable whose {@link #run run} method executes a system command.
 * The system command is either specified as a single string or as an
@@ -33,6 +35,7 @@ import java.io.OutputStream;
 * @see java.lang.Runtime#exec
 */
 public class ProcessRunnable implements RunnableQueue.Job{
+    private static final Logger logger = Logger.getLogger(ProcessRunnable.class.getPackage().getName());
     private String command;
     private String cmdarray[];
     private File dir = null;
@@ -55,7 +58,6 @@ public class ProcessRunnable implements RunnableQueue.Job{
     private transient Process process = null;
     private transient int exitValue = 0;
     private ExceptionHandler exceptionHandler;
-    private static ThreadGroup iothreads = new ThreadGroup("ProcessRunableIO");
 
     /** Constructs a new ProcessRunnable whose {@link #run} method will execute
     * the specified command.
@@ -272,6 +274,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     /** Executes this process runnable's system command. If we are already
     * running then we first wait until the process spawned on the last
     * invocation terminates.*/
+    @Override
     public void run(){
         try{
             if(isRunning()){
@@ -306,13 +309,12 @@ public class ProcessRunnable implements RunnableQueue.Job{
             /* this will make isRunning() return false */
             process = null;
         } catch (Exception ex){
-            ex.printStackTrace();
             stop();
             if(exceptionHandler == null){
                 throw new RuntimeException(ex);
-            } else {
-                exceptionHandler.handleException(ex);
             }
+                
+            exceptionHandler.handleException(ex);
         }
     }
 
@@ -321,6 +323,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     * thrown within run will be re-thrown as RuntimeExceptions.
     * @param xh an exception handler
     */
+    @Override
     public void registerExceptionHandler(ExceptionHandler xh){
         exceptionHandler = xh;
     }
@@ -336,6 +339,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
 
     /** Kills the system process spawned by the {@link #run} method if
     * this process runnable is currently running. */
+    @Override
     public void stop(){
         if (isRunning()){
             process.destroy();
@@ -351,17 +355,14 @@ public class ProcessRunnable implements RunnableQueue.Job{
     * @throws InterruptedException if the system process is interrupted
     */
     public int waitFor() throws InterruptedException{
-        if (isRunning()){
-            return process.waitFor();
-        } else {
-            return exitValue;
-        }
+        return isRunning() ? process.waitFor() : exitValue;
     }
 
     /** Returns the exit status of the system process that returned last.
     * @return the exit status of the system process that returned last or zero
     * if this runnable has never run.
     */
+    @Override
     public int getExitStatus(){
         return exitValue;
     }
@@ -387,6 +388,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     * specified stream.
     * @param i the stream to read input from
     */
+    @Override
     public void readInputFrom(InputStream i){
         inpt = new StreamInput(i);
     }
@@ -396,6 +398,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
     * @see #readInputFrom(File)
     * @see #readInputFrom(InputStream)
     */
+    @Override
     public boolean hasInput(){
         return inpt != null;
     }
@@ -456,7 +459,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
             outp = writep;
             inp = read;
             this.owner = owner;
-        };
+        }
 
         /** Opens this pipe thread's input and output and writes any
         * bytes that become available on the input to the output.
@@ -464,6 +467,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
         * process runnable associated with this PipeThread stops running
         * the close methods of input and output will be called.
         */
+        @Override
         public void run(){
             InputStream input = null;
             OutputStream output = null;
@@ -486,21 +490,27 @@ public class ProcessRunnable implements RunnableQueue.Job{
                 }
                 output.flush();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                StackTraceElement elements[] = ex.getStackTrace();
+                logger.log(Level.SEVERE, ex.toString());
+                for (int i=0, n=elements.length; i<n; i++) {
+                  logger.log(Level.SEVERE, elements[i].getMethodName());
+                }
             } finally {
                 try{
                     if(output != null){
                         outp.closeOutputStream(output);
                     }
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    logger.warning("Error closing output " + output);
+                    logger.warning(ex.toString());
                 }
                 try{
                     if(input != null){
                         inp.closeInputStream(input);
                     }
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    logger.warning("Error closing input " + input);
+                    logger.warning(ex.toString());
                 }
             }
         }
@@ -535,6 +545,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
         /** Opens the file specified in the constructor for reading.
         * @return a new {@link java.io.FileInputStream} object
         */
+        @Override
         public InputStream openInputStream() throws IOException{
             return new FileInputStream(f);
         }
@@ -543,12 +554,14 @@ public class ProcessRunnable implements RunnableQueue.Job{
         * @param stream an input stream obtained from a previous call to
         * {@link #openInputStream}.
         */
+        @Override
         public void closeInputStream(InputStream stream) throws IOException{
             stream.close();
         }
 
         /** Returns a string representation of this object.
          * @return  a string representation of this object. */
+        @Override
         public String toString(){
             return (f==null)? "null" : "<"+f.getPath();
         }
@@ -569,17 +582,20 @@ public class ProcessRunnable implements RunnableQueue.Job{
         *  treating it as empty input.
         * @return an input stream or <code>null</code>
         */
+        @Override
         public InputStream openInputStream(){
             return inp;
         }
 
         /** Does nothing. **/
+        @Override
         public void closeInputStream(InputStream stream){
             //does nothing
         }
 
         /** Returns a string representation of this object.
          * @return  a string representation of this object. */
+        @Override
         public String toString(){
             return "<"+String.valueOf(inp);
         }
@@ -614,6 +630,7 @@ public class ProcessRunnable implements RunnableQueue.Job{
         /** Opens the file specified in the constructor for writing.
         * @return a new {@link java.io.FileOutputStream} object
         */
+        @Override
         public OutputStream openOutputStream() throws IOException{
             return new FileOutputStream(f);
         }
@@ -622,12 +639,14 @@ public class ProcessRunnable implements RunnableQueue.Job{
         * @param out an output stream obtained from a previous call to
         * {@link #openOutputStream}.
         */
+        @Override
         public void closeOutputStream(OutputStream out) throws IOException{
             out.close();
         }
 
         /** Returns a string representation of this object.
          * @return  a string representation of this object. */
+        @Override
         public String toString(){
             return (f==null)? "null" : ">"+f.getPath();
         }
@@ -647,17 +666,20 @@ public class ProcessRunnable implements RunnableQueue.Job{
         /** Returns the output stream for this StreamOutput.
         * @return a non-null output stream
         */
+        @Override
         public OutputStream openOutputStream(){
             return s;
         }
 
         /** Does nothing */
+        @Override
         public void closeOutputStream(OutputStream out){
             //does nothing
         }
 
         /** Returns a string representation of this object.
          * @return  a string representation of this object. */
+        @Override
         public String toString(){
             return ">"+String.valueOf(s);
         }

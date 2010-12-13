@@ -29,9 +29,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.Collections;
@@ -39,12 +36,13 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarFile;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import javax.swing.Box;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JDialog;
-import javax.swing.Box;
 import javax.swing.JTextArea;
 import de.mospace.lang.ClassLoaderProvider;
 /* TO DO:
@@ -60,6 +58,7 @@ import de.mospace.lang.ClassLoaderProvider;
  * @author ringler
  */
 public class ExtensionInstaller {
+    private static final Logger logger = Logger.getLogger(ExtensionInstaller.class.getPackage().getName());
     private static String javaext = null;
     protected final Component parent;
     private File targetDirectory;
@@ -75,7 +74,7 @@ public class ExtensionInstaller {
             tempdir = (new File(tempdir)).getCanonicalPath();
             result = file.getCanonicalPath().startsWith(tempdir);
         } catch (IOException ignore){
-            System.err.println(ignore);
+            logger.fine(ignore.toString());
         }
         return result;
     }
@@ -248,7 +247,8 @@ public class ExtensionInstaller {
                 canWrite = false;
             } catch (IOException ex) {
                 //we did not succeed in closing fos...
-                ex.printStackTrace();
+                logger.severe("IOException on file " + test);
+                logger.severe(ex.getMessage());
             }
 
         } else if (test.isDirectory()) {
@@ -636,9 +636,10 @@ public class ExtensionInstaller {
                 }
             }
         } catch (IOException ex) {
-            System.err.println(ex.getMessage());
+            logger.warning(ex.getMessage());
             return false;
         } catch (Exception ex) {
+            logger.severe(ex.toString());
             ex.printStackTrace();
             return false;
         }

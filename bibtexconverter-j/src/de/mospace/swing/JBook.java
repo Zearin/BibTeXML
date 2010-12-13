@@ -31,7 +31,12 @@ import javax.swing.JTabbedPane;
  */
 public class JBook extends JTabbedPane{
 
-    /** Constructs a new instance of this class. **/
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5330543179794466258L;
+
+	/** Constructs a new instance of this class. **/
     public JBook(){
         super();
     }

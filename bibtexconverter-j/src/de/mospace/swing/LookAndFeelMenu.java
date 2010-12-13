@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.prefs.Preferences;
+import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -68,6 +69,11 @@ import de.mospace.lang.DefaultClassLoaderProvider;
  * @version $Revision$ ($Date$)
  */
 public class LookAndFeelMenu extends JMenu {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3714644128674589172L;
+	private static final Logger logger = Logger.getLogger(LookAndFeelMenu.class.getPackage().getName());
     private List lafItems;
     private Preferences node = null;
     private Window win;
@@ -443,13 +449,12 @@ public class LookAndFeelMenu extends JMenu {
                     ).newInstance();
             UIManager.setLookAndFeel(newLAF);
         } catch (Exception ex) {
-            System.err.println("Error setting Look and Feel to " + classname);
+            logger.warning("Error setting Look and Feel to " + classname);
             try{
                 UIManager.setLookAndFeel(oldLAF);
-                System.err.println("Successfully switched back to " + oldLAF.toString());
+                logger.warning("Successfully switched back to " + oldLAF.toString());
             } catch (Exception ignore){
-                System.err.println(ignore);
-                System.err.flush();
+                logger.severe(ignore.toString());
             }
             result = false;
         }
@@ -507,7 +512,11 @@ public class LookAndFeelMenu extends JMenu {
      * @author ringler
      */
     private static class LaFMenuItem extends JRadioButtonMenuItem {
-        private final LookAndFeelInfo lafInfo;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 2935119810150059278L;
+		private final LookAndFeelInfo lafInfo;
 
 
         /**
@@ -582,7 +591,11 @@ public class LookAndFeelMenu extends JMenu {
      * @author ringler
      */
     private class LafInstallerMenuItem extends JMenuItem implements ActionListener {
-        private final File idir;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -8645896144873942959L;
+		private final File idir;
         private final File iprops;
 
 
@@ -615,9 +628,8 @@ public class LookAndFeelMenu extends JMenu {
                             iprops);
                     LaFInstaller.LaFPackage laf = lafi.queryLaF();
                     if (laf == null){
-                        System.err.println("No Look and Feel found.");
+                        logger.warning("No Look and Feel found.");
                     } else {
-                        System.err.print(laf);
                         if(lafi.installLaF(laf, clp)) {
                             JMenuItem item = addLookAndFeel(laf);
                             if(clp == null){
@@ -627,19 +639,17 @@ public class LookAndFeelMenu extends JMenu {
                                 item.addActionListener(lnfListener);
                                 item.doClick();
                             }
-                            System.err.println(" installed");
+                            logger.info(laf.toString() + " installed");
                         } else {
-                            System.err.println(" not installed.");
+                            logger.info(laf.toString() + " not installed.");
                         }
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    logger.severe(ex.toString());
                 }
             } else {
                 LaFInstaller.warnCannotInstall(parent, iprops);
             }
-            System.err.flush();
-            System.out.flush();
         }
     }
 

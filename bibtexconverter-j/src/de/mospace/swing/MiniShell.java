@@ -47,16 +47,30 @@ import javax.swing.JToolBar;
  **/
 public class MiniShell extends JPanel {
 
-    private JDialog dialg;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1917900968509402420L;
+	private JDialog dialg;
     private final Action dockAction = new AbstractAction(GLOBALS.getString("Dock")) {
-        public void actionPerformed(ActionEvent e) {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -5962758199538763704L;
+
+		public void actionPerformed(ActionEvent e) {
             dock();
         }
     };
 
     private JButton dockButton;
     private final Action floatAction = new AbstractAction(GLOBALS.getString("Float")) {
-        public void actionPerformed(ActionEvent e) {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 8874905841964360921L;
+
+		public void actionPerformed(ActionEvent e) {
             undock();
         }
     };
@@ -70,7 +84,12 @@ public class MiniShell extends JPanel {
     private ProcessIOPane piop;
     /* must not fail when the ActionEvent is null */
     private final Action showAction = new AbstractAction(GLOBALS.getString("Console")){
-        public void actionPerformed(ActionEvent e) {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 4078511114006026165L;
+
+		public void actionPerformed(ActionEvent e) {
             if (isFloating()) {
                 showDialog();
             } else {
@@ -80,7 +99,12 @@ public class MiniShell extends JPanel {
     };
 
     private final Action closeAction = new AbstractAction(GLOBALS.getString("Close")){
-        public void actionPerformed(ActionEvent e) {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 8833436190786366051L;
+
+		public void actionPerformed(ActionEvent e) {
             close();
         }
     };
@@ -116,7 +140,12 @@ public class MiniShell extends JPanel {
      */
     public MiniShell(JFrame f, int w, int h, String title, boolean floating) {
         init(f, w, h, title, new ProcessIOPane(5, 50){
-            protected boolean builtin(String s){
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 6910445530165577676L;
+
+			protected boolean builtin(String s){
                 return  super.builtin(s) || ("exit".equals(s) && close());
             }
 

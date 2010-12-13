@@ -19,6 +19,7 @@
 package de.mospace.swing;
 
 import java.awt.Color;
+import java.util.logging.Logger;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -57,6 +58,11 @@ import javax.swing.text.Document;
  * @see ProcessIOPane
 **/
 public class IOPane extends JPanel {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5656467310653547648L;
+	private static final Logger logger = Logger.getLogger(IOPane.class.getPackage().getName());
     /** whether to prepend a prompt sign to the echoed input **/
     protected boolean prependPrompt = true;
     /** holds history items as strings **/
@@ -331,22 +337,19 @@ public class IOPane extends JPanel {
      * Removes surplus lines from the start of the text in the output area.
      */
     private void trim() {
-        if (getMaxLines() > 0 && jta.getLineCount() > getMaxLines()) {
+        final int max = getMaxLines();
+        final int surplus = jta.getLineCount() - max;
+        if (max > 0 && surplus > 0) {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     try {
                         synchronized (jta.getDocument()) {
-
-                            int linesToDelete = jta.getLineCount() -
-                                                getMaxLines() - 2;
                             jta.getDocument().remove(0,
-                                                     jta.getLineEndOffset(
-                                                                 linesToDelete));
+                                                     jta.getLineEndOffset(surplus));
                             jta.getDocument().notifyAll();
                         }
                     } catch (BadLocationException ex) {
-                        System.err.println(ex);
-                        System.err.flush();
+                        logger.warning(ex.toString());
                     }
                 }
             });
@@ -425,7 +428,12 @@ public class IOPane extends JPanel {
     /** Default implementation of the IOPane.History interface. **/
     public static final class VectorHistory extends Vector implements History {
 
-        private final ActionListener addListener = new ActionListener() {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -1905559111577529320L;
+
+		private final ActionListener addListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand() != null &&
                             !e.getActionCommand().equals("")) {

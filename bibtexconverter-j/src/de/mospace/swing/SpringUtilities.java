@@ -3,16 +3,18 @@ package de.mospace.swing;
 import javax.swing.*;
 import javax.swing.SpringLayout;
 import java.awt.*;
+import java.util.logging.Logger;
 
 /**
  * This is SpringUtilities from the java tutorial.
- * http://java.sun.com/docs/books/tutorial/uiswing/layout/examples/SpringUtilities.java 
+ * http://java.sun.com/docs/books/tutorial/uiswing/layout/examples/SpringUtilities.java
  * A 1.4 file that provides utility methods for
  * creating form- or grid-style layouts with SpringLayout.
  * These utilities are used by several programs, such as
  * SpringBox and SpringCompactGrid.
  */
 public class SpringUtilities {
+    private static final Logger logger = Logger.getLogger(SpringUtilities.class.getPackage().getName());
     /**
      * A debugging utility that prints to stdout the component's
      * minimum, preferred, and maximum sizes.
@@ -45,7 +47,7 @@ public class SpringUtilities {
         try {
             layout = (SpringLayout)parent.getLayout();
         } catch (ClassCastException exc) {
-            System.err.println("The first argument to makeGrid must use SpringLayout.");
+            logger.severe("The first argument to makeGrid must use SpringLayout.");
             return;
         }
 
@@ -148,7 +150,7 @@ public class SpringUtilities {
         try {
             layout = (SpringLayout)parent.getLayout();
         } catch (ClassCastException exc) {
-            System.err.println("The first argument to makeCompactGrid must use SpringLayout.");
+            logger.severe("The first argument to makeCompactGrid must use SpringLayout.");
             return;
         }
 

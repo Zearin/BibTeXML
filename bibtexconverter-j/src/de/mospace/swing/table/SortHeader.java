@@ -60,7 +60,11 @@ import de.mospace.swing.icon.BlankIcon;
 * @author Moritz Ringler
 */
 public class SortHeader extends JTableHeader implements TableCellRenderer {
-    private int activeColumn = -1;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3797288124179411432L;
+	private int activeColumn = -1;
     private int popupColumn = -1;
     private final Action sortAction;
     private final Action randomizeAction;
@@ -69,7 +73,11 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
     private final ArrowButton arrowButton = new ArrowButton(BevelArrowIcon.DOWN);;
 
     private static class ArrowButton extends JButton{
-        BevelArrowIcon icon, pressedIcon;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 6810849957029567699L;
+		BevelArrowIcon icon, pressedIcon;
 
         /** @param initialState one of BevelArrowIcon.UP and BevelArrowIcon.DOWN **/
         public ArrowButton(int initialState){
@@ -93,6 +101,7 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
     * does not implement {@link SortableTableModel}.
     */
     public SortHeader(JTable table) {
+        super(table.getColumnModel());
         setTableImpl(table);
         MouseListener ml = new MouseListener();
         addMouseListener(ml);
@@ -102,7 +111,12 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
         noneButton.setMargin(new Insets(0,0,0,0));
 
         sortAction = new AbstractAction(GLOBALS.getString("Sort")){
-            public void actionPerformed(ActionEvent e){
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1724674134717671381L;
+
+			public void actionPerformed(ActionEvent e){
                 sort(popupColumn);
                 /* repaint the header */
                 JTableHeader header = getTable().getTableHeader();
@@ -111,7 +125,12 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
         };
 
         randomizeAction = new AbstractAction(GLOBALS.getString("Randomize")){
-            public void actionPerformed(ActionEvent e){
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 322437783421634633L;
+
+			public void actionPerformed(ActionEvent e){
                 randomize();
                 /* repaint the header */
                 JTableHeader header = getTable().getTableHeader();
@@ -189,10 +208,9 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
 
     private class MouseListener extends MouseAdapter{
         public void mousePressed(MouseEvent me) {
-            trigger = me;
             /* Left-Click: Sort or Randomize */
             if ((me.getButton() == MouseEvent.BUTTON1)){
-                activeColumn = getTable().getColumnModel().getColumnIndexAtX(trigger.getX());
+                activeColumn = columnAtPoint(me.getPoint());
                 if(me.isShiftDown()){
                     randomize();
                 } else {
@@ -214,7 +232,7 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
         }
 
         public void showPopup(MouseEvent me){
-                popupColumn = getTable().getColumnModel().getColumnIndexAtX(trigger.getX());
+                popupColumn = columnAtPoint(me.getPoint());
                 JPopupMenu popup = new JPopupMenu();
                 TableModel model = getTable().getModel();
                 if (model instanceof HeaderPopupTableModel){

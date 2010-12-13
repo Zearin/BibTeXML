@@ -52,7 +52,12 @@ import javax.swing.event.ChangeListener;
  **/
 public class VariableRangeSlider extends JPanel {
 
-    /** A constant holding the maximum value allowed for
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7711349632454893123L;
+
+	/** A constant holding the maximum value allowed for
      *  logrange in {@link #setLogRange(int) setLogRange(int)}.
      **/
     public final static int    MAX_LOG_RANGE     =
@@ -162,7 +167,12 @@ public class VariableRangeSlider extends JPanel {
         value.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
                 0),"check");
         value.getActionMap().put("check", new AbstractAction(){
-            public void actionPerformed(ActionEvent e) {
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = -3799648455918035218L;
+
+			public void actionPerformed(ActionEvent e) {
                 if (!value.isEditValid()) {
                     value.selectAll();
                 } else try {

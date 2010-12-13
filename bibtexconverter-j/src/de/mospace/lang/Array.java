@@ -28,6 +28,7 @@ import java.util.Arrays;
  */
 public class Array{
     private Array(){
+        // hide default constructor.
     }
     /**Joins the elements of an Object array to a character-delimited String.
      * No warning will
@@ -116,9 +117,9 @@ public class Array{
             int[][] result = new int[j][2];
             System.arraycopy(rawresult,0,result,0,j);
             return result;
-        } else {
-            return rawresult;
         }
+            
+        return rawresult;
     }
 
     /** Extracts a sub-array from a double array.

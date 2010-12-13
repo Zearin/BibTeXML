@@ -59,7 +59,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
     */
     public static File getRepositoryRootDir(Class klass){
         File f = new File(getRepositoryRoot(klass));
-        return (f == null || f.isDirectory())? f : f.getAbsoluteFile().getParentFile();
+        return f.isDirectory()? f : f.getAbsoluteFile().getParentFile();
     }
 
     /** Tries to determine the class path
@@ -139,8 +139,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
             try{
                 jarFiles.add(new File(new URI(urls[i].toString())));
             } catch (URISyntaxException ex){
-                //Should never happen
-                ex.printStackTrace();
+                throw new Error(ex);
             }
         }
         return (File[]) jarFiles.toArray(new File[jarFiles.size()]);
@@ -154,6 +153,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
      * @return a ClassLoader that looks for class files in all successfully
      * registered libraries.
      */
+    @Override
     public final synchronized ClassLoader getClassLoader(){
         return updateClassLoader();
     }
@@ -167,6 +167,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
      * @throws IllegalArgumentException if jarFile does not exist
      *         or is not a jar file
      **/
+    @Override
     public final synchronized boolean registerLibrary(File jarFile){
         super.registerLibrary(jarFile); //will throw the required Exceptions
         return addLib(jarFile);
@@ -178,6 +179,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
      * @param jarFiles an array of jar archives with Java class files
      * @return true if at least one jarFile was newly registered
      **/
+    @Override
     public final synchronized boolean registerLibraries(File[] jarFiles){
         boolean result = false;
         for(int i = 0; i<jarFiles.length; i++){
@@ -196,6 +198,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
      * for wich the request was honored.
      * @throws IllegalArgumentException if <code>dir</code> is not a directory
      */
+    @Override
     public final synchronized  boolean registerLibraryDirectory(File dir){
         super.registerLibraryDirectory(dir); //will throw the right Exceptions
         return addLibDir(dir);
@@ -209,6 +212,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
      * @return true if there was at least one jar archive in <code>dirs</code>,
      * for wich the request was honored.
      **/
+    @Override
     public final synchronized boolean registerLibraryDirectories(File[] dirs){
         boolean result = false;
         for(int i=0; i < dirs.length; i++){

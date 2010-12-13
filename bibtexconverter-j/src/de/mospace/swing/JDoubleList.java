@@ -24,7 +24,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -49,14 +48,24 @@ import de.mospace.swing.icon.DoubleArrowIcon;
  */
 public class JDoubleList extends JPanel{
 
-    /** Minimum requirements on a model for one of the JLists. **/
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8585197737990921117L;
+
+	/** Minimum requirements on a model for one of the JLists. **/
     public static interface SingleListModel extends ListModel{
         public Object remove(int index);
         public void add(int index, Object element);
     }
 
     public static class DefaultSingleListModel extends DefaultListModel implements SingleListModel{
-        public DefaultSingleListModel(){
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 2537061809772069275L;
+
+		public DefaultSingleListModel(){
             super();
         }
     }
@@ -81,7 +90,12 @@ public class JDoubleList extends JPanel{
     private boolean leftOrderFixed = false;
 
     private class ScrollPane extends JScrollPane{
-        public ScrollPane(Component c){
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -3554373664394765900L;
+
+		public ScrollPane(Component c){
             super(c);
         }
 

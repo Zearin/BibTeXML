@@ -30,6 +30,7 @@ public final class NullStream extends OutputStream{
     private static NullStream instance;
 
     private NullStream(){
+        // hide default constructor.
     }
 
     /** Returns the sole instance of this class.
@@ -46,6 +47,7 @@ public final class NullStream extends OutputStream{
     * clone is not supported.
     * @throws CloneNotSupportedException This method always throws a CloneNotSupportedException.
     */
+    @Override
     public Object clone() throws CloneNotSupportedException{
         throw new CloneNotSupportedException();
     }
@@ -53,6 +55,7 @@ public final class NullStream extends OutputStream{
     /** Does nothing.
     *@throws IOException This method will not throw an Exception.
     */
+    @Override
     public void write(int b) throws IOException{
         //Does nothing.
     }
@@ -60,6 +63,7 @@ public final class NullStream extends OutputStream{
     /** Does nothing.
     *@throws IOException This method will not throw an Exception.
     */
+    @Override
     public void write(byte[] b) throws IOException{
         //Does nothing.
     }
@@ -67,6 +71,7 @@ public final class NullStream extends OutputStream{
     /** Does nothing.
     *@throws IOException This method will not throw an Exception.
     */
+    @Override
     public void write(byte[] b, int off, int len) throws IOException{
         //Does nothing.
     }

@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
@@ -38,6 +39,7 @@ import javax.swing.text.StyleConstants;
 * @author Moritz Ringler
 */
 public class DocumentOutputStream extends OutputStream {
+    private static final Logger logger = Logger.getLogger(DocumentOutputStream.class.getPackage().getName());
 
     private Charset charset;
     private Document doc;
@@ -253,19 +255,25 @@ public class DocumentOutputStream extends OutputStream {
     *
     * @param s the String to append
     */
-    private void append(final String s) {
+    private void append(final String s) throws IOException {
         try {
             if (EventQueue.isDispatchThread()) {
                 doc.insertString(doc.getLength(), s, currentStyle);
             } else {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        append(s);
+                        try{
+                            append(s);
+                        } catch (IOException ex){
+                            logger.severe(ex.toString());
+                        }
                     }
                 });
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            IOException iox = new IOException("Cannot write string " + s);
+            iox.initCause(ex);
+            throw iox;
         }
     }
 }

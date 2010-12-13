@@ -28,7 +28,11 @@ import java.util.EventObject;
  * @version $Revision$ ($Date$)
  */
 public class DataChangeEvent extends EventObject{
-    private int numOfChanges = 1;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6584824184768549764L;
+	private int numOfChanges = 1;
     
     /** Creates a new DataChangeEvent for a single change in the data of the
     * source.

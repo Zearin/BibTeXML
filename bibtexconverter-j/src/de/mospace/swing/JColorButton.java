@@ -30,7 +30,11 @@ import javax.swing.JColorChooser;
  * @version $Revision$ ($Date$)
  */
 public class JColorButton extends JButton{
-    private boolean fg = false;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5353115946792227422L;
+	private boolean fg = false;
     Color myColor;
     String title="";
     ActionListener onClick = new ActionListener(){

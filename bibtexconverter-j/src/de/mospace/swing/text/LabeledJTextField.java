@@ -33,7 +33,11 @@ import javax.swing.JTextField;
  * @author Moritz Ringler
 **/
 public class LabeledJTextField extends JPanel{
-    private final JTextField jTextField;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6304773250787813813L;
+	private final JTextField jTextField;
 
     /** Constructs a new text field with the specified label
     * and initial text.

@@ -29,7 +29,11 @@ import javax.swing.JSlider;
 * @see javax.swing.JSlider
 **/
 public class JSliderDouble extends JSlider{
-    private final double mmin;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4957076861562889929L;
+	private final double mmin;
     private final double sstep;
 
     /** Constructs a new instance of this class.

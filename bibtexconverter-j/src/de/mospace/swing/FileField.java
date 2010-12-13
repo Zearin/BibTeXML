@@ -19,6 +19,7 @@
 package de.mospace.swing;
 
 import java.awt.BorderLayout;
+import java.util.logging.Logger;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -42,6 +43,11 @@ import javax.swing.JPanel;
 * @deprecated use PathInput instead
 **/
 public class FileField extends JPanel {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -987646075270703127L;
+	private static final Logger logger = Logger.getLogger(FileField.class.getPackage().getName());
     private final JLabel file;
 
     /** Constructs a new FileField with the specified title and initial
@@ -55,7 +61,12 @@ public class FileField extends JPanel {
         JLabel text       = new JLabel(label);
         text.setBorder(BorderFactory.createEmptyBorder(2,0,5,0));
         file = new JLabel((f==null)?"":f.toString()){
-            /* Strangely enough this modified setText
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = -2556756180282262596L;
+
+			/* Strangely enough this modified setText
             * leeds to the JLabel assuming its preferredSize
             * That effect seems to depend on the registered
             * propertyChangeListener below
@@ -71,12 +82,17 @@ public class FileField extends JPanel {
         file.setBackground(Color.white);
         b.add(file, BorderLayout.CENTER);
         b.add(new JButton(new AbstractAction(".."){
-            public void actionPerformed(ActionEvent e){
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 7746141229259068418L;
+
+			public void actionPerformed(ActionEvent e){
                 JFileChooser jfc = new JFileChooser();
                 try{
                     jfc.setCurrentDirectory(getFile());
                 } catch (Exception ex){
-                    System.err.println(ex);
+                    logger.warning(ex.toString());
                 }
                 if (jfc.showOpenDialog(FileField.this) == JFileChooser.APPROVE_OPTION){
                     file.setText(jfc.getSelectedFile().getAbsolutePath());

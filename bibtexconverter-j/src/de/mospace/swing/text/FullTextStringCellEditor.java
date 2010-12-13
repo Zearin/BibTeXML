@@ -52,7 +52,11 @@ import de.mospace.lang.FullTextString;
 **/
 public class FullTextStringCellEditor extends AbstractCellEditor
 implements TableCellEditor {
-    /**The button is used as the primary cell editor. However, ist is nothing
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7996656081466743919L;
+	/**The button is used as the primary cell editor. However, ist is nothing
      * but a trigger for dialg which does the actual editing. */
     private final ShortButton button = new ShortButton();
     /** A JScrollPane containing a TextArea where the FullTextString
@@ -124,6 +128,16 @@ implements TableCellEditor {
         }
         /* store the current value of the cell in the button. */
         button.setValue(value);
+        // Assures the dialog is openend.
+        // If we don't do this the dialog is not opened
+        // in Java < 1.6, and opened in Java 1.6.
+        SwingUtilities.invokeLater(new Runnable(){
+                public void run(){
+                    if(dialg == null || !dialg.isVisible()){
+                        button.doClick();
+                    }
+                }
+        });
 
         /* return the button as primary cell editor */
         return (Component) button;
@@ -172,7 +186,11 @@ implements TableCellEditor {
     /* MYDIALOG CLASS */
     /** The dialog used to edit the multiline-string. **/
     private class MyDialog extends JScrollPane {
-        private boolean added = false;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 5693748492476549263L;
+		private boolean added = false;
         private boolean isEditing = false;
         private final JTextArea myText = new JTextArea("");
         private int height = 100;
@@ -192,13 +210,23 @@ implements TableCellEditor {
             });
 
             final Action cancelAction = new AbstractAction(){
-                public void actionPerformed(ActionEvent e){
+                /**
+				 * 
+				 */
+				private static final long serialVersionUID = 8633919185378179264L;
+
+				public void actionPerformed(ActionEvent e){
                     cancelCellEditing();
                 }
             };
 
             final Action okAction = new AbstractAction(){
-                public void actionPerformed(ActionEvent e){
+                /**
+				 * 
+				 */
+				private static final long serialVersionUID = -716688852140613412L;
+
+				public void actionPerformed(ActionEvent e){
                     stopCellEditing();
                 }
             };
@@ -278,7 +306,11 @@ implements TableCellEditor {
     */
     private class ShortButton extends JButton {
 
-        private String text;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 5799900422225575747L;
+		private String text;
 
         /**
         * Creates a new ShortButton object.

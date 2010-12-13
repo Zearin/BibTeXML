@@ -82,7 +82,11 @@ Date, yyyy-MM-dd, > 2007-02-15
 * @author Moritz Ringler
 */
 public class GeneralInputVerifier extends InputVerifier implements java.io.Serializable{
-    private Class  myClass;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4218882472153372100L;
+	private Class  myClass;
     private Method method;
     private Object obj = null;
     private Constructor constructor;

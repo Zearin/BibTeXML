@@ -22,7 +22,6 @@ package de.mospace.swing;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.io.File;
-import java.util.prefs.Preferences;
 
 /**
 * @author Moritz Ringler
@@ -30,7 +29,12 @@ import java.util.prefs.Preferences;
 */
 public class URIInput extends PathInput{
 
-    public URIInput(String url){
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8937439528031134966L;
+
+	public URIInput(String url){
         super(url);
     }
 

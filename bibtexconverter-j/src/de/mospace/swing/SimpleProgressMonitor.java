@@ -89,7 +89,12 @@ import javax.swing.UIManager;
              }
          });
          dialog = new JDialog(f, title, false){
-             protected void processWindowEvent(WindowEvent e){
+             /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1271281951099613074L;
+
+			protected void processWindowEvent(WindowEvent e){
                  if (e.getID() == WindowEvent.WINDOW_CLOSING) {
                      cancel();
                  }

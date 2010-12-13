@@ -51,7 +51,11 @@ import de.mospace.swing.text.DocumentOutputStream;
  *  @author Moritz Ringler
  **/
 public class ProcessIOPane extends IOPane{
-     //private boolean closeWhenDone = false;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6001581343084928041L;
+	//private boolean closeWhenDone = false;
      private File pwd;
      private final RunnableQueue myProcesses = new RunnableQueue();
      private final OutputStream iopOut = new DocumentOutputStream(getDocument());
@@ -64,19 +68,34 @@ public class ProcessIOPane extends IOPane{
     };
     private final Action interruptAction = new AbstractAction(
             GLOBALS.getString("Interrupt")){
-        public void actionPerformed(ActionEvent e){
+        /**
+				 * 
+				 */
+				private static final long serialVersionUID = 7529405734772537733L;
+
+		public void actionPerformed(ActionEvent e){
             interrupt();
         }
     };
 
     private final Action clearAction = new AbstractAction(GLOBALS.getString("Clear")){
-        public void actionPerformed(ActionEvent e){
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -8409632569658079563L;
+
+		public void actionPerformed(ActionEvent e){
             getOutputArea().setText("");
         }
     };
 
     private final Action systemShellAction = new AbstractAction(GLOBALS.getString("System shell")){
-        public void actionPerformed(ActionEvent e){
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -3495663945163001764L;
+
+		public void actionPerformed(ActionEvent e){
             if (systemShell == null || systemShell.equals("")){
                 setSystemShell(querySystemShell());
             }

@@ -23,7 +23,11 @@ import java.io.Serializable;
 /** A minimal implementation of the ClassLoaderProvider interface whose
 * {@link #getClassLoader getClassLoader} method always returns the same classloader. **/
 public class MinimalClassLoaderProvider implements ClassLoaderProvider, Serializable {
-    private final ClassLoader classloader;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8299292519421247198L;
+	private final ClassLoader classloader;
 
     /** Contructs a new MinimalClassLoaderProvider whose {@link #getClassLoader}
     * method will always return the specified class loader.
@@ -44,6 +48,7 @@ public class MinimalClassLoaderProvider implements ClassLoaderProvider, Serializ
 
     /** Returns the class loader specified when this MinimalClassLoader
     * is instantiated. */
+    @Override
     public ClassLoader getClassLoader(){
         return classloader;
     }
@@ -55,6 +60,7 @@ public class MinimalClassLoaderProvider implements ClassLoaderProvider, Serializ
      * @throws IllegalArgumentException if jarFile does not exist
      *         or is not a jar file
      **/
+    @Override
     public boolean registerLibrary(File jarFile){
         if (! (jarFile.isFile() && jarFile.getName().endsWith(".jar"))){
             throw new IllegalArgumentException("Argument must be a jar file.");
@@ -65,6 +71,7 @@ public class MinimalClassLoaderProvider implements ClassLoaderProvider, Serializ
     /** Does nothing.
      * @param jarFiles an array of jar archives with Java class files 
      * @return <code>false</code> */
+    @Override
     public boolean registerLibraries(File[] jarFiles){
         return false;
     }
@@ -75,6 +82,7 @@ public class MinimalClassLoaderProvider implements ClassLoaderProvider, Serializ
      * @return <code>false</code>
      * @throws IllegalArgumentException if <code>dir</code> is not a directory
      **/
+    @Override
     public boolean registerLibraryDirectory(File dir){
         if (! dir.isDirectory()){
             throw new IllegalArgumentException("Argument must be a directory.");
@@ -85,6 +93,7 @@ public class MinimalClassLoaderProvider implements ClassLoaderProvider, Serializ
     /** Does nothing.
      * @param dirs an array o directories with jar archives
      * @return <code>false</code> */
+    @Override
     public boolean registerLibraryDirectories(File[] dirs){
         return false;
     }

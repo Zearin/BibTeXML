@@ -43,7 +43,11 @@ import javax.swing.ListModel;
 import javax.swing.UIManager;
 
 public class ListPicker extends JDialog{
-    private ListModel model;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1897142665965261039L;
+	private ListModel model;
     private final JList list = new JList();
     private Object value;
     private final Container customButtons = new JPanel();
@@ -90,7 +94,12 @@ public class ListPicker extends JDialog{
         list.setModel(model);
         list.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         Action okAction = new AbstractAction(UIManager.getString("OptionPane.okButtonText")){
-            public void actionPerformed(ActionEvent e){
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = -5565172828981184862L;
+
+			public void actionPerformed(ActionEvent e){
                 value = list.getSelectedValue();
                 if(value != null){
                     ListPicker.this.setVisible(false);
@@ -154,7 +163,11 @@ public class ListPicker extends JDialog{
     }
 
     private static class PickerButton extends JButton{
-        final String bvalue;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -8099171001511267260L;
+		final String bvalue;
         final ListPicker picker;
 
         public PickerButton(String title, String pvalue, ListPicker picker){

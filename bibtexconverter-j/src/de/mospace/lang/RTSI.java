@@ -73,7 +73,7 @@ public class RTSI {
                         try{
                             jars.add(libs[i].toURI().toURL());
                         } catch (MalformedURLException ignore){
-                            System.err.println(ignore);
+                            logger.warning(ignore.toString());
                         }
                     }
                 }
@@ -81,7 +81,7 @@ public class RTSI {
                 try{
                     jars.add(lib.toURI().toURL());
                 } catch (MalformedURLException ignore){
-                    System.err.println(ignore);
+                    logger.warning(ignore.toString());
                 }
             }
         }
@@ -128,7 +128,7 @@ public class RTSI {
                 RTSI.class.getName(),
                 "find(String)",
                 "Class "+tosubclassname+" not found!", ex);
-            System.err.println("Class "+tosubclassname+" not found!");
+            //System.err.println("Class "+tosubclassname+" not found!");
         }
     }
 
@@ -147,7 +147,7 @@ public class RTSI {
                     RTSI.class.getName(),
                     "find(String, String)",
                     "Class "+tosubclassname+" not found!", ex);
-            System.err.println("Class "+tosubclassname+" not found!");
+            //System.err.println("Class "+tosubclassname+" not found!");
         }
     }
 
@@ -324,8 +324,8 @@ public class RTSI {
                     RTSI.class.getName(),
                     "find(String, Class)",
                     "Error in RTSI: Returning Empty Array!", ex);
-            System.err.println("Error in RTSI: Returning Empty Array!");
-            ex.printStackTrace(System.err);
+            //System.err.println("Error in RTSI: Returning Empty Array!");
+            //ex.printStackTrace(System.err);
             return new String[]{};
         }
         // New code
@@ -384,7 +384,7 @@ public class RTSI {
                     }
                 }
             } catch (IOException ioex) {
-                System.err.println(ioex);
+                logger.warning(ioex.toString());
             }
         }
         return (String[]) validSubclasses.toArray(new String[validSubclasses.size()]);

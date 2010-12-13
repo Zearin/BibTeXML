@@ -30,7 +30,11 @@ import javax.swing.Timer;
  * @version $Revision$ ($Date$)
  */
 public class StatusBar extends JLabel{
-      private final Timer clearTimer;
+      /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8924512264734401341L;
+	private final Timer clearTimer;
       private final ActionListener clearTimerActionListener;
       private int defaultTimeout;
       /** initial timeout */

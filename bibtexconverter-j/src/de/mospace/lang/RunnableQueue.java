@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -40,6 +41,7 @@ import javax.swing.event.EventListenerList;
 * @see java.lang.Runnable
 **/
 public class RunnableQueue implements Runnable{
+    private static final Logger logger = Logger.getLogger(RunnableQueue.class.getPackage().getName());
     /** A Runnable that can be enqueued to a RunnableQueue. */
     public static interface Job extends Runnable{
         /** Returns the exit status of this job. Should be zero by default and
@@ -78,6 +80,7 @@ public class RunnableQueue implements Runnable{
     }
 
     private ExceptionHandler eh = new ExceptionHandler(){
+        @Override
         public void handleException(Throwable e){
             //does nothing.
         }
@@ -88,6 +91,7 @@ public class RunnableQueue implements Runnable{
     private boolean goon = true;
     private int lastExitStatus;
     private final Runnable fireStateChange = new Runnable(){
+        @Override
         public void run(){
             fireStateChanged();
         }
@@ -96,6 +100,7 @@ public class RunnableQueue implements Runnable{
     "RunnableQueueThreadGroup"+
     this.toString()
     ){
+        @Override
         public void uncaughtException(Thread t, Throwable e){
             eh.handleException(e);
         }
@@ -105,6 +110,7 @@ public class RunnableQueue implements Runnable{
     * order in which they have been enqueued.
     * @throws IllegalStateException when this queue is already running
     */
+    @Override
     public void run(){
         if(isRunning()){
             throw new
@@ -119,11 +125,9 @@ public class RunnableQueue implements Runnable{
             try{
                 SwingUtilities.invokeAndWait(fireStateChange);
             } catch (InterruptedException ex){
-                System.err.println("Interrupted");
-                ex.printStackTrace();
+                throw new Error(ex);
             } catch (InvocationTargetException ex){
-                System.err.println("InvocationTarget");
-                ex.printStackTrace();
+                throw new Error(ex);
             }
         }
         while(goon && job != null){
@@ -136,28 +140,21 @@ public class RunnableQueue implements Runnable{
                 PipedInputStream pipei = null;
                 try{
                     pipeo = new PipedOutputStream();
-                    pipei = new PipedInputStream(pipeo);
-                    job.readInputFrom(pipei);
-                    inputSink = pipeo;
-                    job.run();
-                } catch (IOException ex){
-                    ex.printStackTrace();
-                } finally {
-                    inputSink = null;
                     try{
-                        if(pipeo != null){
-                            pipeo.close();
-                        }
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                    try{
-                        if(pipei != null){
+                        pipei = new PipedInputStream(pipeo);
+                        try {
+                            job.readInputFrom(pipei);
+                            inputSink = pipeo;
+                            job.run();
+                        } finally {
+                            inputSink = null;
                             pipei.close();
                         }
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+                    } finally {
+                        pipeo.close();
                     }
+                } catch (IOException ex){
+                    logger.severe(ex.toString());
                 }
             }
             lastExitStatus = job.getExitStatus();
@@ -173,11 +170,11 @@ public class RunnableQueue implements Runnable{
             try{
                 SwingUtilities.invokeAndWait(fireStateChange);
             } catch (InterruptedException ex){
-                System.err.println("Interrupted");
-                ex.printStackTrace();
+                //ignore
+                logger.warning(ex.toString());
             } catch (InvocationTargetException ex){
-                System.err.println("InvocationTarget");
-                ex.printStackTrace();
+                //cannot happen
+                throw new Error(ex);
             }
         }
     }
@@ -187,6 +184,7 @@ public class RunnableQueue implements Runnable{
         tg,
         "RunnableQueueThread:"+this.toString()
         ){
+            @Override
             public void run(){
                 RunnableQueue.this.run();
             }
@@ -232,11 +230,7 @@ public class RunnableQueue implements Runnable{
     * or <code>null</code> if no job is awaiting execution in the queue
     */
     public Job getNextRunnable(){
-        if(jobs == null || jobs.isEmpty()){
-            return null;
-        } else {
-            return (Job) jobs.get(0);
-        }
+        return (jobs == null || jobs.isEmpty()) ?  null : (Job) jobs.get(0);
     }
 
     /** Returns the currently running job.
@@ -373,5 +367,9 @@ public class RunnableQueue implements Runnable{
                 ((ChangeListener)listeners[i+1]).stateChanged(changeEvent);
             }
         }
+    }
+
+    public int getLastExitStatus() {
+        return this.lastExitStatus;
     }
 }
