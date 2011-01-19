@@ -1,4 +1,4 @@
-package net.sourceforge.bibtexml.util;
+package de.mospace.lang;
 /*
 * $Id: XSLTUtils.java 326 2007-08-23 15:19:05Z ringler $
 *
@@ -33,10 +33,11 @@ public class TranslatorOutputStream extends FilterOutputStream{
         if(from.length == 0){
             throw new IllegalArgumentException("from must not be empty.");
         }
-        this.from = (byte[]) from.clone();
-        this.to = (byte[]) to.clone();
+        this.from = from.clone();
+        this.to = to.clone();
     }
 
+    @Override
     public void write(int b) throws IOException{
         if(b == from[idx]){
             idx++;
@@ -52,6 +53,7 @@ public class TranslatorOutputStream extends FilterOutputStream{
         }
     }
 
+    @Override
     public void flush() throws IOException{
         if(idx != 0){
             out.write(from, 0, idx);
