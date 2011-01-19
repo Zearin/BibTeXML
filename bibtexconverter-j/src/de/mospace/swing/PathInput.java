@@ -73,6 +73,7 @@ public class PathInput extends Box{
         textfield.setText(path);
         textfield.setTransferHandler(new FileTransferHandler(textfield.getTransferHandler()));
         textfield.addActionListener(new ActionListener(){
+                @Override
                 public void actionPerformed(ActionEvent e){
                     event = e;
                     PathInput.this.fireActionPerformed();
@@ -86,7 +87,8 @@ public class PathInput extends Box{
 			 */
 			private static final long serialVersionUID = 178269836460842899L;
 
-			public void actionPerformed(ActionEvent e){
+			@Override
+            public void actionPerformed(ActionEvent e){
                 browse();
             }
         });
@@ -141,6 +143,7 @@ public class PathInput extends Box{
         return textfield;
     }
 
+    @Override
     public void setEnabled(boolean on){
         super.setEnabled(on);
         textfield.setEnabled(on);
@@ -196,6 +199,7 @@ public class PathInput extends Box{
             this.parent =  parent;
         }
 
+        @Override
         public boolean canImport(JComponent comp, DataFlavor[] flavor){
             boolean result =
                 Arrays.asList(flavor).contains(DataFlavor.javaFileListFlavor);
@@ -207,29 +211,37 @@ public class PathInput extends Box{
             return result;
         }
 
+        @Override
         public int getSourceActions(JComponent comp){
             return COPY_OR_MOVE;
         }
 
+        @Override
         public Transferable createTransferable(JComponent c){
             return new StringSelection(textfield.getSelectedText());
         }
 
+        @SuppressWarnings("unchecked")
+        @Override
         public boolean importData(JComponent comp, Transferable t){
             boolean result = false;
             if(
                  t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
             ){
-                List data = null;
+                List<File> data = null;
                 try{
-                   data = (List) t.getTransferData(DataFlavor.javaFileListFlavor);
+                   Object rawData = t.getTransferData(DataFlavor.javaFileListFlavor);
+                   if (rawData instanceof List<?>)
+                   {
+                       data = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
+                   }
                 } catch (UnsupportedFlavorException ex){
                     throw new Error(ex);
                 } catch (IOException ex){
                     logger.severe(ex.toString());
                 }
                 if(data != null && !data.isEmpty()){
-                    textfield.setText(((File) data.get(0)).getAbsolutePath());
+                    textfield.setText(data.get(0).getAbsolutePath());
                     result = true;
                 }
             } else {
@@ -241,6 +253,7 @@ public class PathInput extends Box{
             }
             if(result){
                 SwingUtilities.invokeLater(new Runnable(){
+                    @Override
                     public void run(){
                         fireActionPerformed();
                     }

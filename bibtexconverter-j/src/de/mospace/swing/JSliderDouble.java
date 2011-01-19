@@ -48,8 +48,7 @@ public class JSliderDouble extends JSlider{
         super(0, (int) ((max-min)/step), (int) ((initialValue - min)/step));
         final int numSteps   = (int) ((max-min)/step);
         final int iLabelStep = (int) (labelStep/step);
-        Hashtable labels = new Hashtable();
-        labelStep = iLabelStep * step;
+        Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
         double d = truncate(min,step);
         for(int i = 0; i <= numSteps; i+=iLabelStep){
             int ival = (int) d;
@@ -85,11 +84,13 @@ public class JSliderDouble extends JSlider{
     }
 
     /** Disabled. **/
-    public void setLabelTable(Hashtable ht){
+    @Deprecated
+    public void setLabelTable(Hashtable<?, ?> ht){
         //disabled
     }
 
-    /** Disabled. **/
+    /** Does nothing. **/
+    @Override
     public void setMajorTickSpacing(int i){
         //disabled
     }

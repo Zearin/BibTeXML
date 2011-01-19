@@ -102,7 +102,7 @@ public class VariableRangeSlider extends JPanel {
             MIN_LOG_RANGE, MAX_LOG_RANGE, 1));
 
     /** The List that holds all registered changeListeners. */
-    private final List changeListeners = new ArrayList();
+    private final List<ChangeListener> changeListeners = new ArrayList<ChangeListener>();
 
         /** Tells the slider change listener whether the change is caused
         by a slider reset. **/
@@ -114,6 +114,7 @@ public class VariableRangeSlider extends JPanel {
      *  milliseconds after it has been released.
      **/
     private final Timer resetSlider = new Timer(1, new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent evt) {
             isReset = true;
             slider.setValueIsAdjusting(true);
@@ -131,7 +132,7 @@ public class VariableRangeSlider extends JPanel {
      * range -10 to 10 and gridsize 201.
      */
     public VariableRangeSlider() {
-        value.setValue((Number) new Double(0.0));
+        value.setValue(new Double(0.0));
         initComponents();
         configureUI();
     }
@@ -154,10 +155,11 @@ public class VariableRangeSlider extends JPanel {
 
         //text field
         value.addPropertyChangeListener(new PropertyChangeListener(){
+            @Override
             public void propertyChange(PropertyChangeEvent e) {
                 if ("value".equals(e.getPropertyName())) {
-                    Number value = (Number) e.getNewValue();
-                    if (slider != null && value != null) {
+                    Number newValue = (Number) e.getNewValue();
+                    if (slider != null && newValue != null) {
                         slider.setValue(0);
                         fireStateChanged();
                     }
@@ -172,17 +174,21 @@ public class VariableRangeSlider extends JPanel {
 			 */
 			private static final long serialVersionUID = -3799648455918035218L;
 
-			public void actionPerformed(ActionEvent e) {
+			@Override
+            public void actionPerformed(ActionEvent e) {
                 if (!value.isEditValid()) {
                     value.selectAll();
                 } else try {
                     value.commitEdit();
-                } catch (ParseException exc) { }
+                } catch (ParseException exc) { 
+                    // ignore
+                }
             }
         });
 
         //slider
         slider.addChangeListener(new ChangeListener(){
+            @Override
             public void stateChanged(ChangeEvent e){
                 //Do nothing when the change is due to
                 //a re-centering (reset) of the JSlider
@@ -258,7 +264,7 @@ public class VariableRangeSlider extends JPanel {
     /** Reads the internal slider value and transfers it to the text field.
      **/
     private void setTextFieldFromSlider(){
-        double r  = Math.pow(10, (double) getLogRange());
+        double r  = Math.pow(10, getLogRange());
         double o = slider.getValue()*1./halfgridsize * r;
         try{
             setValue(((Number) value.getValue()).doubleValue()+o);
@@ -279,7 +285,7 @@ public class VariableRangeSlider extends JPanel {
         if(r>MAX_VALUE/10 || (r<MIN_VALUE*10 && r != 0)){
             throw new IllegalArgumentException(d + "is out of range!");
         }
-        value.setValue((Number) new Double(d));
+        value.setValue(new Double(d));
         resetSlider.start();
     }
 
@@ -287,13 +293,16 @@ public class VariableRangeSlider extends JPanel {
      *  @return the value of the slider
      **/
     public double getValue(){
+        double result;
         if (!slider.getValueIsAdjusting()){
-            return ((Number) value.getValue()).doubleValue();
+            result = ((Number) value.getValue()).doubleValue();
         } else {
-            double r  = Math.pow(10, (double) getLogRange());
+            double r  = Math.pow(10, getLogRange());
             double o = slider.getValue()*1./halfgridsize * r;
-            return ((Number) value.getValue()).doubleValue() + o;
+            result = ((Number) value.getValue()).doubleValue() + o;
         }
+        
+        return result;
     }
 
     /** Gets the current value of the slider as a formatted String.
@@ -310,13 +319,13 @@ public class VariableRangeSlider extends JPanel {
      **/
     public void setGridsize(int i){
         //ensure gridsize makes sense;
-        if (i < 0){
-            i = - i;
+        int gridsize = Math.abs(i);
+        
+        if (gridsize < 3){
+            gridsize = 3;
         }
-        if (i < 3){
-            i = 3;
-        }
-        halfgridsize = i/2; //integer division!!
+        
+        halfgridsize = gridsize/2; //integer division!!
     }
 
     /** Gets the number of steps used for the slider.
@@ -332,9 +341,9 @@ public class VariableRangeSlider extends JPanel {
     public void setLogRange(int lr){
         if(lr>MAX_LOG_RANGE || lr<MIN_LOG_RANGE){
             throw new IllegalArgumentException(lr + " is out of range!");
-        } else {
-            range.setValue(new Integer(lr));
         }
+        
+        range.setValue(new Integer(lr));
     }
 
     /**	Gets the power of ten that corresponds to half the slider length.
@@ -365,9 +374,9 @@ public class VariableRangeSlider extends JPanel {
      */
     protected synchronized void fireStateChanged(){
         ChangeEvent e = new ChangeEvent(this);
-        Iterator listenersIt = changeListeners.iterator();
+        Iterator<ChangeListener> listenersIt = changeListeners.iterator();
         while(listenersIt.hasNext()){
-            ((ChangeListener) listenersIt.next()).stateChanged(e);
+            listenersIt.next().stateChanged(e);
         }
     }
 
@@ -375,6 +384,7 @@ public class VariableRangeSlider extends JPanel {
      * Overrides method in superclass
      * {@link java.awt.Component#getPreferredSize() java.awt.Component}.
      */
+    @Override
     public Dimension getPreferredSize(){
         return preferredSize;
     }
@@ -383,6 +393,7 @@ public class VariableRangeSlider extends JPanel {
      * Overrides method in superclass
      * {@link java.awt.Component#getMinimumSize() java.awt.Component}.
      */
+    @Override
     public Dimension getMinimumSize(){
         return getPreferredSize();
     }
@@ -393,6 +404,8 @@ public class VariableRangeSlider extends JPanel {
      * @deprecated
      * @see #getPreferredSize
      */
+    @Deprecated
+    @Override
     public Dimension preferredSize(){
         return getPreferredSize();
     }
@@ -403,6 +416,8 @@ public class VariableRangeSlider extends JPanel {
      * @deprecated
      * @see #getMinimumSize
      */
+    @Deprecated
+    @Override
     public Dimension minimumSize(){
         return getPreferredSize();
     }

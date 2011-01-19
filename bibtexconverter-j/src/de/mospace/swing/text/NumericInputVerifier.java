@@ -33,16 +33,17 @@ import javax.swing.text.JTextComponent;
 * @version $Revision$ ($Date$)
 * @author Moritz Ringler
 */
-public class NumericInputVerifier extends InputVerifier implements java.io.Serializable{
+@Deprecated
+public class NumericInputVerifier<T extends Number> extends InputVerifier implements java.io.Serializable{
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = -3369466113721179363L;
-	private Class  myClass = Double.class;
-    private Method method;
-    private Constructor constructor;
-    private Comparable min = null;
-    private Comparable max = null;
+	private Class<T> myClass;
+    private Method valueOfMethod;
+    private Constructor<T> constructor;
+    private Comparable<? super T> min = null;
+    private Comparable<? super T> max = null;
     private transient Exception ex = null;
     
     /** Constructs a new NumericInputVerifier for the given 
@@ -58,7 +59,7 @@ public class NumericInputVerifier extends InputVerifier implements java.io.Seria
     * <code>min</code> and <code>max</code> are not <code>null</code>
     * or instances of <code>c</code>. 
     */
-    public NumericInputVerifier(Class c, Comparable min, Comparable max){
+    public NumericInputVerifier(Class<T> c, Comparable<? super T> min, Comparable<? super T> max){
         setNumberClass(c);
         setUpperLimit(max);
         setLowerLimit(min);
@@ -73,14 +74,14 @@ public class NumericInputVerifier extends InputVerifier implements java.io.Seria
     * <code>valueOf(String)</code> method or a constructor with
     * a single String argument
     */
-    public NumericInputVerifier(Class c){
+    public NumericInputVerifier(Class<T> c){
         setNumberClass(c);
     }
     
     /** Returns the class against which input will be checked.
     * @see #setNumberClass
     */
-    public Class getNumberClass(){
+    public Class<T> getNumberClass(){
         return myClass;
     }
     
@@ -93,17 +94,21 @@ public class NumericInputVerifier extends InputVerifier implements java.io.Seria
     * <code>valueOf(String)</code>
     * method or a single argument string constructor.
     */
-    public void setNumberClass(Class c){
+    public void setNumberClass(Class<T> c){
         if (Number.class.isAssignableFrom(c) || Comparable.class.isAssignableFrom(c)){
             myClass = c;
         } else {
             throw new IllegalArgumentException(String.valueOf(c) + " is not a " +
             "comparable subclass of Number");
         }
-        method = null;
+        valueOfMethod = null;
         constructor = null;
         try{
-            method = c.getMethod("valueOf",new Class[]{String.class});
+            valueOfMethod = c.getMethod("valueOf",new Class[]{String.class});
+            if (!c.isAssignableFrom(valueOfMethod.getReturnType()))
+            {
+                valueOfMethod = null;
+            }
         } catch (NoSuchMethodException exm){
             try {
                 constructor = c.getConstructor(new Class[]{String.class});
@@ -115,44 +120,28 @@ public class NumericInputVerifier extends InputVerifier implements java.io.Seria
     }
     
     /** Sets the largest allowed number.
-    * @param max upper limit. null for none.
+    * @param max2 upper limit. null for none.
     * @throws ClassCastException if <code>max</code> is not <code>null</code>
     * or an instance of <code>getNumberClass</code>.
     */
-    public void setUpperLimit(Comparable max){
-        if(max == null){
-            this.max = null;
-        } else {
-            if(!(myClass.isInstance(max))){
-                throw new ClassCastException("max (" + max + ") is not an " +
-                "instance of " + myClass);
-            }
-            this.max = max;
-        }
+    public void setUpperLimit(Comparable<? super T> max2){
+        this.max = max2;
     }
     
     /** Returns the largest allowed number.
     * @return upper limit. null for none.
     */
-    public Comparable getUpperLimit(){
+    public Comparable<? super T> getUpperLimit(){
         return max;
     }
     
     /** Sets the smallest allowed number.
-    * @param min lower limit. null for none.
+    * @param min2 lower limit. null for none.
     * @throws ClassCastException if <code>min</code> is not <code>null</code>
     * or an instance of <code>getNumberClass</code>.
     */
-    public void setLowerLimit(Comparable min){
-        if(min == null){
-            this.min = null;
-        } else {
-            if(!(myClass.isInstance(min))){
-                throw new ClassCastException("min (" + min + ") is not an " +
-                "instance of " + myClass);
-            }
-            this.min = min;
-        }
+    public void setLowerLimit(Comparable<? super T> min2){
+        this.min = min2;
     }
     
     /** Explains why the last call to {@link #verify} returned false. If the
@@ -172,7 +161,7 @@ public class NumericInputVerifier extends InputVerifier implements java.io.Seria
     /** Returns the smallest allowed number.
     * @return lower limit. null for none.
     */
-    public Comparable getLowerLimit(){
+    public Comparable<? super T> getLowerLimit(){
         return min;
     }
     
@@ -180,6 +169,7 @@ public class NumericInputVerifier extends InputVerifier implements java.io.Seria
     * @throws IllegalArgumentException if <code>input</code> is not a
     * JTextComponent  
     */
+    @Override
     public boolean verify(JComponent input){
         if(!(input instanceof JTextComponent)){
             throw new IllegalArgumentException(input.toString() + " is not a " +
@@ -189,9 +179,26 @@ public class NumericInputVerifier extends InputVerifier implements java.io.Seria
         ex = null;
         Object[] in = new Object[]{((JTextComponent) input).getText()};
         try{
-            Object num = (method == null)
-                ? constructor.newInstance(in)
-                : method.invoke(null, in);
+            T num;
+            if (valueOfMethod == null)
+            {
+                num = constructor.newInstance(in);
+            }
+            else
+            {
+                Object number = valueOfMethod.invoke(null, in);
+                if (this.myClass.isInstance(number))
+                {
+                    @SuppressWarnings("unchecked")
+                    T tnum = (T) number;
+                    num = tnum;
+                }
+                else 
+                {
+                    return false;
+                }
+            }
+            
             result = 
                 ( min == null || min.compareTo(num) <= 0 ) &&
                 ( max == null || max.compareTo(num) >= 0 );

@@ -23,6 +23,7 @@ package de.mospace.swing.event;
  * @version $Revision$ ($Date$)
  * @author Moritz Ringler
  **/
+@Deprecated
 public interface DataChangeGenerator{
     public void addDataChangeListener(DataChangeListener l);
     public void removeDataChangeListener(DataChangeListener l );

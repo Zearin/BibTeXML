@@ -67,6 +67,7 @@ public class ExtensionInstaller {
     /** @deprecated use
     {@link de.mospace.lang.DefaultClassLoaderProvider#isTemporary}
     instead. **/
+    @Deprecated
     public static boolean isTemporary(File file){
         boolean result = false;
         try{
@@ -363,8 +364,8 @@ public class ExtensionInstaller {
             return false;
         }
 
-        List inEntries = Collections.list(jin.entries());
-        List outEntries = Collections.list(jout.entries());
+        List<? extends ZipEntry> inEntries = Collections.list(jin.entries());
+        List<? extends ZipEntry> outEntries = Collections.list(jout.entries());
 
         /*
          *  test for same number of entries
@@ -376,24 +377,24 @@ public class ExtensionInstaller {
         /*
          *  test entry names, checksums and modification times for equality
          */
-        Comparator comp =
-            new Comparator() {
-                public int compare(Object o1, Object o2) {
-                    return ((ZipEntry) o1).getName().compareTo(
-                            ((ZipEntry) o2).getName());
+        Comparator<ZipEntry> comp =
+            new Comparator<ZipEntry>() {
+                @Override
+                public int compare(ZipEntry o1, ZipEntry o2) {
+                    return o1.getName().compareTo(o2.getName());
                 }
             };
         Collections.sort(inEntries, comp);
         Collections.sort(outEntries, comp);
 
-        Iterator iin = inEntries.iterator();
-        Iterator iout = outEntries.iterator();
+        Iterator<? extends ZipEntry> iin = inEntries.iterator();
+        Iterator<? extends ZipEntry> iout = outEntries.iterator();
         ZipEntry zin;
         ZipEntry zout;
 
         while (iin.hasNext()) {
-            zin = (ZipEntry) iin.next();
-            zout = (ZipEntry) iout.next();
+            zin = iin.next();
+            zout = iout.next();
             if (!zin.getName().equals(zout.getName())) {
                 return false;
             }

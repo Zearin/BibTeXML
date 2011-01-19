@@ -101,6 +101,7 @@ public class JDoubleList extends JPanel{
 
         /** This method assures that both scrollpanes always have
             the same size if this DoubleList is symmetric. **/
+        @Override
         public Dimension getPreferredSize(){
             Dimension d = getPreferredIndividualSize();
             if(symmetric){
@@ -227,11 +228,13 @@ public class JDoubleList extends JPanel{
 
     private void init(){
         FocusAdapter fa = new FocusAdapter(){
+            @Override
             public void focusGained(FocusEvent e){
                 activeList = (JList) e.getSource();
             }
         };
         ActionListener al = new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e){
                 JButton src = (JButton) e.getSource();
                 if (src == buttons[MOVE_RIGHT]){

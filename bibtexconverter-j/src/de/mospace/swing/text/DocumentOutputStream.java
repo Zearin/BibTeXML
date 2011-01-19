@@ -189,6 +189,7 @@ public class DocumentOutputStream extends OutputStream {
     * Closes the output stream. A closed stream cannot perform output
     * operations and cannot be reopened.
     */
+    @Override
     public void close() {
         doc = null;
         charset = null;
@@ -203,6 +204,7 @@ public class DocumentOutputStream extends OutputStream {
     * @param b the byte to write
     * @throws IOException if the output stream has been closed
     */
+    @Override
     public void write(int b) throws IOException {
         write(new byte[]{new Integer(b).byteValue()}, 0, 1);
     }
@@ -220,6 +222,7 @@ public class DocumentOutputStream extends OutputStream {
     *
     * @see #write(byte[], int, int)
     */
+    @Override
     public void write(byte[] b) throws IOException {
         write(b, 0, b.length);
     }
@@ -238,13 +241,14 @@ public class DocumentOutputStream extends OutputStream {
     * @throws IndexOutOfBoundsException if the preconditions on the <code>off</code>
     *         and <code>len</code> parameters do not hold
     */
+    @Override
     public void write(byte[] b, int off, int len) throws IOException {
         b.getClass(); //provoke NullPointerException if b is null
         if (doc == null) {
             throw new IOException("Trying to write to a closed output stream.");
-        } else {
-            append((charset.decode(ByteBuffer.wrap(b, off, len))).toString());
         }
+
+        append((charset.decode(ByteBuffer.wrap(b, off, len))).toString());
     }
 
     /**
@@ -261,6 +265,7 @@ public class DocumentOutputStream extends OutputStream {
                 doc.insertString(doc.getLength(), s, currentStyle);
             } else {
                 SwingUtilities.invokeLater(new Runnable() {
+                    @Override
                     public void run() {
                         try{
                             append(s);

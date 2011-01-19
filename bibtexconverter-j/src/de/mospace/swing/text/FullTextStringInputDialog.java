@@ -60,7 +60,8 @@ private String result = null;
 			 */
 			private static final long serialVersionUID = -6742812662384479083L;
 
-			public void actionPerformed(ActionEvent e){
+			@Override
+            public void actionPerformed(ActionEvent e){
                 result = jta.getText();
                 dispose();
             }
@@ -79,7 +80,8 @@ private String result = null;
 					 */
 					private static final long serialVersionUID = -5235723669537172261L;
 
-			public void actionPerformed(ActionEvent e){
+			@Override
+            public void actionPerformed(ActionEvent e){
                 result = null;
                 dispose();
             }

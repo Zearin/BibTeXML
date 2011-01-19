@@ -65,6 +65,7 @@ public class PopupIcon implements Icon {
     * @param xo the x-offset for this icon
     * @param yo the y-offset for this icon
     */
+    @Override
     public void paintIcon(Component c, Graphics g, int xo, int yo) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.black);
@@ -109,6 +110,7 @@ public class PopupIcon implements Icon {
     *
     * @return the width of this icon
     */
+    @Override
     public int getIconWidth() {
         return size;
     }
@@ -119,6 +121,7 @@ public class PopupIcon implements Icon {
     *
     * @return the height of this icon
     */
+    @Override
     public int getIconHeight() {
         return size;
     }

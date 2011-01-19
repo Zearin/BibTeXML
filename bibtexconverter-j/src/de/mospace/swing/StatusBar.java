@@ -58,7 +58,8 @@ public class StatusBar extends JLabel{
         this.setBorder(BorderFactory.createEtchedBorder());
         this.setText(" ");
         clearTimerActionListener = new ActionListener(){
-          public void actionPerformed(ActionEvent evt){
+          @Override
+        public void actionPerformed(ActionEvent evt){
             clear();
           }
         };

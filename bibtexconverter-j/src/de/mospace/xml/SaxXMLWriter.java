@@ -21,6 +21,7 @@ see http://www.saxproject.org/namespaces.html
 */
 public class SaxXMLWriter{
     /** @deprecated use {@link #getWriter} instead */
+    @Deprecated
     protected final OutputStream out;
     private OutputStreamWriter writer;
     private TransformerHandler hd;
@@ -78,6 +79,7 @@ public class SaxXMLWriter{
         try{
             tf.setAttribute("indent-number", Integer.valueOf(2));
         } catch (IllegalArgumentException ignore){
+            // ignore
         }
         try{
             hd = tf.newTransformerHandler();

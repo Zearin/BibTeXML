@@ -10,9 +10,10 @@ import java.util.ResourceBundle;
 /** Provides static constants for the application. */
 public final class GLOBALS{
     private static ResourceBundle bundle = ResourceBundle.getBundle("de.mospace.swing.DefaultResourceBundle");
-    private static Collection bundleKeys = Collections.list(bundle.getKeys());
+    private static Collection<String> bundleKeys = Collections.list(bundle.getKeys());
 
     private GLOBALS(){
+        // explicit default constructor.
     }
 
     public static String getMessage(String key, Object arg){

@@ -46,6 +46,7 @@ public class FullTextStringCellRenderer extends DefaultTableCellRenderer {
         super();
     }
 
+    @Override
     public Component getTableCellRendererComponent(
                             JTable table, Object value,
                             boolean isSelected, boolean hasFocus,

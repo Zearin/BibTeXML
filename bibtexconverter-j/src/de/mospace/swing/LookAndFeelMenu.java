@@ -74,7 +74,7 @@ public class LookAndFeelMenu extends JMenu {
 	 */
 	private static final long serialVersionUID = -3714644128674589172L;
 	private static final Logger logger = Logger.getLogger(LookAndFeelMenu.class.getPackage().getName());
-    private List lafItems;
+    private List<LaFMenuItem> lafItems;
     private Preferences node = null;
     private Window win;
     private Component dialogParent = null;
@@ -82,6 +82,7 @@ public class LookAndFeelMenu extends JMenu {
     private ClassLoaderProvider clp;
     private final ActionListener lnfListener =
             new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     switchLaF((LaFMenuItem) e.getSource());
                     updateSelection(currentLaF());
@@ -89,6 +90,7 @@ public class LookAndFeelMenu extends JMenu {
             };
 
     private final PropertyChangeListener LaFListener = new PropertyChangeListener(){
+        @Override
         public void propertyChange(PropertyChangeEvent e){
             if(
                 e.getPropertyName().equals("lookAndFeel") &&
@@ -188,10 +190,10 @@ public class LookAndFeelMenu extends JMenu {
 
 
     private void updateSelection(String newLafClass){
-        Iterator it = lafItems.iterator();
+        Iterator<LaFMenuItem> it = lafItems.iterator();
         LaFMenuItem item;
         while(it.hasNext()){
-            item = (LaFMenuItem) it.next();
+            item = it.next();
             String itemclass = item.getLaFClassName();
             if(itemclass.equals(newLafClass)){
                 item.setSelected(true);
@@ -254,17 +256,16 @@ public class LookAndFeelMenu extends JMenu {
         } else if (looks1.length == 0) {
             looks = looks2;
         } else {
-            Set looksSet = new TreeSet(
-                new Comparator() {
-                    public int compare(Object o1, Object o2) {
-                        return
-                                ((LookAndFeelInfo) o1).getName().compareTo(
-                                ((LookAndFeelInfo) o2).getName());
+            Set<LookAndFeelInfo> looksSet = new TreeSet<LookAndFeelInfo>(
+                new Comparator<LookAndFeelInfo>() {
+                    @Override
+                    public int compare(LookAndFeelInfo o1, LookAndFeelInfo o2) {
+                        return o1.getName().compareTo(o2.getName());
                     }
                 });
             looksSet.addAll(Arrays.asList(looks1));
             looksSet.addAll(Arrays.asList(looks2));
-            looks = (LookAndFeelInfo[]) looksSet.toArray(
+            looks = looksSet.toArray(
                     new LookAndFeelInfo[looksSet.size()]);
         }
         win = w;
@@ -286,7 +287,7 @@ public class LookAndFeelMenu extends JMenu {
 
     private void init(LookAndFeelInfo[] looks, final File lafProperties,
             final File installdir) {
-        lafItems = new Vector(looks.length);
+        lafItems = new Vector<LaFMenuItem>(looks.length);
         setText("LnF");
         setMnemonic(KeyEvent.VK_L);
 
@@ -294,9 +295,10 @@ public class LookAndFeelMenu extends JMenu {
         add(installLaF);
 
         Arrays.sort(looks,
-            new Comparator() {
-                public int compare(Object o1, Object o2) {
-                    return ((LookAndFeelInfo) o1).getName().compareTo(((LookAndFeelInfo) o2).getName());
+            new Comparator<LookAndFeelInfo>() {
+                @Override
+                public int compare(LookAndFeelInfo o1, LookAndFeelInfo o2) {
+                    return (o1).getName().compareTo((o2).getName());
                 }
             });
 
@@ -317,7 +319,7 @@ public class LookAndFeelMenu extends JMenu {
              */
             int selectedIndex = lafItems.indexOf(new LaFMenuItem("", prefLaF));
             if (selectedIndex != -1) {
-                switchLaF((LaFMenuItem) lafItems.get(selectedIndex));
+                switchLaF(lafItems.get(selectedIndex));
             }
         }
         UIManager.addPropertyChangeListener(LaFListener);
@@ -568,6 +570,7 @@ public class LookAndFeelMenu extends JMenu {
          * @param o Description of the Parameter
          * @return Description of the Return Value
          */
+        @Override
         public boolean equals(Object o) {
             return (o instanceof LaFMenuItem) &&
                     (((LaFMenuItem) o).getLaFClassName().equals(getLaFClassName()));
@@ -579,6 +582,7 @@ public class LookAndFeelMenu extends JMenu {
          *
          * @return Description of the Return Value
          */
+        @Override
         public int hashCode() {
             return getLaFClassName().hashCode();
         }
@@ -618,6 +622,7 @@ public class LookAndFeelMenu extends JMenu {
          *
          * @param e Description of the Parameter
          */
+        @Override
         public void actionPerformed(ActionEvent e) {
             Component parent = (dialogParent == null)? win : dialogParent;
             if (LaFInstaller.canInstall(iprops)) {

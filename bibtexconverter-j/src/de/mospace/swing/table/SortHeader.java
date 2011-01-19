@@ -68,9 +68,8 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
     private int popupColumn = -1;
     private final Action sortAction;
     private final Action randomizeAction;
-    private transient MouseEvent trigger;
     private final JButton noneButton = new JButton();
-    private final ArrowButton arrowButton = new ArrowButton(BevelArrowIcon.DOWN);;
+    private final ArrowButton arrowButton = new ArrowButton(BevelArrowIcon.DOWN);
 
     private static class ArrowButton extends JButton{
         /**
@@ -116,7 +115,8 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
 			 */
 			private static final long serialVersionUID = 1724674134717671381L;
 
-			public void actionPerformed(ActionEvent e){
+			@Override
+            public void actionPerformed(ActionEvent e){
                 sort(popupColumn);
                 /* repaint the header */
                 JTableHeader header = getTable().getTableHeader();
@@ -130,7 +130,8 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
 			 */
 			private static final long serialVersionUID = 322437783421634633L;
 
-			public void actionPerformed(ActionEvent e){
+			@Override
+            public void actionPerformed(ActionEvent e){
                 randomize();
                 /* repaint the header */
                 JTableHeader header = getTable().getTableHeader();
@@ -145,11 +146,13 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
     /** @throws IllegalArgumentException if the TableModel of the table
     * does not implement {@link SortableTableModel}.
     */
+    @Override
     public void setTable(JTable table){
         setTableImpl(table);
     }
 
     /** must do this to avoid bug in Java 6 */
+    @Override
     public void updateUI(){
         setUI((TableHeaderUI)UIManager.getUI(this));
         //updateUI is called by super constructor
@@ -170,7 +173,8 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
         setColumnModel(table.getColumnModel());
     }
 
-    public Component getTableCellRendererComponent(JTable table, Object value,
+    @Override
+    public Component getTableCellRendererComponent(@SuppressWarnings("hiding") JTable table, Object value,
     boolean isSelected, boolean hasFocus, int row, int col) {
         setTable(table);
         JButton button;
@@ -207,6 +211,7 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
     }
 
     private class MouseListener extends MouseAdapter{
+        @Override
         public void mousePressed(MouseEvent me) {
             /* Left-Click: Sort or Randomize */
             if ((me.getButton() == MouseEvent.BUTTON1)){
@@ -267,6 +272,7 @@ public class SortHeader extends JTableHeader implements TableCellRenderer {
                 );
         }
 
+        @Override
         public void mouseReleased(MouseEvent me) {
             if ((me.getButton() == MouseEvent.BUTTON1)){
                 activeColumn = -1;                // clear

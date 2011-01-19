@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -38,7 +39,6 @@ import java.util.logging.Logger;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Vector;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -83,6 +83,8 @@ public final class LaFInstaller extends ExtensionInstaller {
              *  much lengthier) to overwrite store().
              *  It will do no harm, if keys() is not used.
              */
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            @Override
             public Enumeration keys() {
                 Enumeration ken = super.keys();
                 List kli = Collections.list(ken);
@@ -106,7 +108,7 @@ public final class LaFInstaller extends ExtensionInstaller {
              */
         };
     private static File swingpf = new File(new File(javahome, "lib"), "swing.properties");
-    private final Set installedlafs = new HashSet();
+    private final Set<LaFPackage> installedlafs = new HashSet<LaFPackage>();
     private File fallbackProps = null;
 
 
@@ -361,6 +363,7 @@ public final class LaFInstaller extends ExtensionInstaller {
      * @return ...
      * @throws UnsupportedOperationException
      */
+    @Override
     public boolean installExtension(File jarFile) {
         throw new UnsupportedOperationException();
     }
@@ -377,6 +380,7 @@ public final class LaFInstaller extends ExtensionInstaller {
      * @return ...
      * @throws UnsupportedOperationException
      */
+    @Override
     public boolean installExtension(File zip, String extjars) {
         throw new UnsupportedOperationException();
     }
@@ -400,9 +404,9 @@ public final class LaFInstaller extends ExtensionInstaller {
         LaFPackage lp;
         String laf;
         StringBuffer ilprop = new StringBuffer(installedlafs.size() * 20);
-        Iterator it = installedlafs.iterator();
+        Iterator<LaFPackage> it = installedlafs.iterator();
         while (it.hasNext()) {
-            lp = (LaFPackage) it.next();
+            lp = it.next();
             laf = lp.toString();
             ilprop.append(laf).append(',');
             swingp.setProperty("swing.installedlaf." + laf + ".class",
@@ -418,7 +422,7 @@ public final class LaFInstaller extends ExtensionInstaller {
     /** Updates UIManagers installedLookAndFeels with the current state of installedlafs. */
     public void updateUIManagerInstalledLafs() {
         UIManager.setInstalledLookAndFeels(
-            (LookAndFeelInfo[]) installedlafs.toArray(
+            installedlafs.toArray(
                 new LookAndFeelInfo[installedlafs.size()]
             )
         );
@@ -489,6 +493,7 @@ public final class LaFInstaller extends ExtensionInstaller {
          * @param obj Description of the Parameter
          * @return Description of the Return Value
          */
+        @Override
         public boolean equals(Object obj) {
             return (obj instanceof LaFPackage) && (obj.toString().equals(this.toString()));
         }
@@ -499,6 +504,7 @@ public final class LaFInstaller extends ExtensionInstaller {
          *
          * @return Description of the Return Value
          */
+        @Override
         public int hashCode() {
             return this.toString().hashCode();
         }
@@ -520,6 +526,7 @@ public final class LaFInstaller extends ExtensionInstaller {
          *
          * @return Description of the Return Value
          */
+        @Override
         public String toString() {
             String result = getClassName();
             result.replaceFirst("\\.class$", "");
@@ -547,7 +554,7 @@ public final class LaFInstaller extends ExtensionInstaller {
          * @return all LookAndFeels found in the jar file
          */
         public static LaFPackage[] fromJar(File jar) {
-            List result = new Vector();
+            List<LaFPackage> result = new ArrayList<LaFPackage>();
             ZipFile zip = null;
             URLClassLoader myCl;
             try {
@@ -566,14 +573,14 @@ public final class LaFInstaller extends ExtensionInstaller {
                  *  search the jarfile
                  */
                 zip = new ZipFile(jar);
-                Enumeration entries = zip.entries();
+                Enumeration<? extends ZipEntry> entries = zip.entries();
 
                 while (entries.hasMoreElements()) {
 
                     /*
                      *  look for packages/directories
                      */
-                    ZipEntry dir = (ZipEntry) entries.nextElement();
+                    ZipEntry dir = entries.nextElement();
                     String dirName = dir.getName();
                     if (dir.isDirectory()) {
                         String packageName = dirName.substring(0, dirName.length() - 1).replaceAll("/", ".");
@@ -610,7 +617,7 @@ public final class LaFInstaller extends ExtensionInstaller {
                 }
             }
 
-            return (LaFPackage[]) result.toArray(new LaFPackage[result.size()]);
+            return result.toArray(new LaFPackage[result.size()]);
         }
 
 
@@ -625,7 +632,7 @@ public final class LaFInstaller extends ExtensionInstaller {
          * @exception IOException Description of the Exception
          */
         public static LaFPackage[] fromZip(File zipfile) throws IOException {
-            List result = new Vector();
+            List<LaFPackage> result = new ArrayList<LaFPackage>();
             BufferedInputStream is = null;
             BufferedOutputStream dest = null;
 
@@ -650,12 +657,12 @@ public final class LaFInstaller extends ExtensionInstaller {
              *  read zip file
              */
             ZipFile zip = new ZipFile(zipfile);
-            Enumeration entries = zip.entries();
+            Enumeration<? extends ZipEntry> entries = zip.entries();
             ZipEntry jar;
             String jarName;
 
             while (entries.hasMoreElements()) {
-                jar = (ZipEntry) entries.nextElement();
+                jar = entries.nextElement();
                 jarName = jar.getName();
 
                 if (jarName.endsWith(".jar")) {
@@ -714,10 +721,8 @@ public final class LaFInstaller extends ExtensionInstaller {
                          *  if none are found delete the extracted jar
                          *  from the temporary directory ...
                          */
-                        if (target != null) {
-                            target.delete();
-                            target = null;
-                        }
+                         target.delete();
+                         target = null;
                     } else {
                         /*
                          *  otherwise add the found LaFs to the result list
@@ -726,7 +731,7 @@ public final class LaFInstaller extends ExtensionInstaller {
                     }
                 }
             }
-            return (LaFPackage[]) result.toArray(new LaFPackage[result.size()]);
+            return result.toArray(new LaFPackage[result.size()]);
         }
 
 
@@ -738,6 +743,7 @@ public final class LaFInstaller extends ExtensionInstaller {
          * @param f Description of the Parameter
          * @return Description of the Return Value
          */
+        @SuppressWarnings("unused")
         private static boolean deleteRecursively(File f) {
             if (f.isDirectory()) {
                 File[] ff = f.listFiles();

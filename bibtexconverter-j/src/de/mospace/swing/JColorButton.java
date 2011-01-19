@@ -38,6 +38,7 @@ public class JColorButton extends JButton{
     Color myColor;
     String title="";
     ActionListener onClick = new ActionListener(){
+        @Override
         public void actionPerformed(ActionEvent e){
             Color c;
             c = JColorChooser.showDialog(JColorButton.this,title, myColor);

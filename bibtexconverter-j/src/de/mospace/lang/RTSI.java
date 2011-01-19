@@ -62,7 +62,7 @@ public class RTSI {
     /** deprecated use a ClassLoaderProvider instead */
     public static ClassLoader createLibClassLoader(File[] libdir){
         ClassLoader libClassLoader = null;
-        List jars = new Vector(libdir.length * 10);
+        List<URL> jars = new Vector<URL>(libdir.length * 10);
         for(int j = 0; j<libdir.length; j++){
             File lib = libdir[j];
             if(lib.isDirectory()){
@@ -87,7 +87,7 @@ public class RTSI {
         }
         libClassLoader = jars.isEmpty()
             ? ClassLoader.getSystemClassLoader()
-            : new URLClassLoader((URL[]) jars.toArray(new URL[jars.size()]),
+            : new URLClassLoader(jars.toArray(new URL[jars.size()]),
                     ClassLoader.getSystemClassLoader());
 
         return libClassLoader;
@@ -118,7 +118,7 @@ public class RTSI {
     */
     public void find(String tosubclassname) {
         try {
-            Class tosubclass = Class.forName(tosubclassname, true, classloader);
+            Class<?> tosubclass = Class.forName(tosubclassname, true, classloader);
             Package [] pcks = Package.getPackages();
             for (int i=0;i<pcks.length;i++) {
                 find(pcks[i].getName(),tosubclass);
@@ -140,7 +140,7 @@ public class RTSI {
     */
     public void find(String pckname, String tosubclassname) {
         try {
-            Class tosubclass = Class.forName(tosubclassname, true, classloader);
+            Class<?> tosubclass = Class.forName(tosubclassname, true, classloader);
             find(pckname,tosubclass);
         } catch (ClassNotFoundException ex) {
             logger.logp(Level.SEVERE,
@@ -152,7 +152,7 @@ public class RTSI {
     }
 
     /** pref cache **/
-    public String[] find(String pckname, Class tosubclass,
+    public String[] find(String pckname, Class<?> tosubclass,
             Preferences pref, String buildprop, String buildval){
         String[] result = null;
         Preferences p = pref;
@@ -191,7 +191,7 @@ public class RTSI {
     }
 
     /** property cache **/
-    public String[] find(String pckname, Class tosubclass,
+    public String[] find(String pckname, Class<?> tosubclass,
             File configdir, String buildprop, String buildval){
         File prop = new File(configdir, tosubclass.getName()+".properties");
         Properties properties = new Properties();
@@ -273,7 +273,7 @@ public class RTSI {
     * @param pckgname the fully qualified name of the package
     * @param tosubclass the Class object to inherit from
     */
-    public String[] find(String pckgname, Class tosubclass) {
+    public String[] find(String pckgname, Class<?> tosubclass) {
         logger.logp(Level.INFO,
                     RTSI.class.getName(),
                     "find(String, Class)",
@@ -330,7 +330,7 @@ public class RTSI {
         }
         // New code
         // ======
-        Vector validSubclasses = new Vector();
+        Vector<String> validSubclasses = new Vector<String>();
         if (directory != null && directory.exists()) {
             logger.logp(Level.INFO,
                     RTSI.class.getName(),
@@ -366,7 +366,7 @@ public class RTSI {
                         RTSI.class.getName(),
                         "find(String, Class)",
                         "Jarfile name: " + jfile.getName());
-                Enumeration e = jfile.entries();
+                Enumeration<?> e = jfile.entries();
                 while (e.hasMoreElements()) {
                     ZipEntry entry = (ZipEntry)e.nextElement();
                     String entryname = entry.getName();
@@ -387,7 +387,7 @@ public class RTSI {
                 logger.warning(ioex.toString());
             }
         }
-        return (String[]) validSubclasses.toArray(new String[validSubclasses.size()]);
+        return validSubclasses.toArray(new String[validSubclasses.size()]);
     }
 
     public void main(String []args) {
@@ -402,7 +402,7 @@ public class RTSI {
         }
     }
 
-    public boolean testClass(String classname, Class tosubclass){
+    public boolean testClass(String classname, Class<?> tosubclass){
         boolean result = false;
         logger.logp(Level.FINE,
         RTSI.class.getName(),
@@ -410,7 +410,7 @@ public class RTSI {
         "Candidate class: " + classname);
         try {
             // Test if this class is public.
-            Class cl = Class.forName(classname, true, classloader);
+            Class<?> cl = Class.forName(classname, true, classloader);
             if(Modifier.isPublic(cl.getModifiers())){
                 // Try to create an instance of the object
                 Object o = Class.forName(classname, true, classloader).newInstance();

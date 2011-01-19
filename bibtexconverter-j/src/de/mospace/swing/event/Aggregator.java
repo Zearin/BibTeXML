@@ -41,7 +41,8 @@ public class Aggregator {
     private final Timer timer = new Timer(true); //run as daemon
     private final long aggDelay;
     private final boolean reset;
-    private final Set currentTasks = Collections.synchronizedSet(new HashSet());
+    private final Set<AggregatorTask> currentTasks =
+                Collections.synchronizedSet(new HashSet<AggregatorTask>());
 
     private static class AggregatorTask extends TimerTask{
         private final Runnable job;
@@ -52,6 +53,7 @@ public class Aggregator {
             job = r;
         }
 
+        @Override
         public void run(){
             parent.stopAggregating(this);
             SwingUtilities.invokeLater(job);
@@ -110,9 +112,9 @@ public class Aggregator {
 
     private AggregatorTask getTask(Runnable r){
         AggregatorTask result = null;
-        Iterator it = currentTasks.iterator();
+        Iterator<AggregatorTask> it = currentTasks.iterator();
         while( it.hasNext() && (result == null) ){
-            AggregatorTask task = (AggregatorTask) it.next();
+            AggregatorTask task = it.next();
             if(task.getRunnable().equals(r)){
                 result = task;
             }

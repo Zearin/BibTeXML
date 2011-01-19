@@ -146,6 +146,7 @@ public class HistoryTextField {
         if(b && !autosave){
             if(autoSaver == null){
                 autoSaver = new ActionListener(){
+                    @Override
                     public void actionPerformed(ActionEvent e){
                         JComboBox cb = (JComboBox) e.getSource();
 

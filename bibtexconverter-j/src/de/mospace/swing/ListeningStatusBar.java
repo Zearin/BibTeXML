@@ -51,6 +51,7 @@ public class ListeningStatusBar extends StatusBar implements MessageListener {
         super(timeout);
     }
 
+    @Override
     public void messageSent(MessageEvent e) {
         if(e.getTimeout() == MessageEvent.DEFAULT_TIMEOUT){
             setStatus(e.getMessage());

@@ -94,6 +94,7 @@ public class DoubleArrowIcon implements Icon {
     * @param x the x-offset for this icon
     * @param y the y-offset for this icon
     */
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
         switch (direction) {
             case DIRECTION_DOWN:
@@ -119,6 +120,7 @@ public class DoubleArrowIcon implements Icon {
     *
     * @return the width of this icon
     */
+    @Override
     public int getIconWidth() {
         return size;
     }
@@ -129,11 +131,13 @@ public class DoubleArrowIcon implements Icon {
     *
     * @return the height of this icon
     */
+    @Override
     public int getIconHeight() {
         return size;
     }
     
     
+    @SuppressWarnings("hiding")
     private void init(int size, int direction) {
         this.size = size;
         this.direction = direction;

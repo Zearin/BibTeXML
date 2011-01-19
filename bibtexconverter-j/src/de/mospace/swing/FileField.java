@@ -42,6 +42,7 @@ import javax.swing.JPanel;
 * @author Moritz Ringler
 * @deprecated use PathInput instead
 **/
+@Deprecated
 public class FileField extends JPanel {
     /**
 	 * 
@@ -71,6 +72,7 @@ public class FileField extends JPanel {
             * That effect seems to depend on the registered
             * propertyChangeListener below
             */
+            @Override
             public void setText(String s){
                 super.setText("");
                 super.setText(s);
@@ -87,7 +89,8 @@ public class FileField extends JPanel {
 			 */
 			private static final long serialVersionUID = 7746141229259068418L;
 
-			public void actionPerformed(ActionEvent e){
+			@Override
+            public void actionPerformed(ActionEvent e){
                 JFileChooser jfc = new JFileChooser();
                 try{
                     jfc.setCurrentDirectory(getFile());
@@ -102,6 +105,7 @@ public class FileField extends JPanel {
         add(text, BorderLayout.NORTH);
         add(b, BorderLayout.CENTER);
         file.addPropertyChangeListener("text",new PropertyChangeListener(){
+            @Override
             public void propertyChange(PropertyChangeEvent evt){
                 FileField.this.firePropertyChange(
                 evt.getPropertyName(),

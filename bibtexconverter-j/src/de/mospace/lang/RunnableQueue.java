@@ -85,7 +85,7 @@ public class RunnableQueue implements Runnable{
             //does nothing.
         }
     };
-    private List jobs;
+    private List<Job> jobs;
     private Job job;
     private OutputStream inputSink;
     private boolean goon = true;
@@ -217,9 +217,9 @@ public class RunnableQueue implements Runnable{
         eh = xh;
         if(jobs != null){
             synchronized(jobs) {
-                Iterator i = jobs.iterator(); // Must be in synchronized block
+                Iterator<Job> i = jobs.iterator(); // Must be in synchronized block
                 while (i.hasNext()){
-                    ((Job) i.next()).registerExceptionHandler(xh);
+                    i.next().registerExceptionHandler(xh);
                 }
             }
         }
@@ -230,7 +230,7 @@ public class RunnableQueue implements Runnable{
     * or <code>null</code> if no job is awaiting execution in the queue
     */
     public Job getNextRunnable(){
-        return (jobs == null || jobs.isEmpty()) ?  null : (Job) jobs.get(0);
+        return (jobs == null || jobs.isEmpty()) ?  null : jobs.get(0);
     }
 
     /** Returns the currently running job.
@@ -253,7 +253,7 @@ public class RunnableQueue implements Runnable{
 
     private void enqueueImpl(Job p){
         if(jobs == null){
-            jobs = Collections.synchronizedList(new Vector());
+            jobs = Collections.synchronizedList(new Vector<Job>());
         }
         p.registerExceptionHandler(eh);
         jobs.add(p);

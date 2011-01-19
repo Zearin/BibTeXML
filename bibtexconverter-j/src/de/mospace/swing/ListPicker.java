@@ -64,25 +64,26 @@ public class ListPicker extends JDialog{
         init(null);
     }
 
-    public ListPicker(Frame f, Collection c){
+    public ListPicker(Frame f, Collection<?> c){
         super(f);
         model = makeModel(c);
         init(f);
     }
 
-    public ListPicker(Dialog d, Collection c){
+    public ListPicker(Dialog d, Collection<?> c){
         super(d);
         model = makeModel(c);
         init(null);
     }
 
-    private ListModel makeModel(Collection c){
-        Vector v = null;
-        if(c instanceof Vector){
-            v = (Vector) c;
+    private ListModel makeModel(Collection<?> c){
+        Vector<?> v = null;
+        if(c instanceof Vector<?>){
+            v = (Vector<?>) c;
         } else {
-            v = new Vector(c.size());
-            v.addAll(c);
+            Vector<Object> vo = new Vector<Object>(c.size());
+            vo.addAll(c);
+            v = vo;
         }
         return new DefaultComboBoxModel(v);
     }
@@ -99,7 +100,8 @@ public class ListPicker extends JDialog{
 			 */
 			private static final long serialVersionUID = -5565172828981184862L;
 
-			public void actionPerformed(ActionEvent e){
+			@Override
+            public void actionPerformed(ActionEvent e){
                 value = list.getSelectedValue();
                 if(value != null){
                     ListPicker.this.setVisible(false);
@@ -117,11 +119,13 @@ public class ListPicker extends JDialog{
         JButton buttonCancel = new JButton();
         buttonCancel.setText(UIManager.getString("OptionPane.cancelButtonText"));
         buttonOK.addActionListener(new ActionListener(){
+                @Override
                 public void actionPerformed(ActionEvent e){
                     //do nothing
                 }
         });
         buttonCancel.addActionListener(new ActionListener(){
+                @Override
                 public void actionPerformed(ActionEvent e){
                     value = null;
                     ListPicker.this.setVisible(false);
@@ -175,6 +179,7 @@ public class ListPicker extends JDialog{
             this.bvalue = pvalue;
             this.picker = picker;
             addActionListener(new ActionListener(){
+                    @Override
                     public void actionPerformed(ActionEvent e){
                         PickerButton.this.picker.setValue(bvalue);
                         PickerButton.this.picker.setVisible(false);
@@ -188,6 +193,7 @@ public class ListPicker extends JDialog{
         addButton(pb);
     }
 
+    @Override
     public void setVisible(boolean b){
         super.setVisible(b);
         if(b){
@@ -211,7 +217,7 @@ public class ListPicker extends JDialog{
         setModel();
     }
 
-    public void setChoice(Collection c){
+    public void setChoice(Collection<?> c){
         model = makeModel(c);
         setModel();
     }

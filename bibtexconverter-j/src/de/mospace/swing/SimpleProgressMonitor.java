@@ -55,7 +55,8 @@ import javax.swing.UIManager;
       * @param max integer corresponding to 100% progress
       * @deprecated use SimpleProgressMonitor(Frame f, String title, String note) instead
      **/
-     public SimpleProgressMonitor(Frame f, String title, String note,
+     @Deprecated
+    public SimpleProgressMonitor(Frame f, String title, String note,
      int min, int max){
          reset(f,title,note,min,max);
      }
@@ -84,7 +85,8 @@ import javax.swing.UIManager;
          progressBar.setPreferredSize(new Dimension(290,20));
          JButton cancel = new JButton(UIManager.getString("OptionPane.cancelButtonText"));
          cancel.addActionListener(new ActionListener(){
-             public void actionPerformed(ActionEvent e){
+             @Override
+            public void actionPerformed(ActionEvent e){
                  cancel();
              }
          });
@@ -94,7 +96,8 @@ import javax.swing.UIManager;
 			 */
 			private static final long serialVersionUID = 1271281951099613074L;
 
-			protected void processWindowEvent(WindowEvent e){
+			@Override
+            protected void processWindowEvent(WindowEvent e){
                  if (e.getID() == WindowEvent.WINDOW_CLOSING) {
                      cancel();
                  }

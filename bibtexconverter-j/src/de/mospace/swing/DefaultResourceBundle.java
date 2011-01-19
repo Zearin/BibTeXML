@@ -119,6 +119,7 @@ public final class DefaultResourceBundle extends ListResourceBundle {
      *
      * @return DOCUMENT ME!
      */
+    @Override
     public Object[][] getContents() {
         return contents;
     }

@@ -58,7 +58,8 @@ public class MiniShell extends JPanel {
 		 */
 		private static final long serialVersionUID = -5962758199538763704L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+        public void actionPerformed(ActionEvent e) {
             dock();
         }
     };
@@ -70,7 +71,8 @@ public class MiniShell extends JPanel {
 		 */
 		private static final long serialVersionUID = 8874905841964360921L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+        public void actionPerformed(ActionEvent e) {
             undock();
         }
     };
@@ -89,7 +91,8 @@ public class MiniShell extends JPanel {
 		 */
 		private static final long serialVersionUID = 4078511114006026165L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+        public void actionPerformed(ActionEvent e) {
             if (isFloating()) {
                 showDialog();
             } else {
@@ -104,7 +107,8 @@ public class MiniShell extends JPanel {
 		 */
 		private static final long serialVersionUID = 8833436190786366051L;
 
-		public void actionPerformed(ActionEvent e) {
+		@Override
+        public void actionPerformed(ActionEvent e) {
             close();
         }
     };
@@ -145,10 +149,12 @@ public class MiniShell extends JPanel {
 			 */
 			private static final long serialVersionUID = 6910445530165577676L;
 
-			protected boolean builtin(String s){
+			@Override
+            protected boolean builtin(String s){
                 return  super.builtin(s) || ("exit".equals(s) && close());
             }
 
+            @Override
             protected Preferences getPref(){
                 return MiniShell.this.getPref().node("ProcessIOPane");
             }
@@ -168,7 +174,8 @@ public class MiniShell extends JPanel {
         init(f,w,h,title,pip, false);
     }
 
-    private void init(JFrame f, int w, int h, String title, ProcessIOPane pip, boolean floating){
+    private void init(JFrame f, int w, int h, 
+            String title, ProcessIOPane pip, @SuppressWarnings("hiding") boolean floating){
         this.floating= floating;
         piop = pip;
         jtb.setRollover(true);
@@ -178,11 +185,13 @@ public class MiniShell extends JPanel {
         Action ashell = piop.getSystemShellAction();
         JButton jb = addButton(ashell);
         jb.addMouseListener(new MouseAdapter(){
+            @Override
             public void mousePressed(MouseEvent e){
                 if(e.isPopupTrigger()){ //getButton() != MouseEvent.BUTTON1){
                     piop.setSystemShell(piop.querySystemShell());
                 }
             }
+            @Override
             public void mouseReleased(MouseEvent e){
                 if(e.isPopupTrigger()){ //getButton() != MouseEvent.BUTTON1){
                     piop.setSystemShell(piop.querySystemShell());

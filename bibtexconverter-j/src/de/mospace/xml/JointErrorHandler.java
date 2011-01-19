@@ -13,6 +13,7 @@ public class JointErrorHandler implements ResettableErrorHandler{
         this.second = second;
     }
 
+    @Override
     public synchronized void fatalError( SAXParseException e ) throws SAXException {
         if(first != null){
             first.fatalError(e);
@@ -20,6 +21,7 @@ public class JointErrorHandler implements ResettableErrorHandler{
         second.fatalError(e);
     }
 
+    @Override
     public synchronized void error( SAXParseException e ) throws SAXException {
         if(first != null){
             first.error(e);
@@ -27,6 +29,7 @@ public class JointErrorHandler implements ResettableErrorHandler{
         second.error(e);
     }
 
+    @Override
     public synchronized void warning( SAXParseException e ) throws SAXException {
         if(first != null){
             first.error(e);
@@ -34,6 +37,7 @@ public class JointErrorHandler implements ResettableErrorHandler{
         second.error(e);
     }
 
+    @Override
     public synchronized void reset(){
         if(first != null){
             first.reset();

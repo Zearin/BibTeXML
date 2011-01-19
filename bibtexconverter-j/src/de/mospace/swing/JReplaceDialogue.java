@@ -97,32 +97,33 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
 
         private static char getEscapeChar(char ch)
         {
+            char result;
             switch(ch)
             {
                 case 'b':
-                    ch = '\b';
+                    result = '\b';
                     break;
                 case 't':
-                    ch = '\t';
+                    result = '\t';
                     break;
                 case 'n':
-                    ch = '\n';
+                    result = '\n';
                     break;
                 case 'f':
-                    ch = '\f';
+                    result = '\f';
                     break;
                 case 'r':
-                    ch = '\r';
+                    result = '\r';
                     break;
-                // do nothing - ch already contains correct character
-                case '"':
-                case '\'':
-                case '\\':
-                break;
+                default:
+                    result = ch;
+                    break;
             }
-            return ch;
+            
+            return result;
         }
 
+        @Override
         public String toString(){
             return value;
         }
@@ -133,36 +134,43 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
     **/
     private final static class TextFieldFactory {
         private TextFieldFactory(){
+            // hide default constructor.
         }
 
         public static TextField getTextField(final JComboBox jcb){
             return new TextField(){
-                private JComboBox cb=jcb;
+                private final JComboBox cb=jcb;
 
+                @Override
                 public void setText(String s){
-                    jcb.setSelectedItem(s);
+                    cb.setSelectedItem(s);
                 }
 
+                @Override
                 public String getText(){
-                    return jcb.getSelectedItem().toString();
+                    return cb.getSelectedItem().toString();
                 }
 
+                @Override
                 public JComponent getComponent(){
-                    return jcb;
+                    return cb;
                 }
             };
         }
 
         public static TextField getTextField(final JTextField tf){
          return new TextField(){
+                @Override
                 public void setText(String s){
                     tf.setText(s);
                 }
 
+                @Override
                 public String getText(){
                     return tf.getText();
                 }
 
+                @Override
                 public JComponent getComponent(){
                     return tf;
                 }
@@ -215,6 +223,7 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
     public JReplaceDialogue(Frame owner, Preferences pref, int len, boolean showReplace){
         super(owner);
         replListener = new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 boolean zAll=false;
                 if(e.getSource() == replAll){
@@ -253,7 +262,8 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
 			 */
 			private static final long serialVersionUID = 6595495368666347281L;
 
-				public void actionPerformed(ActionEvent e){
+				@Override
+                public void actionPerformed(ActionEvent e){
                     cancel();
                 }
             };
@@ -265,7 +275,8 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
 					 */
 					private static final long serialVersionUID = 3952586083683443779L;
 
-			public void actionPerformed(ActionEvent e){
+			@Override
+            public void actionPerformed(ActionEvent e){
                 replListener.actionPerformed(
                     new ActionEvent(repl,ActionEvent.ACTION_PERFORMED,""));
             }
@@ -412,6 +423,8 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
     *  @deprecated
     *  @see #setVisible
     */
+    @Deprecated
+    @Override
     public void show(){
     //Don't call setVisible here!
     //JDialog implements setVisible(true) by calling show()
@@ -421,6 +434,7 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
     }
 
     /** Displays or hides the dialogue. */
+    @Override
     public void setVisible(boolean b){
         super.setVisible(b);
         if(b) {
@@ -451,16 +465,23 @@ abstract public class JReplaceDialogue extends JDialog implements ActionListener
      * Overwrite this method to suit your needs.
      * @param what string or regular expression to look for
      * @param with replacement string
-     * @param mWord modifier: match whole word
-     * @param mCase modifier: match case
-     * @param regExp modifier: <code>what</code> is a regular expression
-     * @param rAll modifier: replace all occurences in scope
-     * @param scope search scope set by {@link #setScope(Object scope)}
+     * @param matchWholeWord modifier: match whole word
+     * @param caseSensitive modifier: match case
+     * @param regularExpression modifier: <code>what</code> is a regular expression
+     * @param replaceAll modifier: replace all occurences in scope
+     * @param replaceScope search scope set by {@link #setScope(Object scope)}
      */
-    abstract public void performReplace(String what, String with, boolean mWord,
-            boolean mCase, boolean regExp, boolean rAll, Object scope);
+    abstract public void performReplace(
+            String what, 
+            String with, 
+            boolean matchWholeWord,
+            boolean caseSensitive, 
+            boolean regularExpression, 
+            boolean replaceAll, 
+            Object replaceScope);
 
     /** Show the dialogue when an action is performed */
+    @Override
     public void actionPerformed(ActionEvent e){
         opener = e;
         setVisible(true);

@@ -50,7 +50,7 @@ public class TableSorter {
     }
 
     private int compareRowsByColumn(int row1, int row2, int column){
-        Class type = model.getColumnClass(column);
+        Class<?> type = model.getColumnClass(column);
         SortableTableModel data = model;
 
         /* SortableTableModel expects a (sorted row)-index as its
@@ -158,6 +158,7 @@ public class TableSorter {
     }
 
     /** Performs sorting of the table. **/
+    @SuppressWarnings("unused")
     private void n2sort() {
         int n = model.getRowCount();
         for (int i = 0; i < n; i++) {
@@ -241,10 +242,10 @@ public class TableSorter {
         reallocateIndices();
         sortingColumns = m.getSortOrder();
         compares = 0;
-        shuttlesort((int[])indexes.clone(), indexes, 0, indexes.length);
+        shuttlesort(indexes.clone(), indexes, 0, indexes.length);
         int n = indexes.length;
         int[][] mapping = new int[2][n];
-        mapping[INV]=(int[]) indexes.clone();
+        mapping[INV]=indexes.clone();
         for (int i=0;i<n;i++){
             mapping[FWD][indexes[i]]=i;
         }
@@ -273,7 +274,7 @@ public class TableSorter {
             /* Invert the new mapping. */
             mapping[FWD][indexes[i]]=i;
         }
-        mapping[INV]=(int[]) indexes.clone();
+        mapping[INV]=indexes.clone();
         return mapping;
     }
 }

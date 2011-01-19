@@ -81,6 +81,7 @@ public class IOPane extends JPanel {
     private JLabel prompt;
     /** The action listener that echoes input in the output field */
     protected final ActionListener echoAL = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (prependPrompt) {
                 jta.append(prompt.getText());
@@ -103,6 +104,7 @@ public class IOPane extends JPanel {
     public IOPane(int rows, int cols) {
         jsp.getVerticalScrollBar().getModel().addChangeListener(new ChangeListener() {
             int max = 0;
+            @Override
             public void stateChanged(ChangeEvent e){
                 BoundedRangeModel brm = ((BoundedRangeModel) e.getSource());
                 if(!brm.getValueIsAdjusting() && brm.getMaximum() != max){
@@ -110,25 +112,29 @@ public class IOPane extends JPanel {
                     brm.setValue(max);
                 }
             }
-            ;});
+            });
         jta = new JTextArea(rows, cols);
         jta.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
             public void insertUpdate(DocumentEvent e) {
                 trim();
             }
 
+            @Override
             public void removeUpdate(DocumentEvent e) {
                 //does nothing
             }
 
+            @Override
             public void changedUpdate(DocumentEvent e) {
                 trim();
             }
-            ;});
+            });
         buildGui();
         input.addActionListener(echoAL);
         input.addActionListener(history.getAddListener());
         input.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
 
@@ -147,10 +153,13 @@ public class IOPane extends JPanel {
             }
         });
         addFocusListener(new FocusListener() {
+            @Override
             public void focusLost(FocusEvent e) {
                //does nothing
             }
-            ;public void focusGained(FocusEvent e) {
+            
+            @Override
+            public void focusGained(FocusEvent e) {
                 input.requestFocusInWindow();
             }
         });
@@ -172,6 +181,7 @@ public class IOPane extends JPanel {
      *
      * @param c the desired background Color
      */
+    @Override
     public final void setBackground(Color c) {
         super.setBackground(c);
 
@@ -341,6 +351,7 @@ public class IOPane extends JPanel {
         final int surplus = jta.getLineCount() - max;
         if (max > 0 && surplus > 0) {
             SwingUtilities.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     try {
                         synchronized (jta.getDocument()) {
@@ -391,8 +402,9 @@ public class IOPane extends JPanel {
          * Adds the specified item to this history. If item is not <code>null</code>
          * the next call to next() must return item.
          * @param item the item to add
+         * @return a value of true 
          */
-        public void add(String item);
+        public boolean add(String item);
 
         /**
          * Removes all items from this history.
@@ -426,14 +438,12 @@ public class IOPane extends JPanel {
     }
 
     /** Default implementation of the IOPane.History interface. **/
-    public static final class VectorHistory extends Vector implements History {
+    public static final class VectorHistory extends Vector<String> implements History {
 
-        /**
-		 * 
-		 */
 		private static final long serialVersionUID = -1905559111577529320L;
 
 		private final ActionListener addListener = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand() != null &&
                             !e.getActionCommand().equals("")) {
@@ -460,6 +470,7 @@ public class IOPane extends JPanel {
          *
          * @return an action listener that adds new items to this history
          */
+        @Override
         public ActionListener getAddListener() {
             return addListener;
         }
@@ -470,6 +481,7 @@ public class IOPane extends JPanel {
          * @param maxitems the maximum number of items
          * @see #getLength
          */
+        @Override
         public void setLength(int maxitems) {
             length = maxitems;
             if (length > 0 && size() > length) {
@@ -484,6 +496,7 @@ public class IOPane extends JPanel {
          * @return the maximum number of items, default is 100
          * @see #setLength
          */
+        @Override
         public int getLength() {
             return length;
         }
@@ -492,20 +505,24 @@ public class IOPane extends JPanel {
          * Adds the specified item to this history.
          * The next call to next() must return item.
          * @param item the item to add
+         * @return whether the item was successfully added
          * @throws NullPointerException if item is <code>null</code>
          */
-        public void add(String item) {
+        @Override
+        public boolean add(String item) {
             item.length(); //throws a NullPointerException if item is null
             if (length > 0 && size() == length + 1) {
                 remove(size() - 1);
             }
             add(1, item);
             currentItem = 0;
+            return true;
         }
 
         /**
          * Removes all items from this history.
          */
+        @Override
         public void clear() {
             setSize(1);
         }
@@ -517,12 +534,11 @@ public class IOPane extends JPanel {
          * {@link #previous()}. It returns <code>null</code> if no such item exists.
          * @return the next item in this history or <code>null</code> at its end
          */
+        @Override
         public String next() {
-            if (currentItem + 1 < size()) {
-                return (String) get(++currentItem);
-            } else {
-                return null;
-            }
+            return (currentItem + 1 < size())
+                ? get(++currentItem)
+                : null;
         }
 
         /**
@@ -532,12 +548,9 @@ public class IOPane extends JPanel {
          *
          * @return the previous item in this history
          */
+        @Override
         public String previous() {
-            if (currentItem == 0) {
-                return (String) get(0);
-            } else {
-                return (String) get(--currentItem);
-            }
+            return (currentItem == 0) ? get(0) : get(--currentItem);
         }
 
         /**
@@ -545,6 +558,7 @@ public class IOPane extends JPanel {
          * returned by next()
          * will be the item last added or null if no such item exists.
          */
+        @Override
         public void resetPointer() {
             currentItem = 0;
         }

@@ -83,7 +83,7 @@ public class MessageEvent extends EventObject{
     */
     public MessageEvent(Object source, String message, int type){
         this(source, message);
-        this.type = type;
+        this.setType(type);
     }
     
     /** Constructs a new message event with the specified source, message,
@@ -112,5 +112,13 @@ public class MessageEvent extends EventObject{
     */
     public int getTimeout(){
         return timeout;
+    }
+
+    private void setType(int type) {
+        this.type = type;
+    }
+
+    public int getType() {
+        return type;
     }
 }

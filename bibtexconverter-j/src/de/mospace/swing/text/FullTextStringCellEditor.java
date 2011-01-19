@@ -77,6 +77,7 @@ implements TableCellEditor {
     public FullTextStringCellEditor() {
         /* set up the button. */
         button.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 dialg.show(button.getLocationOnScreen(), button.getWidth(),
                 button);
@@ -89,13 +90,12 @@ implements TableCellEditor {
     *         for empty or invalid values
     * @see de.mospace.lang.FullTextString
     **/
+    @Override
     public Object getCellEditorValue() {
         String content = dialg.getText();
-        if (content == null || content.equals("")) {
-            return (FullTextString) null;
-        } else {
-            return new FullTextString(content);
-        }
+        return (content == null || content.equals(""))
+            ? null
+            : new FullTextString(content);
     }
 
     /**
@@ -113,8 +113,9 @@ implements TableCellEditor {
      * @param column the column of the cell being edited
      * @return a JButton as the primary cell editor
      **/
-   public Component getTableCellEditorComponent(JTable table, Object value,
-            boolean isSelected, int row, int column) {
+   @Override
+public Component getTableCellEditorComponent(JTable table, Object value,
+            boolean isSelected, @SuppressWarnings("hiding") int row, int column) {
         if (dialg.isEditing()){
             cancelCellEditing();
         }
@@ -132,6 +133,7 @@ implements TableCellEditor {
         // If we don't do this the dialog is not opened
         // in Java < 1.6, and opened in Java 1.6.
         SwingUtilities.invokeLater(new Runnable(){
+                @Override
                 public void run(){
                     if(dialg == null || !dialg.isVisible()){
                         button.doClick();
@@ -140,7 +142,7 @@ implements TableCellEditor {
         });
 
         /* return the button as primary cell editor */
-        return (Component) button;
+        return button;
     }
 
     /**
@@ -148,6 +150,7 @@ implements TableCellEditor {
     * has cancelled, and returns focus to the JTable and the cell that
     * have been edited.
     */
+    @Override
     public void cancelCellEditing() {
         dialg.stopEditing();
         super.cancelCellEditing();
@@ -160,6 +163,7 @@ implements TableCellEditor {
     * has stopped, and returns focus to the JTable and the cell that
     * has been edited.
     */
+    @Override
     public boolean stopCellEditing() {
         dialg.stopEditing();
         boolean b = super.stopCellEditing();
@@ -202,6 +206,7 @@ implements TableCellEditor {
             setViewportView(myText);
             setVisible(false);
             myText.addFocusListener(new FocusAdapter() {
+                @Override
                 public void focusLost(FocusEvent e) {
                     if(isEditing()){
                         stopCellEditing();
@@ -215,7 +220,8 @@ implements TableCellEditor {
 				 */
 				private static final long serialVersionUID = 8633919185378179264L;
 
-				public void actionPerformed(ActionEvent e){
+				@Override
+                public void actionPerformed(ActionEvent e){
                     cancelCellEditing();
                 }
             };
@@ -226,7 +232,8 @@ implements TableCellEditor {
 				 */
 				private static final long serialVersionUID = -716688852140613412L;
 
-				public void actionPerformed(ActionEvent e){
+				@Override
+                public void actionPerformed(ActionEvent e){
                     stopCellEditing();
                 }
             };

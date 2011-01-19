@@ -62,6 +62,7 @@ public class ProcessIOPane extends IOPane{
      private static String systemShell = "";
 
      private final ExceptionHandler printExceptionHandler = new ExceptionHandler(){
+        @Override
         public void handleException(Throwable ex){
            (new PrintStream(iopOut)).print(ex.getLocalizedMessage().trim()+"\n");
         }
@@ -73,7 +74,8 @@ public class ProcessIOPane extends IOPane{
 				 */
 				private static final long serialVersionUID = 7529405734772537733L;
 
-		public void actionPerformed(ActionEvent e){
+		@Override
+        public void actionPerformed(ActionEvent e){
             interrupt();
         }
     };
@@ -84,7 +86,8 @@ public class ProcessIOPane extends IOPane{
 		 */
 		private static final long serialVersionUID = -8409632569658079563L;
 
-		public void actionPerformed(ActionEvent e){
+		@Override
+        public void actionPerformed(ActionEvent e){
             getOutputArea().setText("");
         }
     };
@@ -95,7 +98,8 @@ public class ProcessIOPane extends IOPane{
 		 */
 		private static final long serialVersionUID = -3495663945163001764L;
 
-		public void actionPerformed(ActionEvent e){
+		@Override
+        public void actionPerformed(ActionEvent e){
             if (systemShell == null || systemShell.equals("")){
                 setSystemShell(querySystemShell());
             }
@@ -115,7 +119,7 @@ public class ProcessIOPane extends IOPane{
     }
 
     public String querySystemShell(){
-        return (String) JOptionPane.showInputDialog(
+        return JOptionPane.showInputDialog(
                 ProcessIOPane.this,
                 "Enter system shell command",
                 (systemShell == null || systemShell.equals(""))
@@ -159,7 +163,7 @@ public class ProcessIOPane extends IOPane{
                     /* System.getEnv raises a java.lang.Error in Sun Java 1.4 */
                 }
             }
-            if(result != null && result.endsWith("bash")){
+            if(result.endsWith("bash")){
                 result += " -l";
             }
         }
@@ -357,13 +361,15 @@ public class ProcessIOPane extends IOPane{
          systemShell = getPref().get("systemShell","");
          removeActionListener(echoAL);
          addActionListener(new ActionListener(){
-             public void actionPerformed(ActionEvent e){
+             @Override
+            public void actionPerformed(ActionEvent e){
                  execute(e.getActionCommand());
              }
          });
         addActionListener(echoAL);
         myProcesses.registerExceptionHandler(printExceptionHandler);
         myProcesses.addChangeListener(new ChangeListener(){
+            @Override
             public void stateChanged(ChangeEvent e){
                 prependPrompt = !myProcesses.isRunning();
             }
@@ -375,7 +381,8 @@ public class ProcessIOPane extends IOPane{
 
      private void runInBackground(final ProcessRunnable command){
          (new Thread(){
-             public void run(){
+             @Override
+            public void run(){
                  runInCallerThread(command);
              }
          }).start();

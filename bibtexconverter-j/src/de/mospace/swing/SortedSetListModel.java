@@ -27,50 +27,52 @@ import java.util.*;
 * @version $Revision$ ($Date$)
 * @author Moritz Ringler
 **/
-public class SortedSetListModel extends AbstractListModel {
+public class SortedSetListModel<T> extends AbstractListModel {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 4418159824081831084L;
-	private final SortedSet set;
+	private final SortedSet<T> sortedSet;
 
     public SortedSetListModel(){
-        set = new TreeSet();
+        sortedSet = new TreeSet<T>();
     }
 
-    public SortedSetListModel(SortedSet s){
-        set = s;
+    public SortedSetListModel(SortedSet<T> s){
+        sortedSet = s;
     }
 
+    @Override
     public int getSize(){
-        return set.size();
+        return sortedSet.size();
     }
 
+    @Override
     public synchronized Object getElementAt(int index){
         if(index < 0 || index >= getSize()){
             throw new ArrayIndexOutOfBoundsException(index);
         }
-        Iterator it = set.iterator();
+        Iterator<T> it = sortedSet.iterator();
         for(int i=0; i<index; i++){
             it.next();
         }
         return it.next();
     }
 
-    public synchronized void add(Object element){
-        if(set.add(element)){
+    public synchronized void add(T element){
+        if(sortedSet.add(element)){
             fireContentsChanged(this, 0, getSize());
         }
     }
 
-    public synchronized void remove(Object element){
-        if(set.remove(element)){
+    public synchronized void remove(T element){
+        if(sortedSet.remove(element)){
             fireContentsChanged(this, 0, getSize());
         }
     }
 
     public synchronized void clear(){
-       set.clear();
+       sortedSet.clear();
        fireContentsChanged(this, 0, getSize());
     }
 

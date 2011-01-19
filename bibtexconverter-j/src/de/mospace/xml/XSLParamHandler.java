@@ -69,7 +69,7 @@ public class XSLParamHandler extends DefaultHandler{
     public final static String XSL_NAMESPACE =
             "http://www.w3.org/1999/XSL/Transform";
     private final static Pattern selectString = Pattern.compile("'(.*)'");
-    private static final Class[] knownTypes = {
+    private static final Class<?>[] knownTypes = {
         Boolean.class,
         Long.class,
         Float.class,
@@ -87,7 +87,7 @@ public class XSLParamHandler extends DefaultHandler{
 
 
     private static class XSLParam{
-        public Class type = null;
+        public Class<?> type = null;
         public Object defaultValue;
         public String name;
 
@@ -98,6 +98,7 @@ public class XSLParamHandler extends DefaultHandler{
             this.name = name;
         }
 
+        @Override
         public String toString(){
             StringBuilder sb = new StringBuilder();
             sb.append("XSLParam ").append(name).append(' ');
@@ -108,7 +109,7 @@ public class XSLParamHandler extends DefaultHandler{
     }
 
     public XSLParamHandler(){
-
+        // explicit default constructor
     }
 
     public static XSLParamHandler analyze(InputStream in, EntityResolver resolver) throws SAXException, IOException{
@@ -124,16 +125,19 @@ public class XSLParamHandler extends DefaultHandler{
         return params;
     }
 
+    @Override
     public void startDocument() throws SAXException{
         xslParam.clear();
         outputType = null;
         level++;
     }
 
+    @Override
     public void endDocument() throws SAXException{
         level --;
     }
 
+    @Override
     public void startElement(String uri, String localname, String rawname,
             Attributes atts) throws SAXException{
                 if((level == 2) && uri.equals(XSL_NAMESPACE)){
@@ -180,7 +184,7 @@ public class XSLParamHandler extends DefaultHandler{
 
             /* if we have no type, try all known types one after the other */
             if(p.type == null){
-                for(Class type : knownTypes){
+                for(Class<?> type : knownTypes){
                     p.defaultValue = makeValue(select, type);
                     if(p.defaultValue != null){
                         p.type = type;
@@ -199,7 +203,7 @@ public class XSLParamHandler extends DefaultHandler{
         }
     }
 
-    private Object makeValue(String val, Class c){
+    private Object makeValue(String val, Class<?> c){
         Object result = null;
         if(c.equals(String.class)){
             return val;
@@ -223,6 +227,7 @@ public class XSLParamHandler extends DefaultHandler{
         return result;
     }
 
+    @Override
     public void endElement(String uri, String localname, String rawname)
             throws SAXException{
         level--;
@@ -258,6 +263,7 @@ public class XSLParamHandler extends DefaultHandler{
         contents = null;
     }
 
+    @Override
     public void characters(char[] ch, int start, int length)
             throws SAXException{
         if(p != null && level == 3){
@@ -289,12 +295,14 @@ public class XSLParamHandler extends DefaultHandler{
         return analyze(in, resolver).getStyleSheetParameters();
     }
 
+    @Override
     public void startPrefixMapping(String prefix,String uri) throws SAXException{
         if(uri.equals(XS_NAMESPACE)){
             xsPrefix = prefix+":";
         }
     }
 
+    @Override
     public void endPrefixMapping(String prefix) throws SAXException{
         if(prefix.equals(xsPrefix)){
             xsPrefix = null;

@@ -29,6 +29,7 @@ import javax.swing.table.TableModel;
  * @version $Revision$ ($Date$)
  * @author Moritz Ringler
  **/
+@Deprecated
 public interface FieldAssociatedTableModel extends TableModel{
     /** Returns the identifier of the field currently associated
      * with the specified table column.

@@ -52,20 +52,25 @@ public class URIInput extends PathInput{
         return result;
     }
 
+    @Override
     public String getPath(){
         String result = getTextfield().getText();
         try{
             result = (new File(new URI(result))).toString();
         } catch (Exception ignore){
+            // ignore.
         }
+        
         return result;
     }
 
+    @Override
     protected void browse(){
         URI oldURI = null;
         try{
             oldURI = getURI();
         } catch (URISyntaxException ignore){
+            // ignore.
         }
         super.browse();
         try{

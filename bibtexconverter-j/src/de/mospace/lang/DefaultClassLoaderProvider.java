@@ -27,10 +27,10 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
 
     /** A set of URLs containing the jar files and directories in the class
     * path of the last class loader. */
-    private final Set jars = new HashSet();
+    private final Set<URL> jars = new HashSet<URL>();
 
     /** A set of URLs containing newly registered jar files and directories. */
-    private final Set newJars = new HashSet(); //can't make this transient because it's final
+    private final Set<URL> newJars = new HashSet<URL>(); //can't make this transient because it's final
 
     /** Constructs a new ClassLoaderProvider whose {@link #getClassLoader}
      * method will return class loaders that finally delegate to
@@ -57,7 +57,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
     * @throws IllegalArgumentException if the repository root of the
     * specified class is not a file.
     */
-    public static File getRepositoryRootDir(Class klass){
+    public static File getRepositoryRootDir(Class<?> klass){
         File f = new File(getRepositoryRoot(klass));
         return f.isDirectory()? f : f.getAbsoluteFile().getParentFile();
     }
@@ -68,7 +68,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
     * @return the URI of the class path element from which <code>klass</code>
     * has been loaded
     **/
-    public static URI getRepositoryRoot(Class klass){
+    public static URI getRepositoryRoot(Class<?> klass){
         /* Constructs the resource name for this Class by replacing
           dots with slashes, prepending a slash, and appending the
           .class extension */
@@ -125,7 +125,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
      **/
     public final synchronized URL[] getLibraries(){
         updateClassLoader();
-        return (URL[]) jars.toArray(new URL[jars.size()]);
+        return jars.toArray(new URL[jars.size()]);
     }
 
     /** Returns the library files that have been registered with this
@@ -134,7 +134,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
      * this ClassLoaderProvider.**/
     public final synchronized File[] getLibraryFiles(){
         URL[] urls = getLibraries();
-        List jarFiles = new Vector(urls.length);
+        List<File> jarFiles = new Vector<File>(urls.length);
         for(int i=0; i<urls.length; i++){
             try{
                 jarFiles.add(new File(new URI(urls[i].toString())));
@@ -142,7 +142,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
                 throw new Error(ex);
             }
         }
-        return (File[]) jarFiles.toArray(new File[jarFiles.size()]);
+        return jarFiles.toArray(new File[jarFiles.size()]);
     }
 
     /** Returns a class loader that looks for class files in all libraries
@@ -298,7 +298,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
     private final ClassLoader updateClassLoader(){
         if (!newJars.isEmpty()){
             classloader = new URLClassLoader(
-                    (URL[]) newJars.toArray(new URL[newJars.size()]), classloader );
+                    newJars.toArray(new URL[newJars.size()]), classloader );
             jars.addAll(newJars);
             newJars.clear();
             //System.out.println(Arrays.asList(((URLClassLoader) classloader).getURLs()));
@@ -319,7 +319,7 @@ public class DefaultClassLoaderProvider extends MinimalClassLoaderProvider imple
         in.defaultReadObject();
         if(jars.isEmpty()){
             classloader = new URLClassLoader(
-                    (URL[]) newJars.toArray(new URL[newJars.size()]), classloader );
+                    newJars.toArray(new URL[newJars.size()]), classloader );
         }
     }
 }

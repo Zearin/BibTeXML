@@ -33,6 +33,7 @@ public class LabeledColorButton extends JColorButton{
 
 	/** Sets the background of this button to c and its foreground
      * to the complementary color of c .**/
+    @Override
     public void setBackground(Color c){
         super.setBackground(c);
         if(c != null){

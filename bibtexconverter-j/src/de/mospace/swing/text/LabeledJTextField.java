@@ -71,6 +71,7 @@ public class LabeledJTextField extends JPanel{
     * @param iv the new inout verifier for the text field
     * @see javax.swing.JTextField#setInputVerifier
     */
+    @Override
     public void setInputVerifier(InputVerifier iv){
       jTextField.setInputVerifier(iv);
     }
