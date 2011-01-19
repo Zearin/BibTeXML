@@ -65,7 +65,8 @@ public class VGridLayout implements LayoutManager, Serializable
    * @param name The name of the component to add.
    * @param comp The component to add.
    */
-  public void addLayoutComponent (String name, Component comp)
+  @Override
+public void addLayoutComponent (String name, Component comp)
   {
     // Nothing.
   }
@@ -151,7 +152,8 @@ public class VGridLayout implements LayoutManager, Serializable
    * number of rows and columns in this object.
    * @param parent The container to lay out
    */
-  public void layoutContainer (Container parent)
+  @Override
+public void layoutContainer (Container parent)
   {
     synchronized (parent.getTreeLock ())
       {
@@ -220,7 +222,8 @@ public class VGridLayout implements LayoutManager, Serializable
   /** Get the minimum layout size of the container.
    * @param cont The parent container
    */
-  public Dimension minimumLayoutSize (Container cont)
+  @Override
+public Dimension minimumLayoutSize (Container cont)
   {
     return getSize (cont, true);
   }
@@ -228,7 +231,8 @@ public class VGridLayout implements LayoutManager, Serializable
   /** Get the preferred layout size of the container.
    * @param cont The parent container
    */
-  public Dimension preferredLayoutSize (Container cont)
+  @Override
+public Dimension preferredLayoutSize (Container cont)
   {
     return getSize (cont, false);
   }
@@ -237,7 +241,8 @@ public class VGridLayout implements LayoutManager, Serializable
    * This particular implementation does nothing.
    * @param comp The component to remove
    */
-  public void removeLayoutComponent (Component comp)
+  @Override
+public void removeLayoutComponent (Component comp)
   {
     // Nothing.
   }
@@ -289,7 +294,8 @@ public class VGridLayout implements LayoutManager, Serializable
   }
 
   /** Return String description of this object.  */
-  public String toString ()
+  @Override
+public String toString ()
   {
     return (getClass ().getName () + "["
         + "hgap=" + hgap + ",vgap=" + vgap
