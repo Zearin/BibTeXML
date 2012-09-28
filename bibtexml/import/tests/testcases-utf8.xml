@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE bibtex:file PUBLIC
+    "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
+    "bibtexml.dtd" >
+<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+
+  
+<bibtex:entry id="Ganzha2006">
+<bibtex:inbook>
+<bibtex:chapter>Utilizing Semantic Web and Software Agents in a Travel Support System</bibtex:chapter>
+<bibtex:title>Semantic Web Technologies and eBusiness: Virtual Organization and Business Process Automation</bibtex:title>
+<bibtex:publisher>Idea Publishing Group</bibtex:publisher>
+<bibtex:year>2006</bibtex:year>
+<bibtex:editor>A. F. Salam and Jason Stevens</bibtex:editor>
+<bibtex:author>
+<bibtex:person>Maria Ganzha</bibtex:person>
+<bibtex:person>Maciej Gawinecki</bibtex:person>
+<bibtex:person>Marcin Paprzycki</bibtex:person>
+<bibtex:person>Rafał Gąsiorowski</bibtex:person>
+<bibtex:person>Szymon Pisarek</bibtex:person>
+<bibtex:person>Wawrzyniec Hyska</bibtex:person>
+</bibtex:author>
+<bibtex:comment>to appear</bibtex:comment>
+<bibtex:owner>maciej</bibtex:owner>
+<bibtex:timestamp>2006.07.13</bibtex:timestamp>
+<bibtex:url>http://agentlab.swps.edu.pl/agent_papers/IDEA_2006.pdf</bibtex:url>
+</bibtex:inbook>
+</bibtex:entry>
+
+<bibtex:entry id="Gawinecki2005c">
+<bibtex:mastersthesis>
+<bibtex:author>Maciej Gawinecki</bibtex:author>
+<bibtex:title>Modelling User on the Basis of Interactions with a WWW Based System</bibtex:title>
+<bibtex:school>Adam Mickiewicz University</bibtex:school>
+<bibtex:year>2005</bibtex:year>
+<bibtex:address>Poznań, Poland</bibtex:address>
+<bibtex:month>December</bibtex:month>
+<bibtex:comment>In Polish</bibtex:comment>
+<bibtex:owner>maciej</bibtex:owner>
+<bibtex:timestamp>2006.07.13</bibtex:timestamp>
+<bibtex:url>http://agentlab.swps.edu.pl/agent_papers/Gawinecki_MS_2005.pdf</bibtex:url>
+</bibtex:mastersthesis>
+</bibtex:entry>
+
+<bibtex:entry id="Gawinecki2005b">
+<bibtex:article>
+<bibtex:author>
+<bibtex:person>Maciej Gawinecki</bibtex:person>
+<bibtex:person>Minor Gordon</bibtex:person>
+<bibtex:person>Paweł Kaczmarek</bibtex:person>
+<bibtex:person>Marcin Paprzycki</bibtex:person>
+</bibtex:author>
+<bibtex:title>The Problem of Agent-Client Communication on the Internet</bibtex:title>
+<bibtex:journal>Scalable Computing: Practice and Experience</bibtex:journal>
+<bibtex:year>2005</bibtex:year>
+<bibtex:volume>6</bibtex:volume>
+<bibtex:pages>111-123</bibtex:pages>
+<bibtex:abstract>In order for software agent technology to come to full fruition, it must be integrated in a realistic way with existing production technologies. In this paper we address one of the interesting problems of real-world agent integration: the interaction between agents and non-agents. The proposed solution is designed to provide non-agents (client software in particular) access to agent services, without restricting the capabilities of agents providing them.</bibtex:abstract>
+<bibtex:owner>maciej</bibtex:owner>
+<bibtex:timestamp>2006.07.13</bibtex:timestamp>
+<bibtex:url>http://agentlab.swps.edu.pl/PDCP_6_1_2003.pdf</bibtex:url>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="Gawinecki2005d">
+<bibtex:inbook>
+<bibtex:chapter>RDF Demarcated Resources in an Agent Based Travel Support System</bibtex:chapter>
+<bibtex:pages>303-310</bibtex:pages>
+<bibtex:title>Informatics and Effectiveness of Systems</bibtex:title>
+<bibtex:publisher>PTI Press</bibtex:publisher>
+<bibtex:year>2005</bibtex:year>
+<bibtex:editor>M. Goliński et. al.</bibtex:editor>
+<bibtex:author>
+<bibtex:person>Maciej Gawinecki</bibtex:person>
+<bibtex:person>Minor Gordon</bibtex:person>
+<bibtex:person>Ngoc Thanh Nguyen</bibtex:person>
+<bibtex:person>Marcin Paprzycki</bibtex:person>
+<bibtex:person>Michał Szymczak</bibtex:person>
+</bibtex:author>
+<bibtex:address>Katowice, Poland</bibtex:address>
+<bibtex:abstract>Further development of the World Wide Web depends on the existence of data stored in a machine-consumable format. This in turn requires the design of domain ontologies, the availability of information described with these ontologies, and agents for exploiting this information. In this paper we describe our attempt at designing travel ontology and illustrate how our ontology can be used not only to store data in an agent-based travel support system, but also to support delivery of personalized content to users.</bibtex:abstract>
+<bibtex:owner>maciej</bibtex:owner>
+<bibtex:timestamp>2006.07.13</bibtex:timestamp>
+<bibtex:url>http://agentlab.swps.edu.pl/SZCZYRK_2005_RDF.pdf</bibtex:url>
+</bibtex:inbook>
+</bibtex:entry>
+
+<bibtex:entry id="Gawinecki2005e">
+<bibtex:inbook>
+<bibtex:chapter>Ontologically Demarcated Resources in an Agent Based Travel Support System</bibtex:chapter>
+<bibtex:pages>219-240</bibtex:pages>
+<bibtex:title>Ontologies and Soft Methods in Knowledge Management</bibtex:title>
+<bibtex:publisher>Advanced Knowledge International</bibtex:publisher>
+<bibtex:year>2005</bibtex:year>
+<bibtex:editor>R. K. Katarzyniak</bibtex:editor>
+<bibtex:author>
+<bibtex:person>Maciej Gawinecki</bibtex:person>
+<bibtex:person>Minor Gordon</bibtex:person>
+<bibtex:person>Ngoc Thanh Nguyen</bibtex:person>
+<bibtex:person>Marcin Paprzycki</bibtex:person>
+<bibtex:person>Zygmunt Vetulani</bibtex:person>
+</bibtex:author>
+<bibtex:address>Adelaide, Australia</bibtex:address>
+<bibtex:abstract>Further development of the World Wide Web depends on the existence of data stored in a machine-consumable format. This in turn requires the design of domain ontologies, availability of information described with these ontologies, and agents for exploiting this information. In this paper we describe our attempt at designing travel ontology and utilizing it to store data and deliver personalized content to users of an agent-based travel support system.</bibtex:abstract>
+<bibtex:owner>maciej</bibtex:owner>
+<bibtex:timestamp>2006.07.13</bibtex:timestamp>
+<bibtex:url>http://agentlab.swps.edu.pl/agent_papers/AKI_2005.pdf</bibtex:url>
+</bibtex:inbook>
+</bibtex:entry>
+
+<bibtex:entry id="Gawinecki2005a">
+<bibtex:inproceedings>
+<bibtex:author>
+<bibtex:person>Maciej Gawinecki</bibtex:person>
+<bibtex:person>Minor Gordon</bibtex:person>
+<bibtex:person>Marcin Paprzycki</bibtex:person>
+<bibtex:person>Michał Szymczak</bibtex:person>
+<bibtex:person>Zygmunt Vetulani</bibtex:person>
+<bibtex:person>Jimmy Wright</bibtex:person>
+</bibtex:author>
+<bibtex:title>Enabling Semantic Referencing of Selected Travel Related Resources</bibtex:title>
+<bibtex:booktitle>Proceedings of the 8 th International Conference on Business Information Systems (BIS 2005)</bibtex:booktitle>
+<bibtex:year>2005</bibtex:year>
+<bibtex:pages>271-28</bibtex:pages>
+<bibtex:address>Poznań, Poland</bibtex:address>
+<bibtex:publisher>Poznań University of Economics Press</bibtex:publisher>
+<bibtex:abstract>This paper describes our efforts to semantically describe travelrelated documents on the Internet. We focus on the areas of lodging and gastronomy, with allowance for further expansion into other aspects of the world of travel. Based on an analysis of currently-available data, we develop hotel ontology. Furthermore, we explicitly define an ontology for the Chefmoz project data, which has no official schema. Finally, we sketch a way to combine these two ontologies for use in an integrated travel framework.</bibtex:abstract>
+<bibtex:owner>maciej</bibtex:owner>
+<bibtex:timestamp>2006.07.13</bibtex:timestamp>
+<bibtex:url>http://agentlab.swps.edu.pl/BIS_2005.pdf</bibtex:url>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+<bibtex:entry id="Gawinecki2005f">
+<bibtex:inproceedings>
+<bibtex:author>
+<bibtex:person>Maciej Gawinecki</bibtex:person>
+<bibtex:person>Mateusz Kruszyk</bibtex:person>
+<bibtex:person>Marcin Paprzycki</bibtex:person>
+</bibtex:author>
+<bibtex:title>Ontology-based Stereotyping in a Travel Support System</bibtex:title>
+<bibtex:booktitle>Proceedings of the XXI Fall Meeting of Polish Information Processing Society</bibtex:booktitle>
+<bibtex:year>2005</bibtex:year>
+<bibtex:abstract>The aim of this paper is to address the problem of user profile initialization in a travel support system. In the system under consideration, ontologically demarcated data is stored in a central repository, while user profiles are functionalized as instances of travel object ontologies. Creation of an initial user profile is achieved through stereotyping. An example of utilization of this technique, in the case of restaurant stereotypes, is presented.</bibtex:abstract>
+<bibtex:owner>maciej</bibtex:owner>
+<bibtex:timestamp>2006.07.13</bibtex:timestamp>
+<bibtex:url>http://agentlab.swps.edu.pl/agent_papers/PIPS_2005_MMP.pdf</bibtex:url>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+<bibtex:entry id="Gawinecki2005">
+<bibtex:inproceedings>
+<bibtex:author>
+<bibtex:person>Maciej Gawinecki</bibtex:person>
+<bibtex:person>Zygmunt Vetulani</bibtex:person>
+<bibtex:person>Minor Gordon</bibtex:person>
+<bibtex:person>Marcin Paprzycki</bibtex:person>
+</bibtex:author>
+<bibtex:title>Representing Users in a Travel Support System</bibtex:title>
+<bibtex:booktitle>Proceedings of the ISDA 2005 Conference</bibtex:booktitle>
+<bibtex:year>2005</bibtex:year>
+<bibtex:pages>393-398</bibtex:pages>
+<bibtex:address>Los Alamitos, CA, USA</bibtex:address>
+<bibtex:publisher>IEEE Computer Society Press</bibtex:publisher>
+<bibtex:abstract>We consider the construction and management of user profiles for an agent-based travel support system, with the goal of providing personalized content for individual users of the system. Profiles consist of statements about the “world of travel.” Conditional probabilities for each statement model the strengths of user preferences. These probabilities are derived from implicit and explicit observations of user behavior.</bibtex:abstract>
+<bibtex:owner>maciej</bibtex:owner>
+<bibtex:timestamp>2006.07.13</bibtex:timestamp>
+<bibtex:url>http://agentlab.swps.edu.pl/ISDA_2005.pdf</bibtex:url>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+<bibtex:entry id="Paprzycki2005">
+<bibtex:inbook>
+<bibtex:chapter>Interakcja Użytkownik - Agentowy System Wspomagania Podróży</bibtex:chapter>
+<bibtex:pages>189-198</bibtex:pages>
+<bibtex:title>Informatics and Modern Management</bibtex:title>
+<bibtex:publisher>PTI Press</bibtex:publisher>
+<bibtex:year>2005</bibtex:year>
+<bibtex:editor>J. Kisienicki et. al.</bibtex:editor>
+<bibtex:author>
+<bibtex:person>Marcin Paprzycki</bibtex:person>
+<bibtex:person>Paweł Kaczmarek</bibtex:person>
+<bibtex:person>Maciej Gawinecki</bibtex:person>
+<bibtex:person>Zygmunt Vetulani</bibtex:person>
+</bibtex:author>
+<bibtex:abstract>Niniejszy artykuł opisuje, odpowiedzialny za interakcje z użytkownikiem, podsystem agentowego systemu wspomagania podróży. W tekście zaprezentowana jest ogólna problematyka interakcji pomiędzy agentem a nie-agentem (klientem), wymagania, jakie przed sobą postawiliśmy budując ten podsystem oraz szczegółowy opis proponowanego przez nas rozwiązania.</bibtex:abstract>
+<bibtex:comment>in Polish</bibtex:comment>
+<bibtex:owner>maciej</bibtex:owner>
+<bibtex:timestamp>2006.07.13</bibtex:timestamp>
+<bibtex:url>http://agentlab.swps.edu.pl/SZCZYRK_2005_POL_K.pdf</bibtex:url>
+</bibtex:inbook>
+</bibtex:entry>
+
+  <!-- manual cleanup may be required... -->
+</bibtex:file>

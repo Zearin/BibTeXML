@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE bibtex:file PUBLIC
+    "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
+    "bibtexml.dtd" >
+<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+
+  
+<bibtex:entry id="btxdoc">
+<bibtex:manual>
+<bibtex:author>Oren Patashnik</bibtex:author>
+<bibtex:title>BibTeXing</bibtex:title>
+<bibtex:address>BibTeX distribution</bibtex:address>
+<bibtex:month>February</bibtex:month>
+<bibtex:year>1988</bibtex:year>
+<bibtex:url>ftp://sunsite.unc.edu/pub/packages/TeX/biblio/bibtex/distribs/doc/btxdoc.tex</bibtex:url>
+</bibtex:manual>
+</bibtex:entry>
+
+<bibtex:entry id="Tufte-1997-VEI">
+<bibtex:book>
+<bibtex:author>Edward R. Tufte</bibtex:author>
+<bibtex:title>Visual Explanations: Images and Quantities, Evidence and Narrative</bibtex:title>
+<bibtex:publisher>Graphics Press</bibtex:publisher>
+<bibtex:address>Box 430, Cheshire, CT 06410, USA</bibtex:address>
+<bibtex:pages>156</bibtex:pages>
+<bibtex:year>1997</bibtex:year>
+<bibtex:isbn>0-9613921-2-6</bibtex:isbn>
+<bibtex:lccn>P93.5.T846 1997</bibtex:lccn>
+<bibtex:mrnumber>B.Tufte.97</bibtex:mrnumber>
+<bibtex:bibdate>Thu Aug 07 13:39:07 1997</bibtex:bibdate>
+<bibtex:price>US\$45.00</bibtex:price>
+<bibtex:acknowledgement>ack-nhfb"(not listed)"</bibtex:acknowledgement>
+<bibtex:class>map2</bibtex:class>
+<bibtex:keywords>scglib</bibtex:keywords>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="robinson">
+<bibtex:book>
+<bibtex:editor>Robinson, W. F. and Huxtable, C. R. R.</bibtex:editor>
+<bibtex:title>Clinicopathologic Principles For Veterinary Medicine</bibtex:title>
+<bibtex:publisher>Cambridge University Press</bibtex:publisher>
+<bibtex:year>1988</bibtex:year>
+<bibtex:address>Cambridge</bibtex:address>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="huffman">
+<bibtex:article>
+<bibtex:author>Huffman, L. M.</bibtex:author>
+<bibtex:title>Processing whey protein for use as a food ingredient</bibtex:title>
+<bibtex:journal>Food Technology</bibtex:journal>
+<bibtex:year>1996</bibtex:year>
+<bibtex:volume>50</bibtex:volume>
+<bibtex:number>2</bibtex:number>
+<bibtex:pages>49-52</bibtex:pages>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="graps">
+<bibtex:article>
+<bibtex:author>Graps, Amara L.</bibtex:author>
+<bibtex:title>An Introduction to Wavelets</bibtex:title>
+<bibtex:journal>IEEE Computational Sciences and Engineering</bibtex:journal>
+<bibtex:year>1995</bibtex:year>
+<bibtex:volume>2</bibtex:volume>
+<bibtex:number>2</bibtex:number>
+<bibtex:pages>50-61</bibtex:pages>
+<bibtex:note>http://www.amara.com/ftpstuff/IEEEwavelet.ps.gz</bibtex:note>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="berkman">
+<bibtex:book>
+<bibtex:author>Berkman, R. I.</bibtex:author>
+<bibtex:title>Find It Fast: How to Uncover Expert Information on Any Subject</bibtex:title>
+<bibtex:publisher>HarperPerennial</bibtex:publisher>
+<bibtex:year>1994</bibtex:year>
+<bibtex:address>New York</bibtex:address>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="chicago">
+<bibtex:inbook>
+<bibtex:title>The Chicago Manual of Style</bibtex:title>
+<bibtex:publisher>University of Chicago Press</bibtex:publisher>
+<bibtex:edition>Thirteenth</bibtex:edition>
+<bibtex:year>1982</bibtex:year>
+<bibtex:pages>400-401</bibtex:pages>
+<bibtex:key>Chicago</bibtex:key>
+</bibtex:inbook>
+</bibtex:entry>
+
+  
+<bibtex:entry id="testcase-percent">
+<bibtex:article>
+<bibtex:author>Doe, J.</bibtex:author>
+<bibtex:title>The use of \% gives trouble</bibtex:title>
+<bibtex:journal>Doe's Journal</bibtex:journal>
+<bibtex:year>2004</bibtex:year>
+<bibtex:volume>1</bibtex:volume>
+<bibtex:number>1</bibtex:number>
+<bibtex:pages>1-2</bibtex:pages>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="Gawinecki2005a">
+<bibtex:inproceedings>
+<bibtex:author>
+<bibtex:person>Maciej Gawinecki</bibtex:person>
+<bibtex:person>Minor Gordon</bibtex:person>
+<bibtex:person>Marcin Paprzycki</bibtex:person>
+<bibtex:person>Michał Szymczak</bibtex:person>
+<bibtex:person>Zygmunt Vetulani</bibtex:person>
+<bibtex:person>Jimmy Wright</bibtex:person>
+</bibtex:author>
+<bibtex:title>Enabling Semantic Referencing of Selected Travel Related Resources</bibtex:title>
+<bibtex:booktitle>Proceedings of the 8 th International Conference on Business Information Systems (BIS 2005)</bibtex:booktitle>
+<bibtex:year>2005</bibtex:year>
+<bibtex:pages>271-28</bibtex:pages>
+<bibtex:address>Poznań, Poland</bibtex:address>
+<bibtex:publisher>Poznań University of Economics Press</bibtex:publisher>
+<bibtex:abstract>This paper describes our efforts to semantically describe travelrelated documents on the Internet. We focus on the areas of lodging and gastronomy, with allowance for further expansion into other aspects of the world of travel. Based on an analysis of currently-available data, we develop hotel ontology. Furthermore, we explicitly define an ontology for the Chefmoz project data, which has no official schema. Finally, we sketch a way to combine these two ontologies for use in an integrated travel framework.</bibtex:abstract>
+<bibtex:owner>maciej</bibtex:owner>
+<bibtex:timestamp>2006.07.13</bibtex:timestamp>
+<bibtex:url>http://agentlab.swps.edu.pl/BIS_2005.pdf</bibtex:url>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+  <!-- manual cleanup may be required... -->
+</bibtex:file>

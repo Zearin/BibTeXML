@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE bibtex:file PUBLIC
+    "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
+    "bibtexml.dtd" >
+<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+
+  
+<bibtex:entry id="btxdoc">
+<bibtex:manual>
+<bibtex:author>Oren Patashnik</bibtex:author>
+<bibtex:title>BibTeXing</bibtex:title>
+<bibtex:address>BibTeX distribution</bibtex:address>
+<bibtex:month>February</bibtex:month>
+<bibtex:year>1988</bibtex:year>
+<bibtex:url>ftp://sunsite.unc.edu/pub/packages/TeX/biblio/bibtex/distribs/doc/btxdoc.tex</bibtex:url>
+</bibtex:manual>
+</bibtex:entry>
+
+<bibtex:entry id="Tufte-1997-VEI">
+<bibtex:book>
+<bibtex:author>Edward R. Tufte</bibtex:author>
+<bibtex:title>Visual Explanations: Images and Quantities, Evidence and Narrative</bibtex:title>
+<bibtex:publisher>Graphics Press</bibtex:publisher>
+<bibtex:address>Box 430, Cheshire, CT 06410, USA</bibtex:address>
+<bibtex:pages>156</bibtex:pages>
+<bibtex:year>1997</bibtex:year>
+<bibtex:isbn>0-9613921-2-6</bibtex:isbn>
+<bibtex:lccn>P93.5.T846 1997</bibtex:lccn>
+<bibtex:mrnumber>B.Tufte.97</bibtex:mrnumber>
+<bibtex:bibdate>Thu Aug 07 13:39:07 1997</bibtex:bibdate>
+<bibtex:price>US\$45.00</bibtex:price>
+<bibtex:acknowledgement>ack-nhfb"(not listed)"</bibtex:acknowledgement>
+<bibtex:class>map2</bibtex:class>
+<bibtex:keywords>scglib</bibtex:keywords>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="EVL-1997-260">
+<bibtex:book>
+<bibtex:year>1997</bibtex:year>
+<bibtex:title>Visual Explanations : Images and Quantities, Evidence and Narrative</bibtex:title>
+<bibtex:author>
+<bibtex:person>Edward R. Tufte</bibtex:person>
+<bibtex:person>Dmitry Krasny</bibtex:person>
+</bibtex:author>
+<bibtex:language>en</bibtex:language>
+<bibtex:abstract>With Visual Explanations, Edward R. Tufte adds a third volume to his series on information display. Visual Explanations centers on dynamic data-information that changes over time. The book ranges through a variety of topics, including the explosion of the space shuttle Challenger, magic tricks, a cholera epidemic in 19th-century London, and the principle of using ``the smallest effective difference'' to display distinctions in data. The book provides pictures of verbs, cause and effect, and other dynamic patterns of information display, exploring how visual evidence influences computer interfaces, design strategies, and how information is transferred and represented.</bibtex:abstract>
+<bibtex:publisher>Graphics Press</bibtex:publisher>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="graps">
+<bibtex:article>
+<bibtex:author>Graps, Amara L.</bibtex:author>
+<bibtex:title>An Introduction to Wavelets</bibtex:title>
+<bibtex:journal>IEEE Computational Sciences and Engineering</bibtex:journal>
+<bibtex:year>1995</bibtex:year>
+<bibtex:volume>2</bibtex:volume>
+<bibtex:number>2</bibtex:number>
+<bibtex:pages>50-61</bibtex:pages>
+<bibtex:note>http://www.amara.com/ftpstuff/IEEEwavelet.ps.gz</bibtex:note>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="bentley">
+<bibtex:book>
+<bibtex:author>John P. Bentley</bibtex:author>
+<bibtex:title>Principles of measurement systems</bibtex:title>
+<bibtex:publisher>Longman Scientific &amp; Technical</bibtex:publisher>
+<bibtex:year>1995</bibtex:year>
+<bibtex:address>Harlow</bibtex:address>
+<bibtex:edition>3</bibtex:edition>
+<bibtex:isbn>0-582-23779-3</bibtex:isbn>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="berkman">
+<bibtex:book>
+<bibtex:author>Berkman, R. I.</bibtex:author>
+<bibtex:title>Find It Fast: How to Uncover Expert Information on Any Subject</bibtex:title>
+<bibtex:publisher>HarperPerennial</bibtex:publisher>
+<bibtex:year>1994</bibtex:year>
+<bibtex:address>New York</bibtex:address>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="moir">
+<bibtex:book>
+<bibtex:author>
+<bibtex:person>Moir, A.</bibtex:person>
+<bibtex:person>Jessel, D.</bibtex:person>
+</bibtex:author>
+<bibtex:title>Brain Sex: The Real Difference Between Men and Women</bibtex:title>
+<bibtex:publisher>Mandarin</bibtex:publisher>
+<bibtex:year>1991</bibtex:year>
+<bibtex:address>London</bibtex:address>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="cheek">
+<bibtex:book>
+<bibtex:author>
+<bibtex:person>Cheek, J.</bibtex:person>
+<bibtex:person>Doskatsch, I.</bibtex:person>
+<bibtex:person>Hill, P.</bibtex:person>
+<bibtex:person>Walsh, L.</bibtex:person>
+</bibtex:author>
+<bibtex:title>Finding Out: Information Literacy For the 21st century</bibtex:title>
+<bibtex:publisher>MacMillan Education Australia</bibtex:publisher>
+<bibtex:year>1995</bibtex:year>
+<bibtex:address>South Melbourne</bibtex:address>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="robinson">
+<bibtex:book>
+<bibtex:editor>Robinson, W. F. and Huxtable, C. R. R.</bibtex:editor>
+<bibtex:title>Clinicopathologic Principles For Veterinary Medicine</bibtex:title>
+<bibtex:publisher>Cambridge University Press</bibtex:publisher>
+<bibtex:year>1988</bibtex:year>
+<bibtex:address>Cambridge</bibtex:address>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="sjostrand">
+<bibtex:book>
+<bibtex:editor>Sjostrand, S.</bibtex:editor>
+<bibtex:title>Institutional Change: Theory and Empirical Findings</bibtex:title>
+<bibtex:publisher>M.E. Sharpe</bibtex:publisher>
+<bibtex:year>1993</bibtex:year>
+<bibtex:address>Armonk, N.Y.</bibtex:address>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="mctaggart">
+<bibtex:book>
+<bibtex:author>
+<bibtex:person>McTaggart, D.</bibtex:person>
+<bibtex:person>Findlay, C.</bibtex:person>
+<bibtex:person>Parkin, M.</bibtex:person>
+</bibtex:author>
+<bibtex:title>Economics</bibtex:title>
+<bibtex:publisher>Addison-Wesley</bibtex:publisher>
+<bibtex:year>1995</bibtex:year>
+<bibtex:address>Sydney</bibtex:address>
+<bibtex:edition>2nd edn</bibtex:edition>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="huffman">
+<bibtex:article>
+<bibtex:author>Huffman, L. M.</bibtex:author>
+<bibtex:title>Processing whey protein for use as a food ingredient</bibtex:title>
+<bibtex:journal>Food Technology</bibtex:journal>
+<bibtex:year>1996</bibtex:year>
+<bibtex:volume>50</bibtex:volume>
+<bibtex:number>2</bibtex:number>
+<bibtex:pages>49-52</bibtex:pages>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="bernstein">
+<bibtex:inbook>
+<bibtex:chapter>Transportation planning</bibtex:chapter>
+<bibtex:author>Bernstein, D.</bibtex:author>
+<bibtex:title>The Civil Engineering Handbook</bibtex:title>
+<bibtex:editor>Chen W.F.</bibtex:editor>
+<bibtex:publisher>CRC Press</bibtex:publisher>
+<bibtex:year>1995</bibtex:year>
+<bibtex:address>Boca Raton</bibtex:address>
+</bibtex:inbook>
+</bibtex:entry>
+
+<bibtex:entry id="simpson">
+<bibtex:article>
+<bibtex:author>Simpson, L.</bibtex:author>
+<bibtex:title>Tasmania's railway goes private</bibtex:title>
+<bibtex:journal>Australian Financial Review</bibtex:journal>
+<bibtex:year>1997</bibtex:year>
+<bibtex:pages>10</bibtex:pages>
+<bibtex:month>13 Oct.</bibtex:month>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="bohrer">
+<bibtex:inproceedings>
+<bibtex:author>
+<bibtex:person>Bohrer, S.</bibtex:person>
+<bibtex:person>Zielke, T.</bibtex:person>
+<bibtex:person>Freiburg, V.</bibtex:person>
+</bibtex:author>
+<bibtex:title>Integrated obstacle detection framework for intelligent cruise control on motorways</bibtex:title>
+<bibtex:booktitle>IEEE Intelligent Vehicles Symposium</bibtex:booktitle>
+<bibtex:year>1995</bibtex:year>
+<bibtex:pages>276-281</bibtex:pages>
+<bibtex:address>Detroit, MI, Piscataway</bibtex:address>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+<bibtex:entry id="simons">
+<bibtex:incollection>
+<bibtex:author>Simons, R. C.</bibtex:author>
+<bibtex:title>Boo! Culture, Experience and the Startle Reflex</bibtex:title>
+<bibtex:booktitle>Series in Affective Science</bibtex:booktitle>
+<bibtex:publisher>Oxford University Press</bibtex:publisher>
+<bibtex:year>1996</bibtex:year>
+<bibtex:address>New York</bibtex:address>
+</bibtex:incollection>
+</bibtex:entry>
+
+<bibtex:entry id="dalheim">
+<bibtex:phdthesis>
+<bibtex:author>Dalheim, Joar Martin</bibtex:author>
+<bibtex:title>Numerical prediction of vortex-induced vibration by the finite element method</bibtex:title>
+<bibtex:school>Department of Structural Engineering, Norwegian University of Science and Technology</bibtex:school>
+<bibtex:year>1997</bibtex:year>
+<bibtex:address>Trondheim</bibtex:address>
+<bibtex:isbn>82-471-0096-7</bibtex:isbn>
+</bibtex:phdthesis>
+</bibtex:entry>
+
+<bibtex:entry id="wavelab-doc">
+<bibtex:manual>
+<bibtex:author>Jonathan Buckheit; Shaobing Chen; David Donoho; Iain Johnstone; Jeffrey Scargle</bibtex:author>
+<bibtex:title>WaveLab, version .701</bibtex:title>
+<bibtex:organization>Stanford University, NASA-Ames Research Center</bibtex:organization>
+<bibtex:month>November</bibtex:month>
+<bibtex:year>1995</bibtex:year>
+<bibtex:url>http://www-stat.stanford.edu/\ wavelab/</bibtex:url>
+</bibtex:manual>
+</bibtex:entry>
+
+<bibtex:entry id="bailleux_cp_2003">
+<bibtex:inproceedings>
+<bibtex:author>
+<bibtex:person>Olivier Bailleux</bibtex:person>
+<bibtex:person>Yacine Boufkhad</bibtex:person>
+</bibtex:author>
+<bibtex:title>Efficient CNF Encodings of Boolean Cardinality Constraints</bibtex:title>
+<bibtex:booktitle>CP</bibtex:booktitle>
+<bibtex:year>2003</bibtex:year>
+<bibtex:pages>108-122</bibtex:pages>
+<bibtex:month>October</bibtex:month>
+<bibtex:publisher>Springer-Verlag</bibtex:publisher>
+<bibtex:url>http://www.springerlink.com/link.asp?id=417w9ba2kaj1bw9f</bibtex:url>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+<bibtex:entry id="chase-89">
+<bibtex:inproceedings>
+<bibtex:author>
+<bibtex:person>Jeffrey S. Chase</bibtex:person>
+<bibtex:person>Franz G. Amador</bibtex:person>
+<bibtex:person>Edward D. Lazowska</bibtex:person>
+<bibtex:person>Henry M. Levy</bibtex:person>
+<bibtex:person>Richard J. Littlefield</bibtex:person>
+</bibtex:author>
+<bibtex:booktitle>sosp-89 "December"</bibtex:booktitle>
+<bibtex:pages>147-158</bibtex:pages>
+<bibtex:title>The Amber System: Parallel Programming on a Network of Multiprocessors</bibtex:title>
+<bibtex:year>1989</bibtex:year>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+  
+<bibtex:entry id="muse">
+<bibtex:inproceedings>
+<bibtex:author>
+<bibtex:person>Jeffrey S. Chase</bibtex:person>
+<bibtex:person>Darrell C. Anderson</bibtex:person>
+<bibtex:person>Prachi N. Thakar</bibtex:person>
+<bibtex:person>Amin M. Vahdat</bibtex:person>
+<bibtex:person>Ronald P. Doyle</bibtex:person>
+</bibtex:author>
+<bibtex:booktitle>Proceedings of the 18th ACM Symposium on Operating System Principles (SOSP)</bibtex:booktitle>
+<bibtex:month>October</bibtex:month>
+<bibtex:title>Managing Energy and Server Resources in Hosting Centers</bibtex:title>
+<bibtex:pages>103-116</bibtex:pages>
+<bibtex:year>2001</bibtex:year>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+  
+<bibtex:entry id="crispysquid">
+<bibtex:misc>
+<bibtex:author>
+<bibtex:person>Syam Gadde</bibtex:person>
+<bibtex:person>Jeff Chase</bibtex:person>
+<bibtex:person>Michael Rabinovich</bibtex:person>
+</bibtex:author>
+<bibtex:title>Crispy Squid</bibtex:title>
+<bibtex:howpublished>\urlhttp://www.cs.duke.edu/ari/crisp/</bibtex:howpublished>
+</bibtex:misc>
+</bibtex:entry>
+
+<bibtex:entry id="chase-switch">
+<bibtex:inproceedings>
+<bibtex:author>Jeffrey S. Chase</bibtex:author>
+<bibtex:title>Server Switching: Yesterday and Tomorrow</bibtex:title>
+<bibtex:booktitle>Proceedings of the Second IEEE Workshop on Internet Applications (WIAPP `01)</bibtex:booktitle>
+<bibtex:month>July</bibtex:month>
+<bibtex:year>2001</bibtex:year>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+  
+<bibtex:entry id="meixner01">
+<bibtex:inproceedings>
+<bibtex:author>
+<bibtex:person>Albert Meixner</bibtex:person>
+<bibtex:person>Peng Yin</bibtex:person>
+<bibtex:person>Donald Onyango</bibtex:person>
+<bibtex:person>Amin Vahdat</bibtex:person>
+</bibtex:author>
+<bibtex:title>Design and Evaluation of a Kernel-Level SCTP Implementation</bibtex:title>
+<bibtex:booktitle>Submitted for publication</bibtex:booktitle>
+<bibtex:year>2001</bibtex:year>
+<bibtex:month>May</bibtex:month>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+<bibtex:entry id="joie-spe">
+<bibtex:article>
+<bibtex:author>
+<bibtex:person>Geoff A. Cohen</bibtex:person>
+<bibtex:person>Jeffrey S. Chase</bibtex:person>
+</bibtex:author>
+<bibtex:title>An Architecture for Safe Bytecode Insertion</bibtex:title>
+<bibtex:journal>Software&#x2014;Practice and Experience</bibtex:journal>
+<bibtex:year>2002</bibtex:year>
+<bibtex:note>To appear</bibtex:note>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="terraflow-acmgis">
+<bibtex:inproceedings>
+<bibtex:author>
+<bibtex:person>Lars Arge</bibtex:person>
+<bibtex:person>Jeffrey S. Chase</bibtex:person>
+<bibtex:person>Laura Toma</bibtex:person>
+<bibtex:person>Jeffrey Scott Vitter</bibtex:person>
+<bibtex:person>Rajiv Wickremesinghe</bibtex:person>
+<bibtex:person>Patrick N. Halpin</bibtex:person>
+<bibtex:person>Dean Urban</bibtex:person>
+</bibtex:author>
+<bibtex:title>Flow Computation on Massive Grids</bibtex:title>
+<bibtex:booktitle>ACM-GIS</bibtex:booktitle>
+ {ACM} Symposium on Advances in Geographic Information Systems},
+<bibtex:month>November</bibtex:month>
+<bibtex:year>2001</bibtex:year>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+<bibtex:entry id="tcp-chapter">
+<bibtex:inbook>
+<bibtex:author>Jeffrey S. Chase</bibtex:author>
+<bibtex:year>2002</bibtex:year>
+<bibtex:chapter>TCP Implementation</bibtex:chapter>
+<bibtex:title>High Performance TCP/IP Networking (Mahbub Hassan and Raj Jain Editors)</bibtex:title>
+<bibtex:month>February</bibtex:month>
+<bibtex:publisher>Prentice-Hall</bibtex:publisher>
+</bibtex:inbook>
+</bibtex:entry>
+
+<bibtex:entry id="doyle-model">
+<bibtex:inproceedings>
+<bibtex:author>
+<bibtex:person>R. Doyle</bibtex:person>
+<bibtex:person>O. Asad</bibtex:person>
+<bibtex:person>J. Chase</bibtex:person>
+<bibtex:person>A. Vahdat</bibtex:person>
+</bibtex:author>
+<bibtex:title>Model-Based Resource Provisioning in a Web Service Utility</bibtex:title>
+<bibtex:booktitle>Proc. 4th USENIX USITS</bibtex:booktitle>
+<bibtex:month>March</bibtex:month>
+<bibtex:year>2003</bibtex:year>
+</bibtex:inproceedings>
+</bibtex:entry>
+
+  
+<bibtex:entry id="jauberteau202">
+<bibtex:article>
+<bibtex:author>
+<bibtex:person>F. Jauberteau</bibtex:person>
+<bibtex:person>C. Rosier</bibtex:person>
+<bibtex:person>R. Temam</bibtex:person>
+</bibtex:author>
+<bibtex:title>A Nonlinear Galerkin Method for the Navier-Stokes Equations</bibtex:title>
+<bibtex:journal>Computer Methods in Applied Mechanics and Engineering</bibtex:journal>
+<bibtex:year>1990</bibtex:year>
+<bibtex:volume>80</bibtex:volume>
+<bibtex:pages>245-260</bibtex:pages>
+<bibtex:ofnote>PWL CAT202</bibtex:ofnote>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="arndt79">
+<bibtex:book>
+<bibtex:author>
+<bibtex:person>Arndt, W.</bibtex:person>
+<bibtex:person>Gingrich, F.</bibtex:person>
+</bibtex:author>
+<bibtex:title>A Greek-English Lexicon of the New Testament and Other Early Christian Literature\,: A translation and adaptation of the fourth revised and augmented edition of Walter Bauer's `Griechisch-Deutsches W&#246;rterbuch zu den Schriften des Neuen Testaments und der &#252;brigen urchristlichen Literatur'</bibtex:title>
+<bibtex:publisher>The University of Chicago Press</bibtex:publisher>
+<bibtex:shorttitle>Lexicon</bibtex:shorttitle>
+<bibtex:year>1979</bibtex:year>
+<bibtex:shortauthor>Arndt &amp; Gingrich</bibtex:shortauthor>
+<bibtex:key>arndt:79</bibtex:key>
+<bibtex:address>Chicago &amp; London</bibtex:address>
+<bibtex:edition>Second</bibtex:edition>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="anacker84">
+<bibtex:book>
+<bibtex:author>Anacker, S.</bibtex:author>
+<bibtex:title>Seven Works of Vasubandhu</bibtex:title>
+<bibtex:publisher>Delhi</bibtex:publisher>
+<bibtex:year>1984</bibtex:year>
+<bibtex:key>anacker:84</bibtex:key>
+<bibtex:note>pp. 191-286, &amp; pp. 424-463, ed. &amp; tr. of `Màdhyàntavibhàgabhyàùya'</bibtex:note>
+</bibtex:book>
+</bibtex:entry>
+
+<bibtex:entry id="anderson-wittgenstein">
+<bibtex:article>
+<bibtex:author>T. Anderson</bibtex:author>
+<bibtex:title>Wittgenstein and Nàgàrjuna's Paradox</bibtex:title>
+<bibtex:journal>Philosophy East and West (Honolulu)</bibtex:journal>
+<bibtex:year>1985</bibtex:year>
+<bibtex:key>anderson:85</bibtex:key>
+<bibtex:volume>35\,(2)</bibtex:volume>
+<bibtex:pages>157-169</bibtex:pages>
+</bibtex:article>
+</bibtex:entry>
+
+  
+<bibtex:entry id="blum-time">
+<bibtex:article>
+<bibtex:author>
+<bibtex:person>M. Blum</bibtex:person>
+<bibtex:person>R. W. Floyd</bibtex:person>
+<bibtex:person>V. Pratt</bibtex:person>
+<bibtex:person>R. L. Rievest</bibtex:person>
+<bibtex:person>R. E. Tarjan</bibtex:person>
+</bibtex:author>
+<bibtex:title>Time bounds for selection</bibtex:title>
+<bibtex:journal>Journal of Computer and System Sciences</bibtex:journal>
+<bibtex:volume>7</bibtex:volume>
+<bibtex:year>1973</bibtex:year>
+<bibtex:pages>448-461</bibtex:pages>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="bentley-optimal">
+<bibtex:article>
+<bibtex:author>
+<bibtex:person>J. L. Bentley</bibtex:person>
+<bibtex:person>D. Wood</bibtex:person>
+</bibtex:author>
+<bibtex:title>An Optimal Worst Case Algorithm for Reporting Intersections of Rectangles</bibtex:title>
+<bibtex:journal>IEEE Transactions on Computers</bibtex:journal>
+<bibtex:volume>29</bibtex:volume>
+<bibtex:year>1980</bibtex:year>
+<bibtex:pages>571-577</bibtex:pages>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="testcase-ac">
+<bibtex:article>
+<bibtex:author>none</bibtex:author>
+<bibtex:title>none</bibtex:title>
+<bibtex:month>1  May, number = "3</bibtex:month>
+<bibtex:acknowledgement>ack-nhfb</bibtex:acknowledgement>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="almanac-66">
+<bibtex:article>
+<bibtex:author>none</bibtex:author>
+<bibtex:title>1966 " World Gnus Almanac"</bibtex:title>
+<bibtex:month>January   14-15</bibtex:month>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="chicago">
+<bibtex:inbook>
+<bibtex:title>The Chicago Manual of Style</bibtex:title>
+<bibtex:publisher>University of Chicago Press</bibtex:publisher>
+<bibtex:edition>Thirteenth</bibtex:edition>
+<bibtex:year>1982</bibtex:year>
+<bibtex:pages>400-401</bibtex:pages>
+<bibtex:key>Chicago</bibtex:key>
+</bibtex:inbook>
+</bibtex:entry>
+
+  
+<bibtex:entry id="testcase-url-equalsign">
+<bibtex:article>
+<bibtex:author>John E. Wessel</bibtex:author>
+<bibtex:title>Surface-enhanced optical microscopy</bibtex:title>
+<bibtex:journal>JOSA B</bibtex:journal>
+<bibtex:volume>2</bibtex:volume>
+<bibtex:number>9</bibtex:number>
+<bibtex:year>1985</bibtex:year>
+<bibtex:month>September</bibtex:month>
+<bibtex:pages>1538-</bibtex:pages>
+<bibtex:url>http://josab.osa.org/abstract.cfm?id=3760</bibtex:url>
+</bibtex:article>
+</bibtex:entry>
+
+<bibtex:entry id="testcase-percent">
+<bibtex:article>
+<bibtex:author>Doe, J.</bibtex:author>
+<bibtex:title>The use of \% gives trouble</bibtex:title>
+<bibtex:journal>Doe's Journal</bibtex:journal>
+<bibtex:year>2004</bibtex:year>
+<bibtex:volume>1</bibtex:volume>
+<bibtex:number>1</bibtex:number>
+<bibtex:pages>1-2</bibtex:pages>
+</bibtex:article>
+</bibtex:entry>
+
+  <!-- manual cleanup may be required... -->
+</bibtex:file>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE bibtex:file PUBLIC
+    "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
+    "bibtexml.dtd" >
+<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+
+  
+<bibtex:entry id="AnEntry">
+<bibtex:misc>
+<bibtex:author>A Author</bibtex:author>
+<bibtex:title>A Title</bibtex:title>
+<bibtex:year>2006</bibtex:year>
+}  Some words.  
+<bibtex:entry id="AnotherEntry">
+<bibtex:article>
+<bibtex:author>
+<bibtex:person>Ann Author</bibtex:person>
+<bibtex:person>Someone Else</bibtex:person>
+</bibtex:author>
+<bibtex:title>Another Title</bibtex:title>
+<bibtex:journal>Journal of Something Or Other</bibtex:journal>
+<bibtex:year>2006</bibtex:year>
+<bibtex:volume>1</bibtex:volume>
+<bibtex:number>1</bibtex:number>
+<bibtex:pages>1-10</bibtex:pages>
+</bibtex:article>
+</bibtex:entry>
+
+  <!-- manual cleanup may be required... -->
+</bibtex:file>
