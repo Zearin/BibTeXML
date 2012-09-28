@@ -1,6 +1,6 @@
 # BibTeXML
 
-This project is a revival of the excellent [BibTeXML project from SourceForge](http://bibtexml.sf.net).  
+This project is a revival of the excellent [BibTeXML project from SourceForge](http://bibtexml.sf.net).
 
 
 ##	Project Overview
@@ -20,7 +20,7 @@ There’s certainly no shortage of existing tools for XML developers who want to
 * [bibtex2html](http://www.lri.fr/~filliatr/bibtex2html/)
 * [Bibutils](http://www.scripps.edu/~cdputnam/software/bibutils/)
 
-…But these didn’t quite do what I wanted.  Bibutils uses MODS XML for everything, and bibtex2html produces HTML that I find offensive to even look at.  
+…But these didn’t quite do what I wanted.  Bibutils uses MODS XML for everything, and bibtex2html produces HTML that I find offensive to even look at.
 
 
 ###	What were my needs?
@@ -28,8 +28,11 @@ I needed something that converted BibTeX into a flavor of XML that *preserved th
 
 
 ###	Reviving the project on GitHub
-BibTeXML stopped being developed [several years ago](http://sourceforge.net/projects/bibtexml/files/).  For a while, it fulfilled my needs perfectly.  But eventually my BibTeX source became more complicated, and the conversion started failing.  I started tweaking a few problems, but the more I looked at the code, the more I wanted to fix—specifically, the Relax-NG Compact schemas and `bibtex2xml` Python script.  I prefer Relax-NG Compact over other XML schema languages, and I appreciate Python’s readability compared to Java. (I have nothing against Java. But for me at least, it requires more practice to read and understand.)
+BibTeXML stopped being developed [several years ago](http://sourceforge.net/projects/bibtexml/files/).  For a while, it fulfilled my needs perfectly.  But eventually my BibTeX source became more complicated, and the conversion started failing.  I started tweaking a few problems, but the more I looked at the code, the more I wanted to fix—specifically, the Relax-NG Compact schemas and `bibtex2xml` Python script.
 
-So I hooked up some electrodes to the original SVN repository, resurrected the project as a Git zombie, and here we are.  I’m planning to improve the mentioned schemas and Python script, which I hope will be helpful.
+I prefer Relax-NG Compact over other XML schema languages, and I appreciate Python’s readability compared to Java. (Nothing against Java. It’s just more
+difficult for me to understand than Python.)
+
+So I hooked up some electrodes to the original SVN repository and resurrected the project as a zombified Git repo.  I’m planning to improve the mentioned schemas and Python script, which I hope will be helpful.
 
 The rest of the project may also help as-is.  Maybe it will get noticed more on GitHub.  Or if you know Java, maybe you can help there.  :-)
