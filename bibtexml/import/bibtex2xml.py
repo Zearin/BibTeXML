@@ -88,16 +88,17 @@ field_rex           = re.compile('\s*(\w*)\s*=\s*(.*)')
 data_rex            = re.compile('\s*(\w*)\s*=\s*([^,]*),?')
 
 
-#
-# return the string parameter without braces
-#
-def removebraces(str):
-    return rembraces_rex.sub('',str)
+def removebraces(string):
+    ''' Return `string` without braces. '''
+    return rembraces_rex.sub('',string)
 
-# fix author so that it creates multiple authors,
-# split by "and"
+
 def bibtexauthor(data):
-    bibtex = '<bibtex:author>'
+    ''' Fix author so that it creates multiple authors,
+        separated by "and".
+    '''
+
+    bibtex      = '<bibtex:author>'
     author_list = author_rex.split(data)
     if len(author_list) > 1:
         bibtex += '\n'
@@ -109,19 +110,26 @@ def bibtexauthor(data):
     return bibtex.strip()
 
 
-# @return the bibtex for the title
-# @param data --> title string
-# braces are removed from title
+
 def bibtextitle(data):
+    ''' Converts bibtex title to XML (removing braces if necessary).
+        @param data --> title string
+        @return the bibtex for the title
+    '''
     title   = removebraces(data)
     title   = title.strip()
     bibtex  = '<bibtex:title>{}</bibtex:title>'.format(title)
     return bibtex
 
 
-# @return the bibtex for the keyword
-# keywords are assumed to be delimited by , or ;
+
 def bibtexkeyword(data):
+    ''' Returns XMLized version of the bibtex keywords in `data`.
+        Keywords are assumed to be delimited by `,` or `;`.
+
+        @returns The XML for the keyword
+    '''
+
     bibtex          = ''
     keyword_list    = keywords_rex.split(data)
     for keyword in keyword_list:
@@ -131,10 +139,17 @@ def bibtexkeyword(data):
 
 
 
-# data = title string
-# @return the capitalized title (first letter is capitalized),
-# rest are capitalized only if capitalized inside braces
 def capitalizetitle(data):
+    ''' Capitalizes the title string, `data`.
+
+        @param `data`
+            The title string
+        @returns
+            The capitalized title. The first letter is always
+            capitalized; the rest are capitalized only if inside braces.
+    '''
+
+
     title_list = capitalize_rex.split(data)
     title   = ''
     count   = 0
@@ -156,11 +171,19 @@ def capitalizetitle(data):
 
 
 #
-# print the XML for the transformed "filecontents_source"
+#
 #
 def bibtexdecoder(filecontents_source):
+    ''' Print the XML for the transformed `filecontents_source`.
+
+        @FIXME
+            The indentation of this function is atrocious.
+            It's also incredibly tricky to repair without breaking
+            this script's output.  Grr.
+    '''
+
     filecontents = []
-    endentry = ''
+    endentry     = ''
 
     # want @<alphanumeric chars><spaces>{<spaces><any chars>,
     pubtype_rex = re.compile('@(\w*)\s*{\s*(.*),')
@@ -256,12 +279,11 @@ def bibtexdecoder(filecontents_source):
 
     return filecontents
 
-#
-# return 1 iff abbr is in line but not inside braces or quotes
-# assumes that abbr appears only once on the line (out of braces and quotes)
-#
-def verify_out_of_braces(line, abbr):
 
+def verify_out_of_braces(line, abbr):
+    ''' Return `1` if `abbr` is in `line`, but not inside braces or quotes.
+        Assumes `abbr` appears only once in `line` (out of braces and quotes).
+    '''
     phrase_split = delimiter_rex.split(line)
 
     abbr_rex = re.compile( '\\b' + abbr + '\\b', re.I)
@@ -286,13 +308,15 @@ def verify_out_of_braces(line, abbr):
     return 0
 
 
-#
-# a line in the form phrase1 # phrase2 # ... # phrasen
-# is returned as phrase1 phrase2 ... phrasen
-# with the correct punctuation
-# Bug: Doesn't always work with multiple abbreviations plugged in
-#
+
 def concat_line(line):
+    ''' A `line` in the form  `phrase1 # phrase2 # ... # phraseN`
+        is returned as `phrase1 phrase2 ... phrasen` with correct punctuation.
+
+        **BUG:**
+            Doesn't always work with multiple abbreviations plugged in.
+    '''
+
     # only look at part after equals
     field   = field_rex.sub('\g<1>',line)
     rest    = field_rex.sub('\g<2>',line)
@@ -332,9 +356,14 @@ def concat_line(line):
 
     return concat_line
 
-# substitute abbreviations into filecontents
-# @param filecontents_source - string of data from file
+
 def bibtex_replace_abbreviations(filecontents_source):
+    ''' Expands abbreviations in `filecontents_source`.
+
+        @param filecontents_source
+            String of data from file
+    '''
+
     filecontents = filecontents_source.splitlines()
 
     #  These are defined in bibtex, so we'll define them too
@@ -434,12 +463,11 @@ def bibtex_replace_abbreviations(filecontents_source):
 
     return filecontents2
 
-#
-# convert @type( ... ) to @type{ ... }
-#
-def no_outer_parens(filecontents):
 
-    # do checking for open parens
+def no_outer_parens(filecontents):
+    ''' Converts `@type( ... )` to `@type{ ... }`.  '''
+
+    # Check for open parens;
     # will convert to braces
     paren_split = re.split('([(){}])',filecontents)
 
@@ -479,10 +507,11 @@ def no_outer_parens(filecontents):
     return filecontents
 
 
-# make all whitespace into just one space
-# format the bibtex file into a usable form.
-def bibtexwasher(filecontents_source):
 
+def bibtexwasher(filecontents_source):
+    ''' Normalizes all whitespace from `filecontents_source`,
+        then formats BibTeX into a “usable form”.
+    '''
     space_rex       = re.compile('\s+')
     comment_rex     = re.compile('\s*%')
 
@@ -568,24 +597,35 @@ def bibtexwasher(filecontents_source):
 
 
 def contentshandler(filecontents_source):
-     washeddata = bibtexwasher(filecontents_source)
-     outdata    = bibtexdecoder(washeddata)
-     #print '<?xml-stylesheet href="bibtexml.css" type="text/css" ?>'
-     print('''<?xml version="1.0" encoding="utf-8"?>
-              <!DOCTYPE bibtex:file PUBLIC' "-//BibTeXML//DTD XML for BibTeX v1.0//EN" "bibtexml.dtd" >
-              <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+    ''' Washes, converts to XML, and prints `filecontents_source`.
 
-          ''')
-     for line in outdata:
-         print(line)
-     print( '<!-- manual cleanup may be required... -->\n\n',
-            '</bibtex:file>')
+        This function is *nearly* a convenience wrapper,
+        allowing code wash-and-XMLize `filecontents_source`
+        in a single function call.  However, it does
+        perform some additional small (but important) operations
+        before printing the result.
+    '''
+    washeddata = bibtexwasher(filecontents_source)
+    outdata    = bibtexdecoder(washeddata)
+    #print '<?xml-stylesheet href="bibtexml.css" type="text/css" ?>'
+    print('''<?xml version="1.0" encoding="utf-8"?>
+             <!DOCTYPE bibtex:file PUBLIC' "-//BibTeXML//DTD XML for BibTeX v1.0//EN" "bibtexml.dtd" >
+             <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+
+         ''')
+    for line in outdata:
+        print(line)
+    print( '<!-- manual cleanup may be required... -->\n\n',
+           '</bibtex:file>')
 
 
 def filehandler(filepath):
-     with open(filepath, 'r') as fd:
-         filecontents_source = fd.readlines()
-     return filecontents_source
+    ''' Opens `filepath` and returns the result as a string.  Uses
+        `readlines()` internally.
+    '''
+    with open(filepath, 'r') as f:
+        filecontents_source = f.readlines()
+    return filecontents_source
 
 
 # main program
