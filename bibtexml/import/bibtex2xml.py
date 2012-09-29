@@ -2,61 +2,68 @@
 # -*- coding: utf-8 -*-
 # Time-stamp: "2006-07-26T09:50:29 vidar"
 '''
-  Decoder for bibliographic data, BibTeX
-  Usage: python bibtex2xml.py bibfile.bib > bibfile.xml
+    Decoder for bibliographic data, BibTeX
 
-  (c) Vidar Bronken Gundersen, Sara Sprenkle
-  http://bibtexml.sourceforge.net/
-  Reuse approved as long as this notification is kept.
-  License: http://creativecommons.org/licenses/GPL/2.0/
+    Usage:
+        python bibtex2xml.py bibfile.bib > bibfile.xml
 
-  Contributions/thanks to:
-  Thomas Karl Schwaerzler, read stdin
-  Egon Willighagen, http://jreferences.sf.net/
-  Richard Mahoney, for providing a test case
+    (c) Vidar Bronken Gundersen, Sara Sprenkle
+    http://bibtexml.sourceforge.net/
 
-  This is Sara Sprenkle's rewrite of our original script, which
-  is changed to be more robust and handle more bibtex features:
-  3.  Allow spaces between @type and first {
-  4.  'author' fields with multiple authors split by ' and '
-      are put in separate xml 'bibtex:person' tags.
-  5.  Option for Titles: words are capitalized
-      only if first letter in title or capitalized inside braces
-  6.  Removes braces from within field values
-  7.  Ignores comments in bibtex file (including @comment{ or % )
-  8.  Replaces some special latex tags, e.g., replaces ~ with '&#160;'
-  9.  Handles bibtex @string abbreviations
-        --> includes bibtex's default abbreviations for months
-        --> does concatenation of abbr # ' more ' and ' more ' # abbr
-  10. Handles @type( ... ) or @type{ ... }
-  11. The keywords field is split on , or ; and put into
-      separate xml 'bibtex:keywords' tags
-  12. Ignores @preamble
+    Reuse approved as long as this notification is kept.
 
-  replace ':' with '-' for bibtex:entry@id: unique-ids cannot contain ':'
+    License:
+        http://creativecommons.org/licenses/GPL/2.0/
 
-  Known Limitations
-  1.  Does not transform Latex encoding like math mode
-         and special latex symbols.
-  2.  Does not parse author fields into first and last names.
-      E.g., It does not do anything special to an author whose name is
-      in the form LAST_NAME, FIRST_NAME In'author' tag, will show up as
-      <bibtex:author>LAST_NAME, FIRST_NAME</bibtex:author>
-  3.  Does not handle 'crossref' fields other than to print
-      <bibtex:crossref>...</bibtex:crossref>
-  4.  Does not inform user of the input's format errors.
-       You just won't be able to transform the file later with XSL
-       Create error.log file?
+    Contributions/thanks to:
+        *   Thomas Karl Schwaerzler, read stdin
+        *   Egon Willighagen, http://jreferences.sf.net/
+        *   Richard Mahoney, for providing a test case
 
-  5.  Special treatment of
-      howpublished = '\url{http://www.cs.duke.edu/ari/crisp/}',
+    This is Sara Sprenkle's rewrite of our original script, which
+    is more robust and handles more BibTeX features:
 
-  6. document functions with docstrings
+        1.  Allows spaces between `@[type]` and first '{'
+        2.  @author fields with multiple authors split by ' and '
+            are put into separate 'bibtex:person' XML elements.
+        3.  Option for `titles`: words are capitalized only if
+            first letter in `title` or capitalized inside braces
+        4.  Removes braces from within field values
+        5.  Ignores comments in BibTeX file (including @comment{ or % )
+        6.  Replaces some special LaTeX tags, e.g., replaces '~' with '&#160;'
+        7.  Handles BibTeX @string abbreviations
+            --> includes BibTeX's default abbreviations for months
+            --> does concatenation of abbr # ' more ' and ' more ' # abbr
+        8.  Handles @type( ... ) or @type{ ... }
+        9.  `keywords` field is split on ',' or ';', and put into separate
+            'bibtex:keywords' XML elements
+        10. Ignores `preamble`
+        11. Replace ':' with '-' for bibtex:entry/@id;
+            unique-ids cannot contain ':'
 
-  You will have to manually edit the XML output if you need to handle
-  these (and unknown) limitations.
+    Known Limitations:
+
+        1.  Doesn't transform LaTeX encoding (like math mode and special
+            LaTeX symbols).
+        2.  Doesn't parse `author` fields into first and last names.
+            (It doesn't do anything special to an author whose name is
+            in the form LAST_NAME, FIRST_NAME.  This will output
+            <bibtex:author>LAST_NAME, FIRST_NAME</bibtex:author>)
+        3.  Doesn't process `crossref` fields (apart from printing
+            <bibtex:crossref>...</bibtex:crossref>)
+        4.  Doesn't inform user of the input's format errors.
+            You just won't be able to transform the output with XSL
+            (Create error.log file?)
+        5.  Special treatment of
+            `howpublished = '\url{http://www.cs.duke.edu/ari/crisp/}'`
+        6.  Functions lack docstrings
+
+    You will have to manually edit the XML output if you need to handle
+    these (and unknown) limitations.
 
 '''
+
+
 from    __future__  import  print_function, with_statement
 import re
 
@@ -565,13 +572,14 @@ def contentshandler(filecontents_source):
      outdata    = bibtexdecoder(washeddata)
      #print '<?xml-stylesheet href="bibtexml.css" type="text/css" ?>'
      print('''<?xml version="1.0" encoding="utf-8"?>
-              <!DOCTYPE bibtex:file PUBLIC' "-//BibTeXML//DTD XML for BibTeX v1.0//EN" "bibtexml.dtd" >''')
-     print('<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">')
-     print()
+              <!DOCTYPE bibtex:file PUBLIC' "-//BibTeXML//DTD XML for BibTeX v1.0//EN" "bibtexml.dtd" >
+              <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+
+          ''')
      for line in outdata:
          print(line)
-     print('  <!-- manual cleanup may be required... -->')
-     print('</bibtex:file>')
+     print( '<!-- manual cleanup may be required... -->\n\n',
+            '</bibtex:file>')
 
 
 def filehandler(filepath):
