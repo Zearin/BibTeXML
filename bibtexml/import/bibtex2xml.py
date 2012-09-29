@@ -92,12 +92,11 @@ def removebraces(str):
 def bibtexauthor(data):
     bibtex = '<bibtex:author>'
     author_list = author_rex.split(data)
-    if len(author_list) >1:
+    if len(author_list) > 1:
         bibtex += '\n'
         for author in author_list:
 	    author = author.strip()
-	    bibtex += '<bibtex:person>' + removebraces(author) + \
-		     '</bibtex:person>' + '\n'
+	    bibtex += '<bibtex:person>{}</bibtex:person>\n'.format( removebraces(author) )
     else: bibtex += removebraces(author_list[0])
     bibtex += '</bibtex:author>'
     return bibtex.strip()
@@ -109,8 +108,7 @@ def bibtexauthor(data):
 def bibtextitle(data):
     title = removebraces(data)
     title = title.strip()
-    bibtex = '<bibtex:title>' + title + \
-	     '</bibtex:title>'
+    bibtex = '<bibtex:title>{}</bibtex:title>'.format(title)
     return bibtex
 
 
@@ -121,8 +119,7 @@ def bibtexkeyword(data):
     keyword_list = keywords_rex.split(data)
     for keyword in keyword_list:
 	    keyword = keyword.strip()
-	    bibtex += '<bibtex:keywords>' + removebraces(keyword) \
-		            + '</bibtex:keywords>' + '\n'
+	    bibtex += '<bibtex:keywords>{}</bibtex:keywords>\n'.format(removebraces(keyword))
     return bibtex.strip()
 
 
@@ -191,9 +188,8 @@ def bibtexdecoder(filecontents_source):
 	    arttype = string.lower(arttype)
 	    artid   = pubtype_rex.sub('\g<2>', line)
             artid   = string.replace(artid,':','-')
-            endentry = '</bibtex:' + arttype + '>' + '\n</bibtex:entry>\n'
-            line = '<bibtex:entry id="' + artid + '">\n' + \
-                   '<bibtex:' + arttype + '>'
+            endentry = '</bibtex:{}>\n</bibtex:entry>\n'.format(arttype)
+            line = '<bibtex:entry id="{}">\n<bibtex:{}>'.format(artid, arttype)
         # end item
 
         # end entry if just a }
@@ -231,8 +227,7 @@ def bibtexdecoder(filecontents_source):
             data = removebraces(data)
             data = string.strip(data)
             if data != '':
-                line = '<bibtex:' + field + '>' + string.strip(data) + \
-                       '</bibtex:' + field + '>'
+                line = '<bibtex:{0}>{1}</bibtex:{0}>'.format(field, string.strip(data))
             # get rid of the field={} type stuff
 	    else:
 		    line = ''
