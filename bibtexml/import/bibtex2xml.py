@@ -572,12 +572,8 @@ def contentshandler(filecontents_source):
 
 
 def filehandler(filepath):
-     try:
-         fd = open(filepath, 'r')
+     with open(filepath, 'r') as fd:
          filecontents_source = fd.readlines()
-         fd.close()
-     except:
-         print('Could not open file:', filepath)
      return filecontents_source
 
 
