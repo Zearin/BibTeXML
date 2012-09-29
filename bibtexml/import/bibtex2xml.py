@@ -76,7 +76,12 @@ rembraces_rex       = re.compile('[{}]')
 capitalize_rex      = re.compile('({\w*})')
 
 # used by bibtexkeywords(data)
-keywords_rex        = re.compile('[,;]')
+#
+#   fixed by zearin, 2011-12-1
+#   use "negative lookbehind asssertion" to prevent
+#   an already-converted ampersand from triggering a
+#   keyword delimiter match with its semi-colon
+keywords_rex    = re.compile(',|(?<!&amp);')
 
 # used by concat_line(line)
 concatsplit_rex     = re.compile('\s*#\s*')
