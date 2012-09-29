@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Time-stamp: "2006-07-26T09:50:29 vidar"
-"""
+'''
   Decoder for bibliographic data, BibTeX
   Usage: python bibtex2xml.py bibfile.bib > bibfile.xml
 
@@ -56,7 +56,7 @@
   You will have to manually edit the XML output if you need to handle
   these (and unknown) limitations.
 
-"""
+'''
 from    __future__  import  print_function, with_statement
 import re
 
@@ -263,9 +263,9 @@ def verify_out_of_braces(line, abbr):
     open_quote = 0
 
     for phrase in phrase_split:
-        if phrase == "{":
+        if phrase == '{':
             open_brace  += 1
-        elif phrase == "}":
+        elif phrase == '}':
             open_brace  -= 1
         elif phrase == '"':
             if open_quote is 1:
@@ -305,20 +305,20 @@ def concat_line(line):
         elif phrase.startswith('"'):
             phrase  =   phrase.replace('"','{',1)
 
-        if phrase_count != length-1:
+        if phrase_count != length - 1:
             if phrase.endswith('"') or phrase.endswith('}'):
                 phrase  =   phrase[:-1]
         else:
             if phrase.endswith('"'):
                 phrase  = phrase[:-1]
-                phrase  +=  "}"
+                phrase  +=  '}'
             elif phrase.endswith('",'):
                 phrase  =   phrase[:-2]
-                phrase  +=  "},"
+                phrase  +=  '},'
 
         # if phrase did have \#, add the \# back
         if phrase.endswith('\\'):
-            phrase  += "#"
+            phrase  += '#'
         concat_line += ' ' + phrase
 
         phrase_count += 1
@@ -592,7 +592,7 @@ def main():
      	filecontents_source     = sys.stdin.readlines()
      contentshandler(filecontents_source)
 
-if __name__ == "__main__": main()
+if __name__ == '__main__': main()
 
 
 # end python script
