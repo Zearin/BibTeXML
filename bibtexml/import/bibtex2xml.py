@@ -609,7 +609,7 @@ def contentshandler(filecontents_source):
     outdata    = bibtexdecoder(washeddata)
     #print '<?xml-stylesheet href="bibtexml.css" type="text/css" ?>'
     print('''<?xml version="1.0" encoding="utf-8"?>
-             <!DOCTYPE bibtex:file PUBLIC' "-//BibTeXML//DTD XML for BibTeX v1.0//EN" "bibtexml.dtd" >
+             <!DOCTYPE bibtex:file PUBLIC "-//BibTeXML//DTD XML for BibTeX v1.0//EN" "bibtexml.dtd">
              <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
 
          ''')
