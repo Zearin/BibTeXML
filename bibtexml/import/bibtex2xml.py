@@ -1,4 +1,4 @@
-#!/usr/bin/env python -B
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Time-stamp: "2006-07-26T09:50:29 vidar"
 """
@@ -138,11 +138,11 @@ def capitalizetitle(data):
 	 check = string.lstrip(phrase)
 
 	 # keep phrase's capitalization the same
-	 if check.find('{') == 0:
+	 if check.find('{') is 0:
 	      title = title + removebraces(phrase)
          else:
 	 # first word --> capitalize first letter (after spaces)
-	      if count == 0:
+	      if count is 0:
 	          title = title + check.capitalize()
 	      else:
 	          title = title + phrase.lower()
@@ -273,12 +273,12 @@ def verify_out_of_braces(line, abbr):
         elif phrase == "}":
             open_brace = open_brace - 1
         elif phrase == '"':
-            if open_quote == 1:
+            if open_quote is 1:
                 open_quote = 0
             else:
                 open_quote = 1
         elif abbr_rex.search(phrase):
-            if open_brace == 0 and open_quote == 0:
+            if open_brace is 0 and open_quote is 0:
                 return 1
 
     return 0
@@ -376,7 +376,7 @@ def bibtex_replace_abbreviations(filecontents_source):
         if abbrdef_rex.search(line):
             abbr = abbrdef_rex.sub('\g<1>', line)
 
-	    if abbr_list.count(abbr) == 0:
+	    if abbr_list.count(abbr) is 0:
                 val = abbrdef_rex.sub('\g<2>', line)
 	        abbr_list.append(abbr)
 		value_list.append(string.strip(val))
@@ -401,7 +401,7 @@ def bibtex_replace_abbreviations(filecontents_source):
         for x in abbr_list:
 
             if abbr_rex[abbr_count].search(line):
-                if verify_out_of_braces(line,abbr_list[abbr_count]) == 1:
+                if verify_out_of_braces(line,abbr_list[abbr_count]) is 1:
                     line = abbr_rex[abbr_count].sub(\
                         value_list[abbr_count] + '\g<1>', line)
                 # Check for # concatenations
@@ -450,7 +450,7 @@ def no_outer_parens(filecontents):
     at_rex = re.compile('@\w*')
 
     for phrase in paren_split:
-	if look_next == 1:
+	if look_next is 1:
 		if phrase == '(':
 			phrase = '{'
 			open_paren_count = open_paren_count + 1
@@ -463,7 +463,7 @@ def no_outer_parens(filecontents):
 
 	elif phrase == ')':
 		open_paren_count = open_paren_count - 1
-		if open_type == 1 and open_paren_count == 0:
+		if open_type is 1 and open_paren_count is 0:
 			phrase = '}'
 			open_type = 0
 
@@ -534,7 +534,7 @@ def bibtexwasher(filecontents_source):
             open_brace_count = open_brace_count + 1
         elif phrase == '}':
             open_brace_count = open_brace_count - 1
-            if open_brace_count == 0:
+            if open_brace_count is 0:
                 filecontents = filecontents + '\n'
 
         filecontents = filecontents + phrase
@@ -565,24 +565,17 @@ def bibtexwasher(filecontents_source):
 def contentshandler(filecontents_source):
      washeddata = bibtexwasher(filecontents_source)
      outdata = bibtexdecoder(washeddata)
+     print '<?xml version="1.0" encoding="utf-8"?>'
      #print '<?xml-stylesheet href="bibtexml.css" type="text/css" ?>'
-
-     outxml  = '''
-            <?xml version="1.0" encoding="utf-8"?>
-            <!DOCTYPE bibtex:file PUBLIC
-                "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
-                "bibtexml.dtd" >
-            <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
-
-            '''
-
+     print '<!DOCTYPE bibtex:file PUBLIC'
+     print '    "-//BibTeXML//DTD XML for BibTeX v1.0//EN"'
+     print '    "bibtexml.dtd" >'
+     print '<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">'
+     print
      for line in outdata:
-         outxml += line
-
-     outxml += '  <!-- manual cleanup may be required... -->'
-     outxml += '</bibtex:file>'
-
-     return outxml
+         print line
+     print '  <!-- manual cleanup may be required... -->'
+     print '</bibtex:file>'
 
 
 def filehandler(filepath):
