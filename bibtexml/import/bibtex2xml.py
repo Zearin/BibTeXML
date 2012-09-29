@@ -93,13 +93,13 @@ def bibtexauthor(data):
     bibtex = '<bibtex:author>'
     author_list = author_rex.split(data)
     if len(author_list) >1:
-        bibtex = bibtex + '\n'
+        bibtex += '\n'
         for author in author_list:
 	    author = author.strip()
-	    bibtex = bibtex + '<bibtex:person>' + removebraces(author) + \
+	    bibtex += '<bibtex:person>' + removebraces(author) + \
 		     '</bibtex:person>' + '\n'
-    else: bibtex = bibtex + removebraces(author_list[0])
-    bibtex = bibtex + '</bibtex:author>'
+    else: bibtex += removebraces(author_list[0])
+    bibtex += '</bibtex:author>'
     return bibtex.strip()
 
 
@@ -121,7 +121,7 @@ def bibtexkeyword(data):
     keyword_list = keywords_rex.split(data)
     for keyword in keyword_list:
 	    keyword = keyword.strip()
-	    bibtex = bibtex + '<bibtex:keywords>' + removebraces(keyword) \
+	    bibtex += '<bibtex:keywords>' + removebraces(keyword) \
 		            + '</bibtex:keywords>' + '\n'
     return bibtex.strip()
 
@@ -139,14 +139,14 @@ def capitalizetitle(data):
 
 	 # keep phrase's capitalization the same
 	 if check.find('{') is 0:
-	      title = title + removebraces(phrase)
+	      title += removebraces(phrase)
          else:
 	 # first word --> capitalize first letter (after spaces)
 	      if count is 0:
-	          title = title + check.capitalize()
+	          title += check.capitalize()
 	      else:
-	          title = title + phrase.lower()
-	 count = count + 1
+	          title += phrase.lower()
+	 count += 1
 
     return title
 
@@ -269,9 +269,9 @@ def verify_out_of_braces(line, abbr):
 
     for phrase in phrase_split:
         if phrase == "{":
-            open_brace = open_brace + 1
+            open_brace += 1
         elif phrase == "}":
-            open_brace = open_brace - 1
+            open_brace -= 1
         elif phrase == '"':
             if open_quote is 1:
                 open_quote = 0
@@ -316,17 +316,17 @@ def concat_line(line):
         else:
             if phrase.endswith('"'):
                 phrase = phrase[:-1]
-                phrase = phrase + "}"
+                phrase += "}"
             elif phrase.endswith('",'):
                 phrase = phrase[:-2]
-                phrase = phrase + "},"
+                phrase += "},"
 
         # if phrase did have \#, add the \# back
         if phrase.endswith('\\'):
-            phrase = phrase + "#"
-        concat_line = concat_line + ' ' + phrase
+            phrase += "#"
+        concat_line += ' ' + phrase
 
-        phrase_count = phrase_count + 1
+        phrase_count += 1
 
     return concat_line
 
@@ -351,7 +351,7 @@ def bibtex_replace_abbreviations(filecontents_source):
     for x in abbr_list:
         abbr_rex.append( re.compile(\
             front + abbr_list[total_abbr_count] + back, re.I ) )
-        total_abbr_count = total_abbr_count + 1
+        total_abbr_count += 1
 
 
     abbrdef_rex = re.compile('\s*@string\s*{\s*('+\
@@ -382,7 +382,7 @@ def bibtex_replace_abbreviations(filecontents_source):
 		value_list.append(string.strip(val))
                 abbr_rex.append( re.compile(\
                     front + abbr_list[total_abbr_count] + back, re.I ) )
-                total_abbr_count = total_abbr_count + 1
+                total_abbr_count += 1
             waiting_for_end_string = 1
             continue
 
@@ -407,11 +407,11 @@ def bibtex_replace_abbreviations(filecontents_source):
                 # Check for # concatenations
                 if concatsplit_rex.search(line):
                     line = concat_line(line)
-            abbr_count = abbr_count + 1
+            abbr_count += 1
 
 
-        filecontents2 = filecontents2 + line + '\n'
-        i = i+1
+        filecontents2 += line + '\n'
+        i += 1
 
 
     # Do one final pass over file
@@ -453,16 +453,16 @@ def no_outer_parens(filecontents):
 	if look_next is 1:
 		if phrase == '(':
 			phrase = '{'
-			open_paren_count = open_paren_count + 1
+			open_paren_count += 1
 		else:
 			open_type = 0
 		look_next = 0
 
 	if phrase == '(':
-		open_paren_count = open_paren_count + 1
+		open_paren_count += 1
 
 	elif phrase == ')':
-		open_paren_count = open_paren_count - 1
+		open_paren_count -= 1
 		if open_type is 1 and open_paren_count is 0:
 			phrase = '}'
 			open_type = 0
@@ -471,7 +471,7 @@ def no_outer_parens(filecontents):
 		open_type = 1
 		look_next = 1
 
-        filecontents = filecontents + phrase
+        filecontents += phrase
 
     return filecontents
 
@@ -531,13 +531,13 @@ def bibtexwasher(filecontents_source):
 
     for phrase in brace_split:
         if phrase == '{':
-            open_brace_count = open_brace_count + 1
+            open_brace_count += 1
         elif phrase == '}':
-            open_brace_count = open_brace_count - 1
+            open_brace_count -= 1
             if open_brace_count is 0:
-                filecontents = filecontents + '\n'
+                filecontents += '\n'
 
-        filecontents = filecontents + phrase
+        filecontents += phrase
 
     filecontents2 = bibtex_replace_abbreviations(filecontents)
 
@@ -548,10 +548,10 @@ def bibtexwasher(filecontents_source):
     for line in filecontents:
         # ignore blank lines
         if line == '' or line == ' ':
-            j = j+1
+            j += 1
             continue
         filecontents[i] = line + '\n'
-        i = i+1
+        i += 1
 
     # get rid of the extra stuff at the end of the array
     # (The extra stuff are duplicates that are in the array because
