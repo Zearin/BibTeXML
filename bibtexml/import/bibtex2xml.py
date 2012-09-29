@@ -227,7 +227,7 @@ def bibtexdecoder(filecontents_source):
             line = endtag_rex.sub(endentry, line)
 
         field = ''
-        data = ''
+        data  = ''
         # field, publication info
         # field = {data} entries
 	if bracedata_rex.match(line):
@@ -505,7 +505,6 @@ def no_outer_parens(filecontents):
         filecontents += phrase
 
     return filecontents
-
 
 
 def bibtexwasher(filecontents_source):
