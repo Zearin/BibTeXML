@@ -281,7 +281,7 @@ def bibtexdecoder(filecontents_source):
 
 
 def verify_out_of_braces(line, abbr):
-    ''' Return `1` if `abbr` is in `line`, but not inside braces or quotes.
+    ''' Return `True` if `abbr` is in `line`, but not inside braces or quotes.
         Assumes `abbr` appears only once in `line` (out of braces and quotes).
     '''
     phrase_split = delimiter_rex.split(line)
@@ -303,9 +303,9 @@ def verify_out_of_braces(line, abbr):
                 open_quote  = 1
         elif abbr_rex.search(phrase):
             if open_brace is 0 and open_quote is 0:
-                return 1
+                return True
 
-    return 0
+    return False
 
 
 
@@ -433,7 +433,7 @@ def bibtex_replace_abbreviations(filecontents_source):
         for x in abbr_list:
 
             if abbr_rex[abbr_count].search(line):
-                if verify_out_of_braces(line,abbr_list[abbr_count]) is 1:
+                if verify_out_of_braces(line,abbr_list[abbr_count]) is True:
                     line = abbr_rex[abbr_count].sub(\
                         value_list[abbr_count] + '\g<1>', line)
                 # Check for # concatenations
