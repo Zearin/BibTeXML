@@ -207,9 +207,9 @@ def bibtexdecoder(filecontents_source):
         line = line[:-1]
 
         # encode character entities
-	line = line.replace('&', '&amp;')
+        line = line.replace('&', '&amp;')
         line = line.replace('<', '&lt;')
-	line = line.replace('>', '&gt;')
+        line = line.replace('>', '&gt;')
 
         # start item: publication type (store for later use)
 	if pubtype_rex.match(line):
