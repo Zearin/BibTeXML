@@ -58,7 +58,7 @@
 
 """
 from    __future__  import  print_function, with_statement
-import string, re
+import re
 
 # set of valid name characters
 valid_name_chars = '[\w\-:]'
@@ -132,7 +132,7 @@ def capitalizetitle(data):
     title = ''
     count = 0
     for phrase in title_list:
-	 check = string.lstrip(phrase)
+	 check  = phrase.lstrip()
 
 	 # keep phrase's capitalization the same
 	 if check.find('{') is 0:
@@ -177,19 +177,19 @@ def bibtexdecoder(filecontents_source):
         line = line[:-1]
 
         # encode character entities
-	line = string.replace(line, '&', '&amp;')
-        line = string.replace(line, '<', '&lt;')
-	line = string.replace(line, '>', '&gt;')
+	line = line.replace('&', '&amp;')
+        line = line.replace('<', '&lt;')
+	line = line.replace('>', '&gt;')
 
         # start item: publication type (store for later use)
 	if pubtype_rex.match(line):
         # want @<alphanumeric chars><spaces>{<spaces><any chars>,
 	    arttype = pubtype_rex.sub('\g<1>',line)
-	    arttype = string.lower(arttype)
+	    arttype = arttype.lower()
 	    artid   = pubtype_rex.sub('\g<2>', line)
-            artid   = string.replace(artid,':','-')
-            endentry = '</bibtex:{}>\n</bibtex:entry>\n'.format(arttype)
-            line = '<bibtex:entry id="{}">\n<bibtex:{}>'.format(artid, arttype)
+            artid       = artid.replace(':','-')
+            endentry    = '</bibtex:{}>\n</bibtex:entry>\n'.format(arttype)
+            line        = '<bibtex:entry id="{}">\n<bibtex:{}>'.format(artid, arttype)
         # end item
 
         # end entry if just a }
@@ -202,20 +202,20 @@ def bibtexdecoder(filecontents_source):
         # field = {data} entries
 	if bracedata_rex.match(line):
             field = bracefield_rex.sub('\g<1>', line)
-            field = string.lower(field)
             data =  bracedata_rex.sub('\g<2>', line)
+            field   = field.lower()
 
         # field = "data" entries
         elif quotedata_rex.match(line):
             field = quotefield_rex.sub('\g<1>', line)
-            field = string.lower(field)
             data =  quotedata_rex.sub('\g<2>', line)
+            field   = field.lower()
 
 	# field = data entries
 	elif data_rex.match(line):
             field = field_rex.sub('\g<1>', line)
-            field = string.lower(field)
             data =  data_rex.sub('\g<2>', line)
+            field   = field.lower()
 
         if field == 'title':
             line = bibtextitle(data)
@@ -225,7 +225,7 @@ def bibtexdecoder(filecontents_source):
             line = bibtexkeyword(data)
         elif field != '':
             data = removebraces(data)
-            data = string.strip(data)
+            data = data.strip()
             if data != '':
                 line = '<bibtex:{0}>{1}</bibtex:{0}>'.format(field, string.strip(data))
             # get rid of the field={} type stuff
@@ -235,15 +235,15 @@ def bibtexdecoder(filecontents_source):
 	if line != '':
 		# latex-specific replacements
 		# do this now after braces were removed
-		line = string.replace(line, '~', ' ')#'&#160;')
-		line = string.replace(line, '\\\'a', '&#225;')
-		line = string.replace(line, '\\"a', '&#228;')
-		line = string.replace(line, '\\\'c', '&#263;')
-		line = string.replace(line, '\\"o', '&#246;')
-		line = string.replace(line, '\\o', '&#248;')
-		line = string.replace(line, '\\"u', '&#252;')
-		line = string.replace(line, '---', '&#x2014;')
-		line = string.replace(line, '--', '-')
+		line = line.replace( '~', ' ')#'&#160;')
+		line = line.replace( '\\\'a', '&#225;')
+		line = line.replace( '\\"a', '&#228;')
+		line = line.replace( '\\\'c', '&#263;')
+		line = line.replace( '\\"o', '&#246;')
+		line = line.replace( '\\o', '&#248;')
+		line = line.replace( '\\"u', '&#252;')
+		line = line.replace( '---', '&#x2014;')
+		line = line.replace( '--', '-')
 
 		filecontents.append(line)
 
@@ -483,13 +483,13 @@ def bibtexwasher(filecontents_source):
     # remove trailing and excessive whitespace
     # ignore comments
     for line in filecontents_source:
-	line = string.strip(line)
-	line = space_rex.sub(' ', line)
+	line    = line.strip()
+	line    = space_rex.sub(' ', line)
 	# ignore comments
 	if not comment_rex.match(line):
 	    filecontents.append(' '+ line)
 
-    filecontents = string.join(filecontents, '')
+    filecontents    = ''.join(filecontents)
 
     # the file is in one long string
 
