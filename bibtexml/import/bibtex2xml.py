@@ -57,7 +57,7 @@
   these (and unknown) limitations.
 
 """
-
+from    __future__  import  print_function, with_statement
 import string, re
 
 # set of valid name characters
@@ -565,17 +565,15 @@ def bibtexwasher(filecontents_source):
 def contentshandler(filecontents_source):
      washeddata = bibtexwasher(filecontents_source)
      outdata = bibtexdecoder(washeddata)
-     print '<?xml version="1.0" encoding="utf-8"?>'
      #print '<?xml-stylesheet href="bibtexml.css" type="text/css" ?>'
-     print '<!DOCTYPE bibtex:file PUBLIC'
-     print '    "-//BibTeXML//DTD XML for BibTeX v1.0//EN"'
-     print '    "bibtexml.dtd" >'
-     print '<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">'
-     print
+     print('''<?xml version="1.0" encoding="utf-8"?>
+              <!DOCTYPE bibtex:file PUBLIC' "-//BibTeXML//DTD XML for BibTeX v1.0//EN" "bibtexml.dtd" >''')
+     print('<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">')
+     print()
      for line in outdata:
-         print line
-     print '  <!-- manual cleanup may be required... -->'
-     print '</bibtex:file>'
+         print(line)
+     print('  <!-- manual cleanup may be required... -->')
+     print('</bibtex:file>')
 
 
 def filehandler(filepath):
@@ -584,7 +582,7 @@ def filehandler(filepath):
          filecontents_source = fd.readlines()
          fd.close()
      except:
-         print 'Could not open file:', filepath
+         print('Could not open file:', filepath)
      return filecontents_source
 
 
