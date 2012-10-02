@@ -2,18 +2,24 @@
 # -*- coding: UTF-8 -*-
 
 
+#---------------------------------------------------------------------
+#   IMPORTS
+#---------------------------------------------------------------------
 from    pyvows  import (Vows, expect)
 
 try:
     #   Import the file directly above this one
     #   (Don’t use anything found in normal PYTHONPATHs)
     import  sys
-    sys.path.insert(0,'../')
+    sys.path.insert( 0, '../' )
     import bibtex2xml
 except ImportError as e:
     sys.exit(e)
 
 
+#---------------------------------------------------------------------
+#   TEST UTILITIES
+#---------------------------------------------------------------------
 testDataPrefix = '../examples'
 testData = (    open( testDataPrefix + '/testcases-utf8.bib', 'r' )          ,
                 open( testDataPrefix + '/testcases-uncommented.bib', 'r' )   ,
@@ -21,6 +27,11 @@ testData = (    open( testDataPrefix + '/testcases-utf8.bib', 'r' )          ,
                 open( testDataPrefix + '/demo.bib', 'r' )
             )
 
+
+
+#---------------------------------------------------------------------
+#   BEGIN THE TESTS
+#---------------------------------------------------------------------
 @Vows.batch
 class ContentsHandler(Vows.Context):
 
