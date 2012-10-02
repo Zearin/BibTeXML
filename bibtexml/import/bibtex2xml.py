@@ -227,11 +227,10 @@ def concat_line(line):
     '''
 
     # only look at part after equals
-    field   = field_rex.sub('\g<1>',line)
-    rest    = field_rex.sub('\g<2>',line)
+    field       = field_rex.sub('\g<1>',line)
+    rest        = field_rex.sub('\g<2>',line)
 
     concat_line = field + ' ='
-
     pound_split = concatsplit_rex.split(rest)
 
     phrase_count    = 0
@@ -239,7 +238,7 @@ def concat_line(line):
 
     for phrase in pound_split:
         phrase = phrase.strip()
-        if phrase_count != 0:
+        if   phrase_count is not 0:
             if phrase.startswith('"') or phrase.startswith('{'):
                 phrase  =   phrase[1:]
         elif phrase.startswith('"'):
@@ -249,7 +248,7 @@ def concat_line(line):
             if phrase.endswith('"') or phrase.endswith('}'):
                 phrase  =   phrase[:-1]
         else:
-            if phrase.endswith('"'):
+            if  phrase.endswith('"'):
                 phrase  = phrase[:-1]
                 phrase  +=  '}'
             elif phrase.endswith('",'):
@@ -277,17 +276,16 @@ def no_outer_parens(filecontents):
     #       (Be sure to check which maps to which! Don't
     #       just assume the Pythonic equivalent.)
 
-    # Check for open parens;
-    # will convert to braces
-    paren_split = re.split('([(){}])',filecontents)
+    # Check for open parens; will convert to braces
+    paren_split         = re.split('([(){}])',filecontents)
 
     open_paren_count    = 0
     open_type           = 0
     look_next           = 0
 
     # rebuild filecontents
-    filecontents    = ''
-    at_rex          = re.compile('@\w*')
+    filecontents        =   ''
+    at_rex              =   re.compile('@\w*')
 
     for phrase in paren_split:
         if look_next is 1:
@@ -335,8 +333,8 @@ def bibtex_replace_abbreviations(filecontents_source):
     abbr_rex        = []
     total_abbr_count= 0
 
-    front   = '\\b'
-    back    = '(,?)\\b'
+    front           = '\\b'
+    back            = '(,?)\\b'
 
     for x in abbr_list:
         abbr_rex.append(re.compile(
@@ -392,7 +390,6 @@ def bibtex_replace_abbreviations(filecontents_source):
             waiting_for_end_string = 1
             continue
 
-
         # replace subsequent abbreviations with the value
         abbr_count = 0
 
@@ -406,27 +403,27 @@ def bibtex_replace_abbreviations(filecontents_source):
                 # Check for # concatenations
                 if concatsplit_rex.search(line):
                     line = concat_line(line)
-            abbr_count += 1
+            abbr_count  += 1
 
 
-        filecontents2 += line + '\n'
-        i += 1
+        filecontents2   += line + '\n'
+        i               += 1
 
 
     # Do one final pass over file
 
     # make sure that didn't end up with {" or }" after the substitution
-    filecontents2   = filecontents2.replace('{"','{{')
-    filecontents2   = filecontents2.replace('"}','}}')
+    filecontents2       = filecontents2.replace('{"','{{')
+    filecontents2       = filecontents2.replace('"}','}}')
 
     afterquotevalue_rex = re.compile('"\s*,\s*')
     afterbrace_rex      = re.compile('"\s*}')
     afterbracevalue_rex = re.compile('(=\s*{[^=]*)},\s*')
 
     # add new lines to data that changed because of abbreviation substitutions
-    filecontents2   = afterquotevalue_rex.sub('",\n', filecontents2)
-    filecontents2   = afterbrace_rex.sub('"\n}', filecontents2)
-    filecontents2   = afterbracevalue_rex.sub('\g<1>},\n', filecontents2)
+    filecontents2       = afterquotevalue_rex.sub('",\n', filecontents2)
+    filecontents2       = afterbrace_rex.sub('"\n}', filecontents2)
+    filecontents2       = afterbracevalue_rex.sub('\g<1>},\n', filecontents2)
 
     return filecontents2
 
