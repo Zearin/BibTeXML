@@ -295,7 +295,7 @@ def no_outer_parens(filecontents):
             else:
                 open_type = 0
 
-            look_next   = 0
+                look_next   = 0
 
         if   phrase == '(':
             open_paren_count += 1
@@ -587,8 +587,8 @@ def bibtexwasher(filecontents_source):
     filecontents    = re.sub('\\\&'     ,'&',           filecontents)
 
     # do checking for open braces to get format correct
-    open_brace_count    = 0
-    brace_split         = re.split('([{}])',filecontents)
+    open_brace_count= 0
+    brace_split     = re.split('([{}])',filecontents)
 
     # rebuild filecontents
     filecontents = ''
@@ -636,8 +636,8 @@ def contentshandler(filecontents_source):
         perform some additional small (but important) operations
         before printing the result.
     '''
-    washeddata = bibtexwasher(filecontents_source)
-    outdata    = bibtexdecoder(washeddata)
+    washeddata  = bibtexwasher(filecontents_source)
+    outdata     = bibtexdecoder(washeddata)
 
     #print '<?xml-stylesheet href="bibtexml.css" type="text/css" ?>'
     print('''<?xml version="1.0" encoding="utf-8"?>
