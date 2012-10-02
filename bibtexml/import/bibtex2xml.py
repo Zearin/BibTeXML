@@ -32,8 +32,8 @@
         5.  Ignores comments in BibTeX file (including @comment{ or % )
         6.  Replaces some special LaTeX tags, e.g., replaces '~' with '&#160;'
         7.  Handles BibTeX @string abbreviations
-            --> includes BibTeX's default abbreviations for months
-            --> does concatenation of abbr # ' more ' and ' more ' # abbr
+            * includes BibTeX's default abbreviations for months
+            * does concatenation of abbr # ' more ' and ' more ' # abbr
         8.  Handles @type( ... ) or @type{ ... }
         9.  `keywords` field is split on ',' or ';', and put into separate
             'bibtex:keywords' XML elements
@@ -56,16 +56,20 @@
             (Create error.log file?)
         5.  Special treatment of
             `howpublished = '\url{http://www.cs.duke.edu/ari/crisp/}'`
-        6.  Functions lack docstrings
+        6.  Some functions lack docstrings
 
     You will have to manually edit the XML output if you need to handle
     these (and unknown) limitations.
-
 '''
 
 
 from    __future__  import  print_function, with_statement
 import re
+
+
+#---------------------------------------------------------------------
+#   REGULAR EXPRESSIONS
+#---------------------------------------------------------------------
 
 # set of valid name characters
 valid_name_chars    = '[\w\-:]'
@@ -81,7 +85,7 @@ capitalize_rex      = re.compile('({\w*})')
 #   use "negative lookbehind asssertion" to prevent
 #   an already-converted ampersand from triggering a
 #   keyword delimiter match with its semi-colon
-keywords_rex    = re.compile(',|(?<!&amp);')
+keywords_rex        = re.compile(',|(?<!&amp);')
 
 # used by concat_line(line)
 concatsplit_rex     = re.compile('\s*#\s*')
@@ -93,11 +97,15 @@ field_rex           = re.compile('\s*(\w*)\s*=\s*(.*)')
 data_rex            = re.compile('\s*(\w*)\s*=\s*([^,]*),?')
 
 
-def removebraces(string):
+def remove_braces(string):
     ''' Return `string` without braces. '''
-    return rembraces_rex.sub('',string)
+    return rembraces_rex.sub('', string)
 
 
+
+#---------------------------------------------------------------------
+#   DATA FUNCTIONS
+#---------------------------------------------------------------------
 def bibtexauthor(data):
     ''' Fix author so that it creates multiple authors,
         separated by "and".
@@ -285,6 +293,9 @@ def bibtexdecoder(filecontents_source):
     return filecontents
 
 
+#---------------------------------------------------------------------
+#   LINE FUNCTIONS
+#---------------------------------------------------------------------
 def verify_out_of_braces(line, abbr):
     ''' Return `True` if `abbr` is in `line`, but not inside braces or quotes.
         Assumes `abbr` appears only once in `line` (out of braces and quotes).
@@ -362,6 +373,10 @@ def concat_line(line):
     return concat_line
 
 
+
+#---------------------------------------------------------------------
+#   FILE-AS-A-STRING FUNCTIONS
+#---------------------------------------------------------------------
 def bibtex_replace_abbreviations(filecontents_source):
     ''' Expands abbreviations in `filecontents_source`.
 
