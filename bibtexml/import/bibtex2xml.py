@@ -372,7 +372,7 @@ def bibtex_replace_abbreviations(filecontents_source):
             if abbr_list.count(abbr) is 0:
                 val = abbrdef_rex.sub('\g<2>', line)
                 abbr_list.append(abbr)
-                value_list.append(string.strip(val))
+                value_list.append(val.strip())
                 abbr_rex.append(
                     re.compile(
                         front + abbr_list[total_abbr_count] + back,
