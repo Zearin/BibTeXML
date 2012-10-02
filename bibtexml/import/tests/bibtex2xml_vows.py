@@ -47,8 +47,8 @@ class ContentsHandler(Vows.Context):
             expect(isinstance( topic, str)).to_be_true()
 
         def contentshandler_output_matches_previous(self, topic):
-            XML = open('tests/testcases-utf8.xml','r')
-            testcases_str = ''.join([line for line in XML])
+            XML             =   open('tests/testcases-utf8.xml','r')
+            testcases_str   =   ''.join([line for line in XML])
             XML.close()
             expect(topic).to_be_like( testcases_str )
 
@@ -61,8 +61,8 @@ class ContentsHandler(Vows.Context):
             expect(isinstance( topic, str)).to_be_true()
 
         def contentshandler_output_matches_previous(self, topic):
-            XML = open('tests/testcases-uncommented.xml','r')
-            testcases_str = ''.join([line for line in XML])
+            XML             =   open('tests/testcases-uncommented.xml','r')
+            testcases_str   =   ''.join([line for line in XML])
             XML.close()
             expect(topic).to_be_like( testcases_str )
 
@@ -75,8 +75,8 @@ class ContentsHandler(Vows.Context):
             expect(isinstance( topic, str)).to_be_true()
 
         def contentshandler_output_matches_previous(self, topic):
-            XML = open('tests/testcases.xml','r')
-            testcases_str = ''.join([line for line in XML])
+            XML             =   open('tests/testcases.xml','r')
+            testcases_str   =   ''.join([line for line in XML])
             XML.close()
             expect(topic).to_be_like( testcases_str )
 
@@ -89,8 +89,8 @@ class ContentsHandler(Vows.Context):
             expect(isinstance( topic, str)).to_be_true()
 
         def contentshandler_output_matches_previous(self, topic):
-            XML = open('tests/demo.xml','r')
-            testcases_str = ''.join([line for line in XML])
+            XML             =   open('tests/demo.xml','r')
+            testcases_str   =   ''.join([line for line in XML])
             XML.close()
             expect(topic).to_be_like( testcases_str )
 
