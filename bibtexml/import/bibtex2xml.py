@@ -323,12 +323,12 @@ def bibtex_replace_abbreviations(filecontents_source):
     filecontents    = filecontents_source.splitlines()
 
     #  These are defined in bibtex, so we'll define them too
-    abbr_list       = ( 'jan'       ,'feb'      ,'mar'      ,'apr',
+    abbr_list       = [ 'jan'       ,'feb'      ,'mar'      ,'apr',
                         'may'       ,'jun'      ,'jul'      ,'aug',
-                        'sep'       ,'oct'      ,'nov'      ,'dec')
-    value_list      = ( 'January'   ,'February' ,'March'    ,'April',
+                        'sep'       ,'oct'      ,'nov'      ,'dec']
+    value_list      = [ 'January'   ,'February' ,'March'    ,'April',
                         'May'       ,'June'     ,'July'     ,'August',
-                        'September' , 'October' ,'November' ,'December')
+                        'September' , 'October' ,'November' ,'December']
 
     abbr_rex        = []
     total_abbr_count= 0
