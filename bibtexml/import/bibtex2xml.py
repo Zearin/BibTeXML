@@ -63,8 +63,9 @@
 '''
 
 
-from    __future__  import  print_function, with_statement
-import re
+from    __future__  import  (   print_function,
+                                with_statement,      )
+import  re
 
 
 #---------------------------------------------------------------------
@@ -244,7 +245,7 @@ def concat_line(line):
         elif phrase.startswith('"'):
             phrase  =   phrase.replace('"','{',1)
 
-        if phrase_count != length - 1:
+        if phrase_count is not ( length - 1 ):
             if phrase.endswith('"') or phrase.endswith('}'):
                 phrase  =   phrase[:-1]
         else:
@@ -321,15 +322,15 @@ def bibtex_replace_abbreviations(filecontents_source):
             String of data from file
     '''
 
-    filecontents = filecontents_source.splitlines()
+    filecontents    = filecontents_source.splitlines()
 
     #  These are defined in bibtex, so we'll define them too
-    abbr_list       = [ 'jan'       ,'feb'      ,'mar'      ,'apr',
+    abbr_list       = ( 'jan'       ,'feb'      ,'mar'      ,'apr',
                         'may'       ,'jun'      ,'jul'      ,'aug',
-                        'sep'       ,'oct'      ,'nov'      ,'dec']
-    value_list      = [ 'January'   ,'February' ,'March'    ,'April',
+                        'sep'       ,'oct'      ,'nov'      ,'dec')
+    value_list      = ( 'January'   ,'February' ,'March'    ,'April',
                         'May'       ,'June'     ,'July'     ,'August',
-                        'September' , 'October' ,'November' ,'December']
+                        'September' , 'October' ,'November' ,'December')
 
     abbr_rex        = []
     total_abbr_count= 0
@@ -400,7 +401,8 @@ def bibtex_replace_abbreviations(filecontents_source):
                 if verify_out_of_braces(line,abbr_list[abbr_count]) is True:
                     line = abbr_rex[abbr_count].sub(
                                 value_list[abbr_count] + '\g<1>',
-                                line)
+                                line
+                            )
                 # Check for # concatenations
                 if concatsplit_rex.search(line):
                     line = concat_line(line)
