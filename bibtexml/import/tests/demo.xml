@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE bibtex:file PUBLIC
-    "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
-    "bibtexml.dtd" >
+<!DOCTYPE bibtex:file PUBLIC "-//BibTeXML//DTD XML for BibTeX v1.0//EN" "bibtexml.dtd">
 <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
-
   
 <bibtex:entry id="btxdoc">
 <bibtex:manual>
@@ -65,7 +62,7 @@
 <bibtex:year>1995</bibtex:year>
 <bibtex:volume>2</bibtex:volume>
 <bibtex:number>2</bibtex:number>
-<bibtex:pages>50-61</bibtex:pages>
+<bibtex:pages>50&#x2013;61</bibtex:pages>
 <bibtex:note>http://www.amara.com/ftpstuff/IEEEwavelet.ps.gz</bibtex:note>
 </bibtex:article>
 </bibtex:entry>
@@ -86,7 +83,7 @@
 <bibtex:publisher>University of Chicago Press</bibtex:publisher>
 <bibtex:edition>Thirteenth</bibtex:edition>
 <bibtex:year>1982</bibtex:year>
-<bibtex:pages>400-401</bibtex:pages>
+<bibtex:pages>400&#x2013;401</bibtex:pages>
 <bibtex:key>Chicago</bibtex:key>
 </bibtex:inbook>
 </bibtex:entry>
@@ -100,7 +97,7 @@
 <bibtex:year>2004</bibtex:year>
 <bibtex:volume>1</bibtex:volume>
 <bibtex:number>1</bibtex:number>
-<bibtex:pages>1-2</bibtex:pages>
+<bibtex:pages>1&#x2013;2</bibtex:pages>
 </bibtex:article>
 </bibtex:entry>
 
@@ -127,5 +124,6 @@
 </bibtex:inproceedings>
 </bibtex:entry>
 
-  <!-- manual cleanup may be required... -->
-</bibtex:file>
+<!-- manual cleanup may be required... -->
+
+ </bibtex:file>

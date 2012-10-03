@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE bibtex:file PUBLIC
-    "-//BibTeXML//DTD XML for BibTeX v1.0//EN"
-    "bibtexml.dtd" >
+<!DOCTYPE bibtex:file PUBLIC "-//BibTeXML//DTD XML for BibTeX v1.0//EN" "bibtexml.dtd">
 <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
-
   
 <bibtex:entry id="btxdoc">
 <bibtex:manual>
@@ -44,7 +41,7 @@
 <bibtex:person>Dmitry Krasny</bibtex:person>
 </bibtex:author>
 <bibtex:language>en</bibtex:language>
-<bibtex:abstract>With Visual Explanations, Edward R. Tufte adds a third volume to his series on information display. Visual Explanations centers on dynamic data-information that changes over time. The book ranges through a variety of topics, including the explosion of the space shuttle Challenger, magic tricks, a cholera epidemic in 19th-century London, and the principle of using ``the smallest effective difference'' to display distinctions in data. The book provides pictures of verbs, cause and effect, and other dynamic patterns of information display, exploring how visual evidence influences computer interfaces, design strategies, and how information is transferred and represented.</bibtex:abstract>
+<bibtex:abstract>With Visual Explanations, Edward R. Tufte adds a third volume to his series on information display. Visual Explanations centers on dynamic data&#x2013;information that changes over time. The book ranges through a variety of topics, including the explosion of the space shuttle Challenger, magic tricks, a cholera epidemic in 19th-century London, and the principle of using ``the smallest effective difference'' to display distinctions in data. The book provides pictures of verbs, cause and effect, and other dynamic patterns of information display, exploring how visual evidence influences computer interfaces, design strategies, and how information is transferred and represented.</bibtex:abstract>
 <bibtex:publisher>Graphics Press</bibtex:publisher>
 </bibtex:book>
 </bibtex:entry>
@@ -57,7 +54,7 @@
 <bibtex:year>1995</bibtex:year>
 <bibtex:volume>2</bibtex:volume>
 <bibtex:number>2</bibtex:number>
-<bibtex:pages>50-61</bibtex:pages>
+<bibtex:pages>50&#x2013;61</bibtex:pages>
 <bibtex:note>http://www.amara.com/ftpstuff/IEEEwavelet.ps.gz</bibtex:note>
 </bibtex:article>
 </bibtex:entry>
@@ -239,7 +236,7 @@
 <bibtex:title>Efficient CNF Encodings of Boolean Cardinality Constraints</bibtex:title>
 <bibtex:booktitle>CP</bibtex:booktitle>
 <bibtex:year>2003</bibtex:year>
-<bibtex:pages>108-122</bibtex:pages>
+<bibtex:pages>108&#x2013;122</bibtex:pages>
 <bibtex:month>October</bibtex:month>
 <bibtex:publisher>Springer-Verlag</bibtex:publisher>
 <bibtex:url>http://www.springerlink.com/link.asp?id=417w9ba2kaj1bw9f</bibtex:url>
@@ -256,7 +253,7 @@
 <bibtex:person>Richard J. Littlefield</bibtex:person>
 </bibtex:author>
 <bibtex:booktitle>sosp-89 "December"</bibtex:booktitle>
-<bibtex:pages>147-158</bibtex:pages>
+<bibtex:pages>147&#x2013;158</bibtex:pages>
 <bibtex:title>The Amber System: Parallel Programming on a Network of Multiprocessors</bibtex:title>
 <bibtex:year>1989</bibtex:year>
 </bibtex:inproceedings>
@@ -275,7 +272,7 @@
 <bibtex:booktitle>Proceedings of the 18th ACM Symposium on Operating System Principles (SOSP)</bibtex:booktitle>
 <bibtex:month>October</bibtex:month>
 <bibtex:title>Managing Energy and Server Resources in Hosting Centers</bibtex:title>
-<bibtex:pages>103-116</bibtex:pages>
+<bibtex:pages>103&#x2013;116</bibtex:pages>
 <bibtex:year>2001</bibtex:year>
 </bibtex:inproceedings>
 </bibtex:entry>
@@ -385,7 +382,7 @@
 <bibtex:person>C. Rosier</bibtex:person>
 <bibtex:person>R. Temam</bibtex:person>
 </bibtex:author>
-<bibtex:title>A Nonlinear Galerkin Method for the Navier-Stokes Equations</bibtex:title>
+<bibtex:title>A Nonlinear Galerkin Method for the Navier&#x2013;Stokes Equations</bibtex:title>
 <bibtex:journal>Computer Methods in Applied Mechanics and Engineering</bibtex:journal>
 <bibtex:year>1990</bibtex:year>
 <bibtex:volume>80</bibtex:volume>
@@ -418,7 +415,7 @@
 <bibtex:publisher>Delhi</bibtex:publisher>
 <bibtex:year>1984</bibtex:year>
 <bibtex:key>anacker:84</bibtex:key>
-<bibtex:note>pp. 191-286, &amp; pp. 424-463, ed. &amp; tr. of `Màdhyàntavibhàgabhyàùya'</bibtex:note>
+<bibtex:note>pp. 191&#x2013;286, &amp; pp. 424&#x2013;463, ed. &amp; tr. of `Màdhyàntavibhàgabhyàùya'</bibtex:note>
 </bibtex:book>
 </bibtex:entry>
 
@@ -430,7 +427,7 @@
 <bibtex:year>1985</bibtex:year>
 <bibtex:key>anderson:85</bibtex:key>
 <bibtex:volume>35\,(2)</bibtex:volume>
-<bibtex:pages>157-169</bibtex:pages>
+<bibtex:pages>157&#x2013;169</bibtex:pages>
 </bibtex:article>
 </bibtex:entry>
 
@@ -477,19 +474,15 @@
 
 <bibtex:entry id="almanac-66">
 <bibtex:article>
-<bibtex:author>none</bibtex:author>
-<bibtex:title>1966 " World Gnus Almanac"</bibtex:title>
-<bibtex:month>January   14-15</bibtex:month>
-</bibtex:article>
-</bibtex:entry>
-
+<bibtex:title>1966 " World Gnus Almanac" )January   14&#x2013;15</bibtex:title>
+ }  
 <bibtex:entry id="chicago">
 <bibtex:inbook>
 <bibtex:title>The Chicago Manual of Style</bibtex:title>
 <bibtex:publisher>University of Chicago Press</bibtex:publisher>
 <bibtex:edition>Thirteenth</bibtex:edition>
 <bibtex:year>1982</bibtex:year>
-<bibtex:pages>400-401</bibtex:pages>
+<bibtex:pages>400&#x2013;401</bibtex:pages>
 <bibtex:key>Chicago</bibtex:key>
 </bibtex:inbook>
 </bibtex:entry>
@@ -517,9 +510,10 @@
 <bibtex:year>2004</bibtex:year>
 <bibtex:volume>1</bibtex:volume>
 <bibtex:number>1</bibtex:number>
-<bibtex:pages>1-2</bibtex:pages>
+<bibtex:pages>1&#x2013;2</bibtex:pages>
 </bibtex:article>
 </bibtex:entry>
 
-  <!-- manual cleanup may be required... -->
-</bibtex:file>
+<!-- manual cleanup may be required... -->
+
+ </bibtex:file>
