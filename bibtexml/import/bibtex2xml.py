@@ -80,7 +80,7 @@ author_rex          = re.compile('\s+and\s+')
 rembraces_rex       = re.compile('[{}]')
 capitalize_rex      = re.compile('({\w*})')
 
-# used by bibtexkeywords(data)
+# used by `bibtexkeywords(data)`
 #
 #   fixed by zearin, 2011-12-1
 #   use "negative lookbehind asssertion" to prevent
@@ -91,7 +91,7 @@ keywords_rex        = re.compile(',|(?<!&amp);')
 # used by concat_line(line)
 concatsplit_rex     = re.compile('\s*#\s*')
 
-# split on {, }, or " in verify_out_of_braces
+# split on {, }, or " in `verify_out_of_braces()`
 delimiter_rex       = re.compile('([{}"])',re.I)
 
 field_rex           = re.compile('\s*(\w*)\s*=\s*(.*)')
@@ -238,14 +238,19 @@ def concat_line(line):
 
     for phrase in pound_split:
         phrase = phrase.strip()
+
+        #   phrase start
         if   phrase_count is not 0:
-            if phrase.startswith('"') or phrase.startswith('{'):
+            if phrase.startswith('"') or \
+               phrase.startswith('{'):
                 phrase  =   phrase[1:]
         elif phrase.startswith('"'):
             phrase  =   phrase.replace('"','{',1)
 
+        #   phrase end
         if phrase_count is not ( length - 1 ):
-            if phrase.endswith('"') or phrase.endswith('}'):
+            if phrase.endswith('"') or \
+               phrase.endswith('}'):
                 phrase  =   phrase[:-1]
         else:
             if  phrase.endswith('"'):
@@ -258,8 +263,8 @@ def concat_line(line):
         # if phrase did have \#, add the \# back
         if phrase.endswith('\\'):
             phrase  += '#'
-        concat_line += ' ' + phrase
 
+        concat_line  += ' ' + phrase
         phrase_count += 1
 
     return concat_line
@@ -441,20 +446,15 @@ def bibtexdecoder(filecontents_source):
     endentry     =  ''
 
     # want @<alphanumeric chars><spaces>{<spaces><any chars>,
-    pubtype_rex = re.compile('@(\w*)\s*{\s*(.*),')
-    endtype_rex = re.compile('}\s*$')
-    endtag_rex  = re.compile('^\s*}\s*$')
+    pubtype_rex     = re.compile('@(\w*)\s*{\s*(.*),')
+    endtype_rex     = re.compile('}\s*$')
+    endtag_rex      = re.compile('^\s*}\s*$')
 
-    #165,166c165,166
-    #<     bracefield_rex = re.compile('\s*(\w*)\s*=\s*(.*)')
-    #<     bracedata_rex = re.compile('\s*(\w*)\s*=\s*{(.*)},?')
-    #---
-    #>     bracefield_rex = re.compile('\s*([^=\s]*)\s*=\s*(.*)')
-    #>     bracedata_rex = re.compile('\s*([^=\s]*)\s*=\s*{(.*)},?')
-
+    #   brace-style fields
     bracefield_rex  = re.compile('\s*([^=\s]*)\s*=\s*(.*)')
     bracedata_rex   = re.compile('\s*([^=\s]*)\s*=\s*{(.*)},?')
 
+    #   quote-style fields
     quotefield_rex  = re.compile('\s*(\w*)\s*=\s*(.*)')
     quotedata_rex   = re.compile('\s*(\w*)\s*=\s*"(.*)",?')
 
@@ -463,18 +463,21 @@ def bibtexdecoder(filecontents_source):
 
         # encode character entities
         line = line.replace('&', '&amp;')
-        line = line.replace('<', '&lt;')
-        line = line.replace('>', '&gt;')
+        line = line.replace('<', '&lt;' )
+        line = line.replace('>', '&gt;' )
 
         # start item: publication type (store for later use)
         if pubtype_rex.match(line):
             # want @<alphanumeric chars><spaces>{<spaces><any chars>,
-            arttype = pubtype_rex.sub('\g<1>',line)
-            arttype = arttype.lower()
-            artid   = pubtype_rex.sub('\g<2>', line)
-            artid   = artid.replace(':','-')
-            endentry= '</bibtex:{}>\n</bibtex:entry>\n'.format(arttype)
-            line    = '<bibtex:entry id="{}">\n<bibtex:{}>'.format(artid, arttype)
+            arttype     = pubtype_rex.sub('\g<1>',line)
+            arttype     = arttype.lower()
+            artid       = pubtype_rex.sub('\g<2>', line)
+            artid       = artid.replace(':','-')
+            endentry    = '</bibtex:{}>\n</bibtex:entry>\n'.format(arttype)
+            line        = '<bibtex:entry id="{}">\n<bibtex:{}>'.format(
+                                artid,
+                                arttype
+                            )
             # end item
 
         # end entry if just a }
@@ -628,13 +631,12 @@ def bibtexwasher(filecontents_source):
 
 
 def contentshandler(filecontents_source):
-    ''' Washes, converts to XML, and prints `filecontents_source`.
+    ''' Washes BibTeX, converts to XML, and prints `filecontents_source`.
 
-        This function is *nearly* a convenience wrapper,
-        allowing `filecontents_source` to be washing and XMLized
-        in a single function call.  However, it does
-        perform some additional small (but important) operations
-        before printing the result.
+        This function is *nearly* a convenience wrapper, allowing
+        `filecontents_source` to be washing and XMLized in a single
+        function call.  However, it does perform some additional small
+        (but important) operations before printing the result.
     '''
     washeddata  = bibtexwasher(filecontents_source)
     outdata     = bibtexdecoder(washeddata)
@@ -651,7 +653,7 @@ def contentshandler(filecontents_source):
 
 
 def filehandler(filepath):
-    ''' Opens `filepath` and returns the result as a string.  Uses
+    ''' Opens `filepath` and returns its contents as a string.  Uses
         `readlines()` internally.
     '''
     with open(filepath, 'r') as f:
