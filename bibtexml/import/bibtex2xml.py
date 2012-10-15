@@ -648,7 +648,7 @@ def contentshandler(filecontents_source):
 
     for line in outdata:
         print(line)
-    print( '<!-- manual cleanup may be required... -->\n\n',
+    print( '\n<!-- manual cleanup may be required... -->\n',
            '</bibtex:file>')
 
 

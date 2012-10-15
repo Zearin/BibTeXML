@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE bibtex:file PUBLIC "-//BibTeXML//DTD XML for BibTeX v1.0//EN" "bibtexml.dtd">
 <bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">
+
   
 <bibtex:entry id="btxdoc">
 <bibtex:manual>
@@ -514,6 +515,6 @@
 </bibtex:article>
 </bibtex:entry>
 
-<!-- manual cleanup may be required... -->
 
- </bibtex:file>
+<!-- manual cleanup may be required... -->
+</bibtex:file>
