@@ -68,6 +68,25 @@ from    __future__  import  (   print_function,
 import  re
 
 
+# main program
+def main():
+    import sys
+
+    if sys.argv[1:]:
+        filepath                = sys.argv[1]
+        filecontents_source     = filehandler(filepath)
+    else:
+        # instead of exit() read stdin here
+        filecontents_source     = sys.stdin.readlines()
+
+    #   prints washed bibtex; uncomment to see exactly what gets
+    #   transformed by `bibtexdecoder()`
+    #print( ''.join( bibtexwasher(filecontents_source) ) )
+
+    for line in contentshandler(filecontents_source):
+        print(line)
+    
+    
 #---------------------------------------------------------------------
 #   REGULAR EXPRESSIONS
 #---------------------------------------------------------------------
@@ -661,26 +680,9 @@ def filehandler(filepath):
     return filecontents_source
 
 
-# main program
 
-def main():
-    import sys
-
-    if sys.argv[1:] :
-        filepath                = sys.argv[1]
-        filecontents_source     = filehandler(filepath)
-    else:
-        # instead of exit() read stdin here
-        filecontents_source     = sys.stdin.readlines()
-
-    #   prints washed bibtex; uncomment to see exactly what gets
-    #   transformed by `bibtexdecoder()`
-    #print( ''.join( bibtexwasher(filecontents_source) ) )
-
-    contentshandler(filecontents_source)
-
-
-if __name__ == '__main__': main()
+if __name__ == '__main__': 
+    main()
 
 
 # end python script
