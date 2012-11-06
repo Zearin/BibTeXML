@@ -249,7 +249,7 @@ def concat_line(line):
     field       = field_rex.sub('\g<1>',line)
     rest        = field_rex.sub('\g<2>',line)
 
-    concat_line = field + ' ='
+    concat_line = '{field} ='.format(field = field)
     pound_split = concatsplit_rex.split(rest)
 
     phrase_count    = 0
@@ -283,7 +283,7 @@ def concat_line(line):
         if phrase.endswith('\\'):
             phrase  += '#'
 
-        concat_line  += ' ' + phrase
+        concat_line  = '{0} {1}'.format(concat_line, phrase)
         phrase_count += 1
 
     return concat_line
@@ -421,7 +421,7 @@ def bibtex_replace_abbreviations(filecontents_source):
             if abbr_rex[abbr_count].search(line):
                 if verify_out_of_braces(line,abbr_list[abbr_count]) is True:
                     line = abbr_rex[abbr_count].sub(
-                                value_list[abbr_count] + '\g<1>',
+                                '{0}{1}'.format(value_list[abbr_count], '\g<1>'),
                                 line
                             )
                 # Check for # concatenations
@@ -430,7 +430,7 @@ def bibtex_replace_abbreviations(filecontents_source):
             abbr_count  += 1
 
 
-        filecontents2   += line + '\n'
+        filecontents2   += '{0}\n'.format(line)
         i               += 1
 
 
@@ -637,7 +637,7 @@ def bibtexwasher(filecontents_source):
         if line == '' or line == ' ':
             j += 1
             continue
-        filecontents[i] = line + '\n'
+        filecontents[i] = '{0}\n'.format(line)
         i += 1
 
     # get rid of the extra stuff at the end of the array
