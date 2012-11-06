@@ -357,8 +357,8 @@ def bibtex_replace_abbreviations(filecontents_source):
     abbr_rex        = []
     total_abbr_count= 0
 
-    front           = '\\b'
-    back            = '(,?)\\b'
+    front           = r'\b'
+    back            = r'(,?)\b'
 
     for x in abbr_list:
         abbr_rex.append(re.compile(
