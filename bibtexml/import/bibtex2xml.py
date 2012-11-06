@@ -247,17 +247,17 @@ def concat_line(line):
         phrase = phrase.strip()
 
         #   phrase start
-        if   phrase_count is not 0:
-            if phrase.startswith('"') or \
-               phrase.startswith('{'):
+        if phrase_count is not 0:
+            if (phrase.startswith('"') or 
+                phrase.startswith('{')):
                 phrase  =   phrase[1:]
         elif phrase.startswith('"'):
             phrase  =   phrase.replace('"','{',1)
 
         #   phrase end
-        if phrase_count is not ( length - 1 ):
-            if phrase.endswith('"') or \
-               phrase.endswith('}'):
+        if phrase_count is not (length - 1):
+            if (phrase.endswith('"') or 
+                phrase.endswith('}') ):
                 phrase  =   phrase[:-1]
         else:
             if  phrase.endswith('"'):
