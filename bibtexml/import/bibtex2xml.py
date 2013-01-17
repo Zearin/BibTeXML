@@ -115,7 +115,7 @@ concatsplit_rex     = re.compile('\s*#\s*')
 #
 # extracted from `verify_out_of_braces()`
 #
-delimiter_rex       = re.compile('([{}"])',re.I) # split on {, }, or "
+delimiter_rex       = re.compile('([{}"])', re.I) # split on {, }, or "
 
 
 field_rex           = re.compile('\s*(\w*)\s*=\s*(.*)')
@@ -474,7 +474,7 @@ def bibtex_replace_abbreviations(filecontents_source):
             abbr_count  += 1
 
 
-        filecontents2   += '{0}\n'.format(line)
+        filecontents2   += '{line}\n'.format(line=line)
         i               += 1
 
 
@@ -509,14 +509,14 @@ def bibtexdecoder(filecontents_source):
         # start item: publication type (store for later use)
         if pubtype_rex.match(line):
             # want @<alphanumeric chars><spaces>{<spaces><any chars>,
-            arttype     = pubtype_rex.sub('\g<1>',line)
+            arttype     = pubtype_rex.sub('\g<1>', line)
             arttype     = arttype.lower()
             artid       = pubtype_rex.sub('\g<2>', line)
-            artid       = artid.replace(':','-')
-            endentry    = '</bibtex:{}>\n</bibtex:entry>\n'.format(arttype)
-            line        = '<bibtex:entry id="{}">\n<bibtex:{}>'.format(
-                                artid,
-                                arttype)
+            artid       = artid.replace(':', '-')
+            endentry    = '</bibtex:{pubtype}>\n</bibtex:entry>\n'.format(pubtype=arttype)
+            line        = '<bibtex:entry id="{id}">\n<bibtex:{pubtype}>'.format(
+                                id=artid,
+                                pubtype=arttype)
             # end item
 
         # end entry if just a }
@@ -631,7 +631,7 @@ def no_outer_parens(filecontents):
     #       just assume the Pythonic equivalent.)
 
     # Check for open parens; will convert to braces
-    paren_split         = re.split('([(){}])',filecontents)
+    paren_split         = re.split('([(){}])', filecontents)
 
     open_paren_count    = 0
     open_type           = 0
