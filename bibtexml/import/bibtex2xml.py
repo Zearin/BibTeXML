@@ -72,6 +72,7 @@ def main():
     import sys
 
     if sys.argv[1:]:
+        # accept a file if one is given as an argument
         filepath                = sys.argv[1]
         filecontents_source     = filehandler(filepath)
     else:
