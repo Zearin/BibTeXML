@@ -95,14 +95,14 @@ def main():
 valid_name_chars    = '[\w\-:]'
 
 # define global regular expression variables
-author_rex          = re.compile('\s+and\s+')
-rembraces_rex       = re.compile('[{}]')
-capitalize_rex      = re.compile('({\w*})')
+author_rex          = re.compile(r'\s+and\s+')
+rembraces_rex       = re.compile(r'[{}]')
+capitalize_rex      = re.compile(r'({\w*})')
 
 #
 # extracted from `bibtexkeywords(data)`
 #
-keywords_rex        = re.compile(',|(?<!&amp);')
+keywords_rex        = re.compile(r',|(?<!&amp);')
 #   fixed by zearin, 2011-12-1
 #   use "negative lookbehind asssertion" to prevent
 #   an already-converted ampersand from triggering a
@@ -111,32 +111,32 @@ keywords_rex        = re.compile(',|(?<!&amp);')
 #
 # extracted from `concat_line(line)`
 #
-concatsplit_rex     = re.compile('\s*#\s*')
+concatsplit_rex     = re.compile(r'\s*#\s*')
 
 #
 # extracted from `verify_out_of_braces()`
 #
-delimiter_rex       = re.compile('([{}"])', re.I) # split on {, }, or "
+delimiter_rex       = re.compile(r'([{}"])', re.I) # split on {, }, or "
 
 
-field_rex           = re.compile('\s*(\w*)\s*=\s*(.*)')
-data_rex            = re.compile('\s*(\w*)\s*=\s*([^,]*),?')
+field_rex           = re.compile(r'\s*(\w*)\s*=\s*(.*)')
+data_rex            = re.compile(r'\s*(\w*)\s*=\s*([^,]*),?')
 
 #
 # extracted from `bibtexdecoder()`
 #
 # want @<alphanumeric chars><spaces>{<spaces><any chars>,
-pubtype_rex         = re.compile('@(\w*)\s*{\s*(.*),')
-endtype_rex         = re.compile('}\s*$')
-endtag_rex          = re.compile('^\s*}\s*$')
+pubtype_rex         = re.compile(r'@(\w*)\s*{\s*(.*),')
+endtype_rex         = re.compile(r'}\s*$')
+endtag_rex          = re.compile(r'^\s*}\s*$')
 
 #   brace-style fields
-bracefield_rex      = re.compile('\s*([^=\s]*)\s*=\s*(.*)')
-bracedata_rex       = re.compile('\s*([^=\s]*)\s*=\s*{(.*)},?')
+bracefield_rex      = re.compile(r'\s*([^=\s]*)\s*=\s*(.*)')
+bracedata_rex       = re.compile(r'\s*([^=\s]*)\s*=\s*{(.*)},?')
 
 #   quote-style fields
-quotefield_rex      = re.compile('\s*(\w*)\s*=\s*(.*)')
-quotedata_rex       = re.compile('\s*(\w*)\s*=\s*"(.*)",?')
+quotefield_rex      = re.compile(r'\s*(\w*)\s*=\s*(.*)')
+quotedata_rex       = re.compile(r'\s*(\w*)\s*=\s*"(.*)",?')
 
 
 
