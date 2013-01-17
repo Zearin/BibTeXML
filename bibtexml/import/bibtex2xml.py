@@ -401,14 +401,13 @@ def bibtex_replace_abbreviations(filecontents_source):
     abbr_rex        = []
     total_abbr_count= 0
 
-    front           = r'\b'
-    back            = r'(,?)\b'
+    FRONT           = r'\b'
+    BACK            = r'(,?)\b'
 
     for x in abbr_list:
         abbr_rex.append(re.compile(
-            front + abbr_list[total_abbr_count] + back
-            , re.I )
-        )
+            FRONT + abbr_list[total_abbr_count] + BACK
+            , re.I))
         total_abbr_count += 1
 
 
@@ -444,7 +443,7 @@ def bibtex_replace_abbreviations(filecontents_source):
                 value_list.append(val.strip())
                 abbr_rex.append(
                     re.compile(
-                        front + abbr_list[total_abbr_count] + back,
+                        FRONT + abbr_list[total_abbr_count] + BACK,
                         re.I
                     )
                 )
