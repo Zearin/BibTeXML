@@ -154,7 +154,9 @@ def bibtexauthor(data):
         bibtex  += '\n'
         for author in author_list:
             author  = author.strip()
-            bibtex  += '<bibtex:person>{}</bibtex:person>\n'.format( remove_braces(author) )
+            author  = remove_braces(author)
+            bibtex  += '<bibtex:person>{name_of_author}</bibtex:person>\n'.format(
+                name_of_author=author )
     else:
         bibtex  += remove_braces(author_list[0])
 
