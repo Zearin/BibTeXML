@@ -78,14 +78,14 @@ def main():
         # instead of exit() read stdin here
         filecontents_source     = sys.stdin.readlines()
 
-    #   prints washed bibtex; uncomment to see exactly what gets
-    #   transformed by `bibtexdecoder()`
+    #   prints washed bibtex.
+    #   (uncomment to see exactly what gets transformed by `bibtexdecoder()`)
     #print( ''.join( bibtexwasher(filecontents_source) ) )
 
     for line in contentshandler(filecontents_source):
         print(line)
-    
-    
+
+
 #---------------------------------------------------------------------
 #   REGULAR EXPRESSIONS
 #---------------------------------------------------------------------
@@ -123,7 +123,7 @@ data_rex            = re.compile('\s*(\w*)\s*=\s*([^,]*),?')
 
 #
 # extracted from `bibtexdecoder()`
-# 
+#
 # want @<alphanumeric chars><spaces>{<spaces><any chars>,
 pubtype_rex         = re.compile('@(\w*)\s*{\s*(.*),')
 endtype_rex         = re.compile('}\s*$')
@@ -248,7 +248,7 @@ def concat_line(line):
 
         #   phrase start
         if phrase_count is not 0:
-            if (phrase.startswith('"') or 
+            if (phrase.startswith('"') or
                 phrase.startswith('{')):
                 phrase  =   phrase[1:]
         elif phrase.startswith('"'):
@@ -256,7 +256,7 @@ def concat_line(line):
 
         #   phrase end
         if phrase_count is not (length - 1):
-            if (phrase.endswith('"') or 
+            if (phrase.endswith('"') or
                 phrase.endswith('}') ):
                 phrase  =   phrase[:-1]
         else:
@@ -285,26 +285,26 @@ def encode_character_entities(line):
 def get_field_and_data_from_line(line):
     field   = ''
     data    = ''
-    
+
     # field, publication info
     # field = {data} entries
     if bracedata_rex.match(line):
         field   = bracefield_rex.sub('\g<1>', line)
         field   = field.lower()
         data    = bracedata_rex.sub('\g<2>', line)
-    
+
     # field = "data" entries
     elif quotedata_rex.match(line):
         field   = quotefield_rex.sub('\g<1>', line)
         field   = field.lower()
         data    = quotedata_rex.sub('\g<2>', line)
-    
+
     # field = data entries
     elif data_rex.match(line):
         field   = field_rex.sub('\g<1>', line)
         field   = field.lower()
         data    = data_rex.sub('\g<2>', line)
-    
+
     return field, data
 
 
@@ -323,7 +323,7 @@ def line_to_xml(line, field=None, data=None):
         # get rid of the field={} type stuff
         else:
             line = ''
-    
+
     return line
 
 
@@ -371,7 +371,7 @@ def verify_out_of_braces(line, abbr):
             else:
                 open_quotes  = 1
         elif abbr_rex.search(phrase):
-            if (open_braces is 0 and 
+            if (open_braces is 0 and
                 open_quotes is 0):
                 return True
     return False
@@ -414,7 +414,8 @@ def bibtex_replace_abbreviations(filecontents_source):
 
     abbrdef_rex = re.compile(
                         '\s*@string\s*{\s*('
-                        + valid_name_chars + '*)\s*=(.*)'
+                        + valid_name_chars
+                        + '*)\s*=(.*)'
                         , re.I
                     )
 
@@ -530,8 +531,8 @@ def bibtexdecoder(filecontents_source):
             line    = endtag_rex.sub(endentry, line)
 
         field, data = get_field_and_data_from_line(line)
-        line        = line_to_xml(  line, 
-                                    field=field, 
+        line        = line_to_xml(  line,
+                                    field=field,
                                     data=data)
 
         if line != '':
@@ -590,7 +591,7 @@ def bibtexwasher(filecontents_source):
 
     # do checking for open braces to get format correct
     open_brace_count= 0
-    brace_split     = re.split('([{}])',filecontents)
+    brace_split     = re.split('([{}])', filecontents)
 
     # rebuild filecontents
     filecontents = ''
@@ -681,7 +682,7 @@ def contentshandler(filecontents_source):
         (but important) operations before printing the result.
     '''
     from textwrap import dedent
-    
+
     washeddata  = bibtexwasher(filecontents_source)
     outdata     = bibtexdecoder(washeddata)
 
@@ -690,13 +691,13 @@ def contentshandler(filecontents_source):
         '<?xml version="1.0" encoding="utf-8"?>',
         '<!DOCTYPE bibtex:file PUBLIC "-//BibTeXML//DTD XML for BibTeX v1.0//EN" "bibtexml.dtd">',
         '<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/">',]
-    
+
     suffix = [
         '<!-- manual cleanup may be required... -->',
         '</bibtex:file>']
-    
+
     outdata = prefix + outdata + suffix
-    
+
     for line in outdata:
         yield line
 
@@ -711,7 +712,7 @@ def filehandler(filepath):
 
 
 
-if __name__ == '__main__': 
+if __name__ == '__main__':
     main()
 
 
