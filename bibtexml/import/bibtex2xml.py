@@ -497,13 +497,7 @@ def bibtex_replace_abbreviations(filecontents_source):
 
 
 def bibtexdecoder(filecontents_source):
-    ''' Print the XML for the transformed `filecontents_source`.
-
-        @FIXME
-            The indentation of this function is atrocious.
-            It's also incredibly tricky to repair without breaking
-            this script's output.  Grr.
-    '''
+    ''' Print the XML for the transformed `filecontents_source`.'''
 
     filecontents =  []
     endentry     =  ''
